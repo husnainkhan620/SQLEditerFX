@@ -2,6 +2,7 @@ package org.openjfx.fx;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -61,11 +62,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 public class Menu_Items_FX extends Application {
 
+	public Stage primaryStage;
+	
 	public Scene scene;
 
 	public VBox rootPane;
@@ -128,8 +132,13 @@ public class Menu_Items_FX extends Application {
 		editMenu.setText("Edit");
 		MenuItem newMenuItem = new MenuItem("New");
 		MenuItem openMenuItem = new MenuItem("Open");
+		MenuItem saveFileMenuItem = new MenuItem("Save");
 		fileMenu.getItems().add(newMenuItem);
 		fileMenu.getItems().add(openMenuItem);
+		fileMenu.getItems().add(saveFileMenuItem);
+		
+		
+		saveFileMenuItem.setOnAction(saveFileMenuItemAction());
 		
 		menuBar.getMenus().add(fileMenu);
 		menuBar.getMenus().add(editMenu);
@@ -163,6 +172,7 @@ public class Menu_Items_FX extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 	
+		this.primaryStage = primaryStage;
 		size = Toolkit.getDefaultToolkit().getScreenSize();
 		System.out.println(size);
 		
@@ -505,7 +515,7 @@ public class Menu_Items_FX extends Application {
         editerTabSplitPane.getItems().add(sqlEditerscrollPane); // Top half of query editer
         editerTabSplitPane.getItems().add(sqlEditerResultTabPane); // bottom half of query editer
         
-        sqlEditerTab = new Tab("["+connectionTreeItem.getValue() +"] "+sqlEditerCount++);    // Full editer Tab  // This will also contain the database name
+        sqlEditerTab = new Tab("*["+connectionTreeItem.getValue() +"] " +"unknown "+ sqlEditerCount++);    // Full editer Tab  // This will also contain the database name
         
         // ImageView  connectionTypeImageView = new ImageView(new Image(getClass().getResourceAsStream("/graphics/-----+"Logo.png")));
         ImageView  connectionTypeImageView = new ImageView(new Image(getClass().getResourceAsStream("/graphics/duckDBLogo.png")));
@@ -648,5 +658,23 @@ public class Menu_Items_FX extends Application {
 			}
 		};
 	}
+	
+	private EventHandler<ActionEvent> saveFileMenuItemAction() {
+		return new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				FileChooser fileChooser = new FileChooser();
+				
+				File selectedFile = fileChooser.showOpenDialog(primaryStage);
+				System.out.println("Save File invoked");
+				System.out.println("Selected File path" + selectedFile);
+				System.out.println("Selected File name" + selectedFile.getName());
+				System.out.println( alltabbedEditors.getSelectionModel().getSelectedIndex());
+				System.out.println( alltabbedEditors.getSelectionModel().getSelectedItem().getText() );
+				 alltabbedEditors.getSelectionModel().getSelectedItem().setText(selectedFile.getName());
+			}
+		};
+	}
+	
 	
 }

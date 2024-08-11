@@ -44,7 +44,6 @@ public class DuckDBConnection {
 	}
 	
 	
-	
 	public static void main(String[] args) {
 		
 		String url = "jdbc:duckdb:C:/Users/KOUSER/Downloads/duckdb_cli-windows-amd64/my_database.duckdb";
