@@ -1,11 +1,13 @@
 package com.openfx.handlers;
 
+import java.awt.GridLayout;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -17,6 +19,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
@@ -24,7 +33,27 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TreeItem;
 import javafx.scene.control.cell.MapValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 
@@ -38,19 +67,104 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 	
 	@Override
 	public void handle(ActionEvent event) {
+		
 		System.out.println("Current Contents to run ");
 		if(menu_Items_FX.foucesSqlEditerTextArea != null)
 			System.out.println(menu_Items_FX.foucesSqlEditerTextArea.getText());
 		else {
 			System.out.println("Nothing to run ");
+		}
+		
+		
+		// IF No DB is yet present to run the query 
+		// Display a pop up to say so and ask them to connect to DB either a new one or exisitng ones
+		if(menu_Items_FX.foucesSqlEditerTextArea != null) {
+			System.out.println(menu_Items_FX.foucesSqlEditerTextArea.getId());
+			if(menu_Items_FX.foucesSqlEditerTextArea.getId() == null) {
+				 
+				Stage connectionStage = new Stage();
+				BorderPane mainPopUpborderPane = new BorderPane();
+				 
+				HBox topHbox = addTopHBox();
+				
+				GridPane centerGridPane = addCenterGridPane();
+				
+				HBox bottomHbox = addBottomHBox();
+				
+				
+				mainPopUpborderPane.setTop(topHbox);
+				
+				mainPopUpborderPane.setCenter(centerGridPane);;
+				mainPopUpborderPane.setBottom(bottomHbox);
+				
+				Scene scene = new Scene(mainPopUpborderPane,500,500);  
+				scene.getStylesheets().add(getClass().getResource("/layoutstyles.css").toExternalForm());  
+				
+				connectionStage.initModality(Modality.APPLICATION_MODAL);
+				connectionStage.initOwner(menu_Items_FX.primaryStage.getScene().getWindow());
+				connectionStage.setTitle("No DataBase Connection ");   
+				connectionStage.setScene(scene);
+				 // Commenting the below for now
+				 //  connectionStage.initStyle(StageStyle.TRANSPARENT);  // remove the top head of the scene
+				    
+				connectionStage.show();
+				return;
+			}
+		}
+		 
+		// Move this to a seperate button handler to connect to DB from pop up
+		// Check if the file or TextArea to run is associated with any DB 
+		if(menu_Items_FX.foucesSqlEditerTextArea != null) {
+			System.out.println(menu_Items_FX.foucesSqlEditerTextArea.getId());
+			if(menu_Items_FX.foucesSqlEditerTextArea.getId() == null) {
+				System.out.println("No Database connection to run this !!!!!");
+				new NewMenuItemEventHandler(menu_Items_FX).handle(event);
+			 
+				
+				//change the existingtab name to remove No DB
+				menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().setText(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText().replace("[ No DB ] ", ""));
+				
+				System.out.println("Size is "+menu_Items_FX.rootConnectionItem.getChildren().size());
+				
+				// This should give us the latest added connection
+				TreeItem<String> duckDBTreeItem = menu_Items_FX.rootConnectionItem.getChildren().get(menu_Items_FX.rootConnectionItem.getChildren().size()-1);
+				System.out.println("duckDBTreeItem "+duckDBTreeItem);
+				menu_Items_FX.foucesSqlEditerTextArea.setId( duckDBTreeItem.getGraphic().getId());
+				
+				Tab sqlEditerTab = menu_Items_FX.alltabbedEditors.getTabs().get(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedIndex());
+	            sqlEditerTab.setGraphic(duckDBTreeItem.getGraphic());
+				return;
+			}
+		}
+		else {
+			System.out.println("Nothing to run ");
 			return;
 		}
 		
+		
+		/*
         System.out.println( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedIndex());
 		System.out.println( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText() );
 		menu_Items_FX.toolBarRunButton.setDisable(true);	
 		
-		
+	   SplitPane tabSplitPane	= (SplitPane)  menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getContent();
+	   System.out.println( tabSplitPane.getItems().get(0).toString()) ; // Top half of the tab where sql editer is present
+	  
+	   ScrollPane sqlEditerscrollPane = (ScrollPane) tabSplitPane.getItems().get(0);
+	   
+	   GridPane tabEditergridPane =  (GridPane) sqlEditerscrollPane.getContent(); // will have stack panes which individually have textArea
+	   System.out.println( tabEditergridPane.getChildren().toString());
+	   
+	   ObservableList<Node> gridPaneList =  tabEditergridPane.getChildren();
+	   for(Node node : gridPaneList) {
+		   if(node instanceof StackPane) {	   
+			   TextArea lowestLevelTextArea = (TextArea) ((StackPane) node).getChildren().get(0);
+			   System.out.println(lowestLevelTextArea.getText());
+		   }
+	   }
+	   */
+	 
+	   
 		System.out.println("Database Type incurred from SQL Editer Text Area :"+menu_Items_FX.foucesSqlEditerTextArea.getId()); // This is set for a database connection check in NewMenuItem
 		
 		if(menu_Items_FX.foucesSqlEditerTextArea.getId().equalsIgnoreCase("MySQL")) {
@@ -158,6 +272,65 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 		
 	}
 
+	 private HBox addTopHBox() {
+
+		 
+	        HBox hbox = new HBox();
+//	        hbox.setPadding(new Insets(15, 12, 15, 12));
+//	        hbox.setSpacing(10);   // Gap between nodes
+//	        hbox.setStyle("-fx-background-color: #336699;");
+	// Use style class to set properties previously set above (with some changes)      
+	        hbox.getStyleClass().add("hbox");
+	        
+	        Text connectToDatabseText = new Text("Connect to a Database");
+	        connectToDatabseText.setFont(Font.font("Verdana",20));
+	        connectToDatabseText.setFill(Color.WHITE);
+	        hbox.getChildren().addAll(connectToDatabseText);
+	        
+	        return hbox;
+	    }
+	 
+	 private GridPane addCenterGridPane() {
+		 
+		 GridPane gridPane = new GridPane();
+		 
+		 //Setting the padding  
+	     gridPane.setPadding(new Insets(10, 10, 10, 10)); 
+	      
+	     //Setting the vertical and horizontal gaps between the columns 
+	     
+	     gridPane.setVgap(50); 
+	     gridPane.setHgap(5);
+	      
+	     gridPane.setAlignment(Pos.CENTER);
+	     
+	     Label exisingConnection = new Label("Connect to existing Databases");
+	     Label newConnection = new Label("Connect to a new Database");
+	     
+	     gridPane.add(exisingConnection,0,0);   // row 0 column 0
+	     gridPane.add(newConnection,0,1);
+	     
+		 return gridPane;
+		 
+	 }
+	 
+	 private HBox addBottomHBox() {
+
+		 
+	        HBox hbox = new HBox();
+//	        hbox.setPadding(new Insets(15, 12, 15, 12));
+//	        hbox.setSpacing(10);   // Gap between nodes
+//	        hbox.setStyle("-fx-background-color: #334000;");
+	// Use style class to set properties previously set above (with some changes)      
+	        //hbox.getStyleClass().add("hbox");
+	        
+	        hbox.getStyleClass().add("hbox");
+
+	        
+	        return hbox;
+	    }
+	 
+	 
 	private void runMySQLScript(Connection mySQLConnection) {
 		String sqlQueryTextToRun = menu_Items_FX.foucesSqlEditerTextArea.getText();
 		

@@ -1,6 +1,5 @@
 package com.openfx.placeholders;
 
-import java.sql.Connection;
 import java.util.Date;
 
 public class ConnectionPlaceHolder {

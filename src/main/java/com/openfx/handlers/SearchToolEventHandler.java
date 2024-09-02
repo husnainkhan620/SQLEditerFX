@@ -212,6 +212,9 @@ public class SearchToolEventHandler implements EventHandler<ActionEvent> {
 		
 		menu_Items_FX.alltabbedEditors.getTabs().add(menu_Items_FX.dataSearchtabPane);
 		
+        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+        singleSelectionModel.select(menu_Items_FX.dataSearchtabPane);
+		
 	}
 
 	

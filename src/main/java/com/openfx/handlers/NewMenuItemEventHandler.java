@@ -65,6 +65,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -121,6 +122,7 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	
 	public NewMenuItemEventHandler(Menu_Items_FX menu_Items_FX) {
 		this.menu_Items_FX = menu_Items_FX;
+		
 	}
 	
 	@Override
@@ -137,7 +139,8 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		
 		//frame = new JFrame("Connect to a database");
 		//frame.setContentPane(fxPanel);
-			
+		
+		menu_Items_FX.newMenuItemEventHandler = this; // this class being referenced in Menu_Items_FX class(main class)
 	
 		menu_Items_FX.borderSelectDatabase = new BorderPane();
 		    
@@ -182,7 +185,7 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		connectToLabel.setPadding(new Insets(0, 0, 2, 2));
 		borderPaneProperties.setLeft(connectToLabel);
 		
-		
+		/*
 		HBox boxButtons = new HBox();
 		Button middleButton = new Button();
 	    ImageView  maximizeImage = new ImageView(new Image(getClass().getResourceAsStream("/images/maximize.png")));
@@ -204,12 +207,13 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		closeButton.setStyle("-fx-background-color : transparent");
 		closeButton.setMinWidth(30);
 		boxButtons.getChildren().add(closeButton);
-		  
-		borderPaneProperties.setRight(boxButtons);
+		  */
+		
+	//	borderPaneProperties.setRight(boxButtons);
 		  
 		HBox hbox = addHBox();
 		
-		vBoxTop.getChildren().add(borderPaneProperties);
+		vBoxTop.getChildren().add(borderPaneProperties); // disabled the top bar above menu for now
 		vBoxTop.getChildren().add(hbox);
 		  
 		menu_Items_FX.borderSelectDatabase.setTop(vBoxTop);
@@ -222,28 +226,29 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	      
 	    BorderPane borderPaneBottom = addHBoxBottom();
 	    menu_Items_FX.borderSelectDatabase.setBottom(borderPaneBottom);
-		
 	    menu_Items_FX.sceneDataBaseConnection = new Scene(menu_Items_FX.borderSelectDatabase,800,600);
 	    
 	    
 	    menu_Items_FX.sceneDataBaseConnection.getStylesheets().add(getClass().getResource("/layoutstyles.css").toExternalForm());
 	    
 	    connectionStage = new Stage();
+	    connectionStage.initModality(Modality.APPLICATION_MODAL);
+	    connectionStage.initOwner(menu_Items_FX.primaryStage.getScene().getWindow());
+	    
 	    connectionStage.setScene(menu_Items_FX.sceneDataBaseConnection);
-	    
-	    connectionStage.initStyle(StageStyle.TRANSPARENT);  // remove the top head of the scene
-	    
+	    // Commenting the below for now
+	    //  connectionStage.initStyle(StageStyle.TRANSPARENT);  // remove the top head of the scene
 	    connectionStage.show();
 	    
-	    closeButton.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+	/*    closeButton.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent mouseEvent) {
 				connectionStage.close();
 			}
 		});
-	    
-	    middleButton.addEventHandler(MouseEvent.MOUSE_PRESSED, middleButtonClicked(middleButton, minimizeImage,maximizeImage));
+	    */
+//	    middleButton.addEventHandler(MouseEvent.MOUSE_PRESSED, middleButtonClicked(middleButton, minimizeImage,maximizeImage));
 	    
 	    menu_Items_FX.sceneDataBaseConnection.setOnMouseMoved(new EventHandler<MouseEvent>() {
 			@Override
@@ -1892,7 +1897,6 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		duckDBTreeItem.getChildren().add(duckDBTreeItemViews);
 		duckDBTreeItem.getChildren().add(duckDBTreeItemProcedures);
 		menu_Items_FX.rootConnectionItem.getChildren().add(duckDBTreeItem);
-		
 	}
 	
 }
