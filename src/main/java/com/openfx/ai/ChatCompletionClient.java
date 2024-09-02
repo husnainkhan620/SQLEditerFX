@@ -56,7 +56,7 @@ public class ChatCompletionClient {
 		
 		HttpRequest httpRequest = HttpRequest.newBuilder()
 				.header("Content-Type", "application/json")
-				.header("Authorization", "Bearer sk-tJpq7VTQiZyxnLHEYDpfDkC0r-wNGw0e1Op85vT46ST3BlbkFJ13Vu0w56c2jJO1HPXpnl7GMQFghIrru9Gpo0K6KLIA" )
+				.header("Authorization", "Bearer " )
 	            .POST(BodyPublishers.ofString(new Gson().toJson(chatCompletionRequest)))
 	            .uri(URI.create("https://api.openai.com/v1/chat/completions"))
 	            .build(); 
