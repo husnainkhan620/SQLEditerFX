@@ -24,7 +24,7 @@ public class DatabricksConnection {
 		connectionProperties.put("password",password);
 		
 		try {
-			
+			//this a jdbc conn
 			databricksConnection = DriverManager.getConnection(url);
 			Statement stmt = databricksConnection.createStatement();
 			
