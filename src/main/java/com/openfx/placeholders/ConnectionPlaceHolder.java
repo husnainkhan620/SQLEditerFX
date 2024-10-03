@@ -5,8 +5,16 @@ import java.util.Date;
 public class ConnectionPlaceHolder {
 
 	private String connectionName;
+	private String connectionType;
 	private Date connectionCreationDate;
 	
+	
+	public String getConnectionType() {
+		return connectionType;
+	}
+	public void setConnectionType(String connectionType) {
+		this.connectionType = connectionType;
+	}
 	public String getConnectionName() {
 		return connectionName;
 	}

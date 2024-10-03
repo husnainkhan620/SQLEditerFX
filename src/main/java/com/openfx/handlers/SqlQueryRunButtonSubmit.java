@@ -1,30 +1,30 @@
 package com.openfx.handlers;
 
-import java.awt.GridLayout;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.openjfx.fx.Menu_Items_FX;
 
+import com.openfx.ai.ConnectionsConstants;
 import com.openfx.placeholders.ConnectionPlaceHolder;
+import com.openfx.placeholders.HighLightRectangleHolder;
+import com.openfx.placeholders.ImageItemsHolder;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
+import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.SplitPane;
@@ -33,25 +33,20 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
 import javafx.scene.control.cell.MapValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -59,10 +54,17 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 
 	private String[] sqlConstantsWithoutResultSet = {"USE","ALTER","CREATE","CONNECT"};
 	
+	public ArrayList<Rectangle> avaialbleHighRectangleConnections = new ArrayList<Rectangle>() ;  
+	private HighLightRectangleHolder highLightRectangleHolder = new HighLightRectangleHolder(avaialbleHighRectangleConnections);
+	
 	private Menu_Items_FX menu_Items_FX;
+	public Button connectExistingConnection;
+	private Stage connectionStage;
+	
 	public SqlQueryRunButtonSubmit(Menu_Items_FX menu_Items_FX) {
 		
 		this.menu_Items_FX = menu_Items_FX;
+		this.menu_Items_FX.sqlQueryRunButtonSubmit =this;
 	}
 	
 	@Override
@@ -78,40 +80,38 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 		
 		// IF No DB is yet present to run the query 
 		// Display a pop up to say so and ask them to connect to DB either a new one or exisitng ones
-		if(menu_Items_FX.foucesSqlEditerTextArea != null) {
-			System.out.println(menu_Items_FX.foucesSqlEditerTextArea.getId());
-			if(menu_Items_FX.foucesSqlEditerTextArea.getId() == null) {
+		if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() == null) {
+			System.out.println("Graphic present ? "+ menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic());
+			if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() == null) {
 				 
-				Stage connectionStage = new Stage();
+				connectionStage = new Stage();
 				BorderPane mainPopUpborderPane = new BorderPane();
 				 
 				HBox topHbox = addTopHBox();
 				
-				GridPane centerGridPane = addCenterGridPane();
+				SplitPane centerSplitPane = addCenterSplitPane();
 				
 				HBox bottomHbox = addBottomHBox();
 				
-				
 				mainPopUpborderPane.setTop(topHbox);
 				
-				mainPopUpborderPane.setCenter(centerGridPane);;
+				mainPopUpborderPane.setCenter(centerSplitPane);;
 				mainPopUpborderPane.setBottom(bottomHbox);
 				
-				Scene scene = new Scene(mainPopUpborderPane,500,500);  
+				Scene scene = new Scene(mainPopUpborderPane,550,500);  
 				scene.getStylesheets().add(getClass().getResource("/layoutstyles.css").toExternalForm());  
 				
 				connectionStage.initModality(Modality.APPLICATION_MODAL);
 				connectionStage.initOwner(menu_Items_FX.primaryStage.getScene().getWindow());
 				connectionStage.setTitle("No DataBase Connection ");   
 				connectionStage.setScene(scene);
-				 // Commenting the below for now
-				 //  connectionStage.initStyle(StageStyle.TRANSPARENT);  // remove the top head of the scene
 				    
 				connectionStage.show();
 				return;
 			}
 		}
 		 
+		/*
 		// Move this to a seperate button handler to connect to DB from pop up
 		// Check if the file or TextArea to run is associated with any DB 
 		if(menu_Items_FX.foucesSqlEditerTextArea != null) {
@@ -140,7 +140,7 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 			System.out.println("Nothing to run ");
 			return;
 		}
-		
+		*/
 		
 		/*
         System.out.println( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedIndex());
@@ -164,71 +164,126 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 	   }
 	   */
 	 
-	   
-		System.out.println("Database Type incurred from SQL Editer Text Area :"+menu_Items_FX.foucesSqlEditerTextArea.getId()); // This is set for a database connection check in NewMenuItem
+		genericQueryRun();
+	}
+
+	private void genericQueryRun() {
 		
-		if(menu_Items_FX.foucesSqlEditerTextArea.getId().equalsIgnoreCase("MySQL")) {
+		System.out.println("Database Type incurred from SQL Editer Tab Area :"+menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId()); // This is set for a database connection check in NewMenuItem
+		
+		if(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId().contains(ConnectionsConstants.MySql)) {
 			//System.out.println("Connected MySQl databases");
 			for(Entry<ConnectionPlaceHolder,Connection>  entrySet :  menu_Items_FX.mySqlConnectionsMap.entrySet())
 			{
-				System.out.println( ((ConnectionPlaceHolder)entrySet.getKey()).getConnectionName() +" "+entrySet.getValue());
-				// This check becoz the script tab name will always have connection name in front of it
-				if(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText().contains(((ConnectionPlaceHolder)entrySet.getKey()).getConnectionName())) {
-					System.out.println("Likely to run on this connection"+entrySet.getValue());
-					
+				// MySQL##con12
+				if(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId().split("##")[1].equalsIgnoreCase(entrySet.getKey().getConnectionName()))
+				{
+					System.out.println("Likely to run on this connection"+menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId());
 					runMySQLScript(entrySet.getValue());
+					continue;
 				}
 			}
+			
 		}
-		else if(menu_Items_FX.foucesSqlEditerTextArea.getId().equalsIgnoreCase("PostgreeSql")) {
+		else if(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId().contains(ConnectionsConstants.PostgreeSql)) {
 			//System.out.println("Connected Postgree databases");
 			for(Entry<ConnectionPlaceHolder,Connection>  entrySet :  menu_Items_FX.postgreeSqlConnectionsMap.entrySet())
 			{
-				System.out.println( ((ConnectionPlaceHolder)entrySet.getKey()).getConnectionName() +" "+entrySet.getValue());
-				// This check becoz the script tab name will always have connection name in front of it
-				if(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText().contains(((ConnectionPlaceHolder)entrySet.getKey()).getConnectionName())) {
-					System.out.println("Likely to run on this connection"+entrySet.getValue());
-					
+				if(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId().split("##")[1].equalsIgnoreCase(entrySet.getKey().getConnectionName()))
+				{
+					System.out.println("Likely to run on this connection "+menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId());
 					runPostgreeSqlScript(entrySet.getValue());
+					continue;
 				}
 				
 			}
 		}
-		else if(menu_Items_FX.foucesSqlEditerTextArea.getId().equalsIgnoreCase("Sqlite")) {
+		else if(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId().contains(ConnectionsConstants.Sqlite)) {   // will have to change this names as this check is very generic
 			//System.out.println("Connected SQLite databases");
 			for(Entry<ConnectionPlaceHolder,Connection>  entrySet :  menu_Items_FX.sqliteConnectionsMap.entrySet())
 			{
-				// This check becoz the script tab name will always have connection name in front of it
-				if(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText().contains(((ConnectionPlaceHolder)entrySet.getKey()).getConnectionName())) {
-					System.out.println("Likely to run on this connection"+entrySet.getValue());
-					
+				//  SQLite##muck1
+				if(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId().split("##")[1].equalsIgnoreCase(entrySet.getKey().getConnectionName()))
+				{
+					System.out.println("Likely to run on this connection "+menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId());
 					runSQLiteSqlScript(entrySet.getValue());
+					continue;
 				}
 				
 			}
 		}
-		else if(menu_Items_FX.foucesSqlEditerTextArea.getId().equalsIgnoreCase("oracle")) {
+		else if(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId().contains(ConnectionsConstants.SapHana)) {
+			//System.out.println("Connected Oracle databases");
+			for(Entry<ConnectionPlaceHolder,Connection>  entrySet :  menu_Items_FX.saphanarMap.entrySet())
+			{
+
+				//  Oracle##muck1
+				if(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId().split("##")[1].equalsIgnoreCase(entrySet.getKey().getConnectionName()))
+				{
+					System.out.println("Likely to run on this connection "+menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId());
+					runOracleSqlScript(entrySet.getValue());
+					continue;
+				}
+				
+			}
+		}
+		else if(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId().contains(ConnectionsConstants.Oracle)) {
 			//System.out.println("Connected Oracle databases");
 			for(Entry<ConnectionPlaceHolder,Connection>  entrySet :  menu_Items_FX.oracleConnectionsMap.entrySet())
 			{
-				// This check becoz the script tab name will always have connection name in front of it
-				if(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText().contains(((ConnectionPlaceHolder)entrySet.getKey()).getConnectionName())) {
-					System.out.println("Likely to run on this connection"+entrySet.getValue());
-					
-					runSQLiteSqlScript(entrySet.getValue());
+
+				//  Oracle##muck1
+				if(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId().split("##")[1].equalsIgnoreCase(entrySet.getKey().getConnectionName()))
+				{
+					System.out.println("Likely to run on this connection "+menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId());
+					runOracleSqlScript(entrySet.getValue());
+					continue;
 				}
 				
 			}
 		}
-		else if(menu_Items_FX.foucesSqlEditerTextArea.getId().equalsIgnoreCase("duckDB")) {  // comes from reflectDuckDBTreeView
+	
+		else if(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId().contains(ConnectionsConstants.Databricks)) {
 			//System.out.println("Connected Oracle databases");
+			for(Entry<ConnectionPlaceHolder,Connection>  entrySet :  menu_Items_FX.databricksrMap.entrySet())
+			{
+
+				//  Oracle##muck1
+				if(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId().split("##")[1].equalsIgnoreCase(entrySet.getKey().getConnectionName()))
+				{
+					System.out.println("Likely to run on this connection "+menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId() );
+					runOracleSqlScript(entrySet.getValue());
+					continue;
+				}
+				
+			}
+		}
+		else if(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId().contains(ConnectionsConstants.MSSQLSErver)) {
+			//System.out.println("Connected Oracle databases");
+			for(Entry<ConnectionPlaceHolder,Connection>  entrySet :  menu_Items_FX.msSqlServerMap.entrySet())
+			{
+
+				//  Oracle##muck1
+				if(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId().split("##")[1].equalsIgnoreCase(entrySet.getKey().getConnectionName()))
+				{
+					System.out.println("Likely to run on this connection "+menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId());
+					runOracleSqlScript(entrySet.getValue());
+					continue;
+				}
+				
+			}
+		}
+		else if(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId().contains(ConnectionsConstants.DuckDB)) {  // comes from reflectDuckDBTreeView
+			
 			for(Entry<ConnectionPlaceHolder,Connection>  entrySet :  menu_Items_FX.duckDBConnectionsMap.entrySet())
 			{
-				// This check becoz the script tab name will always have connection name in front of it
-				if(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText().contains(((ConnectionPlaceHolder)entrySet.getKey()).getConnectionName())) {
-					System.out.println("Likely to run on this connection"+entrySet.getValue());
-					
+				
+				//  DuckDB##muck1
+				if(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId().split("##")[1].equalsIgnoreCase(entrySet.getKey().getConnectionName()))
+				{
+					System.out.println("Likely to run on this connection "+menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId());
 					runDuckDBSqlScript(entrySet.getValue());
+					continue;
 				}
 				
 			}
@@ -260,9 +315,9 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 			else
 			{
 				ResultSet rs =   stmt.executeQuery(sqlQueryTextToRun);
-				while(rs.next()) {
+				//while(rs.next()) {
 					showResultSetInTheTableView(rs);
-				}
+				//}
 			}	
 			
 		} catch (SQLException e) {
@@ -289,30 +344,6 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 	        
 	        return hbox;
 	    }
-	 
-	 private GridPane addCenterGridPane() {
-		 
-		 GridPane gridPane = new GridPane();
-		 
-		 //Setting the padding  
-	     gridPane.setPadding(new Insets(10, 10, 10, 10)); 
-	      
-	     //Setting the vertical and horizontal gaps between the columns 
-	     
-	     gridPane.setVgap(50); 
-	     gridPane.setHgap(5);
-	      
-	     gridPane.setAlignment(Pos.CENTER);
-	     
-	     Label exisingConnection = new Label("Connect to existing Databases");
-	     Label newConnection = new Label("Connect to a new Database");
-	     
-	     gridPane.add(exisingConnection,0,0);   // row 0 column 0
-	     gridPane.add(newConnection,0,1);
-	     
-		 return gridPane;
-		 
-	 }
 	 
 	 private HBox addBottomHBox() {
 
@@ -354,9 +385,9 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 			else
 			{
 				ResultSet rs =   stmt.executeQuery(sqlQueryTextToRun);
-				while(rs.next()) {
+				//while(rs.next()) {
 					showResultSetInTheTableView(rs);
-				}
+				//}
 			}	
 			
 		} catch (SQLException e) {
@@ -389,9 +420,9 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 			else
 			{
 				ResultSet rs =   stmt.executeQuery(sqlQueryTextToRun);
-				while(rs.next()) {
+				//while(rs.next()) {
 					showResultSetInTheTableView(rs);
-				}
+				//}
 			}	
 			
 		} catch (SQLException e) {
@@ -424,9 +455,9 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 			else
 			{
 				ResultSet rs =   stmt.executeQuery(sqlQueryTextToRun);
-				while(rs.next()) {
+				// while(rs.next()) {
 					showResultSetInTheTableView(rs);
-				}
+				//}
 			}	
 			
 		} catch (SQLException e) {
@@ -459,9 +490,9 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 			else
 			{
 				ResultSet rs =   stmt.executeQuery(sqlQueryTextToRun);
-				while(rs.next()) {
+				//while(rs.next()) {
 					showResultSetInTheTableView(rs);
-				}
+				//}
 			}	
 			
 		} catch (SQLException e) {
@@ -488,43 +519,46 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 
 	private void showResultSetInTheTableView(ResultSet rs)  throws SQLException{
 	
+			TableView tableView = new TableView();
+			if(rs.next()) {
 		
-	    	TableView tableView = new TableView();
-	    	TableColumn<Map, String> tableColumnName;
-	    	Map<String, Object> tableRowValue;
-	    	ObservableList<Map<String, Object>> items = FXCollections.<Map<String, Object>>observableArrayList();
-	    	
-			ResultSetMetaData md = rs.getMetaData();
-	        String[] columnNames = new String[md.getColumnCount()];
-	        Integer[] columnTypes = new Integer[md.getColumnCount()];
-	       
-	        for (int i = 0; i < columnNames.length; i++) {
-	        	columnNames[i] = md.getColumnName(i+1);
-	        	columnTypes[i] = md.getColumnType(i+1);	   
-	        	
-	        	tableColumnName = new TableColumn<>(columnNames[i]);
-	        	tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[i]));
-	 	        
-	 	        tableView.getColumns().add(tableColumnName);
-	        }		
-		
-	        
-	        
-	       do {
-	        	String[] columnValues = new String[md.getColumnCount()];
-	        	tableRowValue = new HashMap<>();
-	        	for (int i = 0; i < columnNames.length; i++) {
-	        		columnValues[i] =  rs.getString(i+1); 
-	        		
-	            	tableRowValue.put(columnNames[i], columnValues[i]);
-	    	        
-	        	}	
-	        	items.add(tableRowValue);
-	         }	 while (rs.next());
-
-	        
-	        tableView.getItems().addAll(items);
-	        
+		    	
+		    	TableColumn<Map, String> tableColumnName;
+		    	Map<String, Object> tableRowValue;
+		    	ObservableList<Map<String, Object>> items = FXCollections.<Map<String, Object>>observableArrayList();
+		    	
+				ResultSetMetaData md = rs.getMetaData();
+		        String[] columnNames = new String[md.getColumnCount()];
+		        Integer[] columnTypes = new Integer[md.getColumnCount()];
+		       
+		        for (int i = 0; i < columnNames.length; i++) {
+		        	columnNames[i] = md.getColumnName(i+1);
+		        	columnTypes[i] = md.getColumnType(i+1);	   
+		        	
+		        	tableColumnName = new TableColumn<>(columnNames[i]);
+		        	tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[i]));
+		 	        
+		 	        tableView.getColumns().add(tableColumnName);
+		        }		
+			
+		        
+		        
+		       do {
+		        	String[] columnValues = new String[md.getColumnCount()];
+		        	tableRowValue = new HashMap<>();
+		        	for (int i = 0; i < columnNames.length; i++) {
+		        		columnValues[i] =  rs.getString(i+1); 
+		        		
+		            	tableRowValue.put(columnNames[i], columnValues[i]);
+		    	        
+		        	}	
+		        	items.add(tableRowValue);
+		         }	 while (rs.next());
+	
+		        
+		        tableView.getItems().addAll(items);
+			}
+			
 	        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
 	        
 	        System.out.println("Current Tab index "+ singleSelectionModel.getSelectedIndex());
@@ -536,10 +570,206 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 	        
 	        secondHalfofQueryEditerTab.getSelectionModel().select(currentSelectedResultTab);  //
 	        currentSelectedResultTab.setContent(tableView);
+	}
+	
+	private SplitPane addCenterSplitPane() {
+		 
+		 SplitPane splitPaneCenter = new SplitPane();
+		
+		 VBox topControlVBox = new VBox();
+		 
+		 BorderPane borderPaneTop = new BorderPane();
+		 
+		 HBox topControlHBox = new HBox();
+		 topControlHBox.setPadding(new Insets(10,0,10,0));   // top  right bottom left
+	     Text connectToDatabseText = new Text("Existing Connections");
+	     connectToDatabseText.setFont(Font.font("Verdana",20));
+	     connectToDatabseText.setFill(Color.BLACK);
+	     connectToDatabseText.setTextAlignment(TextAlignment.CENTER);
+	     topControlHBox.getChildren().addAll(connectToDatabseText);
+	     
+	     HBox topControlHBoxforButton = new HBox();
+	     topControlHBoxforButton.setPadding(new Insets(10,10,10,0));   // top  right bottom left
+	     connectExistingConnection = new Button("Connect");
+	     connectExistingConnection.setDisable(true);
+	     connectExistingConnection.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				
+				System.out.println("Connect pressed !!!");
+				
+				menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().setText(menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText().replace("No DB",menu_Items_FX.currentConnectionSelected.split("##")[1]));
+				
+				setGraphicNodeForDatabase();
+				genericQueryRun();
+			
+				connectionStage.close();
+				
+			}
+		 });
+	     topControlHBoxforButton.getChildren().add(connectExistingConnection);
+	     borderPaneTop.setLeft(topControlHBox);
+	     borderPaneTop.setRight(topControlHBoxforButton);
+	     
+	     ScrollPane scrollPaneTop = new ScrollPane();
+	     scrollPaneTop.setFitToWidth(true);
+	     scrollPaneTop.setFitToHeight(true);
+	     
+	     FlowPane openConnectionsFlowPane = new FlowPane();
+	     openConnectionsFlowPane.setPadding(new Insets(10, 0, 10, 10));
+	     openConnectionsFlowPane.setVgap(10);
+	     openConnectionsFlowPane.setHgap(20);
+	     
+	     // pull the existing open database connections.
+	     System.out.println("Opened Connections \n");
+	     for(Map.Entry<ConnectionPlaceHolder, Connection> entry : menu_Items_FX.currentOpenConnectionsMap.entrySet()) {
+	    	 
+	    	 System.out.println("Connection Name : "+entry.getKey().getConnectionName()+" ConnectionType : "+entry.getKey().getConnectionType());
+	
+			  
+	    	 if( entry.getKey().getConnectionType().equals("MySqlConnection")) {
+	    		 StackPane stackPaneMySql = highLightRectangleHolder.getHighlightRectangleMySql( entry.getKey().getConnectionName());
+	    		 openConnectionsFlowPane.getChildren().add(stackPaneMySql);
+	    		 stackPaneMySql.setOnMouseEntered(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneMySql.getChildren().get(0),avaialbleHighRectangleConnections,this.menu_Items_FX,null,stackPaneMySql));
+	    		 stackPaneMySql.setOnMouseClicked(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneMySql.getChildren().get(0),avaialbleHighRectangleConnections,this.menu_Items_FX,null,stackPaneMySql));
+	    		 stackPaneMySql.setOnMouseExited(new HighLightRectangleMouseEventHandler((Rectangle)stackPaneMySql.getChildren().get(0),avaialbleHighRectangleConnections,this.menu_Items_FX,null,stackPaneMySql));
+	    	 }
+	    	 
+	    	 if( entry.getKey().getConnectionType().equals("PostgreeSqlConnection")) {
+	    		 StackPane stackPanePostgreeSql = highLightRectangleHolder.getHighlightRectanglePostgreeSql( entry.getKey().getConnectionName());
+	    		 openConnectionsFlowPane.getChildren().add(stackPanePostgreeSql);
+	    		 stackPanePostgreeSql.setOnMouseEntered(new  HighLightRectangleMouseEventHandler((Rectangle)stackPanePostgreeSql.getChildren().get(0),avaialbleHighRectangleConnections,this.menu_Items_FX,null,stackPanePostgreeSql));
+	    		 stackPanePostgreeSql.setOnMouseClicked(new  HighLightRectangleMouseEventHandler((Rectangle)stackPanePostgreeSql.getChildren().get(0),avaialbleHighRectangleConnections,this.menu_Items_FX,null,stackPanePostgreeSql));
+	    		 stackPanePostgreeSql.setOnMouseExited(new  HighLightRectangleMouseEventHandler((Rectangle)stackPanePostgreeSql.getChildren().get(0),avaialbleHighRectangleConnections,this.menu_Items_FX,null,stackPanePostgreeSql));
+	    			 
+	    	 }
+	   
+	    	 if( entry.getKey().getConnectionType().equals("SQLiteConnection")) {
+	    		 StackPane stackPaneSqlite = highLightRectangleHolder.getHighlightRectangleSqlite(entry.getKey().getConnectionName());
+	    		 openConnectionsFlowPane.getChildren().add(stackPaneSqlite);
+	    		 stackPaneSqlite.setOnMouseEntered(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneSqlite.getChildren().get(0),avaialbleHighRectangleConnections,this.menu_Items_FX,null,stackPaneSqlite));
+	    		 stackPaneSqlite.setOnMouseClicked(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneSqlite.getChildren().get(0),avaialbleHighRectangleConnections,this.menu_Items_FX,null,stackPaneSqlite));
+	    		 stackPaneSqlite.setOnMouseExited(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneSqlite.getChildren().get(0),avaialbleHighRectangleConnections,this.menu_Items_FX,null,stackPaneSqlite));
+
+	    	 }
+	    	 
+	    	 if( entry.getKey().getConnectionType().equals("OracleConnection")) {
+	    		 StackPane stackPaneOracle = highLightRectangleHolder.getHighlightRectangleOracle(entry.getKey().getConnectionName());
+	    		 openConnectionsFlowPane.getChildren().add(stackPaneOracle);
+	    		  stackPaneOracle.setOnMouseEntered(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneOracle.getChildren().get(0),avaialbleHighRectangleConnections,this.menu_Items_FX,null,stackPaneOracle));
+	    		  stackPaneOracle.setOnMouseClicked(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneOracle.getChildren().get(0),avaialbleHighRectangleConnections,this.menu_Items_FX,null,stackPaneOracle));
+	    		  stackPaneOracle.setOnMouseExited(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneOracle.getChildren().get(0),avaialbleHighRectangleConnections,this.menu_Items_FX,null,stackPaneOracle));
+	    	 }
+	    	 
+	    	 if( entry.getKey().getConnectionType().equals("MSSQLServerConnection")) {
+				  StackPane stackPaneMssql = highLightRectangleHolder.getHighlightRectangleMSSQLServer(entry.getKey().getConnectionName());
+	    		  openConnectionsFlowPane.getChildren().add(stackPaneMssql);
+	    		  stackPaneMssql.setOnMouseEntered(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneMssql.getChildren().get(0),avaialbleHighRectangleConnections,this.menu_Items_FX,null,stackPaneMssql));
+	    		  stackPaneMssql.setOnMouseClicked(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneMssql.getChildren().get(0),avaialbleHighRectangleConnections,this.menu_Items_FX,null,stackPaneMssql));	  
+	    		  stackPaneMssql.setOnMouseExited(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneMssql.getChildren().get(0),avaialbleHighRectangleConnections,this.menu_Items_FX,null,stackPaneMssql));
+	    	 }
+	    	 
+	    	 if( entry.getKey().getConnectionType().equals("SapHanaConnection")) {
+	    		  StackPane stackPaneSapHana = highLightRectangleHolder.getHighlightRectanglesaphana(entry.getKey().getConnectionName());
+	    		  openConnectionsFlowPane.getChildren().add(stackPaneSapHana);
+	    		  stackPaneSapHana.setOnMouseEntered(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneSapHana.getChildren().get(0),avaialbleHighRectangleConnections,this.menu_Items_FX,null,stackPaneSapHana));
+	    		  stackPaneSapHana.setOnMouseClicked(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneSapHana.getChildren().get(0),avaialbleHighRectangleConnections,this.menu_Items_FX,null,stackPaneSapHana));
+	    		  stackPaneSapHana.setOnMouseExited(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneSapHana.getChildren().get(0),avaialbleHighRectangleConnections,this.menu_Items_FX,null,stackPaneSapHana));
+
+	    	 }
+	    	 
+	    	 if( entry.getKey().getConnectionType().equals("DatabricksConnection")) {
+	    		 StackPane stackPanedatabricks = highLightRectangleHolder.getHighlightRectangleDatabricks(null);
+	    		 openConnectionsFlowPane.getChildren().add(stackPanedatabricks);
+	    		 stackPanedatabricks.setOnMouseEntered(new  HighLightRectangleMouseEventHandler((Rectangle)stackPanedatabricks.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,null,stackPanedatabricks));
+	    		 stackPanedatabricks.setOnMouseClicked(new  HighLightRectangleMouseEventHandler((Rectangle)stackPanedatabricks.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,null,stackPanedatabricks));
+	    		 stackPanedatabricks.setOnMouseExited(new  HighLightRectangleMouseEventHandler((Rectangle)stackPanedatabricks.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,null,stackPanedatabricks));
+
+	    	 }
+	    	 
+	    	 if( entry.getKey().getConnectionType().equals("DuckDBConnection")) {
+	    		  StackPane stackPaneDuckDB = highLightRectangleHolder.getHighlightRectangleDuckDB(entry.getKey().getConnectionName());
+	    		  openConnectionsFlowPane.getChildren().add(stackPaneDuckDB);
+	    		  stackPaneDuckDB.setOnMouseEntered(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneDuckDB.getChildren().get(0),avaialbleHighRectangleConnections,this.menu_Items_FX,null,stackPaneDuckDB));		 
+	    		  stackPaneDuckDB.setOnMouseClicked(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneDuckDB.getChildren().get(0),avaialbleHighRectangleConnections,this.menu_Items_FX,null,stackPaneDuckDB));  
+	    		  stackPaneDuckDB.setOnMouseExited(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneDuckDB.getChildren().get(0),avaialbleHighRectangleConnections,this.menu_Items_FX,null,stackPaneDuckDB));
+
+	    	 }
+	     }
+		
+		
+	     
+	     BackgroundFill background_fill = new BackgroundFill(javafx.scene.paint.Color.WHITE,  CornerRadii.EMPTY,Insets.EMPTY ); 
+	     // create Background 
+	     Background background = new Background(background_fill); 
+	     openConnectionsFlowPane.setBackground(background);
+	  
+	     scrollPaneTop.setContent(openConnectionsFlowPane);
+	     
+	     topControlVBox.getChildren().add(borderPaneTop);
+	     topControlVBox.getChildren().add(scrollPaneTop);
+	     
+	     HBox bottomControl = new HBox();
+	     bottomControl.setPadding(new Insets(10,0,0,0));   // top  right bottom left
+	     Text newConnection = new Text("New Database");
+	     newConnection.setFont(Font.font("Verdana",20));
+	     newConnection.setFill(Color.BLACK);
+	     bottomControl.getChildren().addAll(newConnection);
+
 	        
+	     splitPaneCenter.setDividerPosition(0, 0.7);
+	     
+	     splitPaneCenter.setOrientation(Orientation.VERTICAL);
+	     
+	     splitPaneCenter.getItems().addAll(topControlVBox,bottomControl);
+
+	     
+		 return splitPaneCenter;
+	 }
+
+	private void setGraphicNodeForDatabase() {
+		
+		if(menu_Items_FX.currentConnectionSelected.split("##")[0].equalsIgnoreCase(ConnectionsConstants.MySql)){
+			
+			menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().setGraphic(ImageItemsHolder.getMySqlImage(menu_Items_FX.currentConnectionSelected.split("##")[1]));
+		}
+		
+		if(menu_Items_FX.currentConnectionSelected.split("##")[0].equalsIgnoreCase(ConnectionsConstants.PostgreeSql)){
+			
+			menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().setGraphic(ImageItemsHolder.getPostgreeSqlImage(menu_Items_FX.currentConnectionSelected.split("##")[1]));
+		}
+		
+		if(menu_Items_FX.currentConnectionSelected.split("##")[0].equalsIgnoreCase(ConnectionsConstants.Sqlite)){
+			
+			menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().setGraphic(ImageItemsHolder.getSqliteImage(menu_Items_FX.currentConnectionSelected.split("##")[1]));
+		}
+		
+		if(menu_Items_FX.currentConnectionSelected.split("##")[0].equalsIgnoreCase(ConnectionsConstants.SapHana)){
+			
+			menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().setGraphic(ImageItemsHolder.getSaphanaImage(menu_Items_FX.currentConnectionSelected.split("##")[1]));
+		}
+		
+		if(menu_Items_FX.currentConnectionSelected.split("##")[0].equalsIgnoreCase(ConnectionsConstants.Oracle)){
+			
+			menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().setGraphic(ImageItemsHolder.getOracleImage(menu_Items_FX.currentConnectionSelected.split("##")[1]));
+		}
+		
+		if(menu_Items_FX.currentConnectionSelected.split("##")[0].equalsIgnoreCase(ConnectionsConstants.MSSQLSErver)){
+			
+			menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().setGraphic(ImageItemsHolder.getMSSQLServerImage(menu_Items_FX.currentConnectionSelected.split("##")[1]));
+		}
+		
+		if(menu_Items_FX.currentConnectionSelected.split("##")[0].equalsIgnoreCase(ConnectionsConstants.Databricks)){
+			
+			menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().setGraphic(ImageItemsHolder.getDatabricksImage(menu_Items_FX.currentConnectionSelected.split("##")[1]));
+		}
+		
+		if(menu_Items_FX.currentConnectionSelected.split("##")[0].equalsIgnoreCase(ConnectionsConstants.DuckDB)){
+			
+			menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().setGraphic(ImageItemsHolder.getDuckDBImage(menu_Items_FX.currentConnectionSelected.split("##")[1]));
+	}
 		
 	}
-
-	
 	
 }

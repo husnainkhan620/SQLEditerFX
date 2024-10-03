@@ -1,17 +1,11 @@
 package com.openfx.handlers;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import org.openjfx.fx.Menu_Items_FX;
-import org.openjfx.graphics.DataBricksRectangle;
-import org.openjfx.graphics.DuckDBRectangle;
-import org.openjfx.graphics.MSSQLServerRectangle;
-import org.openjfx.graphics.MySqlRectangle;
-import org.openjfx.graphics.OracleRectangle;
-import org.openjfx.graphics.PostgreeSqlRectangle;
-import org.openjfx.graphics.SapHanaRectangle;
-import org.openjfx.graphics.SqliteRectangle;
 
+import com.openfx.ai.ConnectionsConstants;
 import com.openfx.connections.DatabricksConnection;
 import com.openfx.connections.DuckDBConnection;
 import com.openfx.connections.MySqlConnection;
@@ -20,6 +14,8 @@ import com.openfx.connections.PostgreeSqlConnection;
 import com.openfx.connections.SQLiteConnection;
 import com.openfx.connections.SapHanaConnection;
 import com.openfx.placeholders.ConnectionPlaceHolder;
+import com.openfx.placeholders.HighLightRectangleHolder;
+import com.openfx.placeholders.ImageItemsHolder;
 import com.openfx.ui.DatabricksUI;
 import com.openfx.ui.DuckDBUI;
 import com.openfx.ui.MssqlUI;
@@ -30,13 +26,14 @@ import com.openfx.ui.SQLiteUI;
 import com.openfx.ui.SapHanaUI;
 
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -44,7 +41,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -67,7 +63,6 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	
@@ -80,6 +75,7 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	public TextField jdbcConnectionName;
 	public TextField jdbcConnectionPort;
 	public TextField jdbcUrlTextField;
+	public TextField jdbcUrlDatabaseNameField;
 	public TextField jdbcAuthenticationUsernameTextField;
 	public PasswordField jdbcAuthenticationPasswordField;
 	public Button buttonTestConnection;
@@ -88,16 +84,9 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	public Button buttonFinish;
 	public Button buttonCancel;
 	
-	public MySqlRectangle highlightRectangleMySql = new MySqlRectangle(100.0, 150.0);;
-	public PostgreeSqlRectangle highlightRectanglePostgreeSql = new PostgreeSqlRectangle(100.0, 150.0);;
-	public SqliteRectangle highlightRectangleSqlite = new SqliteRectangle(130.0, 150.0);;
-	public DataBricksRectangle highlightRectangledatabricks = new DataBricksRectangle(100.0, 150.0);
-	public SapHanaRectangle highlightRectanglesaphana = new SapHanaRectangle(100.0, 150.0);
-	public OracleRectangle highlightRectangleOracle = new OracleRectangle(100.0, 150.0);;
-	public MSSQLServerRectangle highlightRectangleMSSQLServer = new MSSQLServerRectangle(100.0, 150.0);
-	public DuckDBRectangle highlightRectangleDuckDB = new DuckDBRectangle(100.0, 150.0);
+	public ArrayList<Rectangle> avaialbleHighRectangleConnections = new ArrayList<Rectangle>();  
+	private HighLightRectangleHolder highLightRectangleHolder = new HighLightRectangleHolder(avaialbleHighRectangleConnections);
 	
-	public Rectangle avaialbleHighRectangleConnections[] = {highlightRectangleMySql,highlightRectanglePostgreeSql,highlightRectangleSqlite,highlightRectangledatabricks,highlightRectanglesaphana,highlightRectangleOracle,highlightRectangleMSSQLServer,highlightRectangleDuckDB};
 	
 	double olddragX = 0.0;
 	double olddragY = 0.0;
@@ -442,68 +431,72 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 					buttonFinish.setDisable(true);
 					
 					// when backButton click clear previously selected Database
-					for(int i=0;i<avaialbleHighRectangleConnections.length;i++) {	
-						System.out.println( avaialbleHighRectangleConnections[i].getClass().getName());
-						 avaialbleHighRectangleConnections[i].setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
+					for(Rectangle avaialbleHighRectangleConnection : avaialbleHighRectangleConnections) {	
+						System.out.println( avaialbleHighRectangleConnection.getClass().getName());
+						avaialbleHighRectangleConnection.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
 					            new Stop[]{
 					            new Stop(0,Color.WHITE),
 					            new Stop(0.5, Color.WHITE),
 					            new Stop(1,Color.WHITE),}));
-						 avaialbleHighRectangleConnections[i].setStroke(Color.WHITE);
-						 avaialbleHighRectangleConnections[i].setArcHeight(3.5);
-						 avaialbleHighRectangleConnections[i].setArcWidth(3.5);
+						avaialbleHighRectangleConnection.setStroke(Color.WHITE);
+						avaialbleHighRectangleConnection.setArcHeight(3.5);
+						avaialbleHighRectangleConnection.setArcWidth(3.5);
 					}
 						
 				}
 			});
 	        
 	        buttonFinish.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
-
+	        	
 				@Override
 				public void handle(MouseEvent event) {
+					
+					System.out.println(" Finish pressed "+menu_Items_FX.currentConnectionSelected);
 
-					if(menu_Items_FX.currentConnectionSelected == "MySQL")
+					if(menu_Items_FX.currentConnectionSelected.equals("MySql"))
 					{
 						createMySQLConnection();
 						connectionStage.close();
 					}
 					
-					if(menu_Items_FX.currentConnectionSelected == "PostgreeSQL")
+					if(menu_Items_FX.currentConnectionSelected.equals("PostgreeSql"))
 					{
 						createPostgreeConnection();
 						connectionStage.close();
 					}
-					if(menu_Items_FX.currentConnectionSelected == "SQLite")
+					if(menu_Items_FX.currentConnectionSelected.equals("SQLite"))
 					{
 						createSQLiteConnection();
 						connectionStage.close();
 					}
-					if(menu_Items_FX.currentConnectionSelected == "SapHana")
+					if(menu_Items_FX.currentConnectionSelected.equals("SapHana"))
 					{
 						createSapHanaConnection();
 						connectionStage.close();
 					}
-					if(menu_Items_FX.currentConnectionSelected == "DataBricks")
+					if(menu_Items_FX.currentConnectionSelected.equals("DataBricks"))
 					{
 						createDataBricksConnection();
 						connectionStage.close();
 					}
-					if(menu_Items_FX.currentConnectionSelected == "Oracle")
+					if(menu_Items_FX.currentConnectionSelected.equals("oracle"))
 					{
 						createOracleConnection();
 						connectionStage.close();
 					}
-					if(menu_Items_FX.currentConnectionSelected == "MS SQL")
+					if(menu_Items_FX.currentConnectionSelected.equals("MSSQLSErver"))
 					{
 						// createMSSQLConnection();
 						connectionStage.close();
 					}
-					if(menu_Items_FX.currentConnectionSelected == "Duck DB")
+					if(menu_Items_FX.currentConnectionSelected.equals("DuckDB"))
 					{
 						createDuckDBConnection();
 						connectionStage.close();
 					}
+					menu_Items_FX.currentConnectionSelected = "";
 				}
+				
 	
 			});
 	        
@@ -589,718 +582,69 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		  menu_Items_FX.selectDatabaseConnectionsflow.getStyleClass().addAll("databasesflowPane");
 		  menu_Items_FX.selectDatabaseConnectionsflow.setPrefWrapLength(170); // preferred width allows for two columns
 
-	        StackPane stackPaneMySql = new StackPane();
-	        
-	        highlightRectangleMySql.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-		            new Stop[]{
-		            new Stop(0,Color.WHITE),
-		            new Stop(0.5, Color.WHITE),
-		            new Stop(1,Color.WHITE),}));
-	        highlightRectangleMySql.setStroke(Color.WHITE);
-	        highlightRectangleMySql.setArcHeight(3.5);
-	        highlightRectangleMySql.setArcWidth(3.5);
-
-	        Label mySqlLabel = new Label();
-	        mySqlLabel.setText("My SQL");
-	        mySqlLabel.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/graphics/mysqlLogo.png"))));
-	        mySqlLabel.setContentDisplay(ContentDisplay.TOP);	    
-	        stackPaneMySql.getChildren().addAll(highlightRectangleMySql, mySqlLabel);
-	        menu_Items_FX.selectDatabaseConnectionsflow.getChildren().add(stackPaneMySql);
+		  // 
+		  StackPane stackPaneMySql = highLightRectangleHolder.getHighlightRectangleMySql(null);
+		  StackPane stackPanePostgreeSql = highLightRectangleHolder.getHighlightRectanglePostgreeSql(null);
+		  StackPane stackPaneSqlite =highLightRectangleHolder.getHighlightRectangleSqlite(null);
+		  StackPane stackPanedatabricks =highLightRectangleHolder.getHighlightRectangleDatabricks(null);
+		  StackPane stackPaneSapHana = highLightRectangleHolder.getHighlightRectanglesaphana(null);
+		  StackPane stackPaneOracle = highLightRectangleHolder.getHighlightRectangleOracle(null);
+		  StackPane stackPaneMssql = highLightRectangleHolder.getHighlightRectangleMSSQLServer(null);
+		  StackPane stackPaneDuckDB = highLightRectangleHolder.getHighlightRectangleDuckDB(null);
+		  
+	      menu_Items_FX.selectDatabaseConnectionsflow.getChildren().add(stackPaneMySql);
     
-	        StackPane stackPanePostgreeSql = new StackPane();
-	        highlightRectanglePostgreeSql.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-		            new Stop[]{
-		            new Stop(0,Color.WHITE),
-		            new Stop(0.5, Color.WHITE),
-		            new Stop(1,Color.WHITE),}));
-	        highlightRectanglePostgreeSql.setStroke(Color.WHITE);
-	        highlightRectanglePostgreeSql.setArcHeight(3.5);
-	        highlightRectanglePostgreeSql.setArcWidth(3.5);
-
-	        Label postgreeSqlLabel = new Label();
-		    postgreeSqlLabel.setText("PostgreSQL");
-		    postgreeSqlLabel.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/graphics/postgreeLogo.png"))));
-		    postgreeSqlLabel.setContentDisplay(ContentDisplay.TOP);
-		    
-		    stackPanePostgreeSql.getChildren().addAll(highlightRectanglePostgreeSql, postgreeSqlLabel);
-		    menu_Items_FX.selectDatabaseConnectionsflow.getChildren().add(stackPanePostgreeSql);
+	      menu_Items_FX.selectDatabaseConnectionsflow.getChildren().add(stackPanePostgreeSql);
      
-	        StackPane stackPaneSqlite = new StackPane();
-	        
-	        highlightRectangleSqlite.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-		            new Stop[]{
-		            new Stop(0,Color.WHITE),
-		            new Stop(0.5, Color.WHITE),
-		            new Stop(1,Color.WHITE),}));
-	        highlightRectangleSqlite.setStroke(Color.WHITE);
-	        highlightRectangleSqlite.setArcHeight(3.5);
-	        highlightRectangleSqlite.setArcWidth(3.5);
-
-	        Label sqliteLabel = new Label();
-	        sqliteLabel.setText("SQLite");
-	        sqliteLabel.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/graphics/sqliteLogo.png"))));
-	        sqliteLabel.setContentDisplay(ContentDisplay.TOP);
-	        
-		    stackPaneSqlite.getChildren().addAll(highlightRectangleSqlite, sqliteLabel);
-		    menu_Items_FX.selectDatabaseConnectionsflow.getChildren().add(stackPaneSqlite);
+		  menu_Items_FX.selectDatabaseConnectionsflow.getChildren().add(stackPaneSqlite);
 	          
-	        StackPane stackPanedatabricks = new StackPane();
+	      menu_Items_FX.selectDatabaseConnectionsflow.getChildren().add(stackPanedatabricks);
 	        
-	        highlightRectangledatabricks.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-		            new Stop[]{
-		            new Stop(0,Color.WHITE),
-		            new Stop(0.5, Color.WHITE),
-		            new Stop(1,Color.WHITE),}));
-	        highlightRectangledatabricks.setStroke(Color.WHITE);
-	        highlightRectangledatabricks.setArcHeight(3.5);
-	        highlightRectangledatabricks.setArcWidth(3.5);
-
-	        Label databricksLabel = new Label();
-	        databricksLabel.setText("Databricks");
-	        databricksLabel.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/graphics/databricksLogo.png"))));
-	        databricksLabel.setContentDisplay(ContentDisplay.TOP);
-	    
-	        stackPanedatabricks.getChildren().addAll(highlightRectangledatabricks, databricksLabel);
-	        menu_Items_FX.selectDatabaseConnectionsflow.getChildren().add(stackPanedatabricks);
+	      menu_Items_FX.selectDatabaseConnectionsflow.getChildren().add(stackPaneSapHana);
 	        
-	        
-	        StackPane stackPaneSapHana = new StackPane();
-	        highlightRectanglesaphana.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-		            new Stop[]{
-		            new Stop(0,Color.WHITE),
-		            new Stop(0.5, Color.WHITE),
-		            new Stop(1,Color.WHITE),}));
-	        highlightRectanglesaphana.setStroke(Color.WHITE);
-	        highlightRectanglesaphana.setArcHeight(3.5);
-	        highlightRectanglesaphana.setArcWidth(3.5);
-
-	        Label saphanaLabel = new Label();
-	        saphanaLabel.setText("Sap Hana");
-	        saphanaLabel.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/graphics/saphanaLogo.png"))));
-	        saphanaLabel.setContentDisplay(ContentDisplay.TOP);
-	        menu_Items_FX.selectDatabaseConnectionsflow.getChildren().add(saphanaLabel);
-
-	        stackPaneSapHana.getChildren().addAll(highlightRectanglesaphana, saphanaLabel);
-	        menu_Items_FX.selectDatabaseConnectionsflow.getChildren().add(stackPaneSapHana);
-	        
-	        StackPane stackPaneOracle = new StackPane();
-	        highlightRectangleOracle.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-		            new Stop[]{
-		            new Stop(0,Color.WHITE),
-		            new Stop(0.5, Color.WHITE),
-		            new Stop(1,Color.WHITE),}));
-	        highlightRectangleOracle.setStroke(Color.WHITE);
-	        highlightRectangleOracle.setArcHeight(3.5);
-	        highlightRectangleOracle.setArcWidth(3.5);
-
-	        Label oracleLabel = new Label();
-	        oracleLabel.setText("Oracle");
-	        oracleLabel.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/graphics/oracleLogo.png"))));
-	        oracleLabel.setContentDisplay(ContentDisplay.TOP);
-		    
-	        stackPaneOracle.getChildren().addAll(highlightRectangleOracle, oracleLabel);
-		    menu_Items_FX.selectDatabaseConnectionsflow.getChildren().add(stackPaneOracle);
-
-		   
-		    StackPane stackPaneMssql = new StackPane();
-		    highlightRectangleMSSQLServer.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-		            new Stop[]{
-		            new Stop(0,Color.WHITE),
-		            new Stop(0.5, Color.WHITE),
-		            new Stop(1,Color.WHITE),}));
-		    highlightRectangleMSSQLServer.setStroke(Color.WHITE);
-		    highlightRectangleMSSQLServer.setArcHeight(3.5);
-		    highlightRectangleMSSQLServer.setArcWidth(3.5);
-
-	        Label mssqlLabel = new Label();
-	        mssqlLabel.setText("MS SQL");
-	        mssqlLabel.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/graphics/MssqlServer.png"))));
-	        mssqlLabel.setContentDisplay(ContentDisplay.TOP);
-		    
-	        stackPaneMssql.getChildren().addAll(highlightRectangleMSSQLServer, mssqlLabel);
-		    menu_Items_FX.selectDatabaseConnectionsflow.getChildren().add(stackPaneMssql);
+		  menu_Items_FX.selectDatabaseConnectionsflow.getChildren().add(stackPaneOracle);
+	 
+		  menu_Items_FX.selectDatabaseConnectionsflow.getChildren().add(stackPaneMssql);
 	
-		    
-		    StackPane stackPaneDuckDB = new StackPane();
-		    highlightRectangleDuckDB.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-		            new Stop[]{
-		            new Stop(0,Color.WHITE),
-		            new Stop(0.5, Color.WHITE),
-		            new Stop(1,Color.WHITE),}));
-		    highlightRectangleDuckDB.setStroke(Color.WHITE);
-		    highlightRectangleDuckDB.setArcHeight(3.5);
-		    highlightRectangleDuckDB.setArcWidth(3.5);
-
-	        Label duckDBLabel = new Label();
-	        duckDBLabel.setText("Duck DB");
-	        duckDBLabel.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/graphics/duckDBLogo.png"))));
-	        duckDBLabel.setContentDisplay(ContentDisplay.TOP);
-		    
-	        stackPaneDuckDB.getChildren().addAll(highlightRectangleDuckDB, duckDBLabel);
-		    menu_Items_FX.selectDatabaseConnectionsflow.getChildren().add(stackPaneDuckDB);
+		  menu_Items_FX.selectDatabaseConnectionsflow.getChildren().add(stackPaneDuckDB);
 		    
 		    
 		    
 		    /* ****************************** */
 		    // Actions on hovering over the database logo's 
 	        
-	        stackPaneMySql.setOnMouseEntered(new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent event) {
-					
-					highlightRectangleMySql.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-					            new Stop[]{
-					            new Stop(0,Color.web("#4977A3")),
-					            new Stop(0.5, Color.web("#B0C6DA")),
-					            new Stop(1,Color.web("#9CB6CF")),}));
-					highlightRectangleMySql.setStroke(Color.web("#D0E6FA"));
-					highlightRectangleMySql.setArcHeight(3.5);
-					highlightRectangleMySql.setArcWidth(3.5);
-				}
-			});
-	        
-			
-	        
-	        stackPaneMySql.setOnMouseClicked(new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent event) {
-				
-					buttonNext.setDisable(false);
-					// clear previous selected connection highlighted					
-					for(int i=0;i<avaialbleHighRectangleConnections.length;i++) {
-						
-						System.out.println( avaialbleHighRectangleConnections[i].getClass().getName());
-						
-						if(avaialbleHighRectangleConnections[i] instanceof MySqlRectangle)
-							continue;
-						
-						 avaialbleHighRectangleConnections[i].setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-					            new Stop[]{
-					            new Stop(0,Color.WHITE),
-					            new Stop(0.5, Color.WHITE),
-					            new Stop(1,Color.WHITE),}));
-						 avaialbleHighRectangleConnections[i].setStroke(Color.WHITE);
-						 avaialbleHighRectangleConnections[i].setArcHeight(3.5);
-						 avaialbleHighRectangleConnections[i].setArcWidth(3.5);
-					}
-					
-					
-					highlightRectangleMySql.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-					            new Stop[]{
-					            new Stop(0,Color.web("#4977A3")),
-					            new Stop(0.5, Color.web("#B0C6DA")),
-					            new Stop(1,Color.web("#9CB6CF")),}));
-					highlightRectangleMySql.setStroke(Color.web("#D0E6FA"));
-					highlightRectangleMySql.setArcHeight(3.5);
-					highlightRectangleMySql.setArcWidth(3.5);
-					
-					menu_Items_FX.currentConnectionSelected = "MySQL";
-					
-					System.out.println("currentConnectionSelected : "+menu_Items_FX.currentConnectionSelected);
-				}
-			});
-	        stackPaneMySql.setOnMouseExited(new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent event) {
-						if(!menu_Items_FX.currentConnectionSelected.equalsIgnoreCase("MySQL")) {
-							highlightRectangleMySql.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-							            new Stop[]{
-							            new Stop(0,Color.WHITE),
-							            new Stop(0.5, Color.WHITE),
-							            new Stop(1,Color.WHITE),}));
-							highlightRectangleMySql.setStroke(Color.WHITE);
-							highlightRectangleMySql.setArcHeight(3.5);
-							highlightRectangleMySql.setArcWidth(3.5);
-						}
-				}
-			});
-	        
+		  stackPaneMySql.setOnMouseEntered(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneMySql.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
+		  stackPaneMySql.setOnMouseClicked(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneMySql.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
+		  stackPaneMySql.setOnMouseExited(new HighLightRectangleMouseEventHandler((Rectangle)stackPaneMySql.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
 	
-	        
-	        stackPanePostgreeSql.setOnMouseEntered(new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent event) {
-					
-					highlightRectanglePostgreeSql.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-					            new Stop[]{
-					            new Stop(0,Color.web("#4977A3")),
-					            new Stop(0.5, Color.web("#B0C6DA")),
-					            new Stop(1,Color.web("#9CB6CF")),}));
-					highlightRectanglePostgreeSql.setStroke(Color.web("#D0E6FA"));
-					highlightRectanglePostgreeSql.setArcHeight(3.5);
-					highlightRectanglePostgreeSql.setArcWidth(3.5);
-				}
-			});
-	        stackPanePostgreeSql.setOnMouseClicked(new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent event) {
-				
-					buttonNext.setDisable(false);
-					
-					for(int i=0;i<avaialbleHighRectangleConnections.length;i++) {
-						
-						System.out.println( avaialbleHighRectangleConnections[i].getClass().getName());
-						
-						if(avaialbleHighRectangleConnections[i] instanceof PostgreeSqlRectangle)
-							continue;
-						
-						 avaialbleHighRectangleConnections[i].setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-					            new Stop[]{
-					            new Stop(0,Color.WHITE),
-					            new Stop(0.5, Color.WHITE),
-					            new Stop(1,Color.WHITE),}));
-						 avaialbleHighRectangleConnections[i].setStroke(Color.WHITE);
-						 avaialbleHighRectangleConnections[i].setArcHeight(3.5);
-						 avaialbleHighRectangleConnections[i].setArcWidth(3.5);
+		  stackPanePostgreeSql.setOnMouseEntered(new  HighLightRectangleMouseEventHandler((Rectangle)stackPanePostgreeSql.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
+		  stackPanePostgreeSql.setOnMouseClicked(new  HighLightRectangleMouseEventHandler((Rectangle)stackPanePostgreeSql.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
+		  stackPanePostgreeSql.setOnMouseExited(new  HighLightRectangleMouseEventHandler((Rectangle)stackPanePostgreeSql.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
+			 
+		  stackPaneSqlite.setOnMouseEntered(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneSqlite.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
+		  stackPaneSqlite.setOnMouseClicked(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneSqlite.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
+		  stackPaneSqlite.setOnMouseExited(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneSqlite.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
+			   
+		  stackPanedatabricks.setOnMouseEntered(new  HighLightRectangleMouseEventHandler((Rectangle)stackPanedatabricks.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
+		  stackPanedatabricks.setOnMouseClicked(new  HighLightRectangleMouseEventHandler((Rectangle)stackPanedatabricks.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
+		  stackPanedatabricks.setOnMouseExited(new  HighLightRectangleMouseEventHandler((Rectangle)stackPanedatabricks.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
 
-						
-					}
-				
-					highlightRectanglePostgreeSql.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-					            new Stop[]{
-					            new Stop(0,Color.web("#4977A3")),
-					            new Stop(0.5, Color.web("#B0C6DA")),
-					            new Stop(1,Color.web("#9CB6CF")),}));
-					highlightRectanglePostgreeSql.setStroke(Color.web("#D0E6FA"));
-					highlightRectanglePostgreeSql.setArcHeight(3.5);
-					highlightRectanglePostgreeSql.setArcWidth(3.5);
-			
-					menu_Items_FX.currentConnectionSelected = "PostgreeSQL";
-					System.out.println("currentConnectionSelected : "+menu_Items_FX.currentConnectionSelected);
-				}
-			});
-	        stackPanePostgreeSql.setOnMouseExited(new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent event) {
-					
-					if(!menu_Items_FX.currentConnectionSelected.equalsIgnoreCase("PostgreeSQL"))
-					{
-						highlightRectanglePostgreeSql.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-						            new Stop[]{
-						            new Stop(0,Color.WHITE),
-						            new Stop(0.5, Color.WHITE),
-						            new Stop(1,Color.WHITE),}));
-						highlightRectanglePostgreeSql.setStroke(Color.WHITE);
-						highlightRectanglePostgreeSql.setArcHeight(3.5);
-						highlightRectanglePostgreeSql.setArcWidth(3.5);
-					}
-				}
-			});
-	        
-	        stackPaneSqlite.setOnMouseEntered(new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent event) {
-					
-					highlightRectangleSqlite.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-					            new Stop[]{
-					            new Stop(0,Color.web("#4977A3")),
-					            new Stop(0.5, Color.web("#B0C6DA")),
-					            new Stop(1,Color.web("#9CB6CF")),}));
-					highlightRectangleSqlite.setStroke(Color.web("#D0E6FA"));
-					highlightRectangleSqlite.setArcHeight(3.5);
-					highlightRectangleSqlite.setArcWidth(3.5);
-				}
-			});
-	        
-	        stackPaneSqlite.setOnMouseClicked(new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent event) {
-					
-					buttonNext.setDisable(false);
-					for(int i=0;i<avaialbleHighRectangleConnections.length;i++) {
-						
-						System.out.println( avaialbleHighRectangleConnections[i].getClass().getName());
-						
-						if(avaialbleHighRectangleConnections[i] instanceof SqliteRectangle)
-							continue;
-						
-						 avaialbleHighRectangleConnections[i].setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-					            new Stop[]{
-					            new Stop(0,Color.WHITE),
-					            new Stop(0.5, Color.WHITE),
-					            new Stop(1,Color.WHITE),}));
-						 avaialbleHighRectangleConnections[i].setStroke(Color.WHITE);
-						 avaialbleHighRectangleConnections[i].setArcHeight(3.5);
-						 avaialbleHighRectangleConnections[i].setArcWidth(3.5);		
-					}
-	
-					highlightRectangleSqlite.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-					            new Stop[]{
-					            new Stop(0,Color.web("#4977A3")),
-					            new Stop(0.5, Color.web("#B0C6DA")),
-					            new Stop(1,Color.web("#9CB6CF")),}));
-					highlightRectangleSqlite.setStroke(Color.web("#D0E6FA"));
-					highlightRectangleSqlite.setArcHeight(3.5);
-					highlightRectangleSqlite.setArcWidth(3.5);
-				
-					menu_Items_FX.currentConnectionSelected = "SQLite";
-					System.out.println("currentConnectionSelected : "+menu_Items_FX.currentConnectionSelected);
-				}
-			});
-	        
-	        stackPaneSqlite.setOnMouseExited(new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent event) {
-					if(!menu_Items_FX.currentConnectionSelected.equalsIgnoreCase("Sqlite"))
-					{
-						highlightRectangleSqlite.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-					            new Stop[]{
-					            new Stop(0,Color.WHITE),
-					            new Stop(0.5, Color.WHITE),
-					            new Stop(1,Color.WHITE),}));
-						highlightRectangleSqlite.setStroke(Color.WHITE);
-						highlightRectangleSqlite.setArcHeight(3.5);	
-						highlightRectangleSqlite.setArcWidth(3.5);
-					}
-				}
-			});
-	        
-	        stackPanedatabricks.setOnMouseEntered(new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent event) {
-					
-					highlightRectangledatabricks.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-					            new Stop[]{
-					            new Stop(0,Color.web("#4977A3")),
-					            new Stop(0.5, Color.web("#B0C6DA")),
-					            new Stop(1,Color.web("#9CB6CF")),}));
-						highlightRectangledatabricks.setStroke(Color.web("#D0E6FA"));
-						highlightRectangledatabricks.setArcHeight(3.5);
-						highlightRectangledatabricks.setArcWidth(3.5);
-					
-				}
-			});
-	        
-	        stackPanedatabricks.setOnMouseClicked(new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent event) {
-					
-					buttonNext.setDisable(false);
-					for(int i=0;i<avaialbleHighRectangleConnections.length;i++) {
-						
-						System.out.println( avaialbleHighRectangleConnections[i].getClass().getName());
-						
-						if(avaialbleHighRectangleConnections[i] instanceof DataBricksRectangle)
-							continue;
-						
-						 avaialbleHighRectangleConnections[i].setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-					            new Stop[]{
-					            new Stop(0,Color.WHITE),
-					            new Stop(0.5, Color.WHITE),
-					            new Stop(1,Color.WHITE),}));
-						 avaialbleHighRectangleConnections[i].setStroke(Color.WHITE);
-						 avaialbleHighRectangleConnections[i].setArcHeight(3.5);
-						 avaialbleHighRectangleConnections[i].setArcWidth(3.5);
-					}
-					
-					highlightRectangledatabricks.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-					            new Stop[]{
-					            new Stop(0,Color.web("#4977A3")),
-					            new Stop(0.5, Color.web("#B0C6DA")),
-					            new Stop(1,Color.web("#9CB6CF")),}));
-					highlightRectangledatabricks.setStroke(Color.web("#D0E6FA"));
-					highlightRectangledatabricks.setArcHeight(3.5);
-					highlightRectangledatabricks.setArcWidth(3.5);
-				
-					menu_Items_FX.currentConnectionSelected = "databricks";
-					System.out.println("currentConnectionSelected : "+menu_Items_FX.currentConnectionSelected);
-				}
-			});
-	        
-	        stackPanedatabricks.setOnMouseExited(new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent event) {
-					if(!menu_Items_FX.currentConnectionSelected.equalsIgnoreCase("databricks"))
-					{
-						highlightRectangledatabricks.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-					            new Stop[]{
-					            new Stop(0,Color.WHITE),
-					            new Stop(0.5, Color.WHITE),
-					            new Stop(1,Color.WHITE),}));
-						highlightRectangledatabricks.setStroke(Color.WHITE);
-						highlightRectangledatabricks.setArcHeight(3.5);
-						highlightRectangledatabricks.setArcWidth(3.5);
-					}
-				}
-			});
-	        
-	        stackPaneSapHana.setOnMouseEntered(new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent event) {
-						
-						highlightRectanglesaphana.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-						            new Stop[]{
-						            new Stop(0,Color.web("#4977A3")),
-						            new Stop(0.5, Color.web("#B0C6DA")),
-						            new Stop(1,Color.web("#9CB6CF")),}));
-						highlightRectangledatabricks.setStroke(Color.web("#D0E6FA"));
-						highlightRectangledatabricks.setArcHeight(3.5);
-						highlightRectangledatabricks.setArcWidth(3.5);
-					}
-				});
-		        
-		        stackPaneSapHana.setOnMouseClicked(new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent event) {
-				
-						buttonNext.setDisable(false);
-						for(int i=0;i<avaialbleHighRectangleConnections.length;i++) {
-							
-							System.out.println( avaialbleHighRectangleConnections[i].getClass().getName());
-							
-							if(avaialbleHighRectangleConnections[i] instanceof SapHanaRectangle)
-								continue;
-							
-							 avaialbleHighRectangleConnections[i].setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-						            new Stop[]{
-						            new Stop(0,Color.WHITE),
-						            new Stop(0.5, Color.WHITE),
-						            new Stop(1,Color.WHITE),}));
-							 avaialbleHighRectangleConnections[i].setStroke(Color.WHITE);
-							 avaialbleHighRectangleConnections[i].setArcHeight(3.5);
-							 avaialbleHighRectangleConnections[i].setArcWidth(3.5);
+		  stackPaneSapHana.setOnMouseEntered(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneSapHana.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
+		  stackPaneSapHana.setOnMouseClicked(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneSapHana.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
+		  stackPaneSapHana.setOnMouseExited(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneSapHana.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
 
-							
-						}
-								
-						highlightRectanglesaphana.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-						            new Stop[]{
-						            new Stop(0,Color.web("#4977A3")),
-						            new Stop(0.5, Color.web("#B0C6DA")),
-						            new Stop(1,Color.web("#9CB6CF")),}));
-						highlightRectanglesaphana.setStroke(Color.web("#D0E6FA"));
-						highlightRectanglesaphana.setArcHeight(3.5);
-						highlightRectanglesaphana.setArcWidth(3.5);	
-						menu_Items_FX.currentConnectionSelected = "SapHana";
-						System.out.println("currentConnectionSelected : "+menu_Items_FX.currentConnectionSelected);
-					}
-				});
-		        
-		        stackPaneSapHana.setOnMouseExited(new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent event) {
-						if(!menu_Items_FX.currentConnectionSelected.equalsIgnoreCase("SapHana"))
-						{
-							highlightRectanglesaphana.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-						            new Stop[]{
-						            new Stop(0,Color.WHITE),
-						            new Stop(0.5, Color.WHITE),
-						            new Stop(1,Color.WHITE),}));
-							highlightRectanglesaphana.setStroke(Color.WHITE);
-							highlightRectanglesaphana.setArcHeight(3.5);
-							highlightRectanglesaphana.setArcWidth(3.5);
-						}
-					}
-				});
-		        
-		        stackPaneOracle.setOnMouseEntered(new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent event) {
-						
-						highlightRectangleOracle.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-						            new Stop[]{
-						            new Stop(0,Color.web("#4977A3")),
-						            new Stop(0.5, Color.web("#B0C6DA")),
-						            new Stop(1,Color.web("#9CB6CF")),}));
-						highlightRectangleOracle.setStroke(Color.web("#D0E6FA"));
-						highlightRectangleOracle.setArcHeight(3.5);
-						highlightRectangleOracle.setArcWidth(3.5);
-					}
-				});
-		        stackPaneOracle.setOnMouseClicked(new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent event) {
-					
-						buttonNext.setDisable(false);
-						// clear previous selected connection highlighted					
-						for(int i=0;i<avaialbleHighRectangleConnections.length;i++) {
-							
-							System.out.println( avaialbleHighRectangleConnections[i].getClass().getName());
-							
-							if(avaialbleHighRectangleConnections[i] instanceof MySqlRectangle)
-								continue;
-							
-							 avaialbleHighRectangleConnections[i].setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-						            new Stop[]{
-						            new Stop(0,Color.WHITE),
-						            new Stop(0.5, Color.WHITE),
-						            new Stop(1,Color.WHITE),}));
-							 avaialbleHighRectangleConnections[i].setStroke(Color.WHITE);
-							 avaialbleHighRectangleConnections[i].setArcHeight(3.5);
-							 avaialbleHighRectangleConnections[i].setArcWidth(3.5);
-						}
-						
-						
-						highlightRectangleOracle.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-						            new Stop[]{
-						            new Stop(0,Color.web("#4977A3")),
-						            new Stop(0.5, Color.web("#B0C6DA")),
-						            new Stop(1,Color.web("#9CB6CF")),}));
-						highlightRectangleOracle.setStroke(Color.web("#D0E6FA"));
-						highlightRectangleOracle.setArcHeight(3.5);
-						highlightRectangleOracle.setArcWidth(3.5);
-						
-						menu_Items_FX.currentConnectionSelected = "Oracle";
-						
-						System.out.println("currentConnectionSelected : "+menu_Items_FX.currentConnectionSelected);
-					}
-				});
-		        stackPaneOracle.setOnMouseExited(new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent event) {
-							if(!menu_Items_FX.currentConnectionSelected.equalsIgnoreCase("Oracle")) {
-								highlightRectangleOracle.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-								            new Stop[]{
-								            new Stop(0,Color.WHITE),
-								            new Stop(0.5, Color.WHITE),
-								            new Stop(1,Color.WHITE),}));
-								highlightRectangleOracle.setStroke(Color.WHITE);
-								highlightRectangleOracle.setArcHeight(3.5);
-								highlightRectangleOracle.setArcWidth(3.5);
-							}
-					}
-				});
-		        
-		        stackPaneMssql.setOnMouseEntered(new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent event) {
-						
-						System.out.println("Mose entered on MSSMQL");
-						highlightRectangleMSSQLServer.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-						            new Stop[]{
-						            new Stop(0,Color.web("#4977A3")),
-						            new Stop(0.5, Color.web("#B0C6DA")),
-						            new Stop(1,Color.web("#9CB6CF")),}));
-						highlightRectangleMSSQLServer.setStroke(Color.web("#D0E6FA"));
-						highlightRectangleMSSQLServer.setArcHeight(3.5);
-						highlightRectangleMSSQLServer.setArcWidth(3.5);
-					}
-				});
-		        
-		        stackPaneMssql.setOnMouseClicked(new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent event) {
-					
-						buttonNext.setDisable(false);
-						// clear previous selected connection highlighted					
-						for(int i=0;i<avaialbleHighRectangleConnections.length;i++) {
-							
-							System.out.println( avaialbleHighRectangleConnections[i].getClass().getName());
-							
-							if(avaialbleHighRectangleConnections[i] instanceof MySqlRectangle)
-								continue;
-							
-							 avaialbleHighRectangleConnections[i].setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-						            new Stop[]{
-						            new Stop(0,Color.WHITE),
-						            new Stop(0.5, Color.WHITE),
-						            new Stop(1,Color.WHITE),}));
-							 avaialbleHighRectangleConnections[i].setStroke(Color.WHITE);
-							 avaialbleHighRectangleConnections[i].setArcHeight(3.5);
-							 avaialbleHighRectangleConnections[i].setArcWidth(3.5);
-						}
-						
-						
-						highlightRectangleMSSQLServer.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-						            new Stop[]{
-						            new Stop(0,Color.web("#4977A3")),
-						            new Stop(0.5, Color.web("#B0C6DA")),
-						            new Stop(1,Color.web("#9CB6CF")),}));
-						highlightRectangleMSSQLServer.setStroke(Color.web("#D0E6FA"));
-						highlightRectangleMSSQLServer.setArcHeight(3.5);
-						highlightRectangleMSSQLServer.setArcWidth(3.5);
-						
-						menu_Items_FX.currentConnectionSelected = "MS SQL";
-						
-						System.out.println("currentConnectionSelected : "+menu_Items_FX.currentConnectionSelected);
-					}
-				});
-		        stackPaneMssql.setOnMouseExited(new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent event) {
-							if(!menu_Items_FX.currentConnectionSelected.equalsIgnoreCase("MS SQL")) {
-								highlightRectangleMSSQLServer.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-								            new Stop[]{
-								            new Stop(0,Color.WHITE),
-								            new Stop(0.5, Color.WHITE),
-								            new Stop(1,Color.WHITE),}));
-								highlightRectangleMSSQLServer.setStroke(Color.WHITE);
-								highlightRectangleMSSQLServer.setArcHeight(3.5);
-								highlightRectangleMSSQLServer.setArcWidth(3.5);
-							}
-					}
-				});
-				
-		        
-		        stackPaneDuckDB.setOnMouseEntered(new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent event) {
-						
-						highlightRectangleDuckDB.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-						            new Stop[]{
-						            new Stop(0,Color.web("#4977A3")),
-						            new Stop(0.5, Color.web("#B0C6DA")),
-						            new Stop(1,Color.web("#9CB6CF")),}));
-						highlightRectangleDuckDB.setStroke(Color.web("#D0E6FA"));
-						highlightRectangleDuckDB.setArcHeight(3.5);
-						highlightRectangleDuckDB.setArcWidth(3.5);
-					}
-				});
-		        
-		        stackPaneDuckDB.setOnMouseClicked(new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent event) {
-					
-						buttonNext.setDisable(false);
-						// clear previous selected connection highlighted					
-						for(int i=0;i<avaialbleHighRectangleConnections.length;i++) {
-							
-							System.out.println( avaialbleHighRectangleConnections[i].getClass().getName());
-							
-							if(avaialbleHighRectangleConnections[i] instanceof MySqlRectangle)
-								continue;
-							
-							 avaialbleHighRectangleConnections[i].setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-						            new Stop[]{
-						            new Stop(0,Color.WHITE),
-						            new Stop(0.5, Color.WHITE),
-						            new Stop(1,Color.WHITE),}));
-							 avaialbleHighRectangleConnections[i].setStroke(Color.WHITE);
-							 avaialbleHighRectangleConnections[i].setArcHeight(3.5);
-							 avaialbleHighRectangleConnections[i].setArcWidth(3.5);
-						}
-						
-						
-						highlightRectangleDuckDB.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-						            new Stop[]{
-						            new Stop(0,Color.web("#4977A3")),
-						            new Stop(0.5, Color.web("#B0C6DA")),
-						            new Stop(1,Color.web("#9CB6CF")),}));
-						highlightRectangleDuckDB.setStroke(Color.web("#D0E6FA"));
-						highlightRectangleDuckDB.setArcHeight(3.5);
-						highlightRectangleDuckDB.setArcWidth(3.5);
-						
-						menu_Items_FX.currentConnectionSelected = "Duck DB";
-						
-						System.out.println("currentConnectionSelected : "+menu_Items_FX.currentConnectionSelected);
-					}
-				});
-		        stackPaneDuckDB.setOnMouseExited(new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent event) {
-							if(!menu_Items_FX.currentConnectionSelected.equalsIgnoreCase("DUCK DB")) {
-								highlightRectangleDuckDB.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
-								            new Stop[]{
-								            new Stop(0,Color.WHITE),
-								            new Stop(0.5, Color.WHITE),
-								            new Stop(1,Color.WHITE),}));
-								highlightRectangleDuckDB.setStroke(Color.WHITE);
-								highlightRectangleDuckDB.setArcHeight(3.5);
-								highlightRectangleDuckDB.setArcWidth(3.5);
-							}
-					}
-				});    
-		        
+		  stackPaneOracle.setOnMouseEntered(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneOracle.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
+		  stackPaneOracle.setOnMouseClicked(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneOracle.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
+		  stackPaneOracle.setOnMouseExited(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneOracle.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
+ 
+		  stackPaneMssql.setOnMouseEntered(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneMssql.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
+		  stackPaneMssql.setOnMouseClicked(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneMssql.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));	  
+		  stackPaneMssql.setOnMouseExited(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneMssql.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
+
+		  stackPaneDuckDB.setOnMouseEntered(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneDuckDB.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));		 
+		  stackPaneDuckDB.setOnMouseClicked(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneDuckDB.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));  
+		  stackPaneDuckDB.setOnMouseExited(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneDuckDB.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
+
 		        
 	        BackgroundFill background_fill = new BackgroundFill(javafx.scene.paint.Color.WHITE,  CornerRadii.EMPTY,Insets.EMPTY ); 
 	        // create Background 
@@ -1340,7 +684,7 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		  
 		  VBox connectionDetailsVbox = null;
 		  
-		  if(menu_Items_FX.currentConnectionSelected.equalsIgnoreCase("MySQL")) {
+		  if(menu_Items_FX.currentConnectionSelected.equalsIgnoreCase(ConnectionsConstants.MySql)) {
 			  
 			  if(mySqlUI == null)
 				  mySqlUI = new MySqlUI(menu_Items_FX,this);
@@ -1349,7 +693,7 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 			   
 		  }
 		 
-		  if(menu_Items_FX.currentConnectionSelected.equalsIgnoreCase("SQLite")) {
+		  if(menu_Items_FX.currentConnectionSelected.equalsIgnoreCase(ConnectionsConstants.Sqlite)) {
 			  
 			  if(sqLiteUI == null)
 				  sqLiteUI = new SQLiteUI(menu_Items_FX,this);
@@ -1357,7 +701,7 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 			  connectionDetailsVbox =  sqLiteUI.addConnectionCredentials();  
 			   
 		  }
-		  if(menu_Items_FX.currentConnectionSelected.equalsIgnoreCase("PostgreeSQL")) {
+		  if(menu_Items_FX.currentConnectionSelected.equalsIgnoreCase(ConnectionsConstants.PostgreeSql)) {
 			  
 			  if(postgreeUI == null)
 				  postgreeUI = new PostgreeUI(menu_Items_FX,this);
@@ -1365,7 +709,7 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 			  connectionDetailsVbox =  postgreeUI.addConnectionCredentials();  
 			   
 		  }
-		  if(menu_Items_FX.currentConnectionSelected.equalsIgnoreCase("SapHana")) {
+		  if(menu_Items_FX.currentConnectionSelected.equalsIgnoreCase(ConnectionsConstants.SapHana)) {
 	  
 			  if(sapHanaUI == null)
 				  sapHanaUI = new SapHanaUI(menu_Items_FX,this);
@@ -1374,7 +718,7 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	   
 		  }
 		 
-		  if(menu_Items_FX.currentConnectionSelected.equalsIgnoreCase("Databricks")) {
+		  if(menu_Items_FX.currentConnectionSelected.equalsIgnoreCase(ConnectionsConstants.Databricks)) {
 			  
 			  if(databricksUI == null)
 				  databricksUI = new DatabricksUI(menu_Items_FX,this);
@@ -1382,7 +726,7 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 			  connectionDetailsVbox =  databricksUI.addConnectionCredentials();  
 	   
 		  }
-		  if(menu_Items_FX.currentConnectionSelected.equalsIgnoreCase("Oracle")) {
+		  if(menu_Items_FX.currentConnectionSelected.equalsIgnoreCase(ConnectionsConstants.Oracle)) {
 			  
 			  if(oracleUI == null)
 				  oracleUI = new OracleUI(menu_Items_FX,this);
@@ -1390,14 +734,14 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 			  connectionDetailsVbox =  oracleUI.addConnectionCredentials();  
 	   
 		  }
-		  if(menu_Items_FX.currentConnectionSelected.equalsIgnoreCase("MS SQL")) {
+		  if(menu_Items_FX.currentConnectionSelected.equalsIgnoreCase(ConnectionsConstants.MSSQLSErver)) {
 			  
 			  if(mssqlUI == null)
 				  mssqlUI = new MssqlUI(menu_Items_FX,this);
 	  
 			  connectionDetailsVbox =  mssqlUI.addConnectionCredentials();  
 		  }
-		  if(menu_Items_FX.currentConnectionSelected.equalsIgnoreCase("Duck DB")) {
+		  if(menu_Items_FX.currentConnectionSelected.equalsIgnoreCase(ConnectionsConstants.DuckDB)) {
 	  
 			  if(duckDBUI == null)
 				  duckDBUI = new DuckDBUI(menu_Items_FX,this);
@@ -1467,50 +811,47 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		jdbcUrlTextField.getText();
 		jdbcAuthenticationUsernameTextField.getText();
 		jdbcAuthenticationPasswordField.getText();
+		jdbcUrlDatabaseNameField.getText();
+		// check if database name is provided  and then create connection accordingly and reflect accordingly
 		
 		// @TODO Add validation here
 		
 		try
 		{
-			MySqlConnection mySqlConnection = new MySqlConnection(jdbcUrlTextField.getText().trim(), jdbcAuthenticationUsernameTextField.getText().trim(), 
-				jdbcAuthenticationPasswordField.getText().trim());		
+			MySqlConnection mySqlConnection;
+			if(jdbcUrlDatabaseNameField.getText().isEmpty())
+				mySqlConnection = new MySqlConnection(jdbcUrlTextField.getText().trim(), jdbcAuthenticationUsernameTextField.getText().trim(), 
+				jdbcAuthenticationPasswordField.getText().trim(),jdbcConnectionPort.getText().trim());	
+			else {
+				mySqlConnection = new MySqlConnection(jdbcUrlTextField.getText().trim(), jdbcUrlDatabaseNameField.getText(),jdbcAuthenticationUsernameTextField.getText().trim(), 
+						jdbcAuthenticationPasswordField.getText().trim(),jdbcConnectionPort.getText().trim());
+			}
 			System.out.println(mySqlConnection.getMySqlConnection());
 			ConnectionPlaceHolder connectionPlaceHolder = new ConnectionPlaceHolder();
+			connectionPlaceHolder.setConnectionType(mySqlConnection.getClass().getSimpleName());
 			connectionPlaceHolder.setConnectionName(jdbcConnectionName.getText());
 			connectionPlaceHolder.setConnectionCreationDate(Calendar.getInstance().getTime());
 			
 			// for time keeping purpose 
+			menu_Items_FX.connectedDatabasesNames.getItems().add(jdbcConnectionName.getText());
 			menu_Items_FX.mySqlConnectionsMap.put(connectionPlaceHolder, mySqlConnection.getMySqlConnection());
+			menu_Items_FX.currentOpenConnectionsMap.put(connectionPlaceHolder, mySqlConnection.getMySqlConnection());
 			
-			reflectMySqlrootTreeView(connectionPlaceHolder);
+			reflectMySqlrootTreeView(connectionPlaceHolder,jdbcUrlDatabaseNameField.getText());
 			
 		}catch(Exception ex) {
 			System.out.println("MySQL Connection failed");
 		}
 	}
 	
-	private void reflectMySqlrootTreeView(ConnectionPlaceHolder connectionPlaceHolder) {
+	private void reflectMySqlrootTreeView(ConnectionPlaceHolder connectionPlaceHolder,String databaseName) {
 		//put the connection on treeview display and add the connection to connectionName,connectionObject Datatype
-		Image imageMySQL = new Image(getClass().getResourceAsStream("/images/mysql.png"));
-		ImageView imageMySQLnode = new ImageView(imageMySQL);
-		imageMySQLnode.setId("MySQL");
-		imageMySQLnode.setFitHeight(20);
-		imageMySQLnode.setFitWidth(20);
-		imageMySQLnode.setPreserveRatio(true);
+				
+		ImageView imageMySQLnode = ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName());
+
+		ImageView imageDatbaseTablenode = ImageItemsHolder.getTableImage();
 		
-		Image imageDatbaseTable = new Image(getClass().getResourceAsStream("/images/table.png"));
-		ImageView imageDatbaseTablenode = new ImageView(imageDatbaseTable);
-		imageDatbaseTablenode.setFitHeight(20);
-		imageDatbaseTablenode.setFitWidth(20);
-		imageDatbaseTablenode.setPreserveRatio(true);
-		
-		
-		TreeItem<String> mySQLTreeItem = new TreeItem<String>(connectionPlaceHolder.getConnectionName(),imageMySQLnode);
-		TreeItem<String> mySQLTreeItemTables = new TreeItem<String>("Tables",imageDatbaseTablenode);
-		mySQLTreeItemTables.getChildren().add(new TreeItem<String>("Loading.."));
-		mySQLTreeItem.getChildren().add(mySQLTreeItemTables);
-		mySQLTreeItem.getChildren().add(new TreeItem<String>("Views"));
-		mySQLTreeItem.getChildren().add(new TreeItem<String>("Procedures"));
+		TreeItem<String> mySQLTreeItem = new MySqlUI(menu_Items_FX,this).getmySqlTreeItem(connectionPlaceHolder,imageMySQLnode,imageDatbaseTablenode,databaseName);
 		menu_Items_FX.rootConnectionItem.getChildren().add(mySQLTreeItem);
 	}
 
@@ -1533,10 +874,13 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 			
 			ConnectionPlaceHolder connectionPlaceHolder = new ConnectionPlaceHolder();
 			connectionPlaceHolder.setConnectionName(jdbcConnectionName.getText());
+			connectionPlaceHolder.setConnectionType(postgreeSQLConnection.getClass().getSimpleName());
 			connectionPlaceHolder.setConnectionCreationDate(Calendar.getInstance().getTime());
 			
 			// for time keeping purpose 
+			menu_Items_FX.connectedDatabasesNames.getItems().add(jdbcConnectionName.getText());
 			menu_Items_FX.postgreeSqlConnectionsMap.put(connectionPlaceHolder, postgreeSQLConnection.getPostgreeSqlConnection());
+			menu_Items_FX.currentOpenConnectionsMap.put(connectionPlaceHolder, postgreeSQLConnection.getPostgreeSqlConnection());
 			
 			reflectPostgreerootTreeView(connectionPlaceHolder);
 			
@@ -1548,21 +892,13 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	private void reflectPostgreerootTreeView(ConnectionPlaceHolder connectionPlaceHolder) {
 		
 			    //put the connection on treeview display and add the connection to connectionName,connectionObject Datatype
-				Image imagePostgreeSQL = new Image(getClass().getResourceAsStream("/images/postgreeLogo.png"));
-				ImageView imageMySQLnode = new ImageView(imagePostgreeSQL);
-				imageMySQLnode.setId("PostgreeSQL");
-				imageMySQLnode.setFitHeight(20);
-				imageMySQLnode.setFitWidth(20);
-				imageMySQLnode.setPreserveRatio(true);
 				
-				Image imageDatbaseTable = new Image(getClass().getResourceAsStream("/images/table.png"));
-				ImageView imageDatbaseTablenode = new ImageView(imageDatbaseTable);
-				imageDatbaseTablenode.setFitHeight(20);
-				imageDatbaseTablenode.setFitWidth(20);
-				imageDatbaseTablenode.setPreserveRatio(true);
+				ImageView imagePostgreeSqlnode = ImageItemsHolder.getPostgreeSqlImage(connectionPlaceHolder.getConnectionName());
+
+				ImageView imageDatbaseTablenode = ImageItemsHolder.getTableImage();
 				
 				
-				TreeItem<String> postgreeSQLTreeItem = new TreeItem<String>(connectionPlaceHolder.getConnectionName(),imageMySQLnode);
+				TreeItem<String> postgreeSQLTreeItem = new TreeItem<String>(connectionPlaceHolder.getConnectionName(),imagePostgreeSqlnode);
 				
 				TreeItem<String> postgreeSQLTreeItemTables = new TreeItem<String>("Tables",imageDatbaseTablenode);
 				postgreeSQLTreeItemTables.getChildren().add(new TreeItem<String>("Loading.."));
@@ -1596,10 +932,14 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 			
 			ConnectionPlaceHolder connectionPlaceHolder = new ConnectionPlaceHolder();
 			connectionPlaceHolder.setConnectionName(jdbcConnectionName.getText());
+			connectionPlaceHolder.setConnectionType(sQLiteConnection.getClass().getSimpleName());
 			connectionPlaceHolder.setConnectionCreationDate(Calendar.getInstance().getTime());
 			
 			// for time keeping purpose 
+			menu_Items_FX.connectedDatabasesNames.getItems().add(jdbcConnectionName.getText());
 			menu_Items_FX.sqliteConnectionsMap.put(connectionPlaceHolder, sQLiteConnection.getSqliteConnection());
+			menu_Items_FX.currentOpenConnectionsMap.put(connectionPlaceHolder, sQLiteConnection.getSqliteConnection());
+			
 			
 			reflectSQLiteTreeView(connectionPlaceHolder);
 			
@@ -1611,18 +951,10 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 
 	private void reflectSQLiteTreeView(ConnectionPlaceHolder connectionPlaceHolder) {
 		//put the connection on treeview display and add the connection to connectionName,connectionObject Datatype
-		Image imageSQLite = new Image(getClass().getResourceAsStream("/images/sqlite.png"));
-		ImageView imageSQLitenode = new ImageView(imageSQLite);
-		imageSQLitenode.setId("SQLite");
-		imageSQLitenode.setFitHeight(20);
-		imageSQLitenode.setFitWidth(20);
-		imageSQLitenode.setPreserveRatio(true);
 		
-		Image imageDatbaseTable = new Image(getClass().getResourceAsStream("/images/table.png"));
-		ImageView imageDatbaseTablenode = new ImageView(imageDatbaseTable);
-		imageDatbaseTablenode.setFitHeight(20);
-		imageDatbaseTablenode.setFitWidth(20);
-		imageDatbaseTablenode.setPreserveRatio(true);
+		ImageView imageSQLitenode = ImageItemsHolder.getSqliteImage(connectionPlaceHolder.getConnectionName());
+
+		ImageView imageDatbaseTablenode = ImageItemsHolder.getTableImage();
 		
 		
 		TreeItem<String> sQLiteTreeItem = new TreeItem<String>(connectionPlaceHolder.getConnectionName(),imageSQLitenode);
@@ -1659,10 +991,13 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 			
 			ConnectionPlaceHolder connectionPlaceHolder = new ConnectionPlaceHolder();
 			connectionPlaceHolder.setConnectionName(jdbcConnectionName.getText());
+			connectionPlaceHolder.setConnectionType(sapHanaConnection.getClass().getSimpleName());
 			connectionPlaceHolder.setConnectionCreationDate(Calendar.getInstance().getTime());
 			
 			// for time keeping purpose 
+			menu_Items_FX.connectedDatabasesNames.getItems().add(jdbcConnectionName.getText());
 			menu_Items_FX.sqliteConnectionsMap.put(connectionPlaceHolder, sapHanaConnection.getSapHanaConnection());
+			menu_Items_FX.currentOpenConnectionsMap.put(connectionPlaceHolder, sapHanaConnection.getSapHanaConnection());
 			
 			reflectSapHanaTreeView(connectionPlaceHolder);
 			
@@ -1675,18 +1010,10 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	private void reflectSapHanaTreeView(ConnectionPlaceHolder connectionPlaceHolder) {
 		
 		//put the connection on treeview display and add the connection to connectionName,connectionObject Datatype
-		Image imageSapHana = new Image(getClass().getResourceAsStream("/images/saphana.png"));
-		ImageView imageSapHananode = new ImageView(imageSapHana);
-		imageSapHananode.setId("SapHana");
-		imageSapHananode.setFitHeight(20);
-		imageSapHananode.setFitWidth(20);
-		imageSapHananode.setPreserveRatio(true);
-				
-		Image imageDatbaseTable = new Image(getClass().getResourceAsStream("/images/table.png"));
-		ImageView imageDatbaseTablenode = new ImageView(imageDatbaseTable);
-		imageDatbaseTablenode.setFitHeight(20);
-		imageDatbaseTablenode.setFitWidth(20);
-		imageDatbaseTablenode.setPreserveRatio(true);
+					
+		ImageView imageSapHananode = ImageItemsHolder.getSaphanaImage(connectionPlaceHolder.getConnectionName());
+		
+		ImageView imageDatbaseTablenode = ImageItemsHolder.getTableImage();
 						
 		TreeItem<String> sapHanaTreeItem = new TreeItem<String>(connectionPlaceHolder.getConnectionName(),imageSapHananode);
 				
@@ -1724,10 +1051,13 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 			
 			ConnectionPlaceHolder connectionPlaceHolder = new ConnectionPlaceHolder();
 			connectionPlaceHolder.setConnectionName(jdbcConnectionName.getText());
+			connectionPlaceHolder.setConnectionType(oracleConnection.getClass().getSimpleName());
 			connectionPlaceHolder.setConnectionCreationDate(Calendar.getInstance().getTime());
 			
 			// for time keeping purpose 
+			menu_Items_FX.connectedDatabasesNames.getItems().add(jdbcConnectionName.getText());
 			menu_Items_FX.oracleConnectionsMap.put(connectionPlaceHolder, oracleConnection.getOracleConnection());
+			menu_Items_FX.currentOpenConnectionsMap.put(connectionPlaceHolder,  oracleConnection.getOracleConnection());
 			
 			reflectOracleTreeView(connectionPlaceHolder);
 			
@@ -1739,20 +1069,12 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	
 	private void reflectOracleTreeView(ConnectionPlaceHolder connectionPlaceHolder) {
 		//put the connection on treeview display and add the connection to connectionName,connectionObject Datatype
-		Image imageSapHana = new Image(getClass().getResourceAsStream("/graphics/oracleLogo.png"));
-		ImageView imageSapHananode = new ImageView(imageSapHana);
-		imageSapHananode.setId("oracle");
-		imageSapHananode.setFitHeight(20);
-		imageSapHananode.setFitWidth(20);
-		imageSapHananode.setPreserveRatio(true);
-						
-		Image imageDatbaseTable = new Image(getClass().getResourceAsStream("/images/table.png"));
-		ImageView imageDatbaseTablenode = new ImageView(imageDatbaseTable);
-		imageDatbaseTablenode.setFitHeight(20);
-		imageDatbaseTablenode.setFitWidth(20);
-		imageDatbaseTablenode.setPreserveRatio(true);
+		ImageView imageOraclenode = ImageItemsHolder.getOracleImage(connectionPlaceHolder.getConnectionName());
+		
+		ImageView imageDatbaseTablenode = ImageItemsHolder.getTableImage();
+		
 								
-		TreeItem<String> oracleTreeItem = new TreeItem<String>(connectionPlaceHolder.getConnectionName(),imageSapHananode);
+		TreeItem<String> oracleTreeItem = new TreeItem<String>(connectionPlaceHolder.getConnectionName(),imageOraclenode);
 						
 		TreeItem<String> oracleTreeItemTables = new TreeItem<String>("Tables",imageDatbaseTablenode);
 		oracleTreeItemTables.getChildren().add(new TreeItem<String>("Loading.."));
@@ -1788,10 +1110,13 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 			
 			ConnectionPlaceHolder connectionPlaceHolder = new ConnectionPlaceHolder();
 			connectionPlaceHolder.setConnectionName(jdbcConnectionName.getText());
+			connectionPlaceHolder.setConnectionType(databricksConnection.getClass().getSimpleName());
 			connectionPlaceHolder.setConnectionCreationDate(Calendar.getInstance().getTime());
 			
 			// for time keeping purpose 
+			menu_Items_FX.connectedDatabasesNames.getItems().add(jdbcConnectionName.getText());
 			menu_Items_FX.sqliteConnectionsMap.put(connectionPlaceHolder, databricksConnection.getDatabricksConnection());
+			menu_Items_FX.currentOpenConnectionsMap.put(connectionPlaceHolder,  databricksConnection.getDatabricksConnection());
 			
 			reflectDatabricksTreeView(connectionPlaceHolder);
 			
@@ -1804,19 +1129,11 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	private void reflectDatabricksTreeView(ConnectionPlaceHolder connectionPlaceHolder) {
 		
 		//put the connection on treeview display and add the connection to connectionName,connectionObject Datatype
-		Image imageDatabricks = new Image(getClass().getResourceAsStream("/images/databricks.png"));
-		ImageView imageDatabricksnode = new ImageView(imageDatabricks);
-		imageDatabricksnode.setId("databricks");
-		imageDatabricksnode.setFitHeight(20);
-		imageDatabricksnode.setFitWidth(20);
-		imageDatabricksnode.setPreserveRatio(true);
-						
-		Image imageDatbaseTable = new Image(getClass().getResourceAsStream("/images/table.png"));
-		ImageView imageDatbaseTablenode = new ImageView(imageDatbaseTable);
-		imageDatbaseTablenode.setFitHeight(20);
-		imageDatbaseTablenode.setFitWidth(20);
-		imageDatbaseTablenode.setPreserveRatio(true);
-								
+		
+		ImageView imageDatabricksnode = ImageItemsHolder.getDatabricksImage(connectionPlaceHolder.getConnectionName());
+		
+		ImageView imageDatbaseTablenode = ImageItemsHolder.getTableImage();
+		
 		TreeItem<String> databricksTreeItem = new TreeItem<String>(connectionPlaceHolder.getConnectionName(),imageDatabricksnode);
 						
 		TreeItem<String> databricksTreeItemTables = new TreeItem<String>("Tables",imageDatbaseTablenode);
@@ -1846,17 +1163,20 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		
 		try
 		{
-			// Databricks sql connection for a specific database only 
+			// DuckDB sql connection for a specific database only 
 			
 			DuckDBConnection duckDBConnection = new DuckDBConnection(jdbcUrlTextField.getText().trim());		
 			System.out.println(duckDBConnection.getDuckDBConnection());
 			
 			ConnectionPlaceHolder connectionPlaceHolder = new ConnectionPlaceHolder();
 			connectionPlaceHolder.setConnectionName(jdbcConnectionName.getText());
+			connectionPlaceHolder.setConnectionType(duckDBConnection.getClass().getSimpleName());
 			connectionPlaceHolder.setConnectionCreationDate(Calendar.getInstance().getTime());
 			
 			// for time keeping purpose 
+			menu_Items_FX.connectedDatabasesNames.getItems().add(jdbcConnectionName.getText());
 			menu_Items_FX.duckDBConnectionsMap.put(connectionPlaceHolder, duckDBConnection.getDuckDBConnection());
+			menu_Items_FX.currentOpenConnectionsMap.put(connectionPlaceHolder, duckDBConnection.getDuckDBConnection());
 			
 			reflectDuckDBTreeView(connectionPlaceHolder);
 			
@@ -1868,35 +1188,14 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	
 	private void reflectDuckDBTreeView(ConnectionPlaceHolder connectionPlaceHolder) {
 		
-		//put the connection on treeview display and add the connection to connectionName,connectionObject Datatype
-		Image imageDuckDB = new Image(getClass().getResourceAsStream("/graphics/duckDBLogo.png"));
-		ImageView imageDuckDBnode = new ImageView(imageDuckDB);
-		imageDuckDBnode.setId("duckDB");  // This id will reflect for SQL editer
-		imageDuckDBnode.setFitHeight(20);
-		imageDuckDBnode.setFitWidth(20);
-		imageDuckDBnode.setPreserveRatio(true);
-						
-		Image imageDatbaseTable = new Image(getClass().getResourceAsStream("/images/table.png"));
-		ImageView imageDatbaseTablenode = new ImageView(imageDatbaseTable);
-		imageDatbaseTablenode.setFitHeight(20);
-		imageDatbaseTablenode.setFitWidth(20);
-		imageDatbaseTablenode.setPreserveRatio(true);
-								
-		TreeItem<String> duckDBTreeItem = new TreeItem<String>(connectionPlaceHolder.getConnectionName(),imageDuckDBnode);
-						
-		TreeItem<String> duckDBTreeItemTables = new TreeItem<String>("Tables",imageDatbaseTablenode);
-		duckDBTreeItemTables.getChildren().add(new TreeItem<String>("Loading.."));
-						
-		TreeItem<String> duckDBTreeItemViews = new TreeItem<String>("Views");
-		duckDBTreeItemViews.getChildren().add(new TreeItem<String>("Loading.."));
-						
-		TreeItem<String> duckDBTreeItemProcedures = new TreeItem<String>("Procedures");
-		duckDBTreeItemProcedures.getChildren().add(new TreeItem<String>("Loading.."));
-						
-		duckDBTreeItem.getChildren().add(duckDBTreeItemTables);
-		duckDBTreeItem.getChildren().add(duckDBTreeItemViews);
-		duckDBTreeItem.getChildren().add(duckDBTreeItemProcedures);
+		//put the connection on treeview display and add the connection to connectionName,connectionObject Datatype		
+		ImageView imageDuckDBnode = ImageItemsHolder.getDuckDBImage(connectionPlaceHolder.getConnectionName());
+		ImageView imageDatbaseTablenode = ImageItemsHolder.getTableImage();
+		
+		TreeItem<String> duckDBTreeItem = new DuckDBUI(menu_Items_FX,this).getDuckDBTreeItem(connectionPlaceHolder,imageDuckDBnode,imageDatbaseTablenode);
+		
 		menu_Items_FX.rootConnectionItem.getChildren().add(duckDBTreeItem);
+		
 	}
 	
 }

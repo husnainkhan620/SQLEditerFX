@@ -3,10 +3,13 @@ package com.openfx.ui;
 import org.openjfx.fx.Menu_Items_FX;
 
 import com.openfx.handlers.NewMenuItemEventHandler;
+import com.openfx.placeholders.ConnectionPlaceHolder;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TreeItem;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
@@ -79,6 +82,55 @@ public class DuckDBUI {
 		  
 		return connectionDetailsVbox;
 		
+	}
+	
+	public  TreeItem<String> getDuckDBTreeItem(ConnectionPlaceHolder connectionPlaceHolder,ImageView imageDuckDBnode,ImageView imageDatbaseTablenode) {
 		
+		TreeItem<String> duckDBTreeItem = new TreeItem<String>(connectionPlaceHolder.getConnectionName(),imageDuckDBnode);
+		
+		// Tables
+		TreeItem<String> duckDBTreeItemTables = new TreeItem<String>("Tables",imageDatbaseTablenode);
+		duckDBTreeItemTables.addEventHandler(TreeItem.branchExpandedEvent(), event -> {
+			
+			System.out.println("Tables Expanded !!!");
+			
+		});
+		duckDBTreeItemTables.addEventHandler(TreeItem.branchCollapsedEvent(), event -> {
+			
+			System.out.println("Tables Collapsed !!!");
+		});
+		duckDBTreeItemTables.getChildren().add(new TreeItem<String>("Loading.."));
+					
+		// Views
+		TreeItem<String> duckDBTreeItemViews = new TreeItem<String>("Views");
+		duckDBTreeItemViews.addEventHandler(TreeItem.branchExpandedEvent(), event -> {
+			
+			System.out.println("Views Expanded !!!");
+			
+		});
+		duckDBTreeItemViews.addEventHandler(TreeItem.branchCollapsedEvent(), event -> {
+			
+			System.out.println("Views Collapsed !!!");
+		});
+		duckDBTreeItemViews.getChildren().add(new TreeItem<String>("Loading.."));
+		
+		// Procedures 
+		TreeItem<String> duckDBTreeItemProcedures = new TreeItem<String>("Procedures");
+		duckDBTreeItemProcedures.addEventHandler(TreeItem.branchExpandedEvent(), event -> {
+			
+			System.out.println("Procedures Expanded !!!");
+		});
+		duckDBTreeItemProcedures.addEventHandler(TreeItem.branchCollapsedEvent(), event -> {
+			
+			System.out.println("Procedures Collapsed !!!");
+		});
+		duckDBTreeItemProcedures.getChildren().add(new TreeItem<String>("Loading.."));
+						
+		
+		duckDBTreeItem.getChildren().add(duckDBTreeItemTables);
+		duckDBTreeItem.getChildren().add(duckDBTreeItemViews);
+		duckDBTreeItem.getChildren().add(duckDBTreeItemProcedures);
+		
+		return duckDBTreeItem;
 	}
 }

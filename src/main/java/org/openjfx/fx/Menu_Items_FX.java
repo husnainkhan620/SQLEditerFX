@@ -11,14 +11,15 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import com.openfx.handlers.NewMenuItemEventHandler;
 import com.openfx.handlers.SearchToolEventHandler;
 import com.openfx.handlers.SqlQueryRunButtonSubmit;
+import com.openfx.placeholders.ConnectionFileRelationHolder;
 import com.openfx.placeholders.ConnectionPlaceHolder;
+import com.openfx.placeholders.ImageItemsHolder;
 import com.openfx.placeholders.SQLCellTextArea;
 import com.sun.javafx.application.LauncherImpl;
 
@@ -42,6 +43,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.SingleSelectionModel;
@@ -73,6 +75,7 @@ import javafx.stage.WindowEvent;
 public class Menu_Items_FX extends Application {
 
 	public NewMenuItemEventHandler newMenuItemEventHandler;
+	public SqlQueryRunButtonSubmit sqlQueryRunButtonSubmit;
 	public Stage primaryStage;
 	
 	public Scene scene;
@@ -88,11 +91,14 @@ public class Menu_Items_FX extends Application {
 	public boolean connectionDoubleClicked = false;
 	
 	public String currentConnectionSelected;
+	public HashMap<ConnectionPlaceHolder,Connection> currentOpenConnectionsMap = new HashMap<ConnectionPlaceHolder, Connection>();
 	public HashMap<ConnectionPlaceHolder,Connection> mySqlConnectionsMap = new HashMap<ConnectionPlaceHolder, Connection>();
 	public HashMap<ConnectionPlaceHolder,Connection> postgreeSqlConnectionsMap = new HashMap<ConnectionPlaceHolder, Connection>();
 	public HashMap<ConnectionPlaceHolder,Connection> sqliteConnectionsMap = new HashMap<ConnectionPlaceHolder, Connection>();
+	public HashMap<ConnectionPlaceHolder,Connection> saphanarMap = new HashMap<ConnectionPlaceHolder, Connection>();
+	public HashMap<ConnectionPlaceHolder,Connection> databricksrMap = new HashMap<ConnectionPlaceHolder, Connection>();
 	public HashMap<ConnectionPlaceHolder,Connection> oracleConnectionsMap = new HashMap<ConnectionPlaceHolder, Connection>();
-	
+	public HashMap<ConnectionPlaceHolder,Connection> msSqlServerMap = new HashMap<ConnectionPlaceHolder, Connection>();
 	public HashMap<ConnectionPlaceHolder,Connection> duckDBConnectionsMap = new HashMap<ConnectionPlaceHolder, Connection>();
 	
 	
@@ -126,6 +132,7 @@ public class Menu_Items_FX extends Application {
 	public ListView<String> selectedTablesNames = new ListView<String>();
 	public Tab dataSearchtabPane;
 	
+	
 	public MenuBar createMenuBar() {
 		
 		for(Map.Entry<File,String> openedFileMap :  openedFilesMap.entrySet()) {
@@ -148,7 +155,9 @@ public class Menu_Items_FX extends Application {
 		Menu viewMenu = new Menu();  // Window in eclipse/DBeaver
 		viewMenu.setText("View");  
 		Menu helpMenu = new Menu();  // SQL Editer in eclipse/DBeaver
-		helpMenu.setText("Help");  
+		helpMenu.setText("Help"); 
+		Menu windowMenu = new Menu();  // SQL Editer in eclipse/DBeaver
+		windowMenu.setText("Window"); 
 		
 		// File Menu subitems
 		MenuItem newMenuItem = new MenuItem          ("New										Ctrl+N");
@@ -216,6 +225,7 @@ public class Menu_Items_FX extends Application {
 		menuBar.getMenus().add(toolsMenu);
 		menuBar.getMenus().add(viewMenu);
 		menuBar.getMenus().add(helpMenu);
+		menuBar.getMenus().add(windowMenu);
 		
 		return menuBar;
 		
@@ -236,11 +246,9 @@ public class Menu_Items_FX extends Application {
 		return new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {		
-				String sqlEditerofTypeIdFromImage = ((ImageView)connectionTreeItem.getGraphic()).getId();
 				
 				createSQLEditer(connectionTreeItem,null);
-				
-				
+					
 			}	
 		};
 	}
@@ -272,30 +280,6 @@ public class Menu_Items_FX extends Application {
 		size = Toolkit.getDefaultToolkit().getScreenSize();
 		System.out.println(size);
 
-		
-		Image imagedatabase = new Image(getClass().getResourceAsStream("/images/database.png"));
-		ImageView imagedatabasenode = new ImageView(imagedatabase);
-		imagedatabasenode.setFitHeight(15);
-		imagedatabasenode.setFitWidth(15);
-		imagedatabasenode.setPreserveRatio(true);
-		
-		Image imageSQLite = new Image(getClass().getResourceAsStream("/images/sqlite.png"));
-		ImageView imageSQLitenode = new ImageView(imageSQLite);
-		imageSQLitenode.setFitHeight(20);
-		imageSQLitenode.setFitWidth(20);
-		imageSQLitenode.setPreserveRatio(true);
-		
-		Image imageDatbaseTable = new Image(getClass().getResourceAsStream("/images/table.png"));
-		ImageView imageDatbaseTablenode = new ImageView(imageDatbaseTable);
-		imageDatbaseTablenode.setFitHeight(20);
-		imageDatbaseTablenode.setFitWidth(20);
-		imageDatbaseTablenode.setPreserveRatio(true);
-		
-		Image imageDatbaseTable1 = new Image(getClass().getResourceAsStream("/images/table.png"));
-		ImageView imageDatbaseTablenode1 = new ImageView(imageDatbaseTable1);
-		imageDatbaseTablenode1.setFitHeight(20);
-		imageDatbaseTablenode1.setFitWidth(20);
-		imageDatbaseTablenode1.setPreserveRatio(true);
 		
 		Image imagenewDBConnection = new Image(getClass().getResourceAsStream("/graphics/newdatabaseconnection.png"));
 		ImageView imagenewDBConnectionImageView = new ImageView(imagenewDBConnection);
@@ -331,22 +315,41 @@ public class Menu_Items_FX extends Application {
 		SplitPane mainSplitPane = new SplitPane();
 		mainSplitPane.setDividerPositions(0.21);
 		VBox vBoxleft  = new VBox();
+		ScrollPane vBoxleftScrollPane = new ScrollPane();
+		vBoxleftScrollPane.setFitToHeight(true);
+		vBoxleftScrollPane.setFitToWidth(true);
+		vBoxleftScrollPane.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
+		vBoxleftScrollPane.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+		
 	    VBox vBoxright = new VBox();
 	
-		rootConnectionItem = new TreeItem<String>("Connections",imagedatabasenode);
+	    TabPane vBoxleftTabPane = new TabPane();
+	    Tab connectionExplorerTab = new Tab("Connection Explorer");
+	  
+	    
+	    Tab projectExplorerTab = new Tab("Project Explorer");
+	   
+		rootConnectionItem = new TreeItem<String>("Connections");
 		treeConnectionsView = new TreeView<String>();
 		treeConnectionsView.setRoot(rootConnectionItem);
 		treeConnectionsView.setShowRoot(false);
 		//treeView.setMinSize(300, size.getHeight()-120);
 		treeConnectionsView.setPrefWidth(300);
 		treeConnectionsView.setMinWidth(100);
-		treeConnectionsView.setMinHeight(size.getHeight()-120);
+		treeConnectionsView.setMinHeight(size.getHeight()-160);
 	
 		treeConnectionsView.setContextMenu(null);
 		
 		this.treeConnectionsView.getSelectionModel().selectedItemProperty().addListener(treeViewChangeListener());
 		
-		vBoxleft.getChildren().add(treeConnectionsView);
+		connectionExplorerTab.setContent(this.treeConnectionsView);
+		
+		vBoxleftScrollPane.setContent(vBoxleftTabPane);
+		
+		
+		vBoxleftTabPane.getTabs().add(connectionExplorerTab); 
+	//	vBoxleftTabPane.getTabs().add(projectExplorerTab);  enable from settings on new project
+		vBoxleft.getChildren().add(vBoxleftScrollPane);
 		
         alltabbedEditors = new TabPane();
         alltabbedEditors.setMinSize(size.getWidth()-320, size.getHeight()-135);
@@ -419,7 +422,9 @@ public class Menu_Items_FX extends Application {
 				
 				TreeItem<String> selectedItem = newValue;
                 System.out.println("Selected Item : " + selectedItem + " Parent value "+selectedItem.getParent());
-                 	
+                
+                System.out.println("Selected connection graphic "+selectedItem.getGraphic());
+                
                 ContextMenu databaseContextMenu = new ContextMenu();
                 MenuItem contextMenuNewSqlEditer = new MenuItem("New SQL Editer");
                 contextMenuNewSqlEditer.setOnAction(newSQLEditerTabCreationAction(selectedItem));
@@ -637,17 +642,23 @@ public class Menu_Items_FX extends Application {
 			}
 		});
         
+        ConnectionFileRelationHolder connectionFileRelationHolder;
+        
         if(connectionTreeItem != null) {  // This is case of new file from a existing connection
-        	sqlEditerTab = new Tab("*["+connectionTreeItem.getValue() +"] " +"unknown "+ sqlEditerCount++);    // Full editer Tab  // This will also contain the database name
-        	ImageView  connectionTypeImageView = new ImageView(new Image(getClass().getResourceAsStream("/graphics/duckDBLogo.png")));
-            connectionTypeImageView.setFitHeight(10);
-            connectionTypeImageView.setFitWidth(10);
+        	
+        	connectionFileRelationHolder = ConnectionFileRelationHolder.newBuilder().connectionName(connectionTreeItem.getValue())
+        			.imageView((ImageView)connectionTreeItem.getGraphic())
+        			.connectionFileName("untitled-"+sqlEditerCount++).build();       	
+        	sqlEditerTab = new Tab( connectionFileRelationHolder.getFirstSeperator() + connectionFileRelationHolder.getConnectionName() + connectionFileRelationHolder.getSecondSeperator() +connectionFileRelationHolder.getconnectionFileName());    // Full editer Tab  // This will also contain the database name
+        	
+        	ImageView  connectionTypeImageView = ImageItemsHolder.contructImageView(connectionTreeItem.getGraphic());
             sqlEditerTab.setGraphic(connectionTypeImageView);
         }
         else if(selectedFile != null)   // This is case of opening an existing file
+
         	sqlEditerTab = new Tab("[ No DB ] " + selectedFile.getName() );    // Full editer Tab  // This will also contain the database name
         else    // This is case of  a new File
-        	sqlEditerTab = new Tab("[ No DB ] " +"unknown "+ sqlEditerCount++);    // Full editer Tab  // This will also contain the database name
+        	sqlEditerTab = new Tab("[ No DB ] " +"untitled-"+ sqlEditerCount++);    // Full editer Tab  // This will also contain the database name
         // ImageView  connectionTypeImageView = new ImageView(new Image(getClass().getResourceAsStream("/graphics/-----+"Logo.png")));
      
         sqlEditerTab.setContent(editerTabSplitPane);  
@@ -849,9 +860,7 @@ public class Menu_Items_FX extends Application {
 				
 				// add the opened file to openedFiles
 				openedFilesMap.put(selectedFile,"[ No DB ] ");
-
-				 	
-				
+			
 				// Write to the newly opened file its contents	
 				SplitPane tabSplitPane	= (SplitPane)  alltabbedEditors.getSelectionModel().getSelectedItem().getContent();
 				System.out.println( tabSplitPane.getItems().get(0).toString()) ; // Top half of the tab where sql editer is present
@@ -861,6 +870,7 @@ public class Menu_Items_FX extends Application {
 				GridPane tabEditergridPane =  (GridPane) sqlEditerscrollPane.getContent(); // will have stack panes which individually have textArea
 				System.out.println( tabEditergridPane.getChildren().toString());
 				 
+				
 			    BufferedReader reader;
 			    StringBuilder readaEditerCell = new StringBuilder();
 			    String readaLine = "";
@@ -959,9 +969,9 @@ public class Menu_Items_FX extends Application {
 	
 	
 	
-	private void genericSaveFileFunction() {
+	public void genericSaveFileFunction() {
 		
-		String noConnectionConstant = "[ No DB ] ";
+		String connectionConstant = " [ No DB ] ";
 		boolean fileSaved = false;
 		
 		for(Map.Entry<File,String> openedFileMap :  openedFilesMap.entrySet()) {
@@ -970,9 +980,11 @@ public class Menu_Items_FX extends Application {
 			System.out.println("openedFileMap.getValue()"+openedFileMap.getValue());
 			System.out.println("current Tab name "+alltabbedEditors.getSelectionModel().getSelectedItem().getText());
 			
-			if(openedFileMap.getKey().getAbsolutePath().contains(alltabbedEditors.getSelectionModel().getSelectedItem().getText().replace("[ No DB ] ",""))
-					|| openedFileMap.getKey().getAbsolutePath().contains(alltabbedEditors.getSelectionModel().getSelectedItem().getText().replace("*[ No DB ] ","")) 
-					|| openedFileMap.getKey().getAbsolutePath().contains(alltabbedEditors.getSelectionModel().getSelectedItem().getText().replace("*",""))) // this will give the current tabs/file name
+			String[] splittedTabName = alltabbedEditors.getSelectionModel().getSelectedItem().getText().split(" ");
+			System.out.println("Only file name is :"+ splittedTabName[splittedTabName.length-1]);
+			
+			if(openedFileMap.getKey().getAbsolutePath().contains(splittedTabName[splittedTabName.length-1]))
+					 // this will give the current tabs/file name
 			{
 				System.out.println("File with the name already opened");
 				//System.out.println("The file is already saved to this location"+openedFile.getAbsolutePath());
@@ -987,7 +999,12 @@ public class Menu_Items_FX extends Application {
 		
 		if(!fileSaved) {
 			System.out.println("The file is not yet saved !!!");
-				
+			
+			Node imageViewNode =  alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic();
+			
+			if(imageViewNode != null)
+				connectionConstant =  alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().getId().split("##")[1];
+
 			FileChooser fileChooser = new FileChooser();
 			fileChooser.setTitle("Save");
 		    fileChooser.getExtensionFilters().addAll(new ExtensionFilter("All Files","*.*")); 
@@ -996,10 +1013,10 @@ public class Menu_Items_FX extends Application {
 			System.out.println("Selected File path" + selectedFile);
 			System.out.println("Selected File name" + selectedFile.getAbsolutePath());
 
-			openedFilesMap.put(selectedFile,noConnectionConstant);
+			openedFilesMap.put(selectedFile,connectionConstant);
 				
 			 					
-			saveToFile(noConnectionConstant,selectedFile);
+			saveToFile(connectionConstant,selectedFile);
 		}
 		
 	}
@@ -1015,12 +1032,11 @@ public class Menu_Items_FX extends Application {
 		GridPane tabEditergridPane =  (GridPane) sqlEditerscrollPane.getContent(); // will have stack panes which individually have textArea
 		System.out.println( tabEditergridPane.getChildren().toString());
 		 
-		String getConnectionId = null;
+		Node  getConnectionIdNode = this.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic();
 		ObservableList<Node> gridPaneList =  tabEditergridPane.getChildren();
 		for(Node node : gridPaneList) {
 			if(node instanceof StackPane) {	   
 				 TextArea lowestLevelTextArea = (TextArea) ((StackPane) node).getChildren().get(0);
-				 getConnectionId =  lowestLevelTextArea.getId(); // This will be null for No DB
 				 fileToSaveFromSQLEditer.append(lowestLevelTextArea.getText());
 				 fileToSaveFromSQLEditer.append("\n#COMMAND#\n");
 			 }
@@ -1037,12 +1053,10 @@ public class Menu_Items_FX extends Application {
 			e.printStackTrace();
 		}
 		
-		if(getConnectionId == null) {
+		if(getConnectionIdNode != null)
+			alltabbedEditors.getSelectionModel().getSelectedItem().setText(" [ "+getConnectionIdNode.getId().split("##")[1]+ " ] "+selectedFile.getName());
+		else
 			alltabbedEditors.getSelectionModel().getSelectedItem().setText(connectionName+selectedFile.getName());
-		}
-		else {
-			alltabbedEditors.getSelectionModel().getSelectedItem().setText(selectedFile.getName());
-		}
 	}
 	
 	private EventHandler<ActionEvent> renameFileEventHandler() {

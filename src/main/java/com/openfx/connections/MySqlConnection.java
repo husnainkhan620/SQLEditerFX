@@ -14,9 +14,8 @@ public class MySqlConnection {
 	String userName;
 	String password;
 	
-	public MySqlConnection(String url,String userName,String password) throws Exception{
-				
-		Class.forName("com.mysql.cj.jdbc.Driver");
+	
+	public MySqlConnection(String url,String databaseName,String userName,String password,String port) throws Exception {
 		
 		this.url = url;   // 127.0.0.1 == localhost
 		this.userName = userName;
@@ -28,31 +27,51 @@ public class MySqlConnection {
 		
 		try  
 		{
-			mySqlConnection = DriverManager.getConnection(url,connectionProperties);
+			mySqlConnection = DriverManager.getConnection(url+":"+port+"/"+databaseName,connectionProperties);
 			Statement stmt = mySqlConnection.createStatement();
 				
-			 try (ResultSet rs = stmt.executeQuery("show databases")) {
-				  	while(rs.next())
-				  		System.out.println(rs.getString(1));
-				  		System.out.println();			  	
-			 }
-			 	
-			 try{	 
-				 stmt.execute("use mydatabase");  
-			 }catch (Exception e) {
-				e.printStackTrace();
-			 }
+			
 			 
-			 try (ResultSet rs = stmt.executeQuery("show tables in mydatabase")) {
+			 try (ResultSet rs = stmt.executeQuery("show tables in "+databaseName)) {
 				 
 				  	while(rs.next())
 				  		
 				  		System.out.println(rs.getString(1));
 			 }
 						 
-			String selectedTable = "employee";
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}		
+
+	}
+	
+	public MySqlConnection(String url,String userName,String password,String port) throws Exception{
+				
+		//Class.forName("com.mysql.cj.jdbc.Driver");
+		
+		this.url = url;   // 127.0.0.1 == localhost
+		this.userName = userName;
+		this.password = password;
+		
+		Properties connectionProperties = new Properties();
+		connectionProperties.put("user", userName);
+		connectionProperties.put("password",password);
+		
+		try  
+		{
+			mySqlConnection = DriverManager.getConnection(url+":"+port,connectionProperties);
+			Statement stmt = mySqlConnection.createStatement();
+				
+			 try (ResultSet rs = stmt.executeQuery("show databases")) {
+				  	while(rs.next())
+				  		System.out.println(rs.getString(1));
+				  		System.out.println();			  	
 			 
-			 try (ResultSet rs = stmt.executeQuery("select * from "+selectedTable+" limit 1")) {
+			 }
+		
+			/* try (ResultSet rs = stmt.executeQuery("select * from "+selectedTable+" limit 1")) {
 				    ResultSetMetaData md = rs.getMetaData();
 			        String[] columns = new String[md.getColumnCount()];
 			        for (int i = 0; i < columns.length; i++) {
@@ -69,12 +88,11 @@ public class MySqlConnection {
 			              System.out.print(columns[i] + "='" + rs.getObject(i + 1) + "'");
 			            }
 			            System.out.println(")]");
-			          }			 				
-			 }
+			          }			*/ 				
 		}catch (Exception e) {
 			e.printStackTrace();
 			throw e;
-		}		
+		}	
 	}
 	
 	public Connection getMySqlConnection() {
@@ -86,7 +104,17 @@ public class MySqlConnection {
 	}
 
 	public static void main(String[] args) throws Exception {
-		MySqlConnection mySqlConnection = new MySqlConnection("jdbc:mysql://127.0.0.1:3306", "root", "root");				
+	
+		//MySqlConnection mySqlConnection = new MySqlConnection("jdbc:mysql://127.0.0.1:3306", "root", "root");
+		
+		//MySqlConnection mySqlConnection1 = new MySqlConnection("jdbc:mysql://127.0.0.1:3306","sakila", "root", "root");
+		
+	//	MySqlConnection mySqlConnectionOVerNet = new MySqlConnection("jdbc:mysql://174.3.140.100", "root", "Mariah$2019","3306");
+		
+	//	MySqlConnection mySqlConnectionOVerNet2 = new MySqlConnection("jdbc:mysql://174.3.140.100", "khan", "khan","3306");
+		
+		MySqlConnection mySqlConnectionOVerNet3 = new MySqlConnection("jdbc:mysql://174.3.140.100", "asma", "asma","3306");
+		
 	}
 	
 }

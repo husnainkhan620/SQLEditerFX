@@ -68,6 +68,12 @@
     -fx-spacing: 10;
 }
 
+.hboxFirst {
+	-fx-background-color: #2f4f4f;
+    -fx-padding: 15;
+    -fx-spacing: 10;
+}
+
 #hbox-custom {
 /*    -fx-background-image: url("graphics/cloud.png");
     -fx-background-size: 60,69;
