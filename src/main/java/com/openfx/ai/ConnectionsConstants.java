@@ -10,6 +10,7 @@ public class ConnectionsConstants {
 	public static final String MSSQLSErver = "MSSQLSErver";
 	public static final String Databricks = "Databricks";
 	public static final String DuckDB = "DuckDB";
+	public static final String MariaDB = "MariaDB";
 	
 	
 }

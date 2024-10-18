@@ -129,6 +129,19 @@ public class ImageItemsHolder {
 	
 		return imageMssqlServernode;
 	}
+	
+	public static ImageView getMariaDBImage(String connectionName) {
+
+		Image imageMariaDB = new Image(ImageItemsHolder.class.getResourceAsStream("/images/MariaDBLogo.jpg"));
+		ImageView imageMariaDBnode = new ImageView(imageMariaDB);
+		imageMariaDBnode.setId(ConnectionsConstants.MariaDB+"##"+connectionName);  
+		imageMariaDBnode.setFitHeight(20);
+		imageMariaDBnode.setFitWidth(20);
+		imageMariaDBnode.setPreserveRatio(true);
+
+		return imageMariaDBnode;
+
+	}
 
 	public static ImageView contructImageView(Node graphic) {
 		
@@ -163,6 +176,10 @@ public class ImageItemsHolder {
 		if(graphic.getId().contains(ConnectionsConstants.DuckDB)) {
 			
 			return getDuckDBImage(graphic.getId().split("##")[1]);
+		}
+		if(graphic.getId().contains(ConnectionsConstants.MariaDB)) {
+			
+			return getMariaDBImage(graphic.getId().split("##")[1]);
 		}
 		
 		return null;

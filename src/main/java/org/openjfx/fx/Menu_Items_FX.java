@@ -100,6 +100,7 @@ public class Menu_Items_FX extends Application {
 	public HashMap<ConnectionPlaceHolder,Connection> oracleConnectionsMap = new HashMap<ConnectionPlaceHolder, Connection>();
 	public HashMap<ConnectionPlaceHolder,Connection> msSqlServerMap = new HashMap<ConnectionPlaceHolder, Connection>();
 	public HashMap<ConnectionPlaceHolder,Connection> duckDBConnectionsMap = new HashMap<ConnectionPlaceHolder, Connection>();
+	public HashMap<ConnectionPlaceHolder,Connection> mariaDBConnectionsMap = new HashMap<ConnectionPlaceHolder, Connection>();
 	
 	
 	public TreeItem<String> rootConnectionItem;

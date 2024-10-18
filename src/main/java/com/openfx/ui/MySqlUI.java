@@ -484,13 +484,63 @@ public class MySqlUI {
 																										
 																									String name = ((BooleanProperty)observable).getName();
 																									Boolean value = ((BooleanProperty)observable).getValue() ;
+																									System.out.println("is expanded "+value);
+																											
 																									if(value) {
 																										 System.out.println("Indexes Expanded!! "+ "Database Selected "+loadedDatabaseName.getValue() +" Tables Selected " +loadedTableName.getValue());
+																									     
+																										 TreeItem<String> currentDatabasebean = ((TreeItem<String>)((BooleanProperty)observable).getBean());
+																											
+																											System.out.println("Current DatabaseSelected Name "+loadedDatabaseName.getValue());
+																											
+																											new Thread(new Runnable() {
+																											     @Override
+																											     public void run() {
+																											        
+																											    	 try {
+																											    		 
+																											    		    stmt.execute("use "+loadedDatabaseName.getValue());
+																											    		    ResultSet rs = stmt.executeQuery("SHOW CREATE TABLE "+loadedTableName.getValue());		
+																													        try {
+																																Thread.sleep(100);
+																															} catch (InterruptedException e) {
+																																// TODO Auto-generated catch block
+																																e.printStackTrace();
+																															}
+																													        tableIndexes.getChildren().remove(0);  // Remove the Loading...
+																															while(rs.next()) {
+																																  System.out.println(rs.getString(2) );
+																																  // break down the show table result and get the foreigh key details
+																																  
+																																String mysqlQuerySplit[] = rs.getString(2).split("\n");
+																															
+																																	for(int i=0;i<mysqlQuerySplit.length;i++) {
+																																		
+																																		if(mysqlQuerySplit[i].contains("KEY")) {
+																																		
+																																			System.out.println( mysqlQuerySplit[i]);
+																																			TreeItem<String> IndexName = new TreeItem<String>(mysqlQuerySplit[i]);
+																																			tableIndexes.getChildren().add(IndexName);
+																																			  
+																																		}
+																																		
+																																	} 	
+																															}
+																													        
+																													    } catch (SQLException e) {
+																															System.out.println("Error during constrains expansion");
+																															e.printStackTrace();
+																														}
+																											    	 }
+																											}).start();
 																									}else {
 																										System.out.println("Indexes Collpapsed!! "+ "Database Selected "+loadedDatabaseName.getValue() +" Tables Selected " +loadedTableName.getValue());
+																										tableIndexes.getChildren().clear();
+																										tableIndexes.getChildren().add(loadingTableNameIndexes);
 																									}
 																								}
 																						  });
+
 																						  TreeItem<String> tablePartitions = new TreeItem<String>("Partitions");
 																						  TreeItem<String> loadingTableNamePartitions = new TreeItem<String>("Loading..");
 																						  tablePartitions.getChildren().add(loadingTableNamePartitions);
