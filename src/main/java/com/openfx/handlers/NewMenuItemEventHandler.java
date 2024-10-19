@@ -8,6 +8,7 @@ import org.openjfx.fx.Menu_Items_FX;
 import com.openfx.ai.ConnectionsConstants;
 import com.openfx.connections.DatabricksConnection;
 import com.openfx.connections.DuckDBConnection;
+import com.openfx.connections.MariaDBConnection;
 import com.openfx.connections.MySqlConnection;
 import com.openfx.connections.OracleConnection;
 import com.openfx.connections.PostgreeSqlConnection;
@@ -18,6 +19,7 @@ import com.openfx.placeholders.HighLightRectangleHolder;
 import com.openfx.placeholders.ImageItemsHolder;
 import com.openfx.ui.DatabricksUI;
 import com.openfx.ui.DuckDBUI;
+import com.openfx.ui.MariaDBUI;
 import com.openfx.ui.MssqlUI;
 import com.openfx.ui.MySqlUI;
 import com.openfx.ui.OracleUI;
@@ -108,7 +110,8 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	public OracleUI oracleUI;
 	public MssqlUI mssqlUI;
 	public DuckDBUI duckDBUI;
-	
+	public MariaDBUI mariaDBUI;
+		
 	public NewMenuItemEventHandler(Menu_Items_FX menu_Items_FX) {
 		this.menu_Items_FX = menu_Items_FX;
 		
@@ -405,9 +408,9 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	        
 	        borderPane.setRight(hboxConnectionButtons);
 	        	 
-	        buttonNext.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent event) {
+	        buttonNext.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+	        	public void handle(ActionEvent event) {
 					
 					connectToDatabseText.setText(menu_Items_FX.currentConnectionSelected + " connection settings");
 					menu_Items_FX.borderSelectDatabase.setCenter(addConnectionDetails());
@@ -417,11 +420,12 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 					buttonTestConnection.setDisable(true);
 					buttonBack.setDisable(false);
 				}
-			});
+	        });
+
 	        
-	        buttonBack.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent event) {			
+	        buttonBack.setOnAction(new EventHandler<ActionEvent>() {
+	        	@Override
+				public void handle(ActionEvent event) {			
 					connectToDatabseText.setText("Select your database to connect ");
 					menu_Items_FX.currentConnectionSelected = "";
 					menu_Items_FX.borderSelectDatabase.setCenter(menu_Items_FX.selectDatabaseConnectionsflow);
@@ -445,11 +449,11 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 						
 				}
 			});
+
 	        
-	        buttonFinish.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
-	        	
-				@Override
-				public void handle(MouseEvent event) {
+	        buttonFinish.setOnAction(new EventHandler<ActionEvent>() {
+	        	@Override
+				public void handle(ActionEvent event) {
 					
 					System.out.println(" Finish pressed "+menu_Items_FX.currentConnectionSelected);
 
@@ -494,19 +498,26 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 						createDuckDBConnection();
 						connectionStage.close();
 					}
+					if(menu_Items_FX.currentConnectionSelected.equals("MariaDB"))
+					{
+						createMariaDBConnection();
+						connectionStage.close();
+					}
 					menu_Items_FX.currentConnectionSelected = "";
 				}
 				
 	
 			});
+
 	        
-	        buttonCancel.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent event) {
+	        buttonCancel.setOnAction(new EventHandler<ActionEvent>() {
+	        	@Override
+				public void handle(ActionEvent event) {
 					
 					connectionStage.close();
 				}
-			});
+	        });
+
 	        
 	        return borderPane;
 	  }
@@ -591,6 +602,7 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		  StackPane stackPaneOracle = highLightRectangleHolder.getHighlightRectangleOracle(null);
 		  StackPane stackPaneMssql = highLightRectangleHolder.getHighlightRectangleMSSQLServer(null);
 		  StackPane stackPaneDuckDB = highLightRectangleHolder.getHighlightRectangleDuckDB(null);
+		  StackPane stackPaneMariaDB = highLightRectangleHolder.getHighlightRectangleMariaDB(null);
 		  
 	      menu_Items_FX.selectDatabaseConnectionsflow.getChildren().add(stackPaneMySql);
     
@@ -607,6 +619,8 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		  menu_Items_FX.selectDatabaseConnectionsflow.getChildren().add(stackPaneMssql);
 	
 		  menu_Items_FX.selectDatabaseConnectionsflow.getChildren().add(stackPaneDuckDB);
+
+		  menu_Items_FX.selectDatabaseConnectionsflow.getChildren().add(stackPaneMariaDB);
 		    
 		    
 		    
@@ -644,6 +658,10 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		  stackPaneDuckDB.setOnMouseEntered(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneDuckDB.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));		 
 		  stackPaneDuckDB.setOnMouseClicked(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneDuckDB.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));  
 		  stackPaneDuckDB.setOnMouseExited(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneDuckDB.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
+		
+		  stackPaneMariaDB.setOnMouseEntered(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneMariaDB.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));		 
+		  stackPaneMariaDB.setOnMouseClicked(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneMariaDB.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));  
+		  stackPaneMariaDB.setOnMouseExited(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneMariaDB.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
 
 		        
 	        BackgroundFill background_fill = new BackgroundFill(javafx.scene.paint.Color.WHITE,  CornerRadii.EMPTY,Insets.EMPTY ); 
@@ -747,6 +765,13 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 				  duckDBUI = new DuckDBUI(menu_Items_FX,this);
 
 			  connectionDetailsVbox =  duckDBUI.addConnectionCredentials(); 
+		  }
+		  if(menu_Items_FX.currentConnectionSelected.equalsIgnoreCase(ConnectionsConstants.MariaDB)) {
+			  
+			  if(mariaDBUI == null)
+				  mariaDBUI = new MariaDBUI(menu_Items_FX,this);
+			  
+			  connectionDetailsVbox =  mariaDBUI.addConnectionCredentials(); 
 		  }
 		 
 		  
@@ -1187,15 +1212,70 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	}
 	
 	private void reflectDuckDBTreeView(ConnectionPlaceHolder connectionPlaceHolder) {
-		
+
 		//put the connection on treeview display and add the connection to connectionName,connectionObject Datatype		
 		ImageView imageDuckDBnode = ImageItemsHolder.getDuckDBImage(connectionPlaceHolder.getConnectionName());
 		ImageView imageDatbaseTablenode = ImageItemsHolder.getTableImage();
-		
+
 		TreeItem<String> duckDBTreeItem = new DuckDBUI(menu_Items_FX,this).getDuckDBTreeItem(connectionPlaceHolder,imageDuckDBnode,imageDatbaseTablenode);
-		
+
 		menu_Items_FX.rootConnectionItem.getChildren().add(duckDBTreeItem);
+
+	}
+	private void createMariaDBConnection() {
+		jdbcUrlTextField.getText();
+		jdbcAuthenticationUsernameTextField.getText();
+		jdbcAuthenticationPasswordField.getText();
+		jdbcUrlDatabaseNameField.getText();
+		// check if database name is provided  and then create connection accordingly and reflect accordingly
 		
+		// @TODO Add validation here
+		
+		try
+		{
+			MariaDBConnection mariaDBConnection;
+			if(jdbcUrlDatabaseNameField.getText().isEmpty())
+				mariaDBConnection = new MariaDBConnection(jdbcUrlTextField.getText().trim(), jdbcAuthenticationUsernameTextField.getText().trim(), 
+				jdbcAuthenticationPasswordField.getText().trim(),jdbcConnectionPort.getText().trim());	
+			else {
+				mariaDBConnection = new MariaDBConnection(jdbcUrlTextField.getText().trim(), jdbcUrlDatabaseNameField.getText(),jdbcAuthenticationUsernameTextField.getText().trim(), 
+						jdbcAuthenticationPasswordField.getText().trim(),jdbcConnectionPort.getText().trim());
+			}
+			System.out.println(mariaDBConnection.getMariaDBConnection());
+			ConnectionPlaceHolder connectionPlaceHolder = new ConnectionPlaceHolder();
+			connectionPlaceHolder.setConnectionType(mariaDBConnection.getClass().getSimpleName());
+			connectionPlaceHolder.setConnectionName(jdbcConnectionName.getText());
+			connectionPlaceHolder.setConnectionCreationDate(Calendar.getInstance().getTime());
+			
+			// for time keeping purpose 
+			menu_Items_FX.connectedDatabasesNames.getItems().add(jdbcConnectionName.getText());
+			menu_Items_FX.mariaDBConnectionsMap.put(connectionPlaceHolder, mariaDBConnection.getMariaDBConnection());
+			menu_Items_FX.currentOpenConnectionsMap.put(connectionPlaceHolder, mariaDBConnection.getMariaDBConnection());
+			
+			reflectMariaDBrootTreeView(connectionPlaceHolder,jdbcUrlDatabaseNameField.getText());
+			
+		}catch(Exception ex) {
+			System.out.println("MariaDB Connection failed");
+		}
 	}
 	
+	private void reflectMariaDBrootTreeView(ConnectionPlaceHolder connectionPlaceHolder,String databaseName) {
+		//put the connection on treeview display and add the connection to connectionName,connectionObject Datatype
+				
+//		ImageView imageMariaDBnode = ImageItemsHolder.getMariaDBImage(connectionPlaceHolder.getConnectionName());
+//
+//		ImageView imageDatbaseTablenode = ImageItemsHolder.getTableImage();
+//		
+//		TreeItem<String> mariaDBTreeItem = new MariaDBUI(menu_Items_FX,this).getmariaDBTreeItem(connectionPlaceHolder,imageMariaDBnode,imageDatbaseTablenode,databaseName);
+//		menu_Items_FX.rootConnectionItem.getChildren().add(mariaDBTreeItem);
+		
+		ImageView imageMariaDBnode = ImageItemsHolder.getMariaDBImage(connectionPlaceHolder.getConnectionName());
+		ImageView imageDatbaseTablenode = ImageItemsHolder.getTableImage();
+
+		TreeItem<String> mariaDBTreeItem = new MariaDBUI(menu_Items_FX,this).getmariaDBTreeItem(connectionPlaceHolder,imageMariaDBnode,imageDatbaseTablenode, databaseName);
+
+		menu_Items_FX.rootConnectionItem.getChildren().add(mariaDBTreeItem);
+	}
 }
+
+	

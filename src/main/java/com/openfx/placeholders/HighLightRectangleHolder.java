@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.openjfx.graphics.DataBricksRectangle;
 import org.openjfx.graphics.DuckDBRectangle;
 import org.openjfx.graphics.MSSQLServerRectangle;
+import org.openjfx.graphics.MariaDBRectangle;
 import org.openjfx.graphics.MySqlRectangle;
 import org.openjfx.graphics.OracleRectangle;
 import org.openjfx.graphics.PostgreeSqlRectangle;
@@ -248,6 +249,32 @@ public class HighLightRectangleHolder {
         
         return stackPaneDuckDB;
 		
+	}
+	
+	public StackPane getHighlightRectangleMariaDB(String connectionName) {
+		MariaDBRectangle highlightRectangleMariaDB = new MariaDBRectangle(100.0,150.0);
+		this.avaialbleHighRectangleConnections.add(highlightRectangleMariaDB);
+		
+	    StackPane stackPaneMariaDB = new StackPane();
+	     highlightRectangleMariaDB.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
+		            new Stop[]{
+		            new Stop(0,Color.WHITE),
+		            new Stop(0.5, Color.WHITE),
+		            new Stop(1,Color.WHITE),}));
+	     highlightRectangleMariaDB.setStroke(Color.WHITE);
+	        highlightRectangleMariaDB.setArcHeight(3.5);
+	        highlightRectangleMariaDB.setArcWidth(3.5);
+
+	        Label mariaDBLabel = new Label();
+	        if(connectionName == null) 
+	        	mariaDBLabel.setText("MariaDB");
+	        else
+	        	mariaDBLabel.setText(connectionName);
+	        mariaDBLabel.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/graphics/MariaDBLogo.jpg"))));
+	        mariaDBLabel.setContentDisplay(ContentDisplay.TOP);	    
+	        stackPaneMariaDB.getChildren().addAll(highlightRectangleMariaDB, mariaDBLabel);
+	        
+	        return stackPaneMariaDB;
 	}
 	
 }
