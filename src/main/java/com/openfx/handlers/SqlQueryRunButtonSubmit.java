@@ -17,6 +17,8 @@ import com.openfx.placeholders.ConnectionPlaceHolder;
 import com.openfx.placeholders.HighLightRectangleHolder;
 import com.openfx.placeholders.ImageItemsHolder;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -30,9 +32,14 @@ import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TableColumn.CellEditEvent;
+import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.cell.MapValueFactory;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -49,6 +56,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 
@@ -520,6 +528,30 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 	private void showResultSetInTheTableView(ResultSet rs)  throws SQLException{
 	
 			TableView tableView = new TableView();
+			tableView.setEditable(true);
+			tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);  // to remove the last empty column otherwise added
+	        
+			tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
+
+				@Override
+				public void changed(ObservableValue<? extends HashMap<String, String>> observable,
+						HashMap<String, String> oldValue, HashMap<String, String> newValue) {
+
+					System.out.println("oldValue --->"+oldValue);
+					System.out.println("newValue --->"+newValue.keySet().toString());
+					for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
+						
+						System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
+					}
+					
+					TableViewSelectionModel  selectionModel = tableView.getSelectionModel();
+			        ObservableList selectedCells = selectionModel.getSelectedCells();
+			        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+			        Object val = tablePosition.getTableColumn().getCellData(newValue);
+			        System.out.println("Selected Value" + val);
+					
+				}	
+			});
 			if(rs.next()) {
 		
 		    	
@@ -537,7 +569,25 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 		        	
 		        	tableColumnName = new TableColumn<>(columnNames[i]);
 		        	tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[i]));
-		 	        
+		        	// Below code will do cell editing
+		        	tableColumnName.setCellFactory( new Callback<TableColumn<Map,String>, TableCell<Map,String>>() {
+						@Override
+						public TableCell<Map, String> call(TableColumn<Map, String> param) {
+							 return new EditingCell();
+						}
+					});
+		        	
+		        
+		        	tableColumnName.setOnEditCommit( new EventHandler<TableColumn.CellEditEvent<Map,String>>() {		
+						@Override
+						public void handle(CellEditEvent<Map, String> t) {
+							System.out.println("Editing firstName..");
+		                	System.out.println("Table View "+ t.getTableView().getItems().get(t.getTablePosition().getRow()));
+		                	 t.getTableView().getItems().get(t.getTablePosition().getRow()).replace(t.getTableColumn(), t.getTableView().getItems().get(t.getTablePosition().getRow()).get(t.getTableColumn()));
+		                	System.out.println("Table Position"+t.getTablePosition().getRow());
+		                	System.out.println("Table Column"+t.getTableColumn());
+						}
+					});
 		 	        tableView.getColumns().add(tableColumnName);
 		        }		
 			
@@ -772,4 +822,71 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 		
 	}
 	
+}
+
+class EditingCell extends TableCell<Map, String> {
+	 
+    private TextField textField;
+
+    public EditingCell() {
+    }
+
+    @Override
+    public void startEdit() {
+        if (!isEmpty()) {
+            super.startEdit();
+            createTextField();
+            setText(null);
+            setGraphic(textField);
+            textField.selectAll();
+        }
+    }
+
+    @Override
+    public void cancelEdit() {
+        super.cancelEdit();
+
+        setText((String) getItem());
+        setGraphic(null);
+    }
+
+    @Override
+    public void updateItem(String item, boolean empty) {
+        super.updateItem(item, empty);
+
+        if (empty) {
+            setText(null);
+            setGraphic(null);
+        } else {
+            if (isEditing()) {
+                if (textField != null) {
+                    textField.setText(getString());
+                }
+                setText(null);
+                setGraphic(textField);
+            } else {
+                setText(getString());
+                setGraphic(null);
+            }
+        }
+    }
+
+    private void createTextField() {
+        textField = new TextField(getString());
+        textField.setMinWidth(this.getWidth() - this.getGraphicTextGap()* 2);
+        
+        textField.focusedProperty().addListener(new ChangeListener<Boolean>(){
+            @Override
+            public void changed(ObservableValue<? extends Boolean> arg0, 
+                Boolean arg1, Boolean arg2) {
+                    if (!arg2) {  // Comment out this part then it will be editable but never persisted
+                       //  commitEdit(textField.getText());  for now no need to commit any cell value
+                    }
+            }
+        });
+    }
+    
+    private String getString() {
+        return getItem() == null ? "" : getItem().toString();
+    }
 }

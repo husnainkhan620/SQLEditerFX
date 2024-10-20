@@ -1,5 +1,7 @@
 package org.openjfx.fx;
 
+import com.openfx.constants.MySQLConstants;
+
 public class Test {
 
 	
@@ -31,6 +33,8 @@ public class Test {
 			}
 			
 		}
+		
+		System.out.println(MySQLConstants.valueOf("admin_p"));
 	 	
 	  	
 	 	
