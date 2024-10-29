@@ -568,6 +568,7 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 		        	columnTypes[i] = md.getColumnType(i+1);	   
 		        	
 		        	tableColumnName = new TableColumn<>(columnNames[i]);
+		        	tableColumnName.setMinWidth(150);
 		        	tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[i]));
 		        	// Below code will do cell editing
 		        	tableColumnName.setCellFactory( new Callback<TableColumn<Map,String>, TableCell<Map,String>>() {

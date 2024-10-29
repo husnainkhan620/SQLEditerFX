@@ -362,7 +362,7 @@ public class Menu_Items_FX extends Application {
 	
 		scene = new Scene(rootPane,size.getWidth(),size.getHeight()-70);
 		
-		primaryStage.setTitle("Menu Item Application \u0627 \u0628 \u0629 \u062A \u062B \u062C \u062D");
+		primaryStage.setTitle("Menu Item Application \u0627 \u0628 \u0629 \u062A \u062B \u062C \u062D ");  
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		

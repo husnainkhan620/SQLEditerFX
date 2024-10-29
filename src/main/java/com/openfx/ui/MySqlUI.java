@@ -1,6 +1,5 @@
 package com.openfx.ui;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -11,7 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.openjfx.fx.Menu_Items_FX;
-import org.openjfx.fx.TableSample3.Person;
 
 import com.openfx.constants.MySQLConstants;
 import com.openfx.handlers.NewMenuItemEventHandler;
@@ -29,32 +27,47 @@ import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.scene.Node;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.cell.MapValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 // import javafx.scene.web.HTMLEditor;
 import javafx.util.Callback;
@@ -78,8 +91,13 @@ public class MySqlUI {
 	  
 	public TabPane systemVariablesTabPane;
 	public TabPane statusVariablesTabPane;
-	public VBox secondHalfDisplayVBox;
+	public VBox variablesSecondHalfDisplayVBox;
 	  
+	public VBox secondHalfDisplayVBox;
+	
+	public TableView performanceReportTableView;
+	public Label particularPerformanceReportLabel;
+	
 	public MySqlUI(Menu_Items_FX menu_Items_FX,NewMenuItemEventHandler newMenuItemEventHandler) {
 		this.menu_Items_FX = menu_Items_FX;
 		this.newMenuItemEventHandler = newMenuItemEventHandler;
@@ -652,6 +670,7 @@ public class MySqlUI {
 																															
 																															 	
 																													}
+																													//stmt.close();
 																														        
 																												} catch (SQLException e) {
 																														System.out.println("Error during indexes expansion");
@@ -724,6 +743,7 @@ public class MySqlUI {
 																														 		}
 																														 	}
 																													}
+																													//stmt.close();
 																														        
 																												} catch (SQLException e) {
 																														System.out.println("Error during partition expansion");
@@ -805,6 +825,7 @@ public class MySqlUI {
 																					  mySqlTreeItemViews.getChildren().add(ViewName);
 																					
 																				}
+																				//stmt.close();
 																			} catch (SQLException e) {
 																				// TODO Auto-generated catch block
 																				e.printStackTrace();
@@ -854,6 +875,7 @@ public class MySqlUI {
 																					  mySqlTreeItemProcedures.getChildren().add(new TreeItem<String>(rs.getString(2)));
 																					
 																				}
+																				//stmt.close();
 																			} catch (SQLException e) {
 																				// TODO Auto-generated catch block
 																				e.printStackTrace();
@@ -898,6 +920,7 @@ public class MySqlUI {
 																				  mySqlTreeItemFunctions.getChildren().add(new TreeItem<String>(rs.getString(2)));
 																				
 																			}
+																			//stmt.close();
 																		} catch (SQLException e) {
 																			// TODO Auto-generated catch block
 																			e.printStackTrace();
@@ -943,6 +966,7 @@ public class MySqlUI {
 																					  mySqlTreeItemEvents.getChildren().add(ViewName);
 																					
 																				}
+																				//stmt.close();
 																			} catch (SQLException e) {
 																				// TODO Auto-generated catch block
 																				e.printStackTrace();
@@ -982,7 +1006,8 @@ public class MySqlUI {
 		});
 		
 		// Check if this can be mage a generic code
-		// Users 
+		// Users
+		/*
 		TreeItem<String> mySqlTreeItemUsers = new TreeItem<String>("Users");
 		TreeItem<String> loadingTreeItemUsers = new TreeItem<String>("Loading..");
 		mySqlTreeItemUsers.getChildren().add(loadingTreeItemUsers);
@@ -1021,12 +1046,7 @@ public class MySqlUI {
 									     public void run() {
 									         
 									    	try (ResultSet rs = stmt.executeQuery("select * from mysql.user")) {
-									    		/* try {
-													Thread.sleep(1000);
-												} catch (InterruptedException e) {
-													// TODO Auto-generated catch block
-													e.printStackTrace();
-												} */
+									    		
 									    		mySqlTreeItemUsers.getChildren().remove(0);  // Remove the Loading...
 												while(rs.next()) {
 													  System.out.println(rs.getString(1));
@@ -1068,6 +1088,7 @@ public class MySqlUI {
 																						  loadedUserName.getChildren().add(new TreeItem<String>(rs.getString(1)));
 																						
 																					}
+																					//stmt.close();
 																				} catch (SQLException e) {
 																					// TODO Auto-generated catch block
 																					e.printStackTrace();
@@ -1085,13 +1106,13 @@ public class MySqlUI {
 															});
 												}	  			
 									    	}catch(SQLException e) {
-									    		/*
-									    		System.out.println("Error Code is :"+ e.getErrorCode());
-									    		System.out.println("SQL State is "+ e.getSQLState());
-									    		System.out.println("Get Cause"+ e.getCause());
-									    		System.out.println("Get Localized Message" +e.getLocalizedMessage());
-									    		System.out.println("Get MEssage"+ e.getMessage());
-									    		*/
+									    		
+									    	//	System.out.println("Error Code is :"+ e.getErrorCode());
+									    	//	System.out.println("SQL State is "+ e.getSQLState());
+									    	//	System.out.println("Get Cause"+ e.getCause());
+									    	//	System.out.println("Get Localized Message" +e.getLocalizedMessage());
+									    	//	System.out.println("Get MEssage"+ e.getMessage());
+									    		
 									    		e.printStackTrace();
 									    		
 									    		String errorString = "SQL Error["+e.getErrorCode()+"]["+e.getSQLState()+"]:"+e.getLocalizedMessage()+"/n"+e.getMessage();
@@ -1107,7 +1128,7 @@ public class MySqlUI {
 							mySqlTreeItemUsers.getChildren().add(loadingTreeItemUsers);
 						}
 			}
-		});
+		}); */
 								
 		//Administrator
 		TreeItem<String> mySqlTreeItemAdminister = new TreeItem<String>("Administer");
@@ -1160,8 +1181,8 @@ public class MySqlUI {
 		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoErrors);
 		TreeItem<String> mySqlTreeItemSystemInfoEvents = new TreeItem<String>("EVENTS");
 		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoEvents);
-		TreeItem<String> mySqlTreeItemSystemInfoGrants = new TreeItem<String>("GRANTS");
-		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoGrants);
+		//TreeItem<String> mySqlTreeItemSystemInfoGrants = new TreeItem<String>("GRANTS");
+		//mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoGrants);
 		TreeItem<String> mySqlTreeItemSystemInfoOpenTables = new TreeItem<String>("OPEN TABLES");
 		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoOpenTables);
 		TreeItem<String> mySqlTreeItemSystemInfoPlugins = new TreeItem<String>("PLUGINS");
@@ -1187,7 +1208,7 @@ public class MySqlUI {
 		
 		
 		mySqlTreeItem.getChildren().add(mySqlTreeItemDatabases);
-		mySqlTreeItem.getChildren().add(mySqlTreeItemUsers);
+	//	mySqlTreeItem.getChildren().add(mySqlTreeItemUsers);
 		mySqlTreeItem.getChildren().add(mySqlTreeItemAdminister);
 		mySqlTreeItem.getChildren().add(mySqlTreeItemSystemInfo);
 				
@@ -1195,6 +1216,8 @@ public class MySqlUI {
 		
 	}
 	
+	
+		
 	// This is inner class within the main class to capture when tree elements are double clicked.
 	final class MySQLTreecellImpl extends TreeCell<String>{
 		
@@ -1220,69 +1243,154 @@ public class MySqlUI {
 			 setOnMouseClicked(event -> {
 				 TreeItem<String> ti = getTreeItem();
 				 System.out.println("Current Tree item value is -->" + getTreeItem().getValue());
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Session Manager")) {   // Session Manager is double clicked
-				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-						Platform.runLater(new Runnable() {
-							  @Override
-							  public void run() { 
-							    try  {	
-							    	ResultSet rs = stmt.executeQuery(" SHOW PROCESSLIST");
-							    	try {
-										Thread.sleep(1000);
-									} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-									}
-									Tab sessionManagerTab = new Tab("Session/Process List " + connectionPlaceHolder.getConnectionName());									
-									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
-										@Override
-										public void handle(Event event) {
-											System.out.println("On Tab close request ");
-											// sessionManagerTab = null;
-											menu_Items_FX.alltabbedEditors.getTabs().remove(sessionManagerTab);
+				 
+				 String actionTypes[] = {"BINARY LOGS","Server Logs","CHARACTER SET","COLLATION","ENGINES","ERRORS","EVENTS","OPEN TABLES","PLUGINS","PRIVILEGES","PROCESS LIST","PROFILES","REPLICAS","WARNINGS"};
+				 String actionTypeQuery[] = {"SHOW BINARY LOGS", "SHOW BINARY LOGS","SHOW CHARACTER SET","SHOW COLLATION","SHOW ENGINES","SHOW ERRORS","SHOW EVENTS IN mysql","SHOW OPEN TABLES","SHOW PLUGINS","SHOW PRIVILEGES",
+						 "SHOW PROCESSLIST","SHOW PROFILES","SHOW REPLICAS","SHOW WARNINGS"};
+				
+				 if(event.getClickCount() == 2) {
+					 for( int i=0;i<actionTypes.length;i++) {
+						 
+						 if(getTreeItem().getValue().equalsIgnoreCase(actionTypes[i])) {
+							 int index = i;
+						      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
+								Platform.runLater(new Runnable() {
+									  @Override
+									  public void run() { 
+									    try  {
+									    	ResultSet rs = stmt.executeQuery(actionTypeQuery[index]);
+									    	try {
+												Thread.sleep(1000);
+											} catch (InterruptedException e) {
+													// TODO Auto-generated catch block
+													e.printStackTrace();
+											}
+									    	
+									    	secondHalfDisplayVBox = new VBox();
+											Tab mainDisplayTab = new Tab();
+											
+											mainDisplayTab.setOnClosed(new EventHandler<Event>() {
+												@Override
+												public void handle(Event event) {
+													System.out.println("On Tab close request ");
+													// sessionManagerTab = null;
+													menu_Items_FX.alltabbedEditors.getTabs().remove(mainDisplayTab);
+												}
+											});
+											
+											Node genericNode = new SplitPane();
+									        ((SplitPane) genericNode).setOrientation(Orientation.VERTICAL);
+									    	((SplitPane) genericNode).setDividerPositions(0.35);  // split pane divider moving a bit lower
+											
+											TableView resultAsTableView = new TableView();
+											VBox topHalfResultTableView = new VBox();
+											if (getTreeItem().getValue().equalsIgnoreCase("BINARY LOGS") || getTreeItem().getValue().equalsIgnoreCase("Server Logs")) {
+												resultAsTableView = showResultSetInTheTableView(rs,getTreeItem().getValue());
+												topHalfResultTableView.getChildren().addAll(addTopHBoxForInfo(getTreeItem().getValue()),resultAsTableView);
+												((SplitPane) genericNode).getItems().addAll(topHalfResultTableView,secondHalfDisplayVBox); // Top half of query editer							      
+										    
+											}
+											else if(getTreeItem().getValue().equalsIgnoreCase("EVENTS")) {
+												System.out.println("Show events");
+												ResultSet rsDatabases = stmt.executeQuery("SHOW DATABASES");
+										    	while(rsDatabases.next()){
+										    		System.out.println("Executing query "+"SHOW EVENTS FROM "+rsDatabases.getString(1));
+										    		stmt = innercurrentConnection.createStatement();
+										    		rs = stmt.executeQuery("SHOW EVENTS FROM "+rsDatabases.getString(1));
+										    		resultAsTableView = showResultSetInTheTableView(rs,resultAsTableView);
+										    	}
+										    	topHalfResultTableView.getChildren().addAll(addTopHBoxForInfo(getTreeItem().getValue()),resultAsTableView);
+										    	((SplitPane) genericNode).getItems().addAll(topHalfResultTableView,secondHalfDisplayVBox); // Top half of query editer
+											}else {
+												resultAsTableView = showResultSetInTheTableView(rs);
+												resultAsTableView.setMinHeight(menu_Items_FX.size.getHeight() - 210);
+												topHalfResultTableView.getChildren().addAll(addTopHBoxForInfo(getTreeItem().getValue()),resultAsTableView);
+												genericNode = new VBox();
+												((VBox)genericNode).getChildren().add(topHalfResultTableView);
+											}
+											
+											mainDisplayTab.setText(getTreeItem().getValue() + connectionPlaceHolder.getConnectionName());
+											
+									        mainDisplayTab.setContent(genericNode);
+											menu_Items_FX.alltabbedEditors.getTabs().add(mainDisplayTab);
+
+									        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+									        singleSelectionModel.select(mainDisplayTab);
+									        
+										} catch (SQLException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
 										}
+									  }
 									});
-									
-									TableView resultAsTableView = showResultSetInTheTableView(rs);
-									SplitPane editerTabSplitPane = new SplitPane();
-							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.67);  // split pane divider moving a bit lower
-							    	
-							    //	 HTMLEditor htmlEditor = new HTMLEditor();
-
-							         VBox vBox = new VBox();
-							         
-							        editerTabSplitPane.getItems().add(resultAsTableView); // Top half of query editer
-							        editerTabSplitPane.getItems().add(vBox); // bottom half of query editer
-							        
-									sessionManagerTab.setContent(editerTabSplitPane);
-									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
-
-							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
-							        singleSelectionModel.select(sessionManagerTab);
-							        
-								} catch (SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-								}
-							  }
-							});		
-				 }   
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("BINARY LOGS")) {   
+						 }
+					 }
+					 
+				 }
+				 
+				 String performanceReportsTypes[] = {"Total Memory","Total Memory By Event","Total Memory By User","Total Memory By Host","Total Memory By Thread","Top File I/O Activity Report","Top I/O By File By Time","Top I/O By Event Category"
+						 ,"Top I/O In Time By Event Categories","Top I/O Time By Uer/Thread","Analysis","With Errors or Warnings","With Full Table Scans","With Runtimes in 95th Percentile","With Sorting","With Temp Tables",
+						 "Auto Increment Columns","Flattened Keys","Index Statistics","Object Overview","Redundant Indexes","Table Lock Waits","Table Statistics","Table Statics with Buffer","Tables With Full Table Scans","Unused Indexes",
+						 "Global Waits By Time","Wait By User By Time","Wait By Host By Time","Wait Classes By Time","Wait Classes By Avg Time","Buffer Stats By Schema","Buffer Stats By Table","Lock Waits",
+						 "User Summary","User File I/O Summary","User File I/O Type Summary","User Stages Summary","User Statement Time Summary","User Statement Type Summary",
+						 "Host Summary","Host File I/O Summary","Host File I/O Type Summary","Host Stages Summary","Host Statement Time Summary","Host Statement Type Summary",
+						 "Version","Session Info","Latest File I/O","System Config","Session SSL Status","Metrics","Process List","Check Lost Instrumentation"};
+				 
+				 String performanceReportQueries[] = {"x$memory_global_total","x$memory_global_by_current_bytes","x$memory_by_user_by_current_bytes","x$memory_by_host_by_current_bytes","x$memory_by_thread_by_current_bytes","x$io_global_by_file_by_bytes","x$io_global_by_file_by_latency",
+						 "x$io_global_by_wait_by_bytes","x$io_global_by_wait_by_latency","x$io_by_thread_by_latency","x$statement_analysis","statements_with_errors_or_warnings","statements_with_full_table_scans",
+						 "x$statements_with_runtimes_in_95th_percentile","statements_with_sorting","statements_with_temp_tables","schema_auto_increment_columns","x$schema_flattened_keys","x$schema_index_statistics","schema_object_overview","schema_redundant_indexes","x$schema_table_lock_waits","x$schema_table_statistics","x$schema_table_statistics_with_buffer","x$schema_tables_with_full_table_scans","schema_unused_indexes",
+						 "x$waits_global_by_latency","x$waits_by_user_by_latency"," x$waits_by_host_by_latency","x$wait_classes_global_by_latency","x$wait_classes_global_by_avg_latency","x$innodb_buffer_stats_by_schema","x$innodb_buffer_stats_by_table","x$innodb_lock_waits",
+						 "x$user_summary","x$user_summary_by_file_io","x$user_summary_by_file_io_type","x$user_summary_by_stages","x$user_summary_by_statement_latency","x$user_summary_by_statement_type",
+						 "x$host_summary","x$host_summary_by_file_io","x$host_summary_by_file_io_type","x$host_summary_by_stages","x$host_summary_by_statement_latency","x$host_summary_by_statement_type",
+						 "version","x$session","x$latest_file_io","sys_config","session_ssl_status","metrics","processlist","ps_check_lost_instrumentation"};
+				 
+				 if(event.getClickCount() == 1) {
+					 for( int i=0;i<performanceReportsTypes.length;i++) {
+						 if(getTreeItem().getValue().equalsIgnoreCase(performanceReportsTypes[i])) {
+							 int index = i;
+						      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
+								Platform.runLater(new Runnable() {
+									  @Override
+									  public void run() { 
+									    try  {
+									    	
+									    	ResultSet rs = stmt.executeQuery("Select * from sys."+performanceReportQueries[index]);
+									    	
+									    	String connectionName = connectionPlaceHolder.getConnectionName();
+									    	
+									    	System.out.println("Connection Name :"+ connectionName);
+									    	particularPerformanceReportLabel.setText(performanceReportsTypes[index]);
+									    	performanceReportTableView.getColumns().clear();
+									    	performanceReportTableView.getItems().clear();
+											showResultSetInTheTableView(rs,performanceReportTableView);
+											 
+										} catch (SQLException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+										}
+									  }
+									});
+						 }
+					 }
+					 
+				 }
+				 /*
+				 if(event.getClickCount() == 2 && (getTreeItem().getValue().equalsIgnoreCase("BINARY LOGS") || getTreeItem().getValue().equalsIgnoreCase("Server Logs"))) {   
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
 						Platform.runLater(new Runnable() {
 							  @Override
 							  public void run() { 
 							    try  {
-							    	ResultSet rs = stmt.executeQuery(" SHOW BINARY LOGS");
+							    	ResultSet rs = stmt.executeQuery("SHOW BINARY LOGS");
 							    	try {
 										Thread.sleep(1000);
 									} catch (InterruptedException e) {
 											// TODO Auto-generated catch block
 											e.printStackTrace();
 									}
-
-									Tab sessionManagerTab = new Tab("BINARY LOGS " + connectionPlaceHolder.getConnectionName());
+							    	
+							    	secondHalfDisplayVBox = new VBox();
+									Tab sessionManagerTab = new Tab();
 									
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
 										@Override
@@ -1293,13 +1401,26 @@ public class MySqlUI {
 										}
 									});
 									
-									TableView resultAsTableView = showResultSetInTheTableView(rs);
+									TableView resultAsTableView = showResultSetInTheTableView(rs,"binaryLogs");
+									VBox binaryLogsDescriptionTableView = new VBox();
+									if (getTreeItem().getValue().equalsIgnoreCase("BINARY LOGS")) {
+										sessionManagerTab.setText("BINARY LOGS " + connectionPlaceHolder.getConnectionName());
+										binaryLogsDescriptionTableView.getChildren().addAll(addTopHBoxForBinaryLogs("Binary"),resultAsTableView);
+									}
+									else if (getTreeItem().getValue().equalsIgnoreCase("Server Logs")) {
+										sessionManagerTab.setText("Server Logs " + connectionPlaceHolder.getConnectionName());
+										binaryLogsDescriptionTableView.getChildren().addAll(addTopHBoxForBinaryLogs("Server"),resultAsTableView);
+									}
+									
+									
 									SplitPane editerTabSplitPane = new SplitPane();
 							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.67);  // split pane divider moving a bit lower
-							    	
-							        editerTabSplitPane.getItems().add(resultAsTableView); // Top half of query editer
-							        editerTabSplitPane.getItems().add(new HBox()); // bottom half of query editer
+							    	editerTabSplitPane.setDividerPositions(0.37);  // split pane divider moving a bit lower
+							    
+							        editerTabSplitPane.getItems().addAll(binaryLogsDescriptionTableView); // Top half of query editer
+							      
+							        editerTabSplitPane.getItems().add(secondHalfDisplayVBox); // bottom half of query editer
+							        
 							        
 									sessionManagerTab.setContent(editerTabSplitPane);
 									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
@@ -1313,7 +1434,7 @@ public class MySqlUI {
 								}
 							  }
 							});		
-				 }  
+				 } *
 				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("CHARACTER SET")) {   
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
 						Platform.runLater(new Runnable() {
@@ -1359,7 +1480,7 @@ public class MySqlUI {
 								}
 							  }
 							});		
-				 }
+				 }/*
 				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("COLLATION")) {   
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
 						Platform.runLater(new Runnable() {
@@ -1685,7 +1806,7 @@ public class MySqlUI {
 								}
 							  }
 							});		
-				 }
+				 } 
 				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("PRIVILEGES")) {   
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
 						Platform.runLater(new Runnable() {
@@ -1817,7 +1938,7 @@ public class MySqlUI {
 								}
 							  }
 							});		
-				 }   
+				 }  
 				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("REPLICAS")) { // display individual replica
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
 						Platform.runLater(new Runnable() {
@@ -2037,21 +2158,15 @@ public class MySqlUI {
 								}
 							  }
 							});		
-				 }
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("WARNINGS")) { 
+				 }*/
+				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Dashboard")) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
 						Platform.runLater(new Runnable() {
 							  @Override
 							  public void run() { 
 							    try  {	
-							    	ResultSet rs = stmt.executeQuery(" SHOW WARNINGS");
-							    	try {
-										Thread.sleep(1000);
-									} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-									}
-									Tab sessionManagerTab = new Tab("WARNINGS " + connectionPlaceHolder.getConnectionName());									
+							    	
+									Tab sessionManagerTab = new Tab("Dashboard " + connectionPlaceHolder.getConnectionName());									
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
 										@Override
 										public void handle(Event event) {
@@ -2061,25 +2176,138 @@ public class MySqlUI {
 										}
 									});
 									
-									TableView resultAsTableView = showResultSetInTheTableView(rs);
-									SplitPane editerTabSplitPane = new SplitPane();
-							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.67);  // split pane divider moving a bit lower
-							    	
-							        editerTabSplitPane.getItems().add(resultAsTableView); // Top half of query editer
-							        editerTabSplitPane.getItems().add(new HBox()); // bottom half of query editer
+									PieChart pieChart = new PieChart();
+
+								    PieChart.Data slice1 = new PieChart.Data("Desktop", 213);
+								    PieChart.Data slice2 = new PieChart.Data("Phone"  , 67);
+								    PieChart.Data slice3 = new PieChart.Data("Tablet" , 36);
+
+								    pieChart.getData().add(slice1);
+								    pieChart.getData().add(slice2);
+								    pieChart.getData().add(slice3);
+								    
+								    
+								    
+								    NumberAxis xAxis = new NumberAxis();
+							        xAxis.setLabel("No of employees");
+
+							        NumberAxis yAxis = new NumberAxis();
+							        yAxis.setLabel("Revenue per employee");
+
+							        LineChart lineChart = new LineChart(xAxis, yAxis);
+
+							        XYChart.Series dataSeries1 = new XYChart.Series();
+							        dataSeries1.setName("2014");
+
+							        dataSeries1.getData().add(new XYChart.Data( 1, 567));
+							        dataSeries1.getData().add(new XYChart.Data( 5, 612));
+							        dataSeries1.getData().add(new XYChart.Data(10, 800));
+							        dataSeries1.getData().add(new XYChart.Data(20, 480));
+							        dataSeries1.getData().add(new XYChart.Data(40, 810));
+							        dataSeries1.getData().add(new XYChart.Data(60, 110));
+							        dataSeries1.getData().add(new XYChart.Data(80, 850));
+
+							        lineChart.getData().add(dataSeries1);
 							        
-									sessionManagerTab.setContent(editerTabSplitPane);
+							        CategoryAxis xAxis1    = new CategoryAxis();
+							        xAxis.setLabel("Devices");
+
+							        NumberAxis yAxis1 = new NumberAxis();
+							        yAxis.setLabel("Visits");
+
+							        BarChart     barChart = new BarChart(xAxis1, yAxis1);
+
+							        XYChart.Series dataSeries2 = new XYChart.Series();
+							        dataSeries1.setName("2014");
+
+							        dataSeries2.getData().add(new XYChart.Data("Desktop", 567));
+							        dataSeries2.getData().add(new XYChart.Data("Phone"  , 65));
+							        dataSeries2.getData().add(new XYChart.Data("Tablet"  , 23));
+
+							        barChart.getData().add(dataSeries2);
+							        
+								    VBox piechartvbox = new VBox();
+								    piechartvbox.setSpacing(10);
+								    piechartvbox.getChildren().addAll(pieChart,lineChart);
+								    
+								    sessionManagerTab.setContent(piechartvbox);
 									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
 
 							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
 							        singleSelectionModel.select(sessionManagerTab);
 							        
-								} catch (SQLException e) {
+								} catch (Exception e) {
 										// TODO Auto-generated catch block
 										e.printStackTrace();
 								}
 							  }
+							});		
+				 } 				 
+				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Performance Reports")) { 
+				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
+						Platform.runLater(new Runnable() {
+							  @Override
+							  public void run() { 
+							    try  {	
+							    	
+							    	String connectionName = connectionPlaceHolder.getConnectionName();
+							    	
+							    	System.out.println("Connection Name :"+ connectionName);
+							    	
+									Tab sessionManagerTab = new Tab("Users and Privileges " + connectionPlaceHolder.getConnectionName());									
+									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
+										@Override
+										public void handle(Event event) {
+											System.out.println("On Tab close request ");
+											// sessionManagerTab = null;
+											menu_Items_FX.alltabbedEditors.getTabs().remove(sessionManagerTab);
+										}
+									});
+									
+									TreeView<String> performanceView = generatePerformnaceReports();
+									
+									// TableView resultAsTableView =  showResultSetInTheTableView(rsUsers);
+									// resultAsTableView.setMinHeight(menu_Items_FX.size.getHeight() - 50);
+									
+									BorderPane performanceReportsBorderPane = new BorderPane();
+									VBox vboxLeft = new VBox();
+									vboxLeft.setPadding(new Insets(5,5,5,5));
+									vboxLeft.setSpacing(5);
+									Label performanceReportsLabel = new Label("Reports");
+									//userAccountsLabel.setTextFill(Color.BLUEVIOLET);
+									vboxLeft.getChildren().add(performanceReportsLabel);
+									vboxLeft.getChildren().add(performanceView);
+									
+									VBox vBoxCenterTop = new VBox();
+									vBoxCenterTop.setPadding(new Insets(5,5,5,5));
+									vBoxCenterTop.setSpacing(5);
+									particularPerformanceReportLabel =  new Label("Nothing Selected");
+									//Label particularPerformanceReportDescription =  new Label("Shows total memory allowed");
+									//detailForAccountLabel.setTextFill(Color.BLUEVIOLET);
+									
+									
+								    performanceReportTableView = new TableView();
+									performanceReportTableView.setMinHeight(menu_Items_FX.size.getHeight() - 250);
+									
+									
+									vBoxCenterTop.getChildren().addAll(particularPerformanceReportLabel,performanceReportTableView);
+									
+									performanceReportsBorderPane.setTop(addTopHBoxForInfo("Performance Reports"));
+									performanceReportsBorderPane.setLeft(vboxLeft);
+									performanceReportsBorderPane.setCenter(vBoxCenterTop);
+									
+									sessionManagerTab.setContent(performanceReportsBorderPane);
+									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
+
+							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+							        singleSelectionModel.select(sessionManagerTab);
+							        
+								} catch (Exception e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+								}
+							  }
+
 							});		
 				 }
 				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Server Status")) { 
@@ -2092,6 +2320,7 @@ public class MySqlUI {
 							    	HashMap<String,String> allVariables = new HashMap<String,String>(); 
 							    	ResultSet rsVariables = stmt.executeQuery(" SHOW VARIABLES");
 							    	while(rsVariables.next()) {
+							    		System.out.println(rsVariables.getString(1)+ " " +rsVariables.getString(2));
 							    		allVariables.put(rsVariables.getString(1), rsVariables.getString(2));
 							    	}
 							    	
@@ -2099,6 +2328,7 @@ public class MySqlUI {
 							    	stmt = innercurrentConnection.createStatement();
 							    	ResultSet rsStatus = stmt.executeQuery(" SHOW STATUS");
 							    	while(rsStatus.next()) {
+							    		System.out.println(rsStatus.getString(1)+ " " +rsStatus.getString(2));
 							    		allStatus.put(rsStatus.getString(1), rsStatus.getString(2));
 							    	}
 							    	
@@ -2106,104 +2336,12 @@ public class MySqlUI {
 							    	stmt = innercurrentConnection.createStatement();
 							    	ResultSet rsPlugins = stmt.executeQuery(" SHOW PLUGINS");
 							    	while(rsPlugins.next()) {
+							    		System.out.println(rsPlugins.getString(1)+ " " +rsPlugins.getString(2));
 							    		allPlugins.put(rsPlugins.getString(1), rsPlugins.getString(2));
 							    	}
 							    	
 							    	String connectionName = connectionPlaceHolder.getConnectionName();
-							    	String hostName = "";
-							    	String socket = "comes from ini";
-							    	String port = "";
-							    	String version = "";
-							    	String compliledFor = "";
-							    	String configurationFile = "Use Files Path to find this in the System installation";
-							    	String runningSince = "";
-							    	System.out.println("Connection Name :"+ connectionName);
-							    	System.out.println("Host Name :"+ allVariables.get("hostname"));
-							    	System.out.println("Socket :"+ allVariables.get("socket"));
-							    	System.out.println("Port :"+ allVariables.get("port"));
-							    	System.out.println("Version :"+ allVariables.get("version") + "("+ allVariables.get("version_comment") + ")");
-							    	System.out.println("Compiled For :"+ allVariables.get("version_compile_os") +"("+ allVariables.get("version_compile_machine") + ")");
-							    	System.out.println("Confuguration File :"+ configurationFile);
-							    	System.out.println("Running Since :"+ allStatus.get("Uptime"));
 							    	
-							    	
-							    	System.out.println("--------Avaialable Server Features-----START--------");
-							    	Boolean performanceSchema = false;   // check under plugins PERFORMANCE_SCHEMA ACTIVE
-							    	Boolean windowsAuthentication = false;  // check under plugins  authentication_windows  ACTIVE
-							    	Boolean threadPool = false;   // is for enterprice version can confirm using "thread_pool_size" in variables
-							    	Boolean passwordValidation = false;  // check in variables 'validate_password.policy';
-							    	Boolean memcachedPlugin = false;  //daemon_memcached variable/PLUGINS ,  plugin is only supported on Linux, Solaris, and macOS platforms. Other operating systems are not supported.
-							    	Boolean auditLog = false;  // If the audit log plugin is enabled, it exposes several system variables that permit control over logging audit_log_file
-							    	Boolean semisyncReplicationPulgin = false;  // rpl_semi_sync_source plugin or rpl_semi_sync_source_enabled/rpl_semi_sync_replica_enabled variables
-							    	Boolean firewall = false;  // mysql_firewall_mode entry in global variables;
-							    	Boolean sslAvaialblity = false;  // ssl_ca variable existance
-							    	Boolean firewallTrace = false; // mysql_firewall_mode entry in global variables;
-							    	Boolean csv = false; //  check under plugins  CSV  ACTIVE  https://dev.mysql.com/doc/refman/8.4/en/csv-storage-engine.html
-							      	Boolean federated = false; //  check under plugins  FEDERATED  ACTIVE  
-							    	
-							    	System.out.println("Performance Schema : "+ allPlugins.containsKey("PERFORMANCE_SCHEMA"));
-							    	System.out.println("Window Authentication : "+ allPlugins.containsKey("authentication_windows"));
-							    	System.out.println("Thread Pool : "+ allVariables.containsKey("thread_pool_size"));
-							    	System.out.println("Password Validation : "+ allVariables.containsKey("validate_password.policy"));
-							    	System.out.println("Thread Pool : "+ allVariables.containsKey("thread_pool_size"));
-							    	System.out.println("Memcached Plugin : "+ allPlugins.containsKey("daemon_memcached"));
-							    	System.out.println("Audit Log : "+ allVariables.containsKey("audit_log_file"));
-							    	System.out.println("Semisync Replication Plugin : "+ allPlugins.containsKey("rpl_semi_sync_source") +" : "+ allPlugins.containsKey("rpl_semi_sync_replica_enabled"));
-							    	System.out.println("Firewall  : "+ allVariables.containsKey("mysql_firewall_mode"));
-							    	System.out.println("SSL Availability  : "+ allVariables.containsKey("ssl_ca"));
-							    	System.out.println("Firewall  Trace: "+ allVariables.containsKey("mysql_firewall_mode"));
-							    	System.out.println("CSV : "+ allPlugins.containsKey("CSV"));
-							    	System.out.println("FEDERATED : "+ allPlugins.containsKey("FEDERATED"));
-							    	System.out.println("--------Avaialable Server Features-----END--------");
-							    	
-							    	File file = new File(allVariables.get("basedir"));
-								 	System.out.println("Total Space : "+file.getTotalSpace()/(1024*1024*1024)+" GB");
-							        System.out.println("Free Space : "+file.getFreeSpace()/(1024*1024*1024)+" GB");							         
-							        System.out.println("Usable Space : "+file.getUsableSpace()/(1024*1024*1024)+" GB");
-							        String diskSpaceInDataDirectory = file.getUsableSpace()/(1024*1024*1024)+" GB" + " of " + file.getTotalSpace()/(1024*1024*1024)+" GB "+ "available";
-							        
-							    	System.out.println("------Server Directories------START----");
-							    	System.out.println("Base Directory :"+allVariables.get("basedir"));
-							    	System.out.println("Data Directory :"+allVariables.get("datadir"));
-							    	System.out.println("Disk Space In Data Directory :"+diskSpaceInDataDirectory);
-							    	System.out.println("Pluins Directory :"+allVariables.get("plugin_dir"));
-							    	System.out.println("Temp Directory :"+allVariables.get("tmpdir"));
-							    	System.out.println("Error Log :"+allVariables.get("log_error"));
-							    	System.out.println("General Log :"+allVariables.get("general_log"));
-							    	System.out.println("General Log File:"+allVariables.get("general_log_file"));
-							    	System.out.println("Slow Query Log :"+allVariables.get("slow_query_log_file"));
-							    	System.out.println("------Server Directories------END----");
-							    	
-							    	System.out.println("------Replica------START----");
-							    	if(Integer.parseInt(allVariables.get("server_id")) > 1)
-							    		System.out.println("Replica : "+allVariables.get("server_id"));
-							    	else
-							    		System.out.println("This is not a Replica : ");
-							    	System.out.println("------Replica------END----");
-							    	
-							    	System.out.println("------Authentication------START----");
-							    	String sha256PasswordPrivateKey = "";
-							    	String sha256PasswordPublicKey = "";
-							    	System.out.println("SHA 256 Password Private Key : "+allVariables.get("sha256_password_private_key_path"));
-							    	System.out.println("SHA 256 Password Public Key : "+allVariables.get("sha256_password_public_key_path"));
-							    	System.out.println("------Authentication------END----");
-							    	
-							    	System.out.println("------Security SSL------START----");
-							    	String sslCA = "";
-							    	String sslCAPath = "";
-							    	String sslCACert = "";
-							    	String sslCipher = "";
-							    	String sslCRL = "";
-							    	String sslCRLPath = "";
-							    	String sslKey = "";
-							    	System.out.println("SSL CA : "+allVariables.get("ssl_ca"));
-							    	System.out.println("SSL CA Path : "+allVariables.get("ssl_capath"));
-							    	System.out.println("SSL CA Cert : "+allVariables.get("ssl_cert"));
-							    	System.out.println("SSL Cipher : "+allVariables.get("ssl_cipher"));
-							    	System.out.println("SSL CRL : "+allVariables.get("ssl_crl"));
-							    	System.out.println("SSL CRL Path : "+allVariables.get("ssl_crlpath"));
-							    	System.out.println("SSL Key : "+allVariables.get("ssl_key"));
-							    	System.out.println("------Security SSL------END----");
 							    	
 									Tab sessionManagerTab = new Tab("SERVER STATUS " + connectionPlaceHolder.getConnectionName());									
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
@@ -2215,15 +2353,10 @@ public class MySqlUI {
 										}
 									});
 									
-									TableView<String> resultAsTableView =   new TableView<String>();   //showResultSetInTheTableView(rs);
-									SplitPane editerTabSplitPane = new SplitPane();
-							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.67);  // split pane divider moving a bit lower
-							    	
-							        editerTabSplitPane.getItems().add(resultAsTableView); // Top half of query editer
-							        editerTabSplitPane.getItems().add(new HBox()); // bottom half of query editer
-							        
-									sessionManagerTab.setContent(editerTabSplitPane);
+									
+									VBox serverStatusVBox = addServerStatus(allVariables,allStatus,allPlugins);
+									
+									sessionManagerTab.setContent(serverStatusVBox);
 									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
 
 							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
@@ -2244,39 +2377,21 @@ public class MySqlUI {
 							    try  {	
 							    	
 							    	HashMap<String,String> allVariables = new HashMap<String,String>(); 
-							    	ResultSet rsVariables = stmt.executeQuery(" SHOW VARIABLES");
-							    	while(rsVariables.next()) {
-							    		allVariables.put(rsVariables.getString(1), rsVariables.getString(2));
+							    	ResultSet rsStatusVariables = stmt.executeQuery(" SHOW GLOBAL STATUS");
+							    	while(rsStatusVariables.next()) {
+							    		allVariables.put(rsStatusVariables.getString(1), rsStatusVariables.getString(2));
+							    	}
+							    	ResultSet rsGlobalVariables = innercurrentConnection.createStatement().executeQuery(" SHOW GLOBAL VARIABLES");
+							    	while(rsGlobalVariables.next()) {
+							    		allVariables.put(rsGlobalVariables.getString(1), rsGlobalVariables.getString(2));
 							    	}
 							    
 							    	String connectionName = connectionPlaceHolder.getConnectionName();
 							    	
-							    	System.out.println("Connection Name :"+ connectionName);
-							    	System.out.println("Threads Connected :"+ allVariables.get("Threads_connected"));
-							    	System.out.println("Threads Running :"+ allVariables.get("Threads_running"));
-							    	System.out.println("Threads Created :"+ allVariables.get("Threads_created"));
-							    	System.out.println("Threads Cached :"+ allVariables.get("Threads_cached"));
-							    	System.out.println("Rejected :"+ allVariables.get("Mysqlx_connections_rejected"));
-							    	System.out.println("Total Connections :"+ allVariables.get("connections"));
-							    	System.out.println("Connections Limit :"+ allVariables.get("max_connections"));
-							    	System.out.println("Aborted Clients :"+ allVariables.get("Aborted_clients"));
-							    	System.out.println("Aborted Connections :"+ allVariables.get("Aborted_connects"));
-							    	System.out.println("Errors :"+ "Need to add below and hihgligt in pop-up");
-							    	System.out.println("Connection_errors_accept :"+ allVariables.get("Connection_errors_accept"));
-							    	System.out.println("Connection_errors_internal :"+ allVariables.get("Connection_errors_internal"));
-							    	System.out.println("Connection_errors_max_connections :"+ allVariables.get("Connection_errors_max_connections"));
-							    	System.out.println("Connection_errors_select :"+ allVariables.get("Connection_errors_select"));
-							    	System.out.println("Connection_errors_tcpwrap :"+ allVariables.get("Connection_errors_tcpwrap"));
-							    	
-							    	System.out.println("Hide Sleeping threads...");
-							    	System.out.println("Hide BackGround threads...");
-							    	System.out.println("Hide ForeGround threads...");
-							    	
 							    	HashMap<String,String> allStatus = new HashMap<String,String>();
 							    	stmt = innercurrentConnection.createStatement();
-							    	ResultSet rsThreads = stmt.executeQuery("SELECT th.PROCESSLIST_ID,th.PROCESSLIST_USER,th.PROCESSLIST_HOST,th.PROCESSLIST_DB,th.PROCESSLIST_COMMAND,th.PROCESSLIST_TIME,th.PROCESSLIST_STATE,th.THREAD_ID,th.TYPE,th.NAME,th.PARENT_THREAD_ID,th.INSTRUMENTED,th.PROCESSLIST_INFO,\r\n"
-							    			+ "attr.ATTR_NAME,attr.ATTR_VALUE FROM performance_schema.threads th  LEFT OUTER JOIN performance_schema.session_connect_attrs attr ON th.processlist_id = attr.processlist_id AND (attr.attr_name IS NULL OR attr.attr_name = 'program_name') WHERE th.TYPE <> 'BACKGROUND'");
-							    	
+							    	ResultSet rsThreads = stmt.executeQuery("SELECT COALESCE(th.PROCESSLIST_ID,0) as Id,COALESCE(th.PROCESSLIST_USER,'None') as User,COALESCE(th.PROCESSLIST_HOST,'None') as Host,COALESCE(th.PROCESSLIST_DB,'None') as DB,COALESCE(th.PROCESSLIST_COMMAND,'None') as Command,COALESCE(th.PROCESSLIST_TIME,0) as Time,COALESCE(th.PROCESSLIST_STATE,'None') as State,th.THREAD_ID as Thread,th.TYPE as Type,th.NAME as Name,COALESCE(th.PARENT_THREAD_ID,0) as ParentThread,th.INSTRUMENTED as Instrumented,COALESCE(th.PROCESSLIST_INFO,'None') as Info,"
+							    			+ "COALESCE(attr.ATTR_VALUE,'None') as Program FROM performance_schema.threads th  LEFT OUTER JOIN performance_schema.session_connect_attrs attr ON th.processlist_id = attr.processlist_id AND (attr.attr_name IS NULL OR attr.attr_name = 'program_name') WHERE th.TYPE <> 'BACKGROUND' ");  // 
 							    	
 									Tab sessionManagerTab = new Tab("Client Connections " + connectionPlaceHolder.getConnectionName());									
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
@@ -2289,14 +2404,11 @@ public class MySqlUI {
 									});
 									
 									TableView resultAsTableView =  showResultSetInTheTableView(rsThreads);
-									SplitPane editerTabSplitPane = new SplitPane();
-							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.67);  // split pane divider moving a bit lower
-							    	
-							        editerTabSplitPane.getItems().add(resultAsTableView); // Top half of query editer
-							        editerTabSplitPane.getItems().add(new HBox()); // bottom half of query editer
-							        
-									sessionManagerTab.setContent(editerTabSplitPane);
+									
+									VBox clientConnectionsVBox = addclientConnectionThreadDetails(allVariables,resultAsTableView);
+									
+									
+									sessionManagerTab.setContent(clientConnectionsVBox);
 									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
 
 							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
@@ -2307,6 +2419,8 @@ public class MySqlUI {
 										e.printStackTrace();
 								}
 							  }
+
+						
 							});		
 				 }
 				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Users and Privileges")) { 
@@ -2333,24 +2447,58 @@ public class MySqlUI {
 									});
 									
 									TableView resultAsTableView =  showResultSetInTheTableView(rsUsers);
-									resultAsTableView.setMaxWidth(250);
-									
 									BorderPane userAccountsBorderPane = new BorderPane();
 									VBox vboxLeft = new VBox();
+									vboxLeft.setPadding(new Insets(5,5,5,5));
+									vboxLeft.setSpacing(5);
+									Label userAccountsLabel = new Label("User Accounts");
+									//userAccountsLabel.setTextFill(Color.BLUEVIOLET);
+									vboxLeft.getChildren().add(userAccountsLabel);
 									vboxLeft.getChildren().add(resultAsTableView);
-									vboxLeft.getChildren().add(new Button("Add Account"));
 									
-									userAccountsBorderPane.setTop(addTopHBoxForUserAndPrevileges());
+									HBox hBox = new HBox();
+									hBox.setPadding(new Insets(5,5,5,5));
+									Button addAccountButton = new Button("Add Account");
+									addAccountButton.setMinWidth(80);
+									Button deletetButton = new Button("Delete");
+									deletetButton.setMinWidth(80);
+									Button refreshButton = new Button("Refresh");
+									refreshButton.setMinWidth(80);
+									hBox.getChildren().add(addAccountButton);
+									hBox.getChildren().add(deletetButton);
+									hBox.getChildren().add(refreshButton);
+									hBox.setSpacing(20);
+									vboxLeft.getChildren().add(hBox);
+								
+									VBox vBoxCenterTop = new VBox();
+									vBoxCenterTop.setPadding(new Insets(5,5,5,5));
+									vBoxCenterTop.setSpacing(5);
+									Label detailForAccountLabel =  new Label("Details for Account - xxxx");
+									//detailForAccountLabel.setTextFill(Color.BLUEVIOLET);
+									vBoxCenterTop.getChildren().add(detailForAccountLabel);
+									
+									TabPane accountDetailsTabs = new TabPane();
+									accountDetailsTabs.getStyleClass().addAll("databasesflowPane");  // box for the connection tabbed pane
+									Tab loginTab = new Tab("Login");
+									loginTab.setClosable(false);  
+									loginTab.setContent(addAccountLoginCredentials()); // will set fields to connectionDetailsTab
+									Tab accountLimitsTab = new Tab("Account Limits");
+									accountLimitsTab.setClosable(false);	
+									accountLimitsTab.setContent(addAccountLimits());
+									Tab accountPrivilegesTab = new Tab("Account Privileges");
+									accountPrivilegesTab.setClosable(false);
+									accountPrivilegesTab.setContent(addAccountPrivileges());
+									Tab schemaPrivilegesTab = new Tab("Schema Privileges");
+									schemaPrivilegesTab.setClosable(false);
+									schemaPrivilegesTab.setContent(addSchemaPrivileges());
+									
+									accountDetailsTabs.getTabs().addAll(loginTab,accountLimitsTab,accountPrivilegesTab,schemaPrivilegesTab);
+									vBoxCenterTop.getChildren().add(accountDetailsTabs);
+									
+									userAccountsBorderPane.setTop(addTopHBoxForInfo("Users and Privileges"));
 									userAccountsBorderPane.setLeft(vboxLeft);
+									userAccountsBorderPane.setCenter(vBoxCenterTop);
 									
-									/*
-									SplitPane editerTabSplitPane = new SplitPane();
-							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.67);  // split pane divider moving a bit lower
-							    	
-							        editerTabSplitPane.getItems().add(resultAsTableView); // Top half of query editer
-							        editerTabSplitPane.getItems().add(new HBox()); // bottom half of query editer
-							        */
 									sessionManagerTab.setContent(userAccountsBorderPane);
 									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
 
@@ -2364,7 +2512,8 @@ public class MySqlUI {
 							  }
 							});		
 				 }
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Status and System Variables")) { 
+				 if(event.getClickCount() == 2 && (getTreeItem().getValue().equalsIgnoreCase("Status and System Variables") || getTreeItem().getValue().equalsIgnoreCase("SESSION STATUS")
+						 || getTreeItem().getValue().equalsIgnoreCase("GLOBAL STATUS") || getTreeItem().getValue().equalsIgnoreCase("SESSION VARIABLES") || getTreeItem().getValue().equalsIgnoreCase("GLOBAL VARIABLES"))) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
 						Platform.runLater(new Runnable() {
 							  @Override
@@ -2375,7 +2524,7 @@ public class MySqlUI {
 							    	System.out.println("Connection Name :"+ connectionName);
 							    	
 							    	BorderPane mainPopUpborderPane = new BorderPane();
-									HBox topHbox = addTopHBoxForVariables();
+									HBox topHbox = addTopHBoxForInfo("Server Variables");
 									TabPane centerTabPane = addCenterTabbedPaneForVariables();
 									HBox bottomHbox = addBottomHBoxForVariables();
 									mainPopUpborderPane.setTop(topHbox);
@@ -2398,8 +2547,8 @@ public class MySqlUI {
 							    	editerTabSplitPane.setDividerPositions(0.70);  // split pane divider moving a bit lower
 							    	
 							        editerTabSplitPane.getItems().add(mainPopUpborderPane); // Top half of query editer
-							        secondHalfDisplayVBox = new VBox();
-							        editerTabSplitPane.getItems().add(secondHalfDisplayVBox); // bottom half of query editer
+							        variablesSecondHalfDisplayVBox = new VBox();
+							        editerTabSplitPane.getItems().add(variablesSecondHalfDisplayVBox); // bottom half of query editer
 							        
 									sessionManagerTab.setContent(editerTabSplitPane);
 									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
@@ -2408,87 +2557,6 @@ public class MySqlUI {
 							        singleSelectionModel.select(sessionManagerTab);
 							        
 								} catch (Exception e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-								}
-							  }
-							});		
-				 }
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Server Logs")) { 
-				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-						Platform.runLater(new Runnable() {
-							  @Override
-							  public void run() { 
-							    try  {	
-	
-							    	
-							    	ResultSet rsbinarLogs = stmt.executeQuery("show binary logs");
-							    	
-							    	HashMap<String,String> sessionVariables = new HashMap<String,String>(); 
-							    	ResultSet rsVariables = stmt.executeQuery(" SHOW SESSION VARIABLES");
-							    	while(rsVariables.next()) {
-							    		sessionVariables.put(rsVariables.getString(1), rsVariables.getString(2));
-							    	}
-							    	
-							    	/*
-							    	general_log - OFF
-							    	general_log_file - hostname.log
-
-							    	log_error - /var/log/mysql/error.log
-							    	slow_query_log - ON def 
-							    	slow_query_log_file - /var/lib/mysql/husnain-slow.log
-									
-									log_bin - ON def
-							    	log_bin_basename - 
-							    	log_bin_index - 
-							    	relay_log - hostname-relay-bin
-							    	relay_log_basename  - /var/lib/mysql/husnain-relay-bin 
-							    	relay_log_index -
-							    	relay_log_info_file - 
-									*/
-							    	
-							    	System.out.println("general_log :"+ sessionVariables.get("general_log"));
-							    	System.out.println("general_log_file :"+ sessionVariables.get("general_log_file"));
-							    	System.out.println("log_error :"+ sessionVariables.get("log_error"));
-							    	System.out.println("slow_query_log :"+ sessionVariables.get("slow_query_log"));
-							    	System.out.println("slow_query_log_file :"+ sessionVariables.get("slow_query_log_file"));
-							    	System.out.println("log_bin :"+ sessionVariables.get("log_bin"));
-							    	System.out.println("log_bin_basename :"+ sessionVariables.get("log_bin_basename"));
-							    	System.out.println("log_bin_index :"+ sessionVariables.get("log_bin_index"));
-							    	System.out.println("relay_log :"+ sessionVariables.get("relay_log"));
-							    	System.out.println("relay_log_basename :"+ sessionVariables.get("relay_log_basename"));
-							    	System.out.println("relay_log_index :"+ sessionVariables.get("relay_log_index"));
-							    	System.out.println("relay_log_info_file :"+ sessionVariables.get("relay_log_info_file"));
-							    	
-							    								    	
-							    	String connectionName = connectionPlaceHolder.getConnectionName();
-							    	System.out.println("Connection Name :"+ connectionName);
-							    	
-									Tab sessionManagerTab = new Tab("Server Logs " + connectionPlaceHolder.getConnectionName());									
-									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
-										@Override
-										public void handle(Event event) {
-											System.out.println("On Tab close request ");
-											// sessionManagerTab = null;
-											menu_Items_FX.alltabbedEditors.getTabs().remove(sessionManagerTab);
-										}
-									});
-									
-									TableView resultAsTableView = showResultSetInTheTableView(rsbinarLogs);
-									SplitPane editerTabSplitPane = new SplitPane();
-							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.67);  // split pane divider moving a bit lower
-							    	
-							        editerTabSplitPane.getItems().add(resultAsTableView); // Top half of query editer
-							        editerTabSplitPane.getItems().add(new HBox()); // bottom half of query editer
-							        
-									sessionManagerTab.setContent(editerTabSplitPane);
-									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
-
-							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
-							        singleSelectionModel.select(sessionManagerTab);
-							        
-								} catch (SQLException e) {
 										// TODO Auto-generated catch block
 										e.printStackTrace();
 								}
@@ -2545,7 +2613,7 @@ public class MySqlUI {
 
 		if(rs.next()) {
 	
-	    	
+	    	System.out.println("First calumne "+rs.getString(1));
 	    	TableColumn<Map, String> tableColumnName;
 	    	Map<String, Object> tableRowValue;
 	    	ObservableList<Map<String, Object>> items = FXCollections.<Map<String, Object>>observableArrayList();
@@ -2554,8 +2622,10 @@ public class MySqlUI {
 	        String[] columnNames = new String[md.getColumnCount()];
 	        Integer[] columnTypes = new Integer[md.getColumnCount()];
 	       
+	        
 	        for (int i = 0; i < columnNames.length; i++) {
-	        	columnNames[i] = md.getColumnName(i+1);
+	        	columnNames[i] = md.getColumnLabel(i+1);
+	        	System.out.println("Column Name : "+columnNames[i]);
 	        	columnTypes[i] =  md.getColumnType(i+1);	   
 	        	
 	        	tableColumnName = new TableColumn<>(columnNames[i]);
@@ -2643,7 +2713,7 @@ public class MySqlUI {
 	        Integer[] columnTypes = new Integer[md.getColumnCount()];
 	       
 	        for (int i = 0; i < columnNames.length; i++) {
-	        	columnNames[i] = md.getColumnName(i+1);
+	        	columnNames[i] = md.getColumnLabel(i+1);
 	        	columnTypes[i] =  md.getColumnType(i+1);	   
 	        	
 	        	tableColumnName = new TableColumn<>(columnNames[i]);
@@ -2686,12 +2756,13 @@ public class MySqlUI {
 
 	        
 	        tableView.getItems().addAll(items);
+	        
 		}
 		
 		return tableView;
 	}
 	
-	private TableView showResultSetInTheTableView(ResultSet rs,String variables)  throws SQLException{
+	private TableView showResultSetInTheTableView(ResultSet rs,String inputParam)  throws SQLException{
 		
 		TableView tableView = new TableView();
 		tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);  // to remove the last empty column otherwise added
@@ -2704,31 +2775,46 @@ public class MySqlUI {
 			public void changed(ObservableValue<? extends HashMap<String, String>> observable,
 					HashMap<String, String> oldValue, HashMap<String, String> newValue) {
 
-				secondHalfDisplayVBox.getChildren().clear();
+			
 				System.out.println("oldValue --->"+oldValue);
 				System.out.println("newValue --->"+newValue.keySet().toString());
 				
 				// Do the alignment here , along with is Editable entry by doing look up to MySQLConstants enum
-				
-				for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
-					System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
+				if(inputParam.equalsIgnoreCase("Status") || inputParam.equalsIgnoreCase("Variables")) {
+					variablesSecondHalfDisplayVBox.getChildren().clear();
+					for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
+						System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
 					
-					
-					secondHalfDisplayVBox.getChildren().add(new Label(tableValues.getKey()+ " "+ tableValues.getValue()));
+						variablesSecondHalfDisplayVBox.getChildren().add(new Label(tableValues.getKey()+ " "+ tableValues.getValue()));
+					}
 				}
-				
+				if(inputParam.equalsIgnoreCase("BINARY LOGS") || inputParam.equalsIgnoreCase("Server Logs")) {
+					secondHalfDisplayVBox.getChildren().clear();
+					for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
+						System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
+					
+						if("Log_name".equalsIgnoreCase(tableValues.getKey()))
+							try {
+								ResultSet resultSetbinlogEvents =   stmt.executeQuery("SHOW BINLOG EVENTS IN '"+tableValues.getValue()+"'");
+								TableView tableView =  showResultSetInTheTableView(resultSetbinlogEvents);
+								secondHalfDisplayVBox.getChildren().add(tableView);
+							} catch (SQLException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+					}
+				}
 				
 				TableViewSelectionModel  selectionModel = tableView.getSelectionModel();
 		        ObservableList selectedCells = selectionModel.getSelectedCells();
 		        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
 		        Object val = tablePosition.getTableColumn().getCellData(newValue);
 		        System.out.println("Selected Value" + val);
-				
 			}	
 		});
 		if(rs.next()) {
 	
-	    	TableColumn<Map, String> tableColumnName;
+	    	TableColumn<Map, String> tableColumnName = null;
 	    	Map<String, Object> tableRowValue;
 	    	ObservableList<Map<String, Object>> items = FXCollections.<Map<String, Object>>observableArrayList();
 	    	
@@ -2737,7 +2823,7 @@ public class MySqlUI {
 	        Integer[] columnTypes = new Integer[md.getColumnCount()];
 	       
 	        for (int i = 0; i < columnNames.length; i++) {
-	        	columnNames[i] = md.getColumnName(i+1);
+	        	columnNames[i] = md.getColumnLabel(i+1);
 	        	columnTypes[i] =  md.getColumnType(i+1);	   
 	        	
 	        	tableColumnName = new TableColumn<>(columnNames[i]);
@@ -2750,8 +2836,7 @@ public class MySqlUI {
 						 return new EditingCell();
 					}
 				});
-	        	
-	        
+	        		        
 	        	tableColumnName.setOnEditCommit( new EventHandler<TableColumn.CellEditEvent<Map,String>>() {		
 					@Override
 					public void handle(CellEditEvent<Map, String> t) {
@@ -2763,9 +2848,12 @@ public class MySqlUI {
 					}
 				});
 	 	        tableView.getColumns().add(tableColumnName);
-	        }		
-	    	tableColumnName = new TableColumn<>("Description");
-        	tableColumnName.setCellValueFactory(new MapValueFactory<>("Description"));
+	        }	
+	        if(inputParam.equalsIgnoreCase("Status") || inputParam.equalsIgnoreCase("Variables")) {
+	        	tableColumnName = new TableColumn<>("Description");
+	        	tableColumnName.setCellValueFactory(new MapValueFactory<>("Description"));
+	        	tableView.getColumns().add(tableColumnName);
+	        }
         	// Below code will do cell editing
         	tableColumnName.setCellFactory( new Callback<TableColumn<Map,String>, TableCell<Map,String>>() {
 				@Override
@@ -2783,7 +2871,7 @@ public class MySqlUI {
                 	System.out.println("Table Column"+t.getTableColumn());
 				}
 			});
-	        tableView.getColumns().add(tableColumnName);
+	       
 		
 	       do {
 				  
@@ -2795,11 +2883,13 @@ public class MySqlUI {
 	            	tableRowValue.put(columnNames[i], columnValues[i]);
 	    	        
 	        	}	
+	        	if(inputParam.equalsIgnoreCase("Status") || inputParam.equalsIgnoreCase("Variables")) {
 	        	// look-up value . We are using try catch because if enum doesn't have a value it will throw exception 
-	        	try {
-	        		tableRowValue.put("Description",MySQLConstants.valueOf(rs.getString(1)).getDescription());
-	        	}catch(Exception e) {
-	        		System.out.print("Enum Not found for-->"+rs.getString(1));
+	        		try {
+	        			tableRowValue.put("Description",MySQLConstants.valueOf(rs.getString(1)).getDescription());
+	        		}catch(Exception e) {
+	        			System.out.print("Enum Not found for-->"+rs.getString(1));
+	        		}
 	        	}
 	        	items.add(tableRowValue);
 	         }	 while (rs.next());
@@ -2875,7 +2965,7 @@ public class MySqlUI {
 	        hbox.setPadding(new Insets(10, 12, 10, 12));
 	        hbox.setSpacing(10);   // Gap between nodes
 	        hbox.setStyle("-fx-background-color: #2f4f4f;");        
-	        Text connectToDatabseText = new Text("Users and Previleges");
+	        Text connectToDatabseText = new Text("Users and Privileges");
 	        connectToDatabseText.setFont(Font.font("Verdana",20));
 	        connectToDatabseText.setFill(Color.WHITE);
 	        hbox.getChildren().addAll(connectToDatabseText);
@@ -2897,7 +2987,50 @@ public class MySqlUI {
 	        
 	        return hbox;
 	  }
+	  
+	  private HBox addTopHBoxForInfo(String infoType) {
+	     
+		  HBox hbox = new HBox();
+	        hbox.setPadding(new Insets(10, 12, 10, 12));
+	        hbox.setSpacing(10);   // Gap between nodes
+	        hbox.setStyle("-fx-background-color: #2f4f4f;");        
+	        Text connectToDatabseText = new Text(infoType);
+	        connectToDatabseText.setFont(Font.font("Verdana",20));
+	        connectToDatabseText.setFill(Color.WHITE);
+	        hbox.getChildren().addAll(connectToDatabseText);
+	        
+	        return hbox;
+	  }
+	  /*
+	  private HBox addTopHBoxForBinaryLogs(String logType) {
 
+			 
+	        HBox hbox = new HBox();
+	        hbox.setPadding(new Insets(10, 12, 10, 12));
+	        hbox.setSpacing(10);   // Gap between nodes
+	        hbox.setStyle("-fx-background-color: #2f4f4f;");        
+	        Text connectToDatabseText = new Text(logType+" Logs");
+	        connectToDatabseText.setFont(Font.font("Verdana",20));
+	        connectToDatabseText.setFill(Color.WHITE);
+	        hbox.getChildren().addAll(connectToDatabseText);
+	        
+	        return hbox;
+	  }*/
+	  /*
+	  private HBox addTopHBoxForClientConnections() {
+
+			 
+	        HBox hbox = new HBox();
+	        hbox.setPadding(new Insets(10, 12, 10, 12));
+	        hbox.setSpacing(10);   // Gap between nodes
+	        hbox.setStyle("-fx-background-color: #2f4f4f;");        
+	        Text connectToDatabseText = new Text("Client Connections");
+	        connectToDatabseText.setFont(Font.font("Verdana",20));
+	        connectToDatabseText.setFill(Color.WHITE);
+	        hbox.getChildren().addAll(connectToDatabseText);
+	        
+	        return hbox;
+	  }*/
 	  
 	  private VBox getStatusVariables() {
 		  
@@ -3012,7 +3145,7 @@ public class MySqlUI {
 				System.out.println("Refresing the variables ...");
 				 statusVariablesTab.setContent(getStatusVariables());
 				 systemVariablesTab.setContent(getSystemVariables()); 
-				 secondHalfDisplayVBox.getChildren().clear();
+				 variablesSecondHalfDisplayVBox.getChildren().clear();
 			}
 		});
 
@@ -3077,6 +3210,959 @@ public class MySqlUI {
 		//*******************//
 		return vBoxMain;
 	}		
+	
+	public Label accountLockedStatus;
+	public Button accountlockUnLock;
+	public TextField loginNameTextFeild;
+	public TextField authenticationTypeTextField;
+	public TextField authenticationStringTextField;
+	public TextField hostsMatchingTextField;
+	public Label passwordExpiredStatusLabel;
+	public Label passwordLastchangedDate;
+	public TextField passwordTextField;
+	public TextField confirmPasswordTextField;
+	
+	
+	public VBox addAccountLoginCredentials() {
+		
+		  VBox accountDetailsVbox = new VBox();
+		  HBox accountLockedHBox = new HBox();
+		  accountLockedHBox.setPadding(new Insets(15,0,0,100));
+		  accountLockedHBox.setSpacing(20);
+		  
+		  Label accountLockedLabel = new Label("Account Locked :");
+		  accountLockedStatus = new Label("Y/N"); // Look up the status	
+		  accountlockUnLock = new Button("Lock/Unlock");
+		  accountLockedHBox.getChildren().addAll(accountLockedLabel,accountLockedStatus,accountlockUnLock);
+		  accountDetailsVbox.getChildren().add(accountLockedHBox);
+		  
+		  GridPane accountDetailsGridPane = new GridPane();
+		  accountDetailsGridPane.setPadding(new Insets(0,10,20,10));
+		  accountDetailsGridPane.setVgap(10);
+		  accountDetailsGridPane.setHgap(10);
+		  Label loginNameLabel = new Label("Login Name :"); 
+		  GridPane.setConstraints(loginNameLabel, 0, 1);   // column 0 row 0
+		  loginNameTextFeild = new TextField();
+		  loginNameTextFeild.setPrefHeight(15);
+		  loginNameTextFeild.setPrefWidth(200);
+		 // jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
+		  GridPane.setConstraints(loginNameTextFeild, 1, 1);
+		  Label loginNameDescriptionLable = new Label("You may create multiple accounts with the same name to connect from different hosts. place holer place holder");
+		  loginNameDescriptionLable.setPrefWidth(300);
+		  loginNameDescriptionLable.setWrapText(true);
+		  GridPane.setConstraints(loginNameDescriptionLable, 2, 1);
+		  accountDetailsGridPane.getChildren().addAll(loginNameLabel,loginNameTextFeild,loginNameDescriptionLable);
+		  
+		  Label authenticationTypeLabel = new Label("Authentication Type :");
+		  GridPane.setConstraints(authenticationTypeLabel, 0, 2);
+		  authenticationTypeTextField= new TextField();
+		  authenticationTypeTextField.setPrefHeight(15);
+		  authenticationTypeTextField.setPrefWidth(200);
+		  GridPane.setConstraints(authenticationTypeTextField, 1, 2);
+		  Label authenticationTypeLabelDescription = new Label("For the standard password and/or host based authication,select 'standard'  place holer place holder  place holer place holder");
+		  authenticationTypeLabelDescription.setPrefWidth(300);
+		  authenticationTypeLabelDescription.setWrapText(true);
+		  GridPane.setConstraints(authenticationTypeLabelDescription, 2, 2);
+		  accountDetailsGridPane.getChildren().addAll(authenticationTypeLabel,authenticationTypeTextField,authenticationTypeLabelDescription);
+		  
+		  Label authenticationStringLabel = new Label("Authentication String :");
+		  GridPane.setConstraints(authenticationStringLabel, 0, 3);
+		  authenticationStringTextField= new TextField();
+		  authenticationStringTextField.setPrefHeight(15);
+		  authenticationStringTextField.setPrefWidth(200);
+		  GridPane.setConstraints(authenticationStringTextField, 1, 3);
+		  Label authenticationStringLabelDescription = new Label("Authentication plugin specific parameters");
+		  authenticationStringLabelDescription.setPrefWidth(300);
+		  authenticationStringLabelDescription.setWrapText(true);
+		  GridPane.setConstraints(authenticationStringLabelDescription, 2, 3);
+		  accountDetailsGridPane.getChildren().addAll(authenticationStringLabel,authenticationStringTextField,authenticationStringLabelDescription);
+		  
+		  
+		  Label hostmatchingLabel = new Label("Hosts Matching :");
+		  GridPane.setConstraints(hostmatchingLabel, 0, 4);
+		  hostsMatchingTextField = new TextField();
+		  hostsMatchingTextField.setPrefHeight(15);
+		  hostsMatchingTextField.setPrefWidth(100);  
+		  GridPane.setConstraints(hostsMatchingTextField, 1, 4);
+		  Label hostmatchingDescriptionLable = new Label("% and _ wildcards may be used , % accesses from anywhere");
+		  hostmatchingDescriptionLable.setPrefWidth(300);
+		  hostmatchingDescriptionLable.setWrapText(true);
+		  GridPane.setConstraints(hostmatchingDescriptionLable, 2, 4);
+		  accountDetailsGridPane.getChildren().addAll(hostmatchingLabel,hostsMatchingTextField,hostmatchingDescriptionLable);
+
+		  Label passwordexpiredLabel = new Label("Password Expired:");
+		  GridPane.setConstraints(passwordexpiredLabel, 0, 5);
+		  passwordExpiredStatusLabel = new Label("Y/N");
+		  GridPane.setConstraints(passwordExpiredStatusLabel, 1, 5);
+		  
+		  Label passwordLastchangedLabel = new Label("Password Last Changed:");
+		  GridPane.setConstraints(passwordLastchangedLabel, 2, 5);
+		  passwordLastchangedDate = new Label("10/12/2024");
+		  GridPane.setConstraints(passwordLastchangedDate, 3, 5);
+		  accountDetailsGridPane.getChildren().addAll(passwordexpiredLabel,passwordExpiredStatusLabel,passwordLastchangedLabel,passwordLastchangedDate);
+		  
+		  Label passwordLabel = new Label("Password :");
+		  GridPane.setConstraints(passwordLabel, 0, 6);
+		  passwordTextField = new TextField();
+		  passwordTextField.setDisable(true);
+		  passwordTextField.setPrefHeight(15);
+		  passwordTextField.setPrefWidth(100);  
+		  GridPane.setConstraints(passwordTextField, 1, 6);
+		  Label passwordDescriptionLabel = new Label("Enter the password to reset it. Follow the passord requiements");
+		  passwordDescriptionLabel.setPrefWidth(300);
+		  passwordDescriptionLabel.setWrapText(true);
+		  GridPane.setConstraints(passwordDescriptionLabel, 2, 6);
+		  accountDetailsGridPane.getChildren().addAll(passwordLabel,passwordTextField,passwordDescriptionLabel);
+		  
+		  Label confirmPasswordLabel = new Label("Confirm Password :");
+		  GridPane.setConstraints(confirmPasswordLabel, 0, 7);
+		  confirmPasswordTextField = new TextField();
+		  confirmPasswordTextField.setDisable(true);
+		  confirmPasswordTextField.setPrefHeight(15);
+		  confirmPasswordTextField.setPrefWidth(100);  
+		  GridPane.setConstraints(confirmPasswordTextField, 1, 7);
+		  Label confirmPasswordDescriptionLabel = new Label("Enter the password again to confirm");
+		  confirmPasswordDescriptionLabel.setPrefWidth(300);
+		  confirmPasswordDescriptionLabel.setWrapText(true);
+		  GridPane.setConstraints(confirmPasswordDescriptionLabel, 2, 7);
+		  accountDetailsGridPane.getChildren().addAll(confirmPasswordLabel,confirmPasswordTextField,confirmPasswordDescriptionLabel);
+		  
+		  accountDetailsVbox.getChildren().add(accountDetailsGridPane);
+		  
+		  HBox accountButtonsHBox = new HBox();
+		  accountButtonsHBox.setPadding(new Insets(15,15,15,100));
+		  accountButtonsHBox.setSpacing(30);
+		  Button updatePasswordButton = new Button("Update Password");
+		  Button expirePasswordButton = new Button("Expire Password");
+		  Button revertAccountChangesButton = new Button("Revert");
+		  Button saveAccountChangesButton = new Button("Save");
+
+		  accountButtonsHBox.getChildren().addAll(updatePasswordButton,expirePasswordButton,revertAccountChangesButton,saveAccountChangesButton);
+		  
+		  accountDetailsVbox.getChildren().add(accountButtonsHBox);
+		  
+		return accountDetailsVbox;
+		
+		
+	}
+	
+	public VBox addAccountLimits(){
+		
+		VBox accountLimitsVBox = new VBox();
+		
+		GridPane accountDetailsGridPane = new GridPane();
+		accountDetailsGridPane.setPadding(new Insets(0,10,20,10));
+		accountDetailsGridPane.setVgap(10);
+		accountDetailsGridPane.setHgap(10);
+		
+		Label maxQueriesLabel = new Label("Max Queries"); 
+		GridPane.setConstraints(maxQueriesLabel, 0, 1);   // column 0 row 0
+		TextField maxQueriesTextFeild = new TextField();
+		maxQueriesTextFeild.setPrefHeight(15);
+		maxQueriesTextFeild.setPrefWidth(200);
+		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
+		GridPane.setConstraints(maxQueriesTextFeild, 1, 1);
+		Label maxQueriesDescription = new Label("The number of queries the account can execute within one hour");
+		maxQueriesDescription.setPrefWidth(300);
+		maxQueriesDescription.setWrapText(true);
+		GridPane.setConstraints(maxQueriesDescription, 2, 1);
+		accountDetailsGridPane.getChildren().addAll(maxQueriesLabel,maxQueriesTextFeild,maxQueriesDescription);
+		
+		Label maxUpdatesLabel = new Label("Max Updates"); 
+		GridPane.setConstraints(maxUpdatesLabel, 0, 2);   // column 0 row 0
+		TextField maxUpdatesTextFeild = new TextField();
+		maxUpdatesTextFeild.setPrefHeight(15);
+		maxUpdatesTextFeild.setPrefWidth(200);
+		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
+		GridPane.setConstraints(maxUpdatesTextFeild, 1, 2);
+		Label maxUpdatesDescription = new Label("The number of updates the account can execute within one hour");
+		maxUpdatesDescription.setPrefWidth(300);
+		maxUpdatesDescription.setWrapText(true);
+		GridPane.setConstraints(maxUpdatesDescription, 2, 2);
+		accountDetailsGridPane.getChildren().addAll(maxUpdatesLabel,maxUpdatesTextFeild,maxUpdatesDescription);
+		
+		
+		Label maxConnectionsLabel = new Label("Max Connections"); 
+		GridPane.setConstraints(maxConnectionsLabel, 0, 3);   // column 0 row 0
+		TextField maxConnectionsTextFeild = new TextField();
+		maxConnectionsTextFeild.setPrefHeight(15);
+		maxConnectionsTextFeild.setPrefWidth(200);
+		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
+		GridPane.setConstraints(maxConnectionsTextFeild, 1, 3);
+		Label maxConnectionsDescription = new Label("The number of updates the account can execute within one hour");
+		maxConnectionsDescription.setPrefWidth(300);
+		maxConnectionsDescription.setWrapText(true);
+		GridPane.setConstraints(maxConnectionsDescription, 2, 3);
+		accountDetailsGridPane.getChildren().addAll(maxConnectionsLabel,maxConnectionsTextFeild,maxConnectionsDescription);
+		
+		Label concurrentConnectionsLabel = new Label("Concurrent Connections"); 
+		GridPane.setConstraints(concurrentConnectionsLabel, 0, 4);   // column 0 row 0
+		TextField concurrentConnectionsTextFeild = new TextField();
+		concurrentConnectionsTextFeild.setPrefHeight(15);
+		concurrentConnectionsTextFeild.setPrefWidth(200);
+		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
+		GridPane.setConstraints(concurrentConnectionsTextFeild, 1, 4);
+		Label concurrentConnectionsDescription = new Label("The number of updates the account can execute within one hour");
+		concurrentConnectionsDescription.setPrefWidth(300);
+		concurrentConnectionsDescription.setWrapText(true);
+		GridPane.setConstraints(maxConnectionsDescription, 2, 4);
+		accountDetailsGridPane.getChildren().addAll(concurrentConnectionsLabel,concurrentConnectionsTextFeild,concurrentConnectionsDescription);
+		
+		accountLimitsVBox.getChildren().add(accountDetailsGridPane);
+		
+		HBox accountLimitsButtonshbox = new HBox();
+		accountLimitsButtonshbox.setSpacing(30);
+		accountLimitsButtonshbox.setPadding(new Insets(20,10,10,500));
+		Button revertAccountLimitsButton = new Button("Revert");
+		Button saveAccountLimitsButton = new Button("Save");
+		accountLimitsButtonshbox.getChildren().addAll(revertAccountLimitsButton,saveAccountLimitsButton);
+		  
+		accountLimitsVBox.getChildren().add(accountLimitsButtonshbox);
+		
+		
+		return accountLimitsVBox;
+	}
+	
+	public CheckBox alterPrivilegeCheckBox;
+	public CheckBox alterRoutinePrivilegeCheckBox;
+	public CheckBox createPrivilegeCheckBox;
+	public CheckBox createRolePrivilegeCheckBox;
+	public CheckBox createRoutinePrivilegeCheckBox;
+	public CheckBox createTableSpacePrivilegeCheckBox;
+	public CheckBox createTemporaryTablesPrivilegeCheckBox;
+	public CheckBox createUserPrivilegeCheckBox;
+	public CheckBox createViewPrivilegeCheckBox;
+	
+	public CheckBox deletePrivilegeCheckBox;  
+	public CheckBox dropPrivilegeCheckBox;
+	public CheckBox dropRolePrivilegeCheckBox;
+	public CheckBox eventPrivilegeCheckBox;
+	public CheckBox executePrivilegeCheckBox; 
+	public CheckBox filePrivilegeCheckBox;
+	public CheckBox grantOptionPrivilegeCheckBox;
+	public CheckBox indexPrivilegeCheckBox;
+	public CheckBox insertPrivilegeCheckBox;
+	public CheckBox lockTablesPrivilegeCheckBox; 
+	public CheckBox processPrivilegeCheckBox;
+	
+	public CheckBox referencesPrivilegeCheckBox; 
+	public CheckBox reloadPrivilegeCheckBox; 
+	public CheckBox replicationSlavePrivilegeCheckBox; 
+	public CheckBox replicationClientPrivilegeCheckBox; 
+	public CheckBox selectPrivilegeCheckBox;
+	public CheckBox showDatabasesPrivilegeCheckBox; 
+	public CheckBox showViewPrivilegeCheckBox; 
+	public CheckBox shutdowmPrivilegeCheckBox; 
+	public CheckBox superPrivilegeCheckBox; 
+	public CheckBox triggerPrivilegeCheckBox; 
+	public CheckBox updatePrivilegeCheckBox; 
+
+	public VBox addAccountPrivileges() {
+		
+		VBox accountPrivilegesVBox = new VBox();
+		accountPrivilegesVBox.setSpacing(10);
+		accountPrivilegesVBox.setPadding(new Insets(10,10,10,10));
+		
+		Label globalPrivilegesLable = new Label("Global Privileges");
+		CheckBox selectAllCheckBox = new CheckBox("Select All");
+		accountPrivilegesVBox.getChildren().addAll(globalPrivilegesLable,selectAllCheckBox);
+		
+
+		
+		HBox globalPreviligeshbox = new HBox();
+		globalPreviligeshbox.setSpacing(50);
+		
+		VBox firstSetofPrivileges = new VBox();
+		firstSetofPrivileges.setSpacing(10);
+		firstSetofPrivileges.setPadding(new Insets(10,10,10,10));
+		alterPrivilegeCheckBox = new CheckBox("ALTER");
+		alterRoutinePrivilegeCheckBox = new CheckBox("ALTER ROUTINE");
+		createPrivilegeCheckBox = new CheckBox("CREATE");
+		createRolePrivilegeCheckBox = new CheckBox("CREATE ROLE");
+		createRoutinePrivilegeCheckBox = new CheckBox("CREATE ROUTINE");
+		createTableSpacePrivilegeCheckBox = new CheckBox("CREATE TABLESPACE");
+		createTemporaryTablesPrivilegeCheckBox = new CheckBox("CREATE TEMPORARY TABLES");
+		createUserPrivilegeCheckBox = new CheckBox("CREATE USER");
+		createViewPrivilegeCheckBox = new CheckBox("CREATE VIEW");
+		deletePrivilegeCheckBox =  new CheckBox("DELETE");  
+		firstSetofPrivileges.getChildren().addAll(alterPrivilegeCheckBox,alterRoutinePrivilegeCheckBox,createPrivilegeCheckBox,createRolePrivilegeCheckBox,createRoutinePrivilegeCheckBox
+				,createTableSpacePrivilegeCheckBox,createTemporaryTablesPrivilegeCheckBox,createUserPrivilegeCheckBox,createViewPrivilegeCheckBox,deletePrivilegeCheckBox);
+		
+		VBox secondSetofPrivileges = new VBox();
+		secondSetofPrivileges.setSpacing(10);
+		secondSetofPrivileges.setPadding(new Insets(10,10,10,10));
+	
+		dropPrivilegeCheckBox =  new CheckBox("DROP");
+		dropRolePrivilegeCheckBox =  new CheckBox("DROP ROLE");
+		eventPrivilegeCheckBox =  new CheckBox("EVENT");
+		executePrivilegeCheckBox =  new CheckBox("EXECUTE"); 
+		filePrivilegeCheckBox =  new CheckBox("FILE");
+		grantOptionPrivilegeCheckBox =  new CheckBox("GRANT OPTION");
+		indexPrivilegeCheckBox =  new CheckBox("INDEX");
+		insertPrivilegeCheckBox =  new CheckBox("INSERT");
+		lockTablesPrivilegeCheckBox =  new CheckBox("LOCK TABLES"); 
+		processPrivilegeCheckBox =  new CheckBox("PROCESS");
+		secondSetofPrivileges.getChildren().addAll(dropPrivilegeCheckBox,dropRolePrivilegeCheckBox,eventPrivilegeCheckBox,executePrivilegeCheckBox,filePrivilegeCheckBox
+				,grantOptionPrivilegeCheckBox,indexPrivilegeCheckBox,insertPrivilegeCheckBox,lockTablesPrivilegeCheckBox,processPrivilegeCheckBox);
+		
+		VBox thirdSetofPrivileges = new VBox();
+		thirdSetofPrivileges.setSpacing(10);
+		thirdSetofPrivileges.setPadding(new Insets(10,10,10,10));
+
+		referencesPrivilegeCheckBox  =  new CheckBox("REFERENCES");
+		reloadPrivilegeCheckBox  =  new CheckBox("RELOAD");
+		replicationSlavePrivilegeCheckBox  =  new CheckBox("REPLICATION SLAVE");
+		replicationClientPrivilegeCheckBox  =  new CheckBox("REPLICATION CLIENT"); 
+		selectPrivilegeCheckBox  =  new CheckBox("SELECT");
+		showDatabasesPrivilegeCheckBox  =  new CheckBox("SHOW DATABASES");
+		showViewPrivilegeCheckBox  =  new CheckBox("SHOW VIEW");
+		shutdowmPrivilegeCheckBox  =  new CheckBox("SHUT DOWN");
+		superPrivilegeCheckBox  =  new CheckBox("SUPER"); 
+		triggerPrivilegeCheckBox  =  new CheckBox("TRIGGER");
+		updatePrivilegeCheckBox  =  new CheckBox("UPDATe");
+		
+		thirdSetofPrivileges.getChildren().addAll(referencesPrivilegeCheckBox,reloadPrivilegeCheckBox,replicationSlavePrivilegeCheckBox,replicationClientPrivilegeCheckBox,selectPrivilegeCheckBox,showDatabasesPrivilegeCheckBox,
+				showViewPrivilegeCheckBox,shutdowmPrivilegeCheckBox,superPrivilegeCheckBox,triggerPrivilegeCheckBox,updatePrivilegeCheckBox);
+		
+		globalPreviligeshbox.getChildren().addAll(firstSetofPrivileges,secondSetofPrivileges,thirdSetofPrivileges);
+		accountPrivilegesVBox.getChildren().add(globalPreviligeshbox);
+		
+		return accountPrivilegesVBox;
+	}
+	
+	public VBox addSchemaPrivileges() {
+		
+		VBox schemaPrivilegesVbox = new VBox();
+		schemaPrivilegesVbox.setSpacing(5);
+		schemaPrivilegesVbox.setPadding(new Insets(5,10,00,20));
+		
+		Label selectSchemaDescription = new Label("Select the Schema/s for which the user 'khan' will have the previleges you want to define");
+		//selectSchemaDescription.setFont(new Font(12));
+		selectSchemaDescription.setTextFill(Color.BLUEVIOLET);
+		schemaPrivilegesVbox.getChildren().add(selectSchemaDescription);	
+		final ToggleGroup group = new ToggleGroup();
+		
+		GridPane schemaPrivilegesGridPane = new GridPane();
+		schemaPrivilegesGridPane.setPadding(new Insets(5,10,5,10));
+		schemaPrivilegesGridPane.setVgap(10);
+		schemaPrivilegesGridPane.setHgap(10);
+		
+		RadioButton allSchemaRadioButton = new RadioButton("All Schema(%)");
+		allSchemaRadioButton.setToggleGroup(group);
+		allSchemaRadioButton.setSelected(true); 
+		GridPane.setConstraints(allSchemaRadioButton, 0, 0);   // column 0 row 0
+		Label allSchemasSelectedLabel = new Label();
+		allSchemasSelectedLabel.setPrefHeight(15);
+		allSchemasSelectedLabel.setPrefWidth(200);
+		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
+		GridPane.setConstraints(allSchemasSelectedLabel, 1, 0);
+		Label allsSchemaSelectedDescriptionLabel = new Label("This rule will apply to any schema name");
+		allsSchemaSelectedDescriptionLabel.setPrefWidth(300);
+		allsSchemaSelectedDescriptionLabel.setWrapText(true);
+		GridPane.setConstraints(allsSchemaSelectedDescriptionLabel, 2, 0);
+		schemaPrivilegesGridPane.getChildren().addAll(allSchemaRadioButton,allSchemasSelectedLabel,allsSchemaSelectedDescriptionLabel);
+		
+		RadioButton schemaMatchingPatternRadioButton = new RadioButton("Schemas matching pattern:");
+		schemaMatchingPatternRadioButton.setToggleGroup(group);
+		GridPane.setConstraints(schemaMatchingPatternRadioButton, 0, 1);   // column 0 row 0
+		TextField schemaMatchingPatternTextField = new TextField();
+		schemaMatchingPatternTextField.setPrefHeight(15);
+		schemaMatchingPatternTextField.setPrefWidth(150);
+		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
+		GridPane.setConstraints(schemaMatchingPatternTextField, 1, 1);
+		Label schemaMatchingPatternDescriptionLabel = new Label("You may use % and _ as wildcards in a pattern.");
+		schemaMatchingPatternDescriptionLabel.setPrefWidth(300);
+		schemaMatchingPatternDescriptionLabel.setWrapText(true);
+		GridPane.setConstraints(schemaMatchingPatternDescriptionLabel, 2, 1);
+		schemaPrivilegesGridPane.getChildren().addAll(schemaMatchingPatternRadioButton,schemaMatchingPatternTextField,schemaMatchingPatternDescriptionLabel);
+		
+		
+		RadioButton selectedSchemasRadioButton = new RadioButton("Selected Schemas");
+		selectedSchemasRadioButton.setToggleGroup(group); 
+		GridPane.setConstraints(selectedSchemasRadioButton, 0, 2);   // column 0 row 0
+		ComboBox<String> selectedSchemascomboBox = new ComboBox();
+		selectedSchemascomboBox.getItems().addAll("mysql","sys","sakila","information_schema","world","others");
+		selectedSchemascomboBox.setPrefHeight(15);
+		selectedSchemascomboBox.setPrefWidth(200);
+		//selectedSchemascomboBox.setValue("mysql");
+		selectedSchemascomboBox.setVisibleRowCount(5); // after this their will be scroll bar
+		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
+		GridPane.setConstraints(selectedSchemascomboBox, 1, 2);
+		Label selectedSchemaDescription = new Label("Select a specific schema for the rule to apply to:");
+		selectedSchemaDescription.setPrefWidth(300);
+		selectedSchemaDescription.setWrapText(true);
+		GridPane.setConstraints(selectedSchemaDescription, 2, 2);
+		schemaPrivilegesGridPane.getChildren().addAll(selectedSchemasRadioButton,selectedSchemascomboBox,selectedSchemaDescription);
+		schemaPrivilegesVbox.getChildren().add(schemaPrivilegesGridPane);
+		
+		HBox addSchemaEntryHbox = new HBox();
+		addSchemaEntryHbox.setPadding(new Insets(0,0,0,500));	
+		Button addSchemaPrivilegesEntryButton = new Button("Add Schema Entry");
+		addSchemaEntryHbox.getChildren().add(addSchemaPrivilegesEntryButton);
+		schemaPrivilegesVbox.getChildren().add(addSchemaEntryHbox);
+
+		VBox existingSchemaPriviligesVBox = new VBox();
+		existingSchemaPriviligesVBox.setMaxHeight(150);
+		existingSchemaPriviligesVBox.setPadding(new Insets(0,10,0,10));
+		
+		TableView tableView = new TableView();
+		tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);  // to remove the last empty column otherwise added
+		tableView.setEditable(true);
+        
+		tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
+
+			@Override
+			public void changed(ObservableValue<? extends HashMap<String, String>> observable,
+					HashMap<String, String> oldValue, HashMap<String, String> newValue) {
+
+				System.out.println("oldValue --->"+oldValue);
+				System.out.println("newValue --->"+newValue.keySet().toString());
+				for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
+					
+					System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
+				}
+				
+				TableViewSelectionModel  selectionModel = tableView.getSelectionModel();
+		        ObservableList selectedCells = selectionModel.getSelectedCells();
+		        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+		        Object val = tablePosition.getTableColumn().getCellData(newValue);
+		        System.out.println("Selected Value" + val);
+				
+			}	
+		});
+		TableColumn tableColumnName;
+		String[] columnNames = {"Schema","Privileges"};
+		   
+	    tableColumnName = new TableColumn<>(columnNames[0]);
+	    tableColumnName.setMinWidth(50);
+	    tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[0]));
+	    tableView.getColumns().add(tableColumnName);
+
+	    tableColumnName = new TableColumn<>(columnNames[1]);
+	    tableColumnName.setMinWidth(250);
+	    tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[1]));
+	    tableView.getColumns().add(tableColumnName);
+	    
+		ObservableList<HashMap<String,String>> mapdata =
+		            FXCollections.observableArrayList();
+        HashMap<String,String> schemaMap = new HashMap<String,String>();
+        
+        schemaMap.put(columnNames[0], "mysql");
+        schemaMap.put(columnNames[1], "none");
+        mapdata.add(schemaMap);
+        
+        schemaMap = new HashMap<String,String>();
+        schemaMap.put(columnNames[0], "world");
+        schemaMap.put(columnNames[1], "tocome");
+        mapdata.add(schemaMap);
+      
+        tableView.setItems(mapdata);
+        
+        existingSchemaPriviligesVBox.getChildren().add(tableView);
+        
+        HBox userAccessSchemaDescriptionHbox= new HBox();
+        userAccessSchemaDescriptionHbox.setPadding(new Insets(5,5,5,5));
+        userAccessSchemaDescriptionHbox.setSpacing(50);
+        Label userAccessSchemaDescriptionLabel = new Label("The use 'khan'@'localhost' will have the following access rights to the schema 'mysql'");
+        selectSchemaDescription.setTextFill(Color.BLUEVIOLET);
+     	Button deleteSchemaPrivilegesEntryButton = new Button("Delete Schema Entry");
+     	deleteSchemaPrivilegesEntryButton.setDisable(true);  // enable it when one of the schema entry is selected
+        userAccessSchemaDescriptionHbox.getChildren().addAll(userAccessSchemaDescriptionLabel,deleteSchemaPrivilegesEntryButton);
+        
+        
+        HBox userAccessSchemaPriviligeshBox = new HBox();
+        userAccessSchemaPriviligeshBox.setSpacing(10);		
+        
+        VBox firstSetofSchemaPriviliges = new VBox();
+        firstSetofSchemaPriviliges.setSpacing(5);
+    	selectPrivilegeCheckBox  =  new CheckBox("SELECT");
+		updatePrivilegeCheckBox  =  new CheckBox("UPDATE");
+		insertPrivilegeCheckBox =  new CheckBox("INSERT");
+		executePrivilegeCheckBox =  new CheckBox("EXECUTE"); 
+		showViewPrivilegeCheckBox  =  new CheckBox("SHOW VIEW");
+		deletePrivilegeCheckBox =  new CheckBox("DELETE");  
+		firstSetofSchemaPriviliges.getChildren().addAll(selectPrivilegeCheckBox,updatePrivilegeCheckBox,insertPrivilegeCheckBox,executePrivilegeCheckBox,showViewPrivilegeCheckBox,deletePrivilegeCheckBox);
+        
+		VBox secondSetofSchemaPriviliges = new VBox();
+		secondSetofSchemaPriviliges.setSpacing(5);
+		createPrivilegeCheckBox = new CheckBox("CREATE");
+		alterPrivilegeCheckBox = new CheckBox("ALTER");
+		referencesPrivilegeCheckBox  =  new CheckBox("REFERENCES");
+		indexPrivilegeCheckBox =  new CheckBox("INDEX");
+		createViewPrivilegeCheckBox = new CheckBox("CREATE VIEW");
+		createRoutinePrivilegeCheckBox = new CheckBox("CREATE ROUTINE");
+		secondSetofSchemaPriviliges.getChildren().addAll(createPrivilegeCheckBox,alterPrivilegeCheckBox,referencesPrivilegeCheckBox,indexPrivilegeCheckBox,createViewPrivilegeCheckBox,createRoutinePrivilegeCheckBox);
+		
+		VBox thirdSetofSchemaPriviliges = new VBox();
+		thirdSetofSchemaPriviliges.setSpacing(5);
+		alterRoutinePrivilegeCheckBox = new CheckBox("ALTER ROUTINE");
+		eventPrivilegeCheckBox =  new CheckBox("EVENT");
+		dropPrivilegeCheckBox =  new CheckBox("DROP");
+		triggerPrivilegeCheckBox  =  new CheckBox("TRIGGER");
+		grantOptionPrivilegeCheckBox =  new CheckBox("GRANT OPTION");
+		createTemporaryTablesPrivilegeCheckBox = new CheckBox("CREATE TEMPORARY TABLES");
+		lockTablesPrivilegeCheckBox =  new CheckBox("LOCK TABLES"); 
+		thirdSetofSchemaPriviliges.getChildren().addAll(alterRoutinePrivilegeCheckBox,eventPrivilegeCheckBox,dropPrivilegeCheckBox,triggerPrivilegeCheckBox,grantOptionPrivilegeCheckBox,
+				createTemporaryTablesPrivilegeCheckBox,lockTablesPrivilegeCheckBox);
+		
+		VBox fourthSegmentWithButtonsVbox = new VBox();
+		fourthSegmentWithButtonsVbox.setPadding(new Insets(130,10,10,20));
+		Button reverPriviligestButton = new Button("Revert Privileges");
+		reverPriviligestButton.setDisable(true); // enable them when one of the schema entry is selected
+		fourthSegmentWithButtonsVbox.getChildren().add(reverPriviligestButton);
+		
+		VBox fifthSegmentWithButtonsVbox = new VBox();
+		fifthSegmentWithButtonsVbox.setPadding(new Insets(130,10,10,20));
+		Button savePrivilegesButton = new Button("Save Privileges");
+		savePrivilegesButton.setDisable(true); // enable them when one of the schema entry is selected
+		fifthSegmentWithButtonsVbox.getChildren().add(savePrivilegesButton);
+		
+		 userAccessSchemaPriviligeshBox.getChildren().addAll(firstSetofSchemaPriviliges,secondSetofSchemaPriviliges,thirdSetofSchemaPriviliges,fourthSegmentWithButtonsVbox,fifthSegmentWithButtonsVbox);
+		schemaPrivilegesVbox.getChildren().addAll(existingSchemaPriviligesVBox,userAccessSchemaDescriptionHbox,userAccessSchemaPriviligeshBox);  // main vbox
+		
+		return schemaPrivilegesVbox;
+		
+	}
+	
+	private VBox addclientConnectionThreadDetails(HashMap<String,String> allVariables,TableView tableView) {
+			
+		VBox clientConnectionsVBox = new VBox();
+		clientConnectionsVBox.setSpacing(10);
+		//clientConnectionsVBox.setPadding(new Insets(0,0,0,0));
+		clientConnectionsVBox.getChildren().add(addTopHBoxForInfo("Client Connections"));
+		
+		HBox clientConnectionsThreadsDescriptionFirstHBox = new HBox();
+		clientConnectionsThreadsDescriptionFirstHBox.setSpacing(30);
+		clientConnectionsThreadsDescriptionFirstHBox.setPadding(new Insets(0,10,0,10));
+		
+		Label threadsConnectedLabel = new Label("Threads Connected : "+allVariables.get("Threads_connected"));
+		threadsConnectedLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		Label threadsRunningLabel = new Label("Threads Running : "+allVariables.get("Threads_running"));
+		threadsRunningLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		Label threadsCreatedLabel = new Label("Threads Created : "+allVariables.get("Threads_created"));
+		threadsCreatedLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		Label threadsCachedLabel = new Label("Threads Cached : "+allVariables.get("Threads_cached"));
+		threadsCachedLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		Label threadsrejectedLabel = new Label("Rejected : "+allVariables.get("Mysqlx_connections_rejected"));
+		threadsrejectedLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+
+		clientConnectionsThreadsDescriptionFirstHBox.getChildren().addAll(threadsConnectedLabel,threadsRunningLabel,
+				threadsCreatedLabel,threadsrejectedLabel);
+
+		HBox clientConnectionsThreadsDescriptionSecondHBox = new HBox();
+		clientConnectionsThreadsDescriptionSecondHBox.setSpacing(30);
+		clientConnectionsThreadsDescriptionSecondHBox.setPadding(new Insets(0,10,0,10));
+		
+		Integer connection_errors_accept = Integer.parseInt(allVariables.get("Connection_errors_accept"));
+		Integer connection_errors_internal = Integer.parseInt(allVariables.get("Connection_errors_internal"));
+		Integer connection_errors_max_connections = Integer.parseInt(allVariables.get("Connection_errors_max_connections"));
+		Integer connection_errors_select = Integer.parseInt(allVariables.get("Connection_errors_select"));
+		Integer connection_errors_tcpwrap = Integer.parseInt(allVariables.get("Connection_errors_tcpwrap"));
+		Integer totalErrors = connection_errors_accept+connection_errors_internal+connection_errors_max_connections+connection_errors_select+connection_errors_tcpwrap;
+
+		Label totalConnectionsLabel = new Label("Total Connections : "+allVariables.get("connections"));
+		totalConnectionsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		Label connectionsLimitLabel = new Label("Connections Limit : "+allVariables.get("max_connections"));
+		connectionsLimitLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		Label abortedClientsLabel = new Label("Aborted Clients : "+allVariables.get("Aborted_clients"));
+		abortedClientsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		Label abortedConnectionsLabel = new Label("Aborted Connections  : "+allVariables.get("Aborted_connects"));
+		abortedConnectionsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		
+		HBox totalErrorsTooltopHBox = new HBox();
+		totalErrorsTooltopHBox.setSpacing(10);
+		Label totalErrorsLabel = new Label("Errors : "+totalErrors);
+		totalErrorsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+        ImageView  informationicon = new ImageView(new Image(getClass().getResourceAsStream("/images/information_icon.png")));
+        informationicon.setFitHeight(10);
+        informationicon.setFitWidth(10);
+        Tooltip toolTip = new Tooltip();
+        toolTip.setText("Connection_errors_accept: "+connection_errors_accept+"\nConnection_errors_internal : "+connection_errors_internal
+        		+"\nConnection_errors_max_connections :"+connection_errors_max_connections+"\nConnection_errors_select :"+connection_errors_select
+        		+"\nConnection_errors_tcpwrap :"+connection_errors_tcpwrap);
+        Label errorinformationLabel = new Label();
+        errorinformationLabel.setGraphic(informationicon);
+        errorinformationLabel.setTooltip(toolTip);
+		totalErrorsTooltopHBox.getChildren().addAll(totalErrorsLabel,errorinformationLabel);
+        clientConnectionsThreadsDescriptionSecondHBox.getChildren().addAll(totalConnectionsLabel,connectionsLimitLabel,abortedClientsLabel,abortedConnectionsLabel,totalErrorsTooltopHBox);
+		
+        VBox processListTableViewVbox = new VBox();
+        processListTableViewVbox.getChildren().add(tableView);
+        processListTableViewVbox.setMaxHeight(350);
+        processListTableViewVbox.setPadding(new Insets(5,5,5,5));
+        
+        
+        HBox clientConnectionsButtonsHBox = new HBox();
+        clientConnectionsButtonsHBox.setSpacing(500);
+        clientConnectionsButtonsHBox.setPadding(new Insets(10,10,10,10));
+        
+        HBox clientConnectionRefreshButtonshbox = new HBox();
+        clientConnectionRefreshButtonshbox.setSpacing(10);
+        Label clientConnectionRefreshLabel = new Label("Refresh Rate :");
+        ComboBox refreshRateComboBox = new ComboBox();
+        refreshRateComboBox.getItems().addAll("Don't Refresh","0.5 Seconds","1 Seconds","2 Seconds","3 Seconds");
+        refreshRateComboBox.setValue("Don't Refresh");
+        clientConnectionRefreshButtonshbox.getChildren().addAll(clientConnectionRefreshLabel,refreshRateComboBox);
+        
+        HBox clientConnectionKillButtonshbox = new HBox();
+        clientConnectionKillButtonshbox.setSpacing(10);
+        Button killQuerysButton = new Button("Kill Query(s)");
+        Button killConnectionsButton = new Button("Kill Connection(s)");
+        Button refreshButton = new Button("Refresh");
+        clientConnectionKillButtonshbox.getChildren().addAll(killQuerysButton,killConnectionsButton,refreshButton);
+        
+        clientConnectionsButtonsHBox.getChildren().addAll(clientConnectionRefreshButtonshbox,clientConnectionKillButtonshbox);
+        
+        HBox clientConnectionsHideButtonsHBox = new HBox();
+        clientConnectionsHideButtonsHBox.setSpacing(50);
+        clientConnectionsHideButtonsHBox.setPadding(new Insets(0,10,0,10));
+        CheckBox hideSleepingConnectionsCheckBox = new CheckBox("Hide Sleeping Connections");
+        CheckBox hideBackgroundThreadsCheckBox = new CheckBox("Hide Background Threads");
+        hideBackgroundThreadsCheckBox.setSelected(true);
+        clientConnectionsHideButtonsHBox.getChildren().addAll(hideSleepingConnectionsCheckBox,hideBackgroundThreadsCheckBox);
+        
+		clientConnectionsVBox.getChildren().addAll(clientConnectionsThreadsDescriptionFirstHBox,clientConnectionsThreadsDescriptionSecondHBox,
+				processListTableViewVbox,clientConnectionsButtonsHBox,clientConnectionsHideButtonsHBox);
+		
+		return clientConnectionsVBox;
+	}
+	
+	 /*private HBox addTopHBoxForServerStatus() {
+
+		 
+	        HBox hbox = new HBox();
+	        hbox.setPadding(new Insets(10, 12, 10, 12));
+	        hbox.setSpacing(10);   // Gap between nodes
+	        hbox.setStyle("-fx-background-color: #2f4f4f;");        
+	        Text connectToDatabseText = new Text("Server Status");
+	        connectToDatabseText.setFont(Font.font("Verdana",20));
+	        connectToDatabseText.setFill(Color.WHITE);
+	        hbox.getChildren().addAll(connectToDatabseText);
+	        
+	        return hbox;
+	  } */
+	 
+
+	private VBox addServerStatus(HashMap<String,String> allVariables,HashMap<String,String> allStatus,HashMap<String,String> allPlugins) {
+    	
+		VBox serverStatusVBox = new VBox();
+		serverStatusVBox.setSpacing(10);
+		serverStatusVBox.getChildren().add(addTopHBoxForInfo("Server Status"));
+		
+		HBox serverRunningDescriptionHbox = new HBox();
+		serverRunningDescriptionHbox.setPadding(new Insets(0,0,0,300));
+		Label serverRunningDescriptionLabel = new Label("Server Status : Running");
+		serverRunningDescriptionLabel.setTextFill(Color.GREEN);
+		serverRunningDescriptionLabel.setFont(Font.font("System Regular",FontWeight.BOLD,18));
+		serverRunningDescriptionHbox.getChildren().add(serverRunningDescriptionLabel);
+		
+		HBox instanceDetailsHBox = new HBox();
+		instanceDetailsHBox.setSpacing(200);
+		instanceDetailsHBox.setPadding(new Insets(0,10,0,10));
+		
+		GridPane instanceDetailsGridPane = new GridPane();
+		//instanceDetailsServerDirectoriesGridPane.setPadding(new Insets(20,10,20,10));
+		instanceDetailsGridPane.setVgap(10);
+		instanceDetailsGridPane.setHgap(10);
+		Label connectionDecriptionLabel = new Label(connectionPlaceHolder.getConnectionName() + " " + "Instance Details");
+		connectionDecriptionLabel.setTextFill(Color.BLUEVIOLET);
+		connectionDecriptionLabel.setFont(Font.font("System Regular",FontWeight.BOLD,16));
+		GridPane.setConstraints(connectionDecriptionLabel, 0, 0);   // column 0 row 0
+		Label hostDecriptionLabel = new Label("Host : " );
+		GridPane.setConstraints(hostDecriptionLabel, 0, 1);
+		Label hostValueLabel = new Label(allVariables.get("hostname"));
+		hostValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(hostValueLabel, 1, 1);
+		Label socketDecriptionLabel = new Label("Socket :");
+		GridPane.setConstraints(socketDecriptionLabel, 0, 2);
+		Label socketValueLabel = new Label(allVariables.get("socket"));
+		socketValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(socketValueLabel, 1, 2);
+		Label portDecriptionLabel = new Label("Port :");
+		GridPane.setConstraints(portDecriptionLabel, 0, 3);
+		Label portValueLabel = new Label(allVariables.get("port"));
+		portValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(portValueLabel, 1, 3);
+		Label versionDecriptionLabel = new Label("Version :");
+		GridPane.setConstraints(versionDecriptionLabel, 0, 4);
+		Label versionValueLabel = new Label(allVariables.get("version"));
+		versionValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(versionValueLabel, 1, 4);
+		Label compiledForDescriptionLabel = new Label("Compiled For :");
+		GridPane.setConstraints(compiledForDescriptionLabel, 0, 5);
+		Label compiledForValueLabel = new Label(allVariables.get("version_compile_os") +"("+ allVariables.get("version_compile_machine") + ")");
+		compiledForValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(compiledForValueLabel, 1, 5);
+		Label runningSinceDescriptionLabel = new Label("Running Since :");
+		GridPane.setConstraints(runningSinceDescriptionLabel, 0, 6);
+		Label runningSinceValueLabel = new Label(allStatus.get("Uptime"));
+		runningSinceValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(runningSinceValueLabel, 1, 6);
+			
+		instanceDetailsGridPane.getChildren().addAll(connectionDecriptionLabel,hostDecriptionLabel,hostValueLabel,socketDecriptionLabel,socketValueLabel,
+		portDecriptionLabel,portValueLabel,versionDecriptionLabel,versionValueLabel,compiledForDescriptionLabel,compiledForValueLabel,runningSinceDescriptionLabel,runningSinceValueLabel);
+		
+		GridPane serverDirectoriesGridPane = new GridPane();
+		serverDirectoriesGridPane.setVgap(10);
+		serverDirectoriesGridPane.setHgap(10);
+		Label serverDirectoriesLabel = new Label("Server Direcories");
+		serverDirectoriesLabel.setTextFill(Color.BLUEVIOLET);
+		serverDirectoriesLabel.setFont(Font.font("System Regular",FontWeight.BOLD,16));
+		GridPane.setConstraints(serverDirectoriesLabel, 0, 0);   // column 0 row 0
+		Label baseDirecoryDescriptionLabel = new Label("Base Directory :" );
+		GridPane.setConstraints(baseDirecoryDescriptionLabel, 0, 1); 
+		Label baseDirecoryValueLabel = new Label(allVariables.get("basedir"));
+		baseDirecoryValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(baseDirecoryValueLabel, 1, 1); 
+		Label dataDirecoryDescriptionLabel = new Label("Data Directory :" );
+		GridPane.setConstraints(dataDirecoryDescriptionLabel, 0, 2); 
+		Label dataDirecoryValueLabel = new Label(allVariables.get("datadir"));
+		dataDirecoryValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(dataDirecoryValueLabel, 1, 2); 
+		Label pluginDirecoryDescriptionLabel = new Label("Plugin Directory :" );
+		GridPane.setConstraints(pluginDirecoryDescriptionLabel, 0, 3); 
+		Label pluginDirecoryValueLabel = new Label(allVariables.get("plugin_dir"));
+		pluginDirecoryValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(pluginDirecoryValueLabel, 1, 3); 
+		Label tempDirecoryDescriptionLabel = new Label("Temp Directory :" );
+		GridPane.setConstraints(tempDirecoryDescriptionLabel, 0, 4); 
+		Label tempDirecoryValueLabel = new Label(allVariables.get("tmpdir"));
+		tempDirecoryValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(tempDirecoryValueLabel, 1, 4); 
+		Label errorLogDirecoryDescriptionLabel = new Label("Error Log :" );
+		GridPane.setConstraints(errorLogDirecoryDescriptionLabel, 0, 5); 
+		Label errorLogDirecoryValueLabel = new Label(allVariables.get("log_error"));
+		errorLogDirecoryValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(errorLogDirecoryValueLabel, 1, 5); 
+		Label generalLogDirecoryDescriptionLabel = new Label("General Log :" );
+		GridPane.setConstraints(generalLogDirecoryDescriptionLabel, 0, 6); 
+		Label generalLogDirecoryValueLabel = new Label(allVariables.get("general_log_file"));
+		generalLogDirecoryValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(generalLogDirecoryValueLabel, 1, 6); 
+		Label slowQueryLogDirecoryDescriptionLabel = new Label("Slow Query Log :" );
+		GridPane.setConstraints(slowQueryLogDirecoryDescriptionLabel, 0, 7); 
+		Label slowQueryLogDirecoryValueLabel = new Label(allVariables.get("slow_query_log_file"));
+		slowQueryLogDirecoryValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(slowQueryLogDirecoryValueLabel, 1, 7);
+		
+		serverDirectoriesGridPane.getChildren().addAll(serverDirectoriesLabel,baseDirecoryDescriptionLabel,baseDirecoryValueLabel,dataDirecoryDescriptionLabel,dataDirecoryValueLabel,
+			pluginDirecoryDescriptionLabel,pluginDirecoryValueLabel,tempDirecoryDescriptionLabel,tempDirecoryValueLabel,
+				errorLogDirecoryDescriptionLabel,errorLogDirecoryValueLabel,generalLogDirecoryDescriptionLabel,generalLogDirecoryValueLabel,slowQueryLogDirecoryDescriptionLabel,slowQueryLogDirecoryValueLabel);
+		
+		instanceDetailsHBox.getChildren().addAll(instanceDetailsGridPane,serverDirectoriesGridPane);
+		
+		HBox serverFeaturesDescriptionHbox = new HBox();
+		serverFeaturesDescriptionHbox.setPadding(new Insets(0,0,0,300));
+		Label serverFeaturesDescriptionLabel = new Label("Available Server Features");
+		serverFeaturesDescriptionLabel.setTextFill(Color.BLUEVIOLET);
+		serverFeaturesDescriptionLabel.setFont(Font.font("System Regular",FontWeight.BOLD,18));
+		serverFeaturesDescriptionHbox.getChildren().add(serverFeaturesDescriptionLabel);
+		
+		HBox serverFeaturesHBox = new HBox();
+		serverFeaturesHBox.setSpacing(200);
+		serverFeaturesHBox.setPadding(new Insets(0,10,00,100));
+    	
+    	
+		GridPane serverFeaturesLeftHalfGridPane = new GridPane();
+		serverFeaturesLeftHalfGridPane.setVgap(10);
+		serverFeaturesLeftHalfGridPane.setHgap(10);
+		
+		Label performanceSchemaDescriptionLabel = new Label("Performance Schema :" );
+		GridPane.setConstraints(performanceSchemaDescriptionLabel, 0, 1); 
+		Label performanceScheamLabel = new Label(String.valueOf(allPlugins.containsKey("PERFORMANCE_SCHEMA")));
+		performanceScheamLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(performanceScheamLabel, 1, 1);
+		Label threadPoolDescriptionLabel = new Label("Thread Pool :" );
+		GridPane.setConstraints(threadPoolDescriptionLabel, 0, 2); 
+		Label threadPoolValueLabel = new Label(String.valueOf(allVariables.containsKey("thread_pool_size")));
+		threadPoolValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(threadPoolValueLabel, 1, 2); 
+		Label memcachedPluginlabel = new Label("Memcached Plugin : " );
+		GridPane.setConstraints(memcachedPluginlabel, 0, 3); 
+		Label memcachedPluginValuelabel = new Label(String.valueOf(allPlugins.containsKey("daemon_memcached")));
+		memcachedPluginValuelabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(memcachedPluginValuelabel, 1, 3);
+		Label smsynReplicationPluginlabel = new Label("Semisync Replication Plugin : " );
+		GridPane.setConstraints(smsynReplicationPluginlabel, 0, 4); 
+		Label smsynReplicationPluginValuelabel = new Label(String.valueOf(allPlugins.containsKey("rpl_semi_sync_source")));
+		smsynReplicationPluginValuelabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(smsynReplicationPluginValuelabel, 1, 4); 
+		Label sslAvailabilitylabel = new Label("SSL Availability  : " );
+		GridPane.setConstraints(sslAvailabilitylabel, 0, 5); 
+		Label sslAvailabilityValuelabel = new Label(String.valueOf(allVariables.containsKey("ssl_ca")));
+		sslAvailabilityValuelabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(sslAvailabilityValuelabel, 1, 5);
+		Label federatedlabel = new Label("FEDERATED : " );
+		GridPane.setConstraints(federatedlabel, 0, 6); 
+		Label federatedValuelabel = new Label(String.valueOf(allPlugins.containsKey("FEDERATED")));
+		GridPane.setConstraints(federatedValuelabel, 1, 6);
+		federatedValuelabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+
+		serverFeaturesLeftHalfGridPane.getChildren().addAll(performanceSchemaDescriptionLabel,performanceScheamLabel,threadPoolDescriptionLabel,threadPoolValueLabel,
+				memcachedPluginlabel,memcachedPluginValuelabel,smsynReplicationPluginlabel,smsynReplicationPluginValuelabel,sslAvailabilitylabel,sslAvailabilityValuelabel,
+				federatedlabel,federatedValuelabel);
+		
+		GridPane serverFeaturesRigthtHalfGridPane = new GridPane();
+		serverFeaturesRigthtHalfGridPane.setVgap(10);
+		serverFeaturesRigthtHalfGridPane.setHgap(10);
+		
+		Label windowAuthenticationDescriptionLabel = new Label("Window Authentication :" );
+		GridPane.setConstraints(windowAuthenticationDescriptionLabel, 0, 1); 
+		Label windowAuthenticationValueLabel = new Label(String.valueOf(allPlugins.containsKey("authentication_windows")));
+		windowAuthenticationValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(windowAuthenticationValueLabel, 1, 1);
+		Label passwordValidationDescriptionLabel = new Label("Password Validation : ");
+		GridPane.setConstraints(passwordValidationDescriptionLabel, 0, 2); 
+		Label passwordValidationValueLabel = new Label(String.valueOf(allVariables.containsKey("validate_password.policy")));
+		passwordValidationValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(passwordValidationValueLabel, 1, 2); 
+		Label auditLogDescriptionLabel = new Label("Audit Log : ");
+		GridPane.setConstraints(auditLogDescriptionLabel, 0, 3); 
+		Label auditLogValueLabel = new Label(String.valueOf(allVariables.containsKey("audit_log_file")));
+		auditLogValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(auditLogValueLabel, 1, 3); 
+		Label firewallDescriptionLabel = new Label("Firewall : ");
+		GridPane.setConstraints(firewallDescriptionLabel, 0, 4); 
+		Label firewallValueLabel = new Label(String.valueOf(allVariables.containsKey("mysql_firewall_mode")));
+		firewallValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(firewallValueLabel, 1, 4); 
+		Label firewallTraceDescriptionLabel = new Label("Firewall  Trace: ");
+		GridPane.setConstraints(firewallTraceDescriptionLabel, 0, 5); 
+		Label firewallTraceValueLabel = new Label(String.valueOf(allVariables.containsKey("mysql_firewall_mode")));
+		firewallTraceValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(firewallTraceValueLabel, 1, 5); 
+		Label csvDescriptionLabel = new Label("CSV : ");
+		GridPane.setConstraints(csvDescriptionLabel, 0, 6); 
+		Label csvValueLabel = new Label(String.valueOf(allPlugins.containsKey("CSV")));
+		csvValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		GridPane.setConstraints(csvValueLabel, 1, 6);     
+		
+		serverFeaturesRigthtHalfGridPane.getChildren().addAll(windowAuthenticationDescriptionLabel,windowAuthenticationValueLabel,passwordValidationDescriptionLabel,passwordValidationValueLabel,
+				auditLogDescriptionLabel,auditLogValueLabel,firewallDescriptionLabel,firewallValueLabel,firewallTraceDescriptionLabel,firewallTraceValueLabel,csvDescriptionLabel,csvValueLabel);
+		
+		
+		serverFeaturesHBox.getChildren().addAll(serverFeaturesLeftHalfGridPane,serverFeaturesRigthtHalfGridPane);
+		serverStatusVBox.getChildren().addAll(serverRunningDescriptionHbox,instanceDetailsHBox,serverFeaturesDescriptionHbox,serverFeaturesHBox);
+		
+		return serverStatusVBox;
+	}
+	
+	private TreeView<String> generatePerformnaceReports() {
+		
+		
+		
+		TreeItem<String> rootReportsTreeItem =  new TreeItem<String>("Reports");
+		TreeView<String> performanceView = new TreeView<String>();
+		performanceView.setCellFactory((TreeView<String> p) -> new MySQLTreecellImpl());
+		performanceView.setRoot(rootReportsTreeItem);
+		performanceView.setShowRoot(false);
+		//treeView.setMinSize(300, size.getHeight()-120);
+		//treeConnectionsView.setPrefWidth(300);
+		//treeConnectionsView.setMinWidth(100);
+		performanceView.setMinHeight(menu_Items_FX.size.getHeight()-200);
+		performanceView.setContextMenu(null);
+		
+		TreeItem<String> memoryUsageTreeItem = new TreeItem<String>("Memory Usage");
+		TreeItem<String> memoryUsageTreeItemTotalMemory = new TreeItem<String>("Total Memory");
+		TreeItem<String> memoryUsageTreeItemTotalMemoryEvent = new TreeItem<String>("Total Memory By Event");
+		TreeItem<String> memoryUsageTreeItemTotalMemoryUser = new TreeItem<String>("Total Memory By User");
+		TreeItem<String> memoryUsageTreeItemTotalMemoryHost = new TreeItem<String>("Total Memory By Host");
+		TreeItem<String> memoryUsageTreeItemTotalMemoryThread = new TreeItem<String>("Total Memory By Thread");
+		
+		memoryUsageTreeItem.getChildren().addAll(memoryUsageTreeItemTotalMemory,memoryUsageTreeItemTotalMemoryEvent,memoryUsageTreeItemTotalMemoryUser,memoryUsageTreeItemTotalMemoryHost,memoryUsageTreeItemTotalMemoryThread);
+		
+		TreeItem<String> hotspotsIOTreeItem = new TreeItem<String>("Hot Spots for I/O");
+		TreeItem<String> hotspotsIOTreeItemActivityReport = new TreeItem<String>("Top File I/O Activity Report");
+		TreeItem<String> hotspotsIOTreeItemFileTime = new TreeItem<String>("Top I/O By File By Time");
+		TreeItem<String> hotspotsIOTreeItemEventCategory = new TreeItem<String>("Top I/O By Event Category");
+		TreeItem<String> hotspotsIOTreeItemTimeEventCategories = new TreeItem<String>("Top I/O In Time By Event Categories");
+		TreeItem<String> hotspotsIOTreeItemTimeThread = new TreeItem<String>("Top I/O Time By Uer/Thread");
+		
+		hotspotsIOTreeItem.getChildren().addAll(hotspotsIOTreeItemActivityReport,hotspotsIOTreeItemFileTime,hotspotsIOTreeItemEventCategory,hotspotsIOTreeItemTimeEventCategories,hotspotsIOTreeItemTimeThread);
+		
+		TreeItem<String> highCostSQLTreeItem = new TreeItem<String>("High Cost SQL Statements");
+		TreeItem<String> highCostSQLTreeItemStmtAnalysis = new TreeItem<String>("Analysis");
+		TreeItem<String> highCostSQLTreeItemErrorsWarnings = new TreeItem<String>("With Errors or Warnings");
+		TreeItem<String> highCostSQLTreeItemTableScans = new TreeItem<String>("With Full Table Scans");
+		TreeItem<String> highCostSQLTreeItem95thPercentile = new TreeItem<String>("With Runtimes in 95th Percentile");
+		TreeItem<String> highCostSQLTreeItemSorting = new TreeItem<String>("With Sorting");
+		TreeItem<String> highCostSQLTreeItemTempTables = new TreeItem<String>("With Temp Tables");
+		
+		highCostSQLTreeItem.getChildren().addAll(highCostSQLTreeItemStmtAnalysis,highCostSQLTreeItemErrorsWarnings,highCostSQLTreeItemTableScans,highCostSQLTreeItem95thPercentile,highCostSQLTreeItemSorting
+				,highCostSQLTreeItemTempTables);
+
+		TreeItem<String> schemaStatisticsTreeItem = new TreeItem<String>("Database Schema Statistics");
+		TreeItem<String> schemaStatisticsTreeItemAutoIncrement = new TreeItem<String>("Auto Increment Columns");
+		TreeItem<String> schemaStatisticsTreeItemFlattenedKeys = new TreeItem<String>("Flattened Keys");
+		TreeItem<String> schemaStatisticsTreeItemIndex = new TreeItem<String>("Index Statistics");
+		TreeItem<String> schemaStatisticsTreeItemObject = new TreeItem<String>("Object Overview");
+		TreeItem<String> schemaStatisticsTreeItemRedundantIndexes = new TreeItem<String>("Redundant Indexes");
+		TreeItem<String> schemaStatisticsTreeItemTableLoackWaits = new TreeItem<String>("Table Lock Waits");
+		TreeItem<String> schemaStatisticsTreeItemTableSatictics = new TreeItem<String>("Table Statistics");
+		TreeItem<String> schemaStatisticsTreeItemTableStatwithBuffer = new TreeItem<String>("Table Statics with Buffer");
+		TreeItem<String> schemaStatisticsTreeItemTableFullScans = new TreeItem<String>("Tables With Full Table Scans");
+		TreeItem<String> schemaStatisticsTreeItemUnusedIndexes = new TreeItem<String>("Unused Indexes");
+		
+		schemaStatisticsTreeItem.getChildren().addAll(schemaStatisticsTreeItemAutoIncrement,schemaStatisticsTreeItemFlattenedKeys,schemaStatisticsTreeItemIndex,schemaStatisticsTreeItemObject
+				,schemaStatisticsTreeItemRedundantIndexes,schemaStatisticsTreeItemTableLoackWaits,schemaStatisticsTreeItemTableSatictics,schemaStatisticsTreeItemTableStatwithBuffer,schemaStatisticsTreeItemTableFullScans,schemaStatisticsTreeItemUnusedIndexes);
+		
+		TreeItem<String> waitTimesTreeItem = new TreeItem<String>("Wait Times");
+		TreeItem<String> waitTimesTreeItemGlobalWait = new TreeItem<String>("Global Waits By Time ");
+		TreeItem<String> waitTimesTreeItemUserTime = new TreeItem<String>("Wait By User By Time");
+		TreeItem<String> waitTimesTreeItemHostTime = new TreeItem<String>("Wait By Host By Time");
+		TreeItem<String> waitTimesTreeItemClassesTime = new TreeItem<String>("Wait Classes By Time");
+		TreeItem<String> waitTimesTreeItemClassesAvgTime = new TreeItem<String>("Wait Classes By Avg Time");
+		
+		waitTimesTreeItem.getChildren().addAll(waitTimesTreeItemGlobalWait,waitTimesTreeItemUserTime,waitTimesTreeItemHostTime,waitTimesTreeItemClassesTime,waitTimesTreeItemClassesAvgTime);
+		
+		TreeItem<String> innoDBStatisticsTreeItem = new TreeItem<String>("InnoDB Statistics");
+		TreeItem<String> innoDBStatisticsTreeItemSchemaStats = new TreeItem<String>("Buffer Stats By Schema");
+		TreeItem<String> innoDBStatisticsTreeItemTableStats = new TreeItem<String>("Buffer Stats By Table");
+		TreeItem<String> innoDBStatisticsTreeItemLockWaits = new TreeItem<String>("Lock Waits");
+
+		innoDBStatisticsTreeItem.getChildren().addAll(innoDBStatisticsTreeItemSchemaStats,innoDBStatisticsTreeItemTableStats,innoDBStatisticsTreeItemLockWaits);
+
+		TreeItem<String> userUtilizationTreeItem = new TreeItem<String>("User Resource Utilization");
+		TreeItem<String> userUtilizationTreeItemSummary= new TreeItem<String>("User Summary");
+		TreeItem<String> userUtilizationTreeItemIOStats= new TreeItem<String>("User File I/O Summary");
+		TreeItem<String> userUtilizationTreeItemSummaryIOTypeStats= new TreeItem<String>("User File I/O Type Summary");
+		TreeItem<String> userUtilizationTreeItemSummaryStageStats= new TreeItem<String>("User Stages Summary");
+		TreeItem<String> userUtilizationTreeItemSummaryStmtTime= new TreeItem<String>("User Statement Time Summary");
+		TreeItem<String> userUtilizationTreeItemSummaryStmtType= new TreeItem<String>("User Statement Type Summary");
+		
+		userUtilizationTreeItem.getChildren().addAll(userUtilizationTreeItemSummary,userUtilizationTreeItemIOStats,userUtilizationTreeItemIOStats,userUtilizationTreeItemSummaryIOTypeStats,userUtilizationTreeItemSummaryStageStats
+				,userUtilizationTreeItemSummaryStmtTime,userUtilizationTreeItemSummaryStmtType);
+		
+
+		TreeItem<String> hostUtilizationTreeItem = new TreeItem<String>("Host Resource Utilization");
+		TreeItem<String> hostUtilizationTreeItemSummary= new TreeItem<String>("Host Summary");
+		TreeItem<String> hostUtilizationTreeItemSummaryIOStats= new TreeItem<String>("Host File I/O Summary");
+		TreeItem<String> hostUtilizationTreeItemSummaryIOTypeStats= new TreeItem<String>("Host File I/O Type Summary");
+		TreeItem<String> hostUtilizationTreeItemSummaryStagesStmt= new TreeItem<String>("Host Stages Summary");
+		TreeItem<String> hostUtilizationTreeItemSummaryStmtTime= new TreeItem<String>("Host Statement Time Summary");
+		TreeItem<String> hostUtilizationTreeItemSummaryStmtType= new TreeItem<String>("Host Statement Type Summary");
+		
+		hostUtilizationTreeItem.getChildren().addAll(hostUtilizationTreeItemSummary,hostUtilizationTreeItemSummaryIOStats,hostUtilizationTreeItemSummaryIOTypeStats,hostUtilizationTreeItemSummaryStagesStmt
+				,hostUtilizationTreeItemSummaryStmtTime,hostUtilizationTreeItemSummaryStmtType);
+		
+		TreeItem<String> otherInformationTreeItem = new TreeItem<String>("Other Information");
+		TreeItem<String> versionTreeItem = new TreeItem<String>("Version");
+		TreeItem<String> sessionTreeItem = new TreeItem<String>("Session Info");
+		TreeItem<String> latestFileioTreeItem = new TreeItem<String>("Latest File I/O");
+		TreeItem<String> systemConfigTreeItem = new TreeItem<String>("System Config");
+		TreeItem<String> sessionSSLStatusConfigTreeItem = new TreeItem<String>("Session SSL Status");
+		TreeItem<String> metricsTreeItem = new TreeItem<String>("Metrics");
+		TreeItem<String> processListTreeItem = new TreeItem<String>("Process List");
+		TreeItem<String> checkLostInstrumentationTreeItem = new TreeItem<String>("Check Lost Instrumentation"); 
+		
+		otherInformationTreeItem.getChildren().addAll(versionTreeItem,sessionTreeItem,latestFileioTreeItem,systemConfigTreeItem,sessionSSLStatusConfigTreeItem,metricsTreeItem
+				,processListTreeItem,checkLostInstrumentationTreeItem);
+		
+		rootReportsTreeItem.getChildren().addAll(memoryUsageTreeItem,hotspotsIOTreeItem,highCostSQLTreeItem,schemaStatisticsTreeItem,waitTimesTreeItem,innoDBStatisticsTreeItem
+				,userUtilizationTreeItem,hostUtilizationTreeItem,otherInformationTreeItem);
+		
+		return performanceView;
+	}
 	 
 }
 
