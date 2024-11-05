@@ -42,6 +42,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.SelectionModel;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
@@ -2673,10 +2674,10 @@ public class MySqlUI {
 										}
 									});
 									
+									
 									TableView resultAsTableView =  showResultSetInTheTableView(rsUsers);
-									// Can move this to invidua; invocations as each call of this will ha`ve custom usage based on selection 
+									// Can move this to invidual invocations as each call of this will ha`ve custom usage based on selection 
 									resultAsTableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
-
 										@Override
 										public void changed(ObservableValue<? extends HashMap<String, String>> observable,
 												HashMap<String, String> oldValue, HashMap<String, String> newValue) {
@@ -2688,12 +2689,45 @@ public class MySqlUI {
 												System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
 											}
 											
+											
 											TableViewSelectionModel  selectionModel = resultAsTableView.getSelectionModel();
 									        ObservableList selectedCells = selectionModel.getSelectedCells();
 									        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
 									        Object val = tablePosition.getTableColumn().getCellData(newValue);
 									        System.out.println("Selected Value" + val);
 											
+									        try {
+									        	
+									        	
+									        	
+												ResultSet rsfullUserDetails = stmt.executeQuery("select * from mysql.user where user='"+newValue.get("User")+"' and host = '"+newValue.get("Host")+"'");
+												
+												System.out.println("select * from mysql.user where user='"+newValue.get("User")+"' and host = '"+newValue.get("Host")+"'");
+												while(rsfullUserDetails.next()) {
+													// Setting the login details below  
+													accountLockedStatus.setText( rsfullUserDetails.getString("account_locked"));
+													loginNameTextFeild.setText(rsfullUserDetails.getString("User"));
+													authenticationTypeTextField.setText(rsfullUserDetails.getString("plugin"));
+													authenticationStringTextField.setText(rsfullUserDetails.getString("authentication_string"));
+													hostsMatchingTextField.setText(rsfullUserDetails.getString("Host"));
+													passwordExpiredStatusLabel.setText(rsfullUserDetails.getString("password_expired"));
+													passwordLastchangedDate.setText(rsfullUserDetails.getString("password_last_changed"));
+													passwordTextField.setText("*********");
+													confirmPasswordTextField.setText("**********");
+													
+													// setting the addAccountLimits below
+													
+													// setting the addAccountPrivileges below
+													
+													// setting the addSchemaPriviliges below
+													
+													
+												}
+											} catch (SQLException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+									        
 										}	
 									});
 
@@ -2839,8 +2873,9 @@ public class MySqlUI {
 		tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);  // to remove the last empty column otherwise added
 		tableView.setEditable(true);
         
+		
 		// Can move this to invidua; invocations as each call of this will ha`ve custom usage based on selection 
-		tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
+		/* tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
 
 			@Override
 			public void changed(ObservableValue<? extends HashMap<String, String>> observable,
@@ -2860,7 +2895,7 @@ public class MySqlUI {
 		        System.out.println("Selected Value" + val);
 				
 			}	
-		});
+		}); */
 
 		if(rs.next()) {
 	
@@ -3040,7 +3075,7 @@ public class MySqlUI {
 				
 				// Do the alignment here , along with is Editable entry by doing look up to MySQLConstants enum
 				if(inputParam.equalsIgnoreCase("Status") || inputParam.equalsIgnoreCase("Variables")) {
-variablesSecondHalfDisplayVBox.getChildren().clear();
+					variablesSecondHalfDisplayVBox.getChildren().clear();
 					
 					System.out.println("Description: "+newValue.get("Description"));
 					System.out.println("Value: "+newValue.get("Value"));
@@ -3794,6 +3829,11 @@ variablesSecondHalfDisplayVBox.getChildren().clear();
 		
 	}
 	
+	public TextField maxQueriesTextFeild;
+	public TextField maxUpdatesTextFeild;
+	public TextField maxConnectionsTextFeild;
+	public TextField concurrentConnectionsTextFeild;
+	
 	public VBox addAccountLimits(){
 		
 		VBox accountLimitsVBox = new VBox();
@@ -3805,7 +3845,7 @@ variablesSecondHalfDisplayVBox.getChildren().clear();
 		
 		Label maxQueriesLabel = new Label("Max Queries"); 
 		GridPane.setConstraints(maxQueriesLabel, 0, 1);   // column 0 row 0
-		TextField maxQueriesTextFeild = new TextField();
+		maxQueriesTextFeild = new TextField();
 		maxQueriesTextFeild.setPrefHeight(15);
 		maxQueriesTextFeild.setPrefWidth(200);
 		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
@@ -3818,7 +3858,7 @@ variablesSecondHalfDisplayVBox.getChildren().clear();
 		
 		Label maxUpdatesLabel = new Label("Max Updates"); 
 		GridPane.setConstraints(maxUpdatesLabel, 0, 2);   // column 0 row 0
-		TextField maxUpdatesTextFeild = new TextField();
+		maxUpdatesTextFeild = new TextField();
 		maxUpdatesTextFeild.setPrefHeight(15);
 		maxUpdatesTextFeild.setPrefWidth(200);
 		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
@@ -3832,7 +3872,7 @@ variablesSecondHalfDisplayVBox.getChildren().clear();
 		
 		Label maxConnectionsLabel = new Label("Max Connections"); 
 		GridPane.setConstraints(maxConnectionsLabel, 0, 3);   // column 0 row 0
-		TextField maxConnectionsTextFeild = new TextField();
+		maxConnectionsTextFeild = new TextField();
 		maxConnectionsTextFeild.setPrefHeight(15);
 		maxConnectionsTextFeild.setPrefWidth(200);
 		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
@@ -3845,7 +3885,7 @@ variablesSecondHalfDisplayVBox.getChildren().clear();
 		
 		Label concurrentConnectionsLabel = new Label("Concurrent Connections"); 
 		GridPane.setConstraints(concurrentConnectionsLabel, 0, 4);   // column 0 row 0
-		TextField concurrentConnectionsTextFeild = new TextField();
+		concurrentConnectionsTextFeild = new TextField();
 		concurrentConnectionsTextFeild.setPrefHeight(15);
 		concurrentConnectionsTextFeild.setPrefWidth(200);
 		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
