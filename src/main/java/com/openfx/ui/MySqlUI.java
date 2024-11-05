@@ -24,9 +24,11 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
@@ -48,6 +50,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TablePosition;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.TextField;
@@ -59,11 +62,13 @@ import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.MapValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -78,6 +83,8 @@ public class MySqlUI {
 	public NewMenuItemEventHandler newMenuItemEventHandler;
 	
 	private ConnectionPlaceHolder connectionPlaceHolder;
+	private Connection currentConnection ;
+	private String currentConnectionName;
 	private Statement stmt ;
 	public Button refreshButton;
 	public TabPane statusSystemVariablesTabpane;
@@ -97,7 +104,35 @@ public class MySqlUI {
 	
 	public TableView performanceReportTableView;
 	public Label particularPerformanceReportLabel;
+	public Button refreshPerformanceButton  = new Button("Refresh");
+	public Button exportPerformanceButton = new Button("Export");
+	public Button performanceCopySelected = new Button("Copy Selected");
 	
+	public Button performanceCopyQuery = new Button("Copy Query");
+    public Clipboard clipboard = Clipboard.getSystemClipboard();
+    public ClipboardContent clipBoardcontent = new ClipboardContent();
+	 
+	public String actionTypes[] = {"BINARY LOGS","Server Logs","CHARACTER SET","COLLATION","ENGINES","ERRORS","EVENTS","OPEN TABLES","PLUGINS","PRIVILEGES","PROCESS LIST","PROFILES","REPLICAS","WARNINGS"};
+	public  String actionTypeQuery[] = {"SHOW BINARY LOGS", "SHOW BINARY LOGS","SHOW CHARACTER SET","SHOW COLLATION","SHOW ENGINES","SHOW ERRORS","SHOW EVENTS IN mysql","SHOW OPEN TABLES","SHOW PLUGINS","SHOW PRIVILEGES",
+			 "SHOW PROCESSLIST","SHOW PROFILES","SHOW REPLICAS","SHOW WARNINGS"};
+	 
+	public String performanceReportsTypes[] = {"Total Memory","Total Memory By Event","Total Memory By User","Total Memory By Host","Total Memory By Thread","Top File I/O Activity Report","Top I/O By File By Time","Top I/O By Event Category"
+			 ,"Top I/O In Time By Event Categories","Top I/O Time By Uer/Thread","Analysis","With Errors or Warnings","With Full Table Scans","With Runtimes in 95th Percentile","With Sorting","With Temp Tables",
+			 "Auto Increment Columns","Flattened Keys","Index Statistics","Object Overview","Redundant Indexes","Table Lock Waits","Table Statistics","Table Statics with Buffer","Tables With Full Table Scans","Unused Indexes",
+			 "Global Waits By Time","Wait By User By Time","Wait By Host By Time","Wait Classes By Time","Wait Classes By Avg Time","Buffer Stats By Schema","Buffer Stats By Table","Lock Waits",
+			 "User Summary","User File I/O Summary","User File I/O Type Summary","User Stages Summary","User Statement Time Summary","User Statement Type Summary",
+			 "Host Summary","Host File I/O Summary","Host File I/O Type Summary","Host Stages Summary","Host Statement Time Summary","Host Statement Type Summary",
+			 "Version","Session Info","Latest File I/O","System Config","Session SSL Status","Metrics","Process List","Check Lost Instrumentation"};
+	 
+	 public String performanceReportQueries[] = {"x$memory_global_total","x$memory_global_by_current_bytes","x$memory_by_user_by_current_bytes","x$memory_by_host_by_current_bytes","x$memory_by_thread_by_current_bytes","x$io_global_by_file_by_bytes","x$io_global_by_file_by_latency",
+			 "x$io_global_by_wait_by_bytes","x$io_global_by_wait_by_latency","x$io_by_thread_by_latency","x$statement_analysis","statements_with_errors_or_warnings","statements_with_full_table_scans",
+			 "x$statements_with_runtimes_in_95th_percentile","statements_with_sorting","statements_with_temp_tables","schema_auto_increment_columns","x$schema_flattened_keys","x$schema_index_statistics","schema_object_overview","schema_redundant_indexes","x$schema_table_lock_waits","x$schema_table_statistics","x$schema_table_statistics_with_buffer","x$schema_tables_with_full_table_scans","schema_unused_indexes",
+			 "x$waits_global_by_latency","x$waits_by_user_by_latency"," x$waits_by_host_by_latency","x$wait_classes_global_by_latency","x$wait_classes_global_by_avg_latency","x$innodb_buffer_stats_by_schema","x$innodb_buffer_stats_by_table","x$innodb_lock_waits",
+			 "x$user_summary","x$user_summary_by_file_io","x$user_summary_by_file_io_type","x$user_summary_by_stages","x$user_summary_by_statement_latency","x$user_summary_by_statement_type",
+			 "x$host_summary","x$host_summary_by_file_io","x$host_summary_by_file_io_type","x$host_summary_by_stages","x$host_summary_by_statement_latency","x$host_summary_by_statement_type",
+			 "version","x$session","x$latest_file_io","sys_config","session_ssl_status","metrics","processlist","ps_check_lost_instrumentation"};
+	
+	 
 	public MySqlUI(Menu_Items_FX menu_Items_FX,NewMenuItemEventHandler newMenuItemEventHandler) {
 		this.menu_Items_FX = menu_Items_FX;
 		this.newMenuItemEventHandler = newMenuItemEventHandler;
@@ -215,8 +250,8 @@ public class MySqlUI {
 								if(connectionPlaceHolder.getConnectionName().equalsIgnoreCase(entrySet.getKey().getConnectionName()))
 								{
 									System.out.println("Current Connection is :"+ entrySet.getKey().getConnectionName() + " of type "+entrySet.getValue());
-									Connection currentConnection = entrySet.getValue();
-									
+									currentConnection = entrySet.getValue();
+									currentConnectionName =  entrySet.getKey().getConnectionName();
 									try {
 										stmt = currentConnection.createStatement();
 									} catch (SQLException e) {
@@ -250,6 +285,10 @@ public class MySqlUI {
 													 TreeItem<String> loadingTreeItemViews = new TreeItem<String>("Loading..");
 													 mySqlTreeItemViews.getChildren().add(loadingTreeItemViews);
 													 
+													 TreeItem<String> mySqlTreeItemIndexes = new TreeItem<String>("Indexes");
+													 TreeItem<String> loadingTreeItemIndexes = new TreeItem<String>("Loading..");
+													 mySqlTreeItemIndexes.getChildren().add(loadingTreeItemIndexes);
+													 
 													 TreeItem<String> mySqlTreeItemProcedures = new TreeItem<String>("Procedures");
 													 TreeItem<String> loadingTreeItemProcedures = new TreeItem<String>("Loading..");
 													 mySqlTreeItemProcedures.getChildren().add(loadingTreeItemProcedures);
@@ -258,14 +297,20 @@ public class MySqlUI {
 													 TreeItem<String> loadingTreeItemFunctions = new TreeItem<String>("Loading..");
 													 mySqlTreeItemFunctions.getChildren().add(loadingTreeItemFunctions);
 													 
+													 TreeItem<String> mySqlTreeItemTriggers = new TreeItem<String>("Triggers");
+													 TreeItem<String> loadingTreeItemTriggers = new TreeItem<String>("Loading..");
+													 mySqlTreeItemTriggers.getChildren().add(loadingTreeItemTriggers);
+													 
 													 TreeItem<String> mySqlTreeItemEvents = new TreeItem<String>("Events");
 													 TreeItem<String> loadingTreeItemEvents = new TreeItem<String>("Loading..");
 													 mySqlTreeItemEvents.getChildren().add(loadingTreeItemEvents);
 													  
 													 loadedDatabaseName.getChildren().add(mySqlTreeItemTables);
 													 loadedDatabaseName.getChildren().add(mySqlTreeItemViews);
+													 loadedDatabaseName.getChildren().add(mySqlTreeItemIndexes);
 													 loadedDatabaseName.getChildren().add(mySqlTreeItemProcedures);
 													 loadedDatabaseName.getChildren().add(mySqlTreeItemFunctions);
+													 loadedDatabaseName.getChildren().add(mySqlTreeItemTriggers);
 													 loadedDatabaseName.getChildren().add(mySqlTreeItemEvents);
 													 
 													 //Database expanded
@@ -276,14 +321,22 @@ public class MySqlUI {
 																System.out.println("observable : "+ "Bean : "+ ((TreeItem<String>)((BooleanProperty)observable).getBean()).getValue()     +" Name : "+((BooleanProperty)observable).getName() +" Value :" +((BooleanProperty)observable).getName() );
 																Boolean value = ((BooleanProperty)observable).getValue() ;
 																if(value) {
-																	System.out.println("Particular Databse Expanded !!!"+loadedDatabaseName.getValue());
-																}
+																	System.out.println("Particular Database Expanded !!!"+loadedDatabaseName.getValue());
+																	/*
+																	Tab mainDatabaseTab = databaseDoubleClickMethod(loadedDatabaseName);
+																															
+																	menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);
+
+															        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+															        singleSelectionModel.select(mainDatabaseTab);
+																		*/
+																	System.out.println("Create the Database Tabs heres");																}
+																
 																else {
 																	System.out.println("Particular Databse Collapsed !!!"+loadedDatabaseName.getValue());
 																}
 															}
 													 });
-													 
 													 
 													 // Tables 
 													 mySqlTreeItemTables.expandedProperty().addListener(new ChangeListener<Boolean>() {
@@ -330,6 +383,15 @@ public class MySqlUI {
 																									Boolean value = ((BooleanProperty)observable).getValue() ;
 																									if(value) {
 																										 System.out.println("Loaded Table Expanded!! "+ "Database Selected "+loadedDatabaseName.getValue() +" Tables Selected " +loadedTableName.getValue());
+																										/*
+																										 Tab particularTableTab = particularTableDoubleClickMethod(loadedTableName.getValue());
+																			        	            	 
+																			        	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
+
+																			        	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+																									     singleSelectionModel.select(particularTableTab);
+																									     */
+																									     
 																									}else {
 																										System.out.println("Loaded Table Collpapsed!! "+ "Database Selected "+loadedDatabaseName.getValue() +" Tables Selected " +loadedTableName.getValue());
 																									}
@@ -820,9 +882,54 @@ public class MySqlUI {
 																				while(rs.next()) {
 																					  System.out.println(rs.getString(1));
 																					  
-																					  TreeItem<String> ViewName = new TreeItem<String>(rs.getString(1));
+																					  TreeItem<String> viewName = new TreeItem<String>(rs.getString(1));
+																					  TreeItem<String> viewNameLoading = new TreeItem<String>("Loading");
+																					  viewName.getChildren().addAll(viewNameLoading);
 																					  
-																					  mySqlTreeItemViews.getChildren().add(ViewName);
+																					  viewName.expandedProperty().addListener(new ChangeListener<Boolean>() {
+																							@Override
+																							public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+																								System.out.println("observable : "+ "Bean : "+ ((TreeItem<String>)((BooleanProperty)observable).getBean()).getValue()     +" Name : "+((BooleanProperty)observable).getName() +" Value :" +((BooleanProperty)observable).getName() );
+																									
+																								String name = ((BooleanProperty)observable).getName();
+																								Boolean value = ((BooleanProperty)observable).getValue() ;
+																								if(value) {
+																									 System.out.println("Views Expanded!! "+ "Database Selected "+loadedDatabaseName.getValue() +" Views Selected " +viewName.getValue());
+																									// get the database name and display its tables 
+																										TreeItem<String> currentDatabasebean = ((TreeItem<String>)((BooleanProperty)observable).getBean());
+																										
+																										System.out.println("Current DatabaseSelected Name "+loadedDatabaseName.getValue());
+																										
+																										new Thread(new Runnable() {
+																										     @Override
+																										     public void run() {
+																										    	 try {
+																										    		  // stmt.execute("use "+loadedDatabaseName.getValue());
+																										    		   ResultSet rs = stmt.executeQuery("desc "+viewName.getValue());
+																										    		   viewName.getChildren().remove(0);  // Remove the Loading...
+																														while(rs.next()) {
+																															  
+																															  TreeItem<String> constraintsName = new TreeItem<String>(rs.getString(1)+","+rs.getString(2));
+																															  viewName.getChildren().add(constraintsName);
+																														}
+  
+																												    } catch (SQLException e) {
+																														System.out.println("Error during columns expansion");
+																														e.printStackTrace();
+																													}
+																										    	 }
+																										}).start();
+																									 
+																								}else {
+																									System.out.println("Views Collpapsed!! "+ "Database Selected "+loadedDatabaseName.getValue() +" Views Selected " +viewName.getValue());
+																									viewName.getChildren().clear();
+																									viewName.getChildren().add(viewNameLoading);
+																								}
+																							}
+																					  });
+																					  
+																					  
+																					  mySqlTreeItemViews.getChildren().add(viewName);
 																					
 																				}
 																				//stmt.close();
@@ -841,19 +948,74 @@ public class MySqlUI {
 															}
 													 });
 													 
+													 //Indexes
+													  mySqlTreeItemIndexes.expandedProperty().addListener(new ChangeListener<Boolean>() {
+															@Override
+															public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+																System.out.println("observable : "+ "Bean : "+ ((TreeItem<String>)((BooleanProperty)observable).getBean()).getValue()     +" Name : "+((BooleanProperty)observable).getName() +" Value :" +((BooleanProperty)observable).getName() );
+																	
+																String name = ((BooleanProperty)observable).getName();
+																Boolean value = ((BooleanProperty)observable).getValue() ;
+																if(value) {
+																	 System.out.println("Indexes Expanded!! "+ "Database Selected "+loadedDatabaseName.getValue() );
+																	 TreeItem<String> currentDatabasebean = ((TreeItem<String>)((BooleanProperty)observable).getBean());										
+																	 System.out.println("Current DatabaseSelected Name "+loadedDatabaseName.getValue());
+																			
+																	new Thread(new Runnable() {
+																		@Override
+																		public void run() {
+																			        
+																			try {
+																			    		 
+																			    	stmt.execute("use "+loadedDatabaseName.getValue());
+																			    	ResultSet rs = stmt.executeQuery("select table_name,index_name from information_schema.statistics where table_schema = '"+loadedDatabaseName.getValue()+"'");;		
+																			    	try {
+																						Thread.sleep(1000);
+																					} catch (InterruptedException e) {
+																						// TODO Auto-generated catch block
+																						e.printStackTrace();
+																					}
+																			    	mySqlTreeItemIndexes.getChildren().remove(0);  // Remove the Loading...
+																					while(rs.next()) {
+																							
+																						TreeItem<String> indexName = new TreeItem<String>(rs.getString(1)+ "." + rs.getString(2));
+																						mySqlTreeItemIndexes.getChildren().add(indexName);
+																						
+																						 	
+																				}
+																				//stmt.close();
+																					        
+																			} catch (SQLException e) {
+																					System.out.println("Error during indexes expansion");
+																					e.printStackTrace();
+																			}
+																		}
+																		}).start();
+																	
+																	
+																}else {
+																	System.out.println("Indexes Collpapsed!! "+ "Database Selected "+loadedDatabaseName.getValue() );
+																	mySqlTreeItemIndexes.getChildren().clear();
+																	mySqlTreeItemIndexes.getChildren().add(loadingTreeItemIndexes);
+																}
+															}
+													  });
+													 
+													 
 													 // Procedures 
 													 mySqlTreeItemProcedures.expandedProperty().addListener(new ChangeListener<Boolean>() {
 															@Override
 															public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
 																System.out.println("observable : "+ "Bean : "+ ((TreeItem<String>)((BooleanProperty)observable).getBean()).getValue()     +" Name : "+((BooleanProperty)observable).getName() +" Value :" +((BooleanProperty)observable).getName() );
 																	
-																	System.out.println("Its Procedures expansion!!!"); // from here fix procedures
+																System.out.println("Its Procedures expansion!!!"); // from here fix procedures
 																	
-																	// get the database name and display its tables 
-																	TreeItem<String> currentDatabasebean = ((TreeItem<String>)((BooleanProperty)observable).getBean());
+																String name = ((BooleanProperty)observable).getName();
+																Boolean value = ((BooleanProperty)observable).getValue() ;
 																	
-
-																	System.out.println("Current DatabaseSelected Name "+loadedDatabaseName.getValue());
+																System.out.println("Current DatabaseSelected Name "+loadedDatabaseName.getValue());
+																
+																if(value) {
 																	
 																	new Thread(new Runnable() {
 																	     @Override
@@ -870,10 +1032,101 @@ public class MySqlUI {
 																				}
 																	    		mySqlTreeItemProcedures.getChildren().remove(0);  // Remove the Loading...
 																				while(rs.next()) {
-																					  System.out.println(rs.getString(1));
-																					  System.out.println(rs.getString(2));
-																					  mySqlTreeItemProcedures.getChildren().add(new TreeItem<String>(rs.getString(2)));
+																					  
+																					  TreeItem<String> procedureName = new TreeItem<String>(rs.getString(2));
+																					  
+																					  ResultSet rsProcedures = currentConnection.createStatement().executeQuery("select parameter_mode,parameter_name,data_type,character_maximum_length,dtd_identifier from information_schema.parameters where specific_name='"+ rs.getString(2) +"' and  specific_schema = '"+loadedDatabaseName.getValue()+"'");
+																					  // Write logic to derive IN and OUT Paramaeters
+																					  																																		  
+																					  TreeItem<String> procedureParametersIN = new TreeItem<String>("Parameters [IN]");
+																					  TreeItem<String> procedureParametersOUT = new TreeItem<String>("Parameters [OUT]");
+																					  
+																					  while(rsProcedures.next()){
+																						  
+																						  if(rsProcedures.getString(1).equals("IN")) {
+																							  TreeItem<String> procedureParameterIN = new TreeItem<String>(rsProcedures.getString(2)+","+rsProcedures.getString(5));
+																							  procedureParametersIN.getChildren().add(procedureParameterIN);
+																						  }
+																						  if(rsProcedures.getString(1).equals("OUT")) {
+																							  TreeItem<String> procedureParameterOUT = new TreeItem<String>(rsProcedures.getString(2)+","+rsProcedures.getString(5));
+																							  procedureParametersOUT.getChildren().add(procedureParameterOUT);
+																						  }
+																					  }
+																					  
+																					  procedureName.getChildren().addAll(procedureParametersIN,procedureParametersOUT);
 																					
+																					  mySqlTreeItemProcedures.getChildren().add(procedureName);
+																					
+																				}
+																				//stmt.close();
+																			} catch (SQLException e) {
+																				System.out.println("Error during procedures expansion");
+																				e.printStackTrace();
+																			}
+																	     }
+																	}).start();	
+																}else {
+																	System.out.println("Procedures Collpapsed!! "+ "Database Selected "+loadedDatabaseName.getValue() );
+																	mySqlTreeItemProcedures.getChildren().clear();
+																	mySqlTreeItemProcedures.getChildren().add(loadingTreeItemProcedures);
+																}
+															}
+													 });
+													 
+													 //Functions
+													 mySqlTreeItemFunctions.expandedProperty().addListener(new ChangeListener<Boolean>() {
+															@Override
+															public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {																	
+																
+																System.out.println("Its Functions expansion!!!"); // from here fix procedures
+																
+																String name = ((BooleanProperty)observable).getName();
+																Boolean value = ((BooleanProperty)observable).getValue() ;
+
+																System.out.println("Current DatabaseSelected Name "+loadedDatabaseName.getValue());
+																
+																if(value) {
+																
+																	new Thread(new Runnable() {
+																	     @Override
+																	     public void run() {
+																	         
+																	    	try  {
+																	    		stmt.execute("use "+loadedDatabaseName.getValue());
+																	    		ResultSet rs = stmt.executeQuery(" SHOW FUNCTION STATUS WHERE Db = '"+ loadedDatabaseName.getValue() +"'");
+																	    		try {
+																					Thread.sleep(1000);
+																				} catch (InterruptedException e) {
+																					// TODO Auto-generated catch block
+																					e.printStackTrace();
+																				}
+																	    		mySqlTreeItemFunctions.getChildren().remove(0);  // Remove the Loading...
+																	    		while(rs.next()) {
+																					  
+																					  TreeItem<String> functionName = new TreeItem<String>(rs.getString(2));
+																					  
+																					  ResultSet rsFunctions = currentConnection.createStatement().executeQuery("select parameter_mode,parameter_name,data_type,character_maximum_length,dtd_identifier from information_schema.parameters where specific_name='"+ rs.getString(2) +"' and  specific_schema = '"+loadedDatabaseName.getValue()+"'");
+																					  // Write logic to derive IN and OUT Paramaeters
+																					  																																		  
+																					  TreeItem<String> functionsParametersIN = new TreeItem<String>("Parameters [IN]");
+																					  TreeItem<String> functionsParametersOUT = new TreeItem<String>("Parameters [RETURN]");
+																					  
+																					  while(rsFunctions.next()){
+																						  
+																						  System.out.println("Whay -->"+rsFunctions.getString(1));
+																						  if(rsFunctions.getString(1) != null &&  rsFunctions.getString(1).equals("IN")) {
+																							  TreeItem<String> procedureParameterIN = new TreeItem<String>(rsFunctions.getString(2)+","+rsFunctions.getString(5));
+																							  functionsParametersIN.getChildren().add(procedureParameterIN);
+																						  }
+																						  if(rsFunctions.getString(1) == null ) {
+																							  TreeItem<String> procedureParameterOUT = new TreeItem<String>("RETURN,"+rsFunctions.getString(5));
+																							  functionsParametersOUT.getChildren().add(procedureParameterOUT);
+																						  }
+																					  }
+																					  
+																					  functionName.getChildren().addAll(functionsParametersIN,functionsParametersOUT);
+																					
+																					  mySqlTreeItemFunctions.getChildren().add(functionName);																					
 																				}
 																				//stmt.close();
 																			} catch (SQLException e) {
@@ -881,54 +1134,13 @@ public class MySqlUI {
 																				e.printStackTrace();
 																			}
 																	     }
-																	}).start();		
+																	}).start();
+															}else {
+																System.out.println("Functions Collpapsed!! "+ "Database Selected "+loadedDatabaseName.getValue() );
+																mySqlTreeItemFunctions.getChildren().clear();
+																mySqlTreeItemFunctions.getChildren().add(loadingTreeItemFunctions);
 															}
-													 });
-													 
-													 //Functions
-													 mySqlTreeItemFunctions.expandedProperty().addListener(new ChangeListener<Boolean>() {
-															@Override
-															public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-														
-																System.out.println("observable : "+ "Bean : "+ ((TreeItem<String>)((BooleanProperty)observable).getBean()).getValue()     +" Name : "+((BooleanProperty)observable).getName() +" Value :" +((BooleanProperty)observable).getName() );
-																
-																System.out.println("Its Functions expansion!!!"); // from here fix procedures
-																
-																// get the database name and display its tables 
-																TreeItem<String> currentDatabasebean = ((TreeItem<String>)((BooleanProperty)observable).getBean());
-																
-
-																System.out.println("Current DatabaseSelected Name "+loadedDatabaseName.getValue());
-																
-																new Thread(new Runnable() {
-																     @Override
-																     public void run() {
-																         
-																    	try  {
-																    		stmt.execute("use "+loadedDatabaseName.getValue());
-																    		ResultSet rs = stmt.executeQuery(" SHOW FUNCTION STATUS WHERE Db = '"+ loadedDatabaseName.getValue() +"'");
-																    		try {
-																				Thread.sleep(1000);
-																			} catch (InterruptedException e) {
-																				// TODO Auto-generated catch block
-																				e.printStackTrace();
-																			}
-																    		mySqlTreeItemFunctions.getChildren().remove(0);  // Remove the Loading...
-																			while(rs.next()) {
-																				  System.out.println(rs.getString(1));
-																				  System.out.println(rs.getString(2));
-																				  mySqlTreeItemFunctions.getChildren().add(new TreeItem<String>(rs.getString(2)));
-																				
-																			}
-																			//stmt.close();
-																		} catch (SQLException e) {
-																			// TODO Auto-generated catch block
-																			e.printStackTrace();
-																		}
-																     }
-																}).start();		
-																
-															 }
+														}
 													 });
 													 
 													 // Events
@@ -1243,11 +1455,49 @@ public class MySqlUI {
 			 setOnMouseClicked(event -> {
 				 TreeItem<String> ti = getTreeItem();
 				 System.out.println("Current Tree item value is -->" + getTreeItem().getValue());
+				 System.out.println("Parent Tree item value is -->" + getTreeItem().getParent().getValue());
+				 // We are adding refresh here below coz we want this to be resetted for every treeitem selected
+				 refreshPerformanceButton.setOnAction(new EventHandler<ActionEvent>() {
+						@Override
+						public void handle(ActionEvent event) {
+							displayPerformanceTableView(performanceReportsTypes, performanceReportQueries,getTreeItem().getValue());
+							
+						}
+					});
 				 
-				 String actionTypes[] = {"BINARY LOGS","Server Logs","CHARACTER SET","COLLATION","ENGINES","ERRORS","EVENTS","OPEN TABLES","PLUGINS","PRIVILEGES","PROCESS LIST","PROFILES","REPLICAS","WARNINGS"};
-				 String actionTypeQuery[] = {"SHOW BINARY LOGS", "SHOW BINARY LOGS","SHOW CHARACTER SET","SHOW COLLATION","SHOW ENGINES","SHOW ERRORS","SHOW EVENTS IN mysql","SHOW OPEN TABLES","SHOW PLUGINS","SHOW PRIVILEGES",
-						 "SHOW PROCESSLIST","SHOW PROFILES","SHOW REPLICAS","SHOW WARNINGS"};
-				
+				 if(event.getClickCount() == 2) {
+					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Databases")) {
+							
+							Tab mainDatabaseTab = databaseDoubleClickMethod(getTreeItem());
+							
+							menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);
+
+					        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+					        singleSelectionModel.select(mainDatabaseTab);
+						 
+					 }
+					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Tables")) {
+						
+						 Tab particularTableTab = particularTableDoubleClickMethod(getTreeItem().getValue());
+    	            	 
+    	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
+
+    	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+					     singleSelectionModel.select(particularTableTab);
+						 
+					 }
+					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Views")) {
+							
+						 Tab particularTableTab = particularViewDoubleClickMethod(getTreeItem().getValue());
+    	            	 
+    	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
+
+    	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+					     singleSelectionModel.select(particularTableTab);
+						 
+					 }
+				 }
+				 
 				 if(event.getClickCount() == 2) {
 					 for( int i=0;i<actionTypes.length;i++) {
 						 
@@ -1324,54 +1574,13 @@ public class MySqlUI {
 									  }
 									});
 						 }
+						 
 					 }
 					 
 				 }
 				 
-				 String performanceReportsTypes[] = {"Total Memory","Total Memory By Event","Total Memory By User","Total Memory By Host","Total Memory By Thread","Top File I/O Activity Report","Top I/O By File By Time","Top I/O By Event Category"
-						 ,"Top I/O In Time By Event Categories","Top I/O Time By Uer/Thread","Analysis","With Errors or Warnings","With Full Table Scans","With Runtimes in 95th Percentile","With Sorting","With Temp Tables",
-						 "Auto Increment Columns","Flattened Keys","Index Statistics","Object Overview","Redundant Indexes","Table Lock Waits","Table Statistics","Table Statics with Buffer","Tables With Full Table Scans","Unused Indexes",
-						 "Global Waits By Time","Wait By User By Time","Wait By Host By Time","Wait Classes By Time","Wait Classes By Avg Time","Buffer Stats By Schema","Buffer Stats By Table","Lock Waits",
-						 "User Summary","User File I/O Summary","User File I/O Type Summary","User Stages Summary","User Statement Time Summary","User Statement Type Summary",
-						 "Host Summary","Host File I/O Summary","Host File I/O Type Summary","Host Stages Summary","Host Statement Time Summary","Host Statement Type Summary",
-						 "Version","Session Info","Latest File I/O","System Config","Session SSL Status","Metrics","Process List","Check Lost Instrumentation"};
-				 
-				 String performanceReportQueries[] = {"x$memory_global_total","x$memory_global_by_current_bytes","x$memory_by_user_by_current_bytes","x$memory_by_host_by_current_bytes","x$memory_by_thread_by_current_bytes","x$io_global_by_file_by_bytes","x$io_global_by_file_by_latency",
-						 "x$io_global_by_wait_by_bytes","x$io_global_by_wait_by_latency","x$io_by_thread_by_latency","x$statement_analysis","statements_with_errors_or_warnings","statements_with_full_table_scans",
-						 "x$statements_with_runtimes_in_95th_percentile","statements_with_sorting","statements_with_temp_tables","schema_auto_increment_columns","x$schema_flattened_keys","x$schema_index_statistics","schema_object_overview","schema_redundant_indexes","x$schema_table_lock_waits","x$schema_table_statistics","x$schema_table_statistics_with_buffer","x$schema_tables_with_full_table_scans","schema_unused_indexes",
-						 "x$waits_global_by_latency","x$waits_by_user_by_latency"," x$waits_by_host_by_latency","x$wait_classes_global_by_latency","x$wait_classes_global_by_avg_latency","x$innodb_buffer_stats_by_schema","x$innodb_buffer_stats_by_table","x$innodb_lock_waits",
-						 "x$user_summary","x$user_summary_by_file_io","x$user_summary_by_file_io_type","x$user_summary_by_stages","x$user_summary_by_statement_latency","x$user_summary_by_statement_type",
-						 "x$host_summary","x$host_summary_by_file_io","x$host_summary_by_file_io_type","x$host_summary_by_stages","x$host_summary_by_statement_latency","x$host_summary_by_statement_type",
-						 "version","x$session","x$latest_file_io","sys_config","session_ssl_status","metrics","processlist","ps_check_lost_instrumentation"};
-				 
 				 if(event.getClickCount() == 1) {
-					 for( int i=0;i<performanceReportsTypes.length;i++) {
-						 if(getTreeItem().getValue().equalsIgnoreCase(performanceReportsTypes[i])) {
-							 int index = i;
-						      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-								Platform.runLater(new Runnable() {
-									  @Override
-									  public void run() { 
-									    try  {
-									    	
-									    	ResultSet rs = stmt.executeQuery("Select * from sys."+performanceReportQueries[index]);
-									    	
-									    	String connectionName = connectionPlaceHolder.getConnectionName();
-									    	
-									    	System.out.println("Connection Name :"+ connectionName);
-									    	particularPerformanceReportLabel.setText(performanceReportsTypes[index]);
-									    	performanceReportTableView.getColumns().clear();
-									    	performanceReportTableView.getItems().clear();
-											showResultSetInTheTableView(rs,performanceReportTableView);
-											 
-										} catch (SQLException e) {
-												// TODO Auto-generated catch block
-												e.printStackTrace();
-										}
-									  }
-									});
-						 }
-					 }
+					 displayPerformanceTableView(performanceReportsTypes, performanceReportQueries,getTreeItem().getValue());
 					 
 				 }
 				 /*
@@ -2254,7 +2463,7 @@ public class MySqlUI {
 							    	
 							    	System.out.println("Connection Name :"+ connectionName);
 							    	
-									Tab sessionManagerTab = new Tab("Users and Privileges " + connectionPlaceHolder.getConnectionName());									
+									Tab sessionManagerTab = new Tab("Performance Reports " + connectionPlaceHolder.getConnectionName());									
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
 										@Override
 										public void handle(Event event) {
@@ -2287,14 +2496,32 @@ public class MySqlUI {
 									
 									
 								    performanceReportTableView = new TableView();
-									performanceReportTableView.setMinHeight(menu_Items_FX.size.getHeight() - 250);
+									performanceReportTableView.setMinHeight(menu_Items_FX.size.getHeight() - 300);
+									
+									HBox hboxPerformanceButtons = new HBox();
+									hboxPerformanceButtons.setSpacing(400);
+									
+									HBox hboxPerformanceButtonsLeft = new HBox();
+									hboxPerformanceButtonsLeft.setSpacing(10);
+									hboxPerformanceButtonsLeft.setPadding(new Insets(10,10,10,10));
 									
 									
-									vBoxCenterTop.getChildren().addAll(particularPerformanceReportLabel,performanceReportTableView);
+									hboxPerformanceButtonsLeft.getChildren().addAll(exportPerformanceButton,performanceCopySelected,performanceCopyQuery);
+									
+									HBox hboxPerformanceButtonsRight = new HBox();
+									hboxPerformanceButtonsRight.setPadding(new Insets(10,10,10,10));
+									
+									hboxPerformanceButtonsRight.getChildren().add(refreshPerformanceButton);
+									
+									hboxPerformanceButtons.getChildren().addAll(hboxPerformanceButtonsLeft,hboxPerformanceButtonsRight);
+									
+									vBoxCenterTop.getChildren().addAll(particularPerformanceReportLabel,performanceReportTableView,hboxPerformanceButtons);
 									
 									performanceReportsBorderPane.setTop(addTopHBoxForInfo("Performance Reports"));
 									performanceReportsBorderPane.setLeft(vboxLeft);
 									performanceReportsBorderPane.setCenter(vBoxCenterTop);
+
+									
 									
 									sessionManagerTab.setContent(performanceReportsBorderPane);
 									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
@@ -2447,6 +2674,29 @@ public class MySqlUI {
 									});
 									
 									TableView resultAsTableView =  showResultSetInTheTableView(rsUsers);
+									// Can move this to invidua; invocations as each call of this will ha`ve custom usage based on selection 
+									resultAsTableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
+
+										@Override
+										public void changed(ObservableValue<? extends HashMap<String, String>> observable,
+												HashMap<String, String> oldValue, HashMap<String, String> newValue) {
+
+											System.out.println("oldValue --->"+oldValue);
+											System.out.println("newValue --->"+newValue.keySet().toString());
+											for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
+												
+												System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
+											}
+											
+											TableViewSelectionModel  selectionModel = resultAsTableView.getSelectionModel();
+									        ObservableList selectedCells = selectionModel.getSelectedCells();
+									        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+									        Object val = tablePosition.getTableColumn().getCellData(newValue);
+									        System.out.println("Selected Value" + val);
+											
+										}	
+									});
+
 									BorderPane userAccountsBorderPane = new BorderPane();
 									VBox vboxLeft = new VBox();
 									vboxLeft.setPadding(new Insets(5,5,5,5));
@@ -2481,7 +2731,7 @@ public class MySqlUI {
 									accountDetailsTabs.getStyleClass().addAll("databasesflowPane");  // box for the connection tabbed pane
 									Tab loginTab = new Tab("Login");
 									loginTab.setClosable(false);  
-									loginTab.setContent(addAccountLoginCredentials()); // will set fields to connectionDetailsTab
+									loginTab.setContent(addAccountLoginCredentials()); // pass the user details here as parameterand set them
 									Tab accountLimitsTab = new Tab("Account Limits");
 									accountLimitsTab.setClosable(false);	
 									accountLimitsTab.setContent(addAccountLimits());
@@ -2589,6 +2839,7 @@ public class MySqlUI {
 		tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);  // to remove the last empty column otherwise added
 		tableView.setEditable(true);
         
+		// Can move this to invidua; invocations as each call of this will ha`ve custom usage based on selection 
 		tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
 
 			@Override
@@ -2629,7 +2880,7 @@ public class MySqlUI {
 	        	columnTypes[i] =  md.getColumnType(i+1);	   
 	        	
 	        	tableColumnName = new TableColumn<>(columnNames[i]);
-	        	tableColumnName.setMinWidth(150);
+	        	tableColumnName.setPrefWidth(150);
 	        	tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[i]));
 	        	// Below code will do cell editing
 	        	tableColumnName.setCellFactory( new Callback<TableColumn<Map,String>, TableCell<Map,String>>() {
@@ -2688,6 +2939,14 @@ public class MySqlUI {
 
 				System.out.println("oldValue --->"+oldValue);
 				System.out.println("newValue --->"+newValue.keySet().toString());
+				performanceCopySelected.setOnAction(new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent event) {
+						
+				        clipBoardcontent.putString(newValue.keySet().toString()+"\n"+newValue.values().toString());
+				        clipboard.setContent(clipBoardcontent);
+					}
+				});
 				for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
 					
 					System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
@@ -2781,12 +3040,67 @@ public class MySqlUI {
 				
 				// Do the alignment here , along with is Editable entry by doing look up to MySQLConstants enum
 				if(inputParam.equalsIgnoreCase("Status") || inputParam.equalsIgnoreCase("Variables")) {
-					variablesSecondHalfDisplayVBox.getChildren().clear();
-					for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
-						System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
+variablesSecondHalfDisplayVBox.getChildren().clear();
 					
-						variablesSecondHalfDisplayVBox.getChildren().add(new Label(tableValues.getKey()+ " "+ tableValues.getValue()));
+					System.out.println("Description: "+newValue.get("Description"));
+					System.out.println("Value: "+newValue.get("Value"));
+					System.out.println("Name: "+newValue.get("Variable_name"));
+					
+					HBox hboxDescriptionValue = new HBox();
+					hboxDescriptionValue.setPadding(new Insets(10,10,10,30));
+					
+					HBox hboxDescriptionhBox= new HBox();
+					hboxDescriptionhBox.setSpacing(10);
+					hboxDescriptionhBox.setPadding(new Insets(20,10,20,200));
+					Label hboxDescriptionLabel = new Label("Description: ");
+					hboxDescriptionLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));					
+					Label hboxDescriptionValueLabel = new Label(newValue.get("Variable_name"));
+					hboxDescriptionhBox.getChildren().addAll(hboxDescriptionLabel,hboxDescriptionValueLabel);
+					
+					
+					Label statusVariableDescriptionLabel = new Label("Description: "+ newValue.get("Description"));
+					statusVariableDescriptionLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+					hboxDescriptionValue.getChildren().add(statusVariableDescriptionLabel);	
+											
+					HBox hboxVariableNameValue = new HBox();
+					hboxVariableNameValue.setPadding(new Insets(10,10,10,30));
+					hboxVariableNameValue.setSpacing(100);
+					
+					HBox variableNamehBox= new HBox();
+					variableNamehBox.setSpacing(10);
+					Label variableNameLabel = new Label("Name: ");
+					variableNameLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+					Label variableNameValueLabel = new Label(newValue.get("Variable_name"));
+					variableNamehBox.getChildren().addAll(variableNameLabel,variableNameValueLabel);
+					
+					HBox hboxVariableValue = new HBox();
+					hboxVariableValue.setSpacing(10);
+					Label statusVariableLabel = new Label("Value:  ");
+					TextField statusVariableValue = new TextField(newValue.get("Value"));
+					statusVariableLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+					hboxVariableValue.getChildren().addAll(statusVariableLabel,statusVariableValue);									
+																					
+							
+					HBox btnSaveVariablehBox = new HBox();									
+					btnSaveVariablehBox.setAlignment(Pos.BOTTOM_RIGHT);
+					//btnBox.setPadding(new Insets(10,100,10,0));
+					
+					Button saveVariablebtn = new Button();
+					
+					
+					if("Y".equals( MySQLConstants.valueOf(newValue.get("Variable_name")).getIsEditable())) {
+						saveVariablebtn.setText("Save");
+						saveVariablebtn.setDisable(false);
+					}else {
+						saveVariablebtn.setText("Read Only");
+						saveVariablebtn.setDisable(true);
 					}
+					
+					btnSaveVariablehBox.getChildren().add(saveVariablebtn);										
+					hboxVariableNameValue.getChildren().addAll(variableNamehBox,hboxVariableValue,btnSaveVariablehBox);	
+
+					variablesSecondHalfDisplayVBox.setPadding(new Insets(0, 40, 10, 0));
+					variablesSecondHalfDisplayVBox.getChildren().addAll(hboxDescriptionhBox,hboxVariableNameValue); 
 				}
 				if(inputParam.equalsIgnoreCase("BINARY LOGS") || inputParam.equalsIgnoreCase("Server Logs")) {
 					secondHalfDisplayVBox.getChildren().clear();
@@ -2899,6 +3213,140 @@ public class MySqlUI {
 		}
 		
 		return tableView;
+	}
+
+	private TableView showResultSetInTheTableViewDoubleClick(ResultSet rs,String sqlComponentForwhich)  throws SQLException{
+		
+		TableView tableView = new TableView();
+		tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);  // to remove the last empty column otherwise added
+        
+		if(rs.next()) {
+	
+	    	System.out.println("First calumne "+rs.getString(1));
+	    	TableColumn<Map, String> tableColumnName;
+	    	Map<String, Object> tableRowValue;
+	    	ObservableList<Map<String, Object>> items = FXCollections.<Map<String, Object>>observableArrayList();
+	    	
+			ResultSetMetaData md = rs.getMetaData();
+	        String[] columnNames = new String[md.getColumnCount()];
+	        Integer[] columnTypes = new Integer[md.getColumnCount()];
+	           
+	        for (int i = 0; i < columnNames.length; i++) {
+	        	columnNames[i] = md.getColumnLabel(i+1);
+	        	System.out.println("Column Name : "+columnNames[i]);
+	        	columnTypes[i] =  md.getColumnType(i+1);	   
+	        	
+	        	tableColumnName = new TableColumn<>(columnNames[i]);
+	        	tableColumnName.setPrefWidth(150);
+	        	tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[i]));
+	        		
+	        	tableView.setRowFactory( tv -> {
+	        	    TableRow<HashMap> row = new TableRow<>();
+	        	    row.setOnMouseClicked(event -> {
+	        	        if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+	        	        	HashMap rowData = row.getItem();
+	        	        	System.out.println("this.connectionPlaceHolder ->"+this.connectionPlaceHolder.toString());
+	        	        	System.out.println("For --->"+sqlComponentForwhich);	
+	        	            System.out.println("Double CLicked "+rowData.toString());
+	        	            
+	        	            if(sqlComponentForwhich.equalsIgnoreCase("Tables")) {
+	        	            	 System.out.println("Pop up a new Tab for Tables from here ");
+	        	            	 Tab particularTableTab = particularTableDoubleClickMethod(rowData.get("TABLE_NAME").toString());
+	        	            	 
+	        	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
+
+	        	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+							     singleSelectionModel.select(particularTableTab);
+	        	            }
+	        	            if(sqlComponentForwhich.equalsIgnoreCase("Views")) {
+	        	            	 System.out.println("Pop up a new Tab for Tables from here ");
+	        	            	 Tab particularTableTab = particularViewDoubleClickMethod(rowData.get("TABLE_NAME").toString());
+	        	            	 
+	        	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
+
+	        	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+							     singleSelectionModel.select(particularTableTab);
+	        	            }
+	        	        }
+	        	    });
+	        	    row.setOnKeyPressed (event -> {
+	        	        if (event.getCode() == KeyCode.ENTER && (! row.isEmpty()) ) {
+	        	        	HashMap rowData = row.getItem();
+	        	        	System.out.println("this.connectionPlaceHolder ->"+this.connectionPlaceHolder.toString());
+	        	        	System.out.println("For --->"+sqlComponentForwhich);	
+	        	            System.out.println("Double CLicked "+rowData.toString());
+	        	            
+	        	            if(sqlComponentForwhich.equalsIgnoreCase("Tables")) {
+	        	            	 System.out.println("Pop up a new Tab for Tables from here ");
+	        	            	 Tab particularTableTab = particularTableDoubleClickMethod(rowData.get("TABLE_NAME").toString());
+	        	            	 
+	        	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
+
+	        	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+							     singleSelectionModel.select(particularTableTab);
+	        	            }
+
+	        	        }
+	        	    });
+	        	    return row ;
+	        	});
+	        	
+	          tableView.getColumns().add(tableColumnName);
+	        }		
+	       do {
+	        	String[] columnValues = new String[md.getColumnCount()];
+	        	tableRowValue = new HashMap<>();
+	        	for (int i = 0; i < columnNames.length; i++) {
+	        		columnValues[i] =  rs.getString(i+1); 	
+	            	tableRowValue.put(columnNames[i], columnValues[i]);
+	        	}	
+	        	items.add(tableRowValue);
+	         }	 while (rs.next());
+	        tableView.getItems().addAll(items);
+		}
+		
+		return tableView;
+}
+	private Tab particularTableDoubleClickMethod(String tableName) {
+		
+		Tab particularTableTab = new Tab(tableName);
+				
+		TabPane tabbedPane = new TabPane();
+		Tab columnsTab = new Tab("Columns");
+		Tab constraintsTab = new Tab("Constraints");
+		Tab foreignKeysTab = new Tab("Foreign Keys");
+		Tab referencesTab = new Tab("References");
+		Tab triggersTab = new Tab("Triggers");
+		Tab indexesTab = new Tab("Indexes");
+		Tab partitionsTab = new Tab("Partitions");
+		
+		
+		tabbedPane.getTabs().addAll(columnsTab,constraintsTab,foreignKeysTab,referencesTab,triggersTab,indexesTab,partitionsTab);
+		
+		particularTableTab.setContent(tabbedPane);
+		
+		return particularTableTab;
+	}
+	
+	private Tab particularViewDoubleClickMethod(String viewName) {
+		
+		Tab particularViewTab = new Tab(viewName);
+				
+		TabPane tabbedPane = new TabPane();
+		Tab columnsTab = new Tab("Columns");
+		Tab constraintsTab = new Tab("Constraints");
+		Tab foreignKeysTab = new Tab("Foreign Keys");
+		Tab referencesTab = new Tab("References");
+		Tab triggersTab = new Tab("Triggers");
+		Tab indexesTab = new Tab("Indexes");
+		Tab partitionsTab = new Tab("Partitions");
+		
+		
+		tabbedPane.getTabs().addAll(columnsTab,constraintsTab,foreignKeysTab,referencesTab,triggersTab,indexesTab,partitionsTab);
+		
+		particularViewTab.setContent(tabbedPane);
+		
+		return particularViewTab;
 	}
 
 	private HBox addBottomHBoxForVariables() {
@@ -4163,6 +4611,465 @@ public class MySqlUI {
 		
 		return performanceView;
 	}
+
+	private void displayPerformanceTableView(String[] performanceReportsTypes, String[] performanceReportQueries,String currentTreeItemSelected) {
+		for( int i=0;i<performanceReportsTypes.length;i++) {
+			 if(currentTreeItemSelected.equalsIgnoreCase(performanceReportsTypes[i])) {
+				 int index = i;
+			      System.out.println("Duble clicked on this item"+ currentTreeItemSelected);
+					Platform.runLater(new Runnable() {
+						  @Override
+						  public void run() { 
+						    try  {
+						    	
+						    	ResultSet rs = stmt.executeQuery("Select * from sys."+performanceReportQueries[index]);
+						    	
+						    	String connectionName = connectionPlaceHolder.getConnectionName();
+						    	
+						    	System.out.println("Connection Name :"+ connectionName);
+						    	particularPerformanceReportLabel.setText(performanceReportsTypes[index]);
+						    	performanceReportTableView.getColumns().clear();
+						    	performanceReportTableView.getItems().clear();
+								showResultSetInTheTableView(rs,performanceReportTableView);
+								
+								performanceCopyQuery.setOnAction(new EventHandler<ActionEvent>() {
+
+									@Override
+									public void handle(ActionEvent event) {
+										 clipBoardcontent.putString("Select * from sys."+performanceReportQueries[index]);
+									        clipboard.setContent(clipBoardcontent);
+										
+									}
+								});
+								 
+							} catch (SQLException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+							}
+						  }
+						});
+			 }
+		 }
+	}
+
+	private Tab databaseDoubleClickMethod(TreeItem<String> loadedDatabaseName) {
+		
+		Tab mainDatabaseTab = new Tab();
+		mainDatabaseTab.setText(loadedDatabaseName.getValue());
+		
+		TabPane databaseTabPane = new TabPane();
+		databaseTabPane.setTabMinWidth(200);	
+		
+		Tab databaseDetails = new Tab("Details");
+		databaseDetails.setClosable(false);
+		
+		Tab databaseDetailsPropertiesTab = new Tab("Properties");
+		databaseDetailsPropertiesTab.setClosable(false);
+		Tab databaseDetailsTablesTab = new Tab("Tables");
+		databaseDetailsTablesTab.setClosable(false);
+		Tab databaseDetailsViewsTab = new Tab("Views");
+		databaseDetailsViewsTab.setClosable(false);
+		Tab databaseDetailsIndexesTab = new Tab("Indexes");
+		databaseDetailsViewsTab.setClosable(false);
+		Tab databaseDetailsProceduresTab = new Tab("Procedures");
+		databaseDetailsProceduresTab.setClosable(false);
+		Tab databaseDetailsFunctionsTab = new Tab("Functions");
+		databaseDetailsFunctionsTab.setClosable(false);
+		Tab databaseDetailsEventsTab = new Tab("Events");
+		databaseDetailsEventsTab.setClosable(false);
+
+		
+		TabPane databaseDetailsTabPane = new TabPane();
+		databaseDetailsTabPane.setTabMinWidth(100);
+		databaseDetailsTabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+				@Override
+				public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
+					 // System.out.println("Old Tab Selected -->"+oldValue.getText());
+					  System.out.println("New Tab Selected -->"+newValue.getText());
+					  
+					  if(newValue.getText().equalsIgnoreCase("Properties")) {
+						  System.out.println("Properties Tab selected ");
+					  }
+					  if(newValue.getText().equalsIgnoreCase("Tables")) {
+						  System.out.println("Tables Tab selected ");
+							
+						  try { 
+							  ResultSet rs = stmt.executeQuery("select table_name,engine,auto_increment,table_rows,data_length,create_time,update_time,create_options from information_schema.tables where table_comment != 'view' and table_schema='"+loadedDatabaseName.getValue()+"'");
+							  SplitPane tableDetailsSplitPane = new SplitPane();
+							  tableDetailsSplitPane.setOrientation(Orientation.VERTICAL);
+							  tableDetailsSplitPane.setDividerPositions(0.75); 
+							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Tables");
+							  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
+									@Override
+									public void changed(ObservableValue<? extends HashMap<String, String>> observable,
+											HashMap<String, String> oldValue, HashMap<String, String> newValue) {
+										System.out.println("From Local oldValue --->"+oldValue);
+										System.out.println("From local newValue --->"+newValue.keySet().toString());
+										for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
+											System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
+										}
+										TableViewSelectionModel  selectionModel = tablesView.getSelectionModel();
+								        ObservableList selectedCells = selectionModel.getSelectedCells();
+								        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+								        Object val = tablePosition.getTableColumn().getCellData(newValue);
+								        System.out.println("Selected Value" + val);
+
+									}	
+							  });
+							  
+							  HBox allButtonsHBox = new HBox();
+							  allButtonsHBox.setSpacing(100);
+							  allButtonsHBox.setPadding(new Insets(10,10,0,100));
+							  
+							  HBox tableButtonsHbox = new HBox();
+							  tableButtonsHbox.setSpacing(20);
+							  tableButtonsHbox.setPadding(new Insets(0,50,0,0));
+							  
+							  Button viewTableButton = new Button("View Table");
+							  Button createTableButton = new Button("Create Table");
+							  Button editTableButton = new Button("Edit Table");
+							  Button deleteTableButton = new Button("Delete Table");
+							  
+							  Button refreshTableButton = new Button("Refresh");
+							  createTableButton.setOnAction(new EventHandler<ActionEvent>() {
+								@Override
+								public void handle(ActionEvent event) {
+									
+									tableDetailsSplitPane.getItems().remove(tableButtonsHbox);
+									tableDetailsSplitPane.setDividerPositions(0.99);
+								}	
+							  });
+							  
+							  tableButtonsHbox.getChildren().addAll(viewTableButton,createTableButton,editTableButton,deleteTableButton);
+							  allButtonsHBox.getChildren().addAll(tableButtonsHbox,refreshTableButton);
+							  
+							  tableDetailsSplitPane.getItems().addAll(tablesView,allButtonsHBox);
+		  					  databaseDetailsTablesTab.setContent(tableDetailsSplitPane);
+							}catch(Exception e) {
+								e.printStackTrace();
+							}
+					  }
+					  if(newValue.getText().equalsIgnoreCase("Views")) {
+						  System.out.println("Views Tab selected ");
+						  	try {		  
+							  ResultSet rs = stmt.executeQuery("select table_name,check_option,is_updatable,definer,view_definition from information_schema.views where table_schema='"+loadedDatabaseName.getValue()+"'");
+							  SplitPane viewDetailsSplitPane = new SplitPane();
+							  viewDetailsSplitPane.setOrientation(Orientation.VERTICAL);
+							  viewDetailsSplitPane.setDividerPositions(0.75); 
+							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Views");
+							  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
+									@Override
+									public void changed(ObservableValue<? extends HashMap<String, String>> observable,
+											HashMap<String, String> oldValue, HashMap<String, String> newValue) {
+										System.out.println("From Local oldValue --->"+oldValue);
+										System.out.println("From local newValue --->"+newValue.keySet().toString());
+										
+										
+										
+										
+										for(Map.Entry<String, String> tableValues : newValue.entrySet()) {	
+											System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
+										}
+										TableViewSelectionModel  selectionModel = tablesView.getSelectionModel();
+								        ObservableList selectedCells = selectionModel.getSelectedCells();
+								        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+								        Object val = tablePosition.getTableColumn().getCellData(newValue);
+								        System.out.println("Selected Value" + val);
+								     
+									}	
+							  });
+							  
+							  HBox allButtonsHBox = new HBox();
+							  allButtonsHBox.setSpacing(100);
+							  allButtonsHBox.setPadding(new Insets(10,10,0,100));
+							  
+							  
+							  HBox viewButtonsHbox = new HBox();
+							  viewButtonsHbox.setSpacing(20);
+							  viewButtonsHbox.setPadding(new Insets(0,50,0,0));
+							  
+							  Button viewViewButton = new Button("View View");
+							  Button createViewButton = new Button("Create View");
+							  Button editViewButton = new Button("Edit View");
+							  Button deleteViewButton = new Button("Delete View");
+							  
+							  Button refreshViewButton = new Button("Refresh");
+							  createViewButton.setOnAction(new EventHandler<ActionEvent>() {
+								@Override
+								public void handle(ActionEvent event) {
+									
+									viewDetailsSplitPane.getItems().remove(viewButtonsHbox);
+									viewDetailsSplitPane.setDividerPositions(0.99);
+								}	
+							  });
+							  
+							  viewButtonsHbox.getChildren().addAll(viewViewButton,createViewButton,editViewButton,deleteViewButton);
+							  allButtonsHBox.getChildren().addAll(viewButtonsHbox,refreshViewButton);
+							  
+							  viewDetailsSplitPane.getItems().addAll(tablesView,allButtonsHBox);
+
+							  databaseDetailsViewsTab.setContent(viewDetailsSplitPane);
+							}catch(Exception e) {
+								e.printStackTrace();
+							}
+					  }
+					  
+					  if(newValue.getText().equalsIgnoreCase("Indexes")) {
+						  System.out.println("Indexes Tab selected ");
+						  	try {		  
+							  ResultSet rs = stmt.executeQuery("select  index_name,column_name,table_name,Index_type,packed,nullable,non_unique from information_schema.statistics where table_schema = '"+loadedDatabaseName.getValue()+"'");
+							  SplitPane indexesDetailsSplitPane = new SplitPane();
+							  indexesDetailsSplitPane.setOrientation(Orientation.VERTICAL);
+							  indexesDetailsSplitPane.setDividerPositions(0.75); 
+							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Indexes");
+							  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
+									@Override
+									public void changed(ObservableValue<? extends HashMap<String, String>> observable,
+											HashMap<String, String> oldValue, HashMap<String, String> newValue) {
+
+										System.out.println("From Local oldValue --->"+oldValue);
+										System.out.println("From local newValue --->"+newValue.keySet().toString());
+										for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
+											
+											System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
+										}
+										TableViewSelectionModel  selectionModel = tablesView.getSelectionModel();
+								        ObservableList selectedCells = selectionModel.getSelectedCells();
+								        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+								        Object val = tablePosition.getTableColumn().getCellData(newValue);
+								        System.out.println("Selected Value" + val);
+									}	
+							  });
+							  
+							  HBox allButtonsHBox = new HBox();
+							  allButtonsHBox.setSpacing(300);
+							  allButtonsHBox.setPadding(new Insets(10,10,0,100));
+							  
+							  HBox indexButtonsHbox = new HBox();
+							  indexButtonsHbox.setSpacing(20);
+							  
+							  Button viewIndexButton = new Button("View Index");
+							  Button createIndexButton = new Button("Create Index");
+							  Button editIndexButton = new Button("Edit Index");
+							  Button deleteIndexButton = new Button("Delete Imdex");
+							  
+							  Button refreshIndexButton = new Button("Refresh");
+							  createIndexButton.setOnAction(new EventHandler<ActionEvent>() {
+								@Override
+								public void handle(ActionEvent event) {
+									
+									indexesDetailsSplitPane.getItems().remove(indexButtonsHbox);
+									indexesDetailsSplitPane.setDividerPositions(0.99);
+								}	
+							  });
+							  
+							  indexButtonsHbox.getChildren().addAll(viewIndexButton,createIndexButton,editIndexButton,deleteIndexButton);
+							  allButtonsHBox.getChildren().addAll(indexButtonsHbox,refreshIndexButton);
+							  
+							  indexesDetailsSplitPane.getItems().addAll(tablesView,allButtonsHBox);
+
+							  databaseDetailsIndexesTab.setContent(indexesDetailsSplitPane);
+							}catch(Exception e) {
+								e.printStackTrace();
+							}
+					  }
+					  if(newValue.getText().equalsIgnoreCase("Procedures")) {
+						  System.out.println("Procedures Tab selected ");
+						  	try {		  
+							  ResultSet rs = stmt.executeQuery("select  routine_name,definer,created,LAST_ALTERED,routine_comment from information_schema.routines where  routine_type != 'FUNCTION' and  routine_schema = '"+loadedDatabaseName.getValue()+"'");
+							  SplitPane proceduresDetailsSplitPane = new SplitPane();
+							  proceduresDetailsSplitPane.setOrientation(Orientation.VERTICAL);
+							  proceduresDetailsSplitPane.setDividerPositions(0.75); 
+							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Procedures");
+							  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
+									@Override
+									public void changed(ObservableValue<? extends HashMap<String, String>> observable,
+											HashMap<String, String> oldValue, HashMap<String, String> newValue) {
+
+										System.out.println("From Local oldValue --->"+oldValue);
+										System.out.println("From local newValue --->"+newValue.keySet().toString());
+										for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
+											
+											System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
+										}
+										TableViewSelectionModel  selectionModel = tablesView.getSelectionModel();
+								        ObservableList selectedCells = selectionModel.getSelectedCells();
+								        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+								        Object val = tablePosition.getTableColumn().getCellData(newValue);
+								        System.out.println("Selected Value" + val);
+									}	
+							  });
+							  
+							  HBox allButtonsHBox = new HBox();
+							  allButtonsHBox.setSpacing(300);
+							  allButtonsHBox.setPadding(new Insets(10,10,0,100));
+							  
+							  HBox proceduresButtonsHbox = new HBox();
+							  proceduresButtonsHbox.setSpacing(20);
+							  
+							  Button viewProcedureButton = new Button("View Procedure");
+							  Button createProcedureButton = new Button("Create Procedure");
+							  Button editProcedureButton = new Button("Edit Procedure");
+							  Button deleteProcedureButton = new Button("Delete Procedure");
+							  
+							  Button refreshProcedureButton = new Button("Refresh");
+							  createProcedureButton.setOnAction(new EventHandler<ActionEvent>() {
+								@Override
+								public void handle(ActionEvent event) {
+									
+									proceduresDetailsSplitPane.getItems().remove(proceduresButtonsHbox);
+									proceduresDetailsSplitPane.setDividerPositions(0.99);
+								}	
+							  });
+							  
+							  proceduresButtonsHbox.getChildren().addAll(viewProcedureButton,createProcedureButton,editProcedureButton,deleteProcedureButton);
+							  allButtonsHBox.getChildren().addAll(proceduresButtonsHbox,refreshProcedureButton);
+							  
+							  proceduresDetailsSplitPane.getItems().addAll(tablesView,allButtonsHBox);
+							  
+							  databaseDetailsProceduresTab.setContent(proceduresDetailsSplitPane);
+							}catch(Exception e) {
+								e.printStackTrace();
+							}
+					  }
+					  if(newValue.getText().equalsIgnoreCase("Functions")) {
+						  System.out.println("Functions Tab selected ");
+						  	try {		  
+							  ResultSet rs = stmt.executeQuery("select  routine_name,definer,created,LAST_ALTERED,routine_comment from information_schema.routines where  routine_type != 'PROCEDURE' and  routine_schema = '"+loadedDatabaseName.getValue()+"'");
+							  SplitPane functionsDetailsSplitPane = new SplitPane();
+							  functionsDetailsSplitPane.setOrientation(Orientation.VERTICAL);
+							  functionsDetailsSplitPane.setDividerPositions(0.75); 
+							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Functions");
+							  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
+									@Override
+									public void changed(ObservableValue<? extends HashMap<String, String>> observable,
+											HashMap<String, String> oldValue, HashMap<String, String> newValue) {
+
+										System.out.println("From Local oldValue --->"+oldValue);
+										System.out.println("From local newValue --->"+newValue.keySet().toString());
+										for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
+											
+											System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
+										}
+										TableViewSelectionModel  selectionModel = tablesView.getSelectionModel();
+								        ObservableList selectedCells = selectionModel.getSelectedCells();
+								        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+								        Object val = tablePosition.getTableColumn().getCellData(newValue);
+								        System.out.println("Selected Value" + val);
+									}	
+							  });
+							  
+							  HBox allButtonsHBox = new HBox();
+							  allButtonsHBox.setSpacing(300);
+							  allButtonsHBox.setPadding(new Insets(10,10,0,100));
+							  
+							  HBox functionsButtonsHbox = new HBox();
+							  functionsButtonsHbox.setSpacing(20);
+							  
+							  Button viewFunctionButton = new Button("View Function");
+							  Button createFunctionButton = new Button("Create Function");
+							  Button editFunctionButton = new Button("Edit Function");
+							  Button deleteFunctionButton = new Button("Delete Function");
+							  
+							  Button refreshProcedureButton = new Button("Refresh");
+							  createFunctionButton.setOnAction(new EventHandler<ActionEvent>() {
+								@Override
+								public void handle(ActionEvent event) {
+									
+									functionsDetailsSplitPane.getItems().remove(functionsButtonsHbox);
+									functionsDetailsSplitPane.setDividerPositions(0.99);
+								}	
+							  });
+							  
+							  functionsButtonsHbox.getChildren().addAll(viewFunctionButton,createFunctionButton,editFunctionButton,deleteFunctionButton);
+							  allButtonsHBox.getChildren().addAll(functionsButtonsHbox,refreshProcedureButton);
+							  
+							  functionsDetailsSplitPane.getItems().addAll(tablesView,allButtonsHBox);  
+							  databaseDetailsFunctionsTab.setContent(functionsDetailsSplitPane);
+							}catch(Exception e) {
+								e.printStackTrace();
+							}
+					  }
+					  if(newValue.getText().equalsIgnoreCase("Events")) {
+						  System.out.println("Events Tab selected ");
+						  	try {		  
+							  ResultSet rs = stmt.executeQuery("select  event_name,definer,event_type,interval_value,interval_field,starts,created,last_altered,last_executed from information_Schema.events where event_schema ='"+loadedDatabaseName.getValue()+"'");
+							  
+							  SplitPane eventsDetailsSplitPane = new SplitPane();
+							  eventsDetailsSplitPane.setOrientation(Orientation.VERTICAL);
+							  eventsDetailsSplitPane.setDividerPositions(0.75); 
+							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Events");
+							  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
+									@Override
+									public void changed(ObservableValue<? extends HashMap<String, String>> observable,
+											HashMap<String, String> oldValue, HashMap<String, String> newValue) {
+
+										System.out.println("From Local oldValue --->"+oldValue);
+										System.out.println("From local newValue --->"+newValue.keySet().toString());
+										for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
+											
+											System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
+										}
+										TableViewSelectionModel  selectionModel = tablesView.getSelectionModel();
+								        ObservableList selectedCells = selectionModel.getSelectedCells();
+								        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+								        Object val = tablePosition.getTableColumn().getCellData(newValue);
+								        System.out.println("Selected Value" + val);
+									}	
+							  });
+							  
+							  HBox allButtonsHBox = new HBox();
+							  allButtonsHBox.setSpacing(300);
+							  allButtonsHBox.setPadding(new Insets(10,10,0,100));
+							  
+							  HBox eventsButtonsHbox = new HBox();
+							  eventsButtonsHbox.setSpacing(20);
+							  
+							  Button viewEventButton = new Button("View Event");
+							  Button createEventButton = new Button("Create Event");
+							  Button editEventButton = new Button("Edit Event");
+							  Button deleteEventButton = new Button("Delete Event");
+							  
+							  Button refreshEventsButton = new Button("Refresh");
+							  createEventButton.setOnAction(new EventHandler<ActionEvent>() {
+								@Override
+								public void handle(ActionEvent event) {
+									
+									eventsDetailsSplitPane.getItems().remove(eventsButtonsHbox);
+									eventsDetailsSplitPane.setDividerPositions(0.99);
+								}	
+							  });
+							  
+							  
+							  eventsButtonsHbox.getChildren().addAll(viewEventButton,createEventButton,editEventButton,deleteEventButton);
+							  allButtonsHBox.getChildren().addAll(eventsButtonsHbox,refreshEventsButton);
+							  
+							  eventsDetailsSplitPane.getItems().addAll(tablesView,allButtonsHBox);  
+							  databaseDetailsEventsTab.setContent(eventsDetailsSplitPane);
+							}catch(Exception e) {
+								e.printStackTrace();
+							}
+					  }
+					   
+				}
+		  });
+		
+		  databaseDetailsTabPane.getTabs().addAll(databaseDetailsPropertiesTab,databaseDetailsTablesTab,databaseDetailsViewsTab,databaseDetailsIndexesTab,
+				databaseDetailsProceduresTab,databaseDetailsFunctionsTab,databaseDetailsEventsTab);
+		
+		databaseDetails.setContent(databaseDetailsTabPane);
+		
+		
+		Tab databaseERDiagram = new Tab("ER Diagram");
+		databaseERDiagram.setClosable(false);
+		Tab databaseGrahicsStats = new Tab("Graphics Stats");
+		databaseGrahicsStats.setClosable(false);
+		Tab databaseAIPrompt = new Tab("AI Prompt");
+		databaseAIPrompt.setClosable(false);				
+		databaseTabPane.getTabs().addAll(databaseDetails,databaseERDiagram,databaseGrahicsStats,databaseAIPrompt);
+		mainDatabaseTab.setContent(databaseTabPane);
+		return mainDatabaseTab;
+	}
 	 
 }
 
@@ -4231,4 +5138,7 @@ class EditingCell extends TableCell<Map, String> {
     private String getString() {
         return getItem() == null ? "" : getItem().toString();
     }
+    
 }
+
+

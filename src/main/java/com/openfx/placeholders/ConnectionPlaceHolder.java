@@ -28,5 +28,9 @@ public class ConnectionPlaceHolder {
 		this.connectionCreationDate = connectionCreationDate;
 	}
 	
-	
+	@Override
+	public String toString() {
+		
+		return "connectionName :"+connectionName + " connectionType :"+connectionType + " connectionCreationDate : "+connectionCreationDate;
+	}
 }
