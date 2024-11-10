@@ -40,6 +40,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SelectionModel;
@@ -2678,6 +2679,8 @@ public class MySqlUI {
 									TableView resultAsTableView =  showResultSetInTheTableView(rsUsers);
 									// Can move this to invidual invocations as each call of this will ha`ve custom usage based on selection 
 									resultAsTableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
+									
+
 										@Override
 										public void changed(ObservableValue<? extends HashMap<String, String>> observable,
 												HashMap<String, String> oldValue, HashMap<String, String> newValue) {
@@ -2696,10 +2699,8 @@ public class MySqlUI {
 									        Object val = tablePosition.getTableColumn().getCellData(newValue);
 									        System.out.println("Selected Value" + val);
 											
-									        try {
-									        	
-									        	
-									        	
+									        try {							        	
+									        										        	
 												ResultSet rsfullUserDetails = stmt.executeQuery("select * from mysql.user where user='"+newValue.get("User")+"' and host = '"+newValue.get("Host")+"'");
 												
 												System.out.println("select * from mysql.user where user='"+newValue.get("User")+"' and host = '"+newValue.get("Host")+"'");
@@ -2716,8 +2717,45 @@ public class MySqlUI {
 													confirmPasswordTextField.setText("**********");
 													
 													// setting the addAccountLimits below
+													maxQueriesTextFeild.setText( rsfullUserDetails.getString("max_questions"));
+													maxUpdatesTextFeild.setText( rsfullUserDetails.getString("max_updates"));
+													maxConnectionsTextFeild.setText( rsfullUserDetails.getString("max_connections"));
+													concurrentConnectionsTextFeild.setText( rsfullUserDetails.getString("max_user_connections"));
 													
 													// setting the addAccountPrivileges below
+													alterPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Alter_priv").equals("Y"));											
+													alterRoutinePrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Alter_routine_priv").equals("Y"));
+													createPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Create_priv").equals("Y"));
+													createRolePrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Create_role_priv").equals("Y"));
+													createRoutinePrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Create_routine_priv").equals("Y")); 
+													createTableSpacePrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Create_tablespace_priv").equals("Y"));
+													createTemporaryTablesPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Create_tmp_table_priv").equals("Y")); 
+													createUserPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Create_user_priv").equals("Y"));
+													createViewPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Create_view_priv").equals("Y"));
+													deletePrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Delete_priv").equals("Y"));
+													
+													dropPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Drop_priv").equals("Y"));
+													dropRolePrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Drop_role_priv").equals("Y"));
+													eventPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Event_priv").equals("Y"));
+													executePrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Execute_priv").equals("Y"));
+													filePrivilegeCheckBox.setSelected(rsfullUserDetails.getString("File_priv").equals("Y"));
+													grantOptionPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Grant_priv").equals("Y"));
+													indexPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Index_priv").equals("Y"));
+													insertPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Insert_priv").equals("Y"));
+													lockTablesPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Lock_tables_priv").equals("Y"));
+													processPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Process_priv").equals("Y"));
+													
+													referencesPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("References_priv").equals("Y"));
+													reloadPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Reload_priv").equals("Y"));
+													replicationSlavePrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Repl_slave_priv").equals("Y"));
+													replicationClientPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Repl_client_priv").equals("Y")); 
+													selectPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Select_priv").equals("Y"));
+													showDatabasesPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Show_db_priv").equals("Y"));
+													showViewPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Show_view_priv").equals("Y"));
+													shutdowmPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Shutdown_priv").equals("Y"));
+													superPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Super_priv").equals("Y")); 
+													triggerPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Trigger_priv").equals("Y"));
+													updatePrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Update_priv").equals("Y"));
 													
 													// setting the addSchemaPriviliges below
 													
@@ -2744,6 +2782,19 @@ public class MySqlUI {
 									hBox.setPadding(new Insets(5,5,5,5));
 									Button addAccountButton = new Button("Add Account");
 									addAccountButton.setMinWidth(80);
+								    addAccountButton.setOnAction(new EventHandler<ActionEvent>() {
+							            @Override
+							            public void handle(ActionEvent e) {
+							            	System.out.println("Adding new row....");
+							            	HashMap<String, String> newUserData = new HashMap<>();
+							                
+							                newUserData.put("User", "newuser");
+							                newUserData.put("Host", "%");
+							                resultAsTableView.getItems().add(newUserData);
+							                loginNameTextFeild.setText(newUserData.get("User"));
+											hostsMatchingTextField.setText(newUserData.get("Host"));										
+							            }
+							        });
 									Button deletetButton = new Button("Delete");
 									deletetButton.setMinWidth(80);
 									Button refreshButton = new Button("Refresh");
@@ -3086,7 +3137,7 @@ public class MySqlUI {
 					
 					HBox hboxDescriptionhBox= new HBox();
 					hboxDescriptionhBox.setSpacing(10);
-					hboxDescriptionhBox.setPadding(new Insets(20,10,20,200));
+					hboxDescriptionhBox.setPadding(new Insets(20,10,20,30));
 					Label hboxDescriptionLabel = new Label("Description: ");
 					hboxDescriptionLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));					
 					Label hboxDescriptionValueLabel = new Label(newValue.get("Variable_name"));
@@ -4007,7 +4058,7 @@ public class MySqlUI {
 		shutdowmPrivilegeCheckBox  =  new CheckBox("SHUT DOWN");
 		superPrivilegeCheckBox  =  new CheckBox("SUPER"); 
 		triggerPrivilegeCheckBox  =  new CheckBox("TRIGGER");
-		updatePrivilegeCheckBox  =  new CheckBox("UPDATe");
+		updatePrivilegeCheckBox  =  new CheckBox("UPDATE");
 		
 		thirdSetofPrivileges.getChildren().addAll(referencesPrivilegeCheckBox,reloadPrivilegeCheckBox,replicationSlavePrivilegeCheckBox,replicationClientPrivilegeCheckBox,selectPrivilegeCheckBox,showDatabasesPrivilegeCheckBox,
 				showViewPrivilegeCheckBox,shutdowmPrivilegeCheckBox,superPrivilegeCheckBox,triggerPrivilegeCheckBox,updatePrivilegeCheckBox);
