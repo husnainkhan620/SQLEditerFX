@@ -103,8 +103,8 @@ public class Menu_Items_FX extends Application {
 	public HashMap<ConnectionPlaceHolder,Connection> mariaDBConnectionsMap = new HashMap<ConnectionPlaceHolder, Connection>();
 	
 	
-	public TreeItem<String> rootConnectionItem;
-	public TreeView<String> treeConnectionsView;
+	public static TreeItem<String> rootConnectionItem;
+	public static TreeView<String> treeConnectionsView;
 	
 	public TabPane alltabbedEditors;
 	public SplitPane editerTabSplitPane;

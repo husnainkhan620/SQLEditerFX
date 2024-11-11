@@ -157,11 +157,11 @@ public class TableViewSample extends Application {
         table.getColumns().addAll(firstNameCol, lastNameCol, emailCol);
  
         final TextField addFirstName = new TextField();
-        addFirstName.setPromptText("First Name");
+        addFirstName.setPromptText("User");
         addFirstName.setMaxWidth(firstNameCol.getPrefWidth());
         final TextField addLastName = new TextField();
         addLastName.setMaxWidth(lastNameCol.getPrefWidth());
-        addLastName.setPromptText("Last Name");
+        addLastName.setPromptText("source");
         final TextField addEmail = new TextField();
         addEmail.setMaxWidth(emailCol.getPrefWidth());
         addEmail.setPromptText("Email");
@@ -174,7 +174,7 @@ public class TableViewSample extends Application {
             	HashMap<String,String> personMap = new HashMap<String,String>();                 
                 personMap.put("firstName",addFirstName.getText());
                 personMap.put("lastName", addLastName.getText());
-                personMap.put("email", addEmail.getText());
+           //     personMap.put("email", addEmail.getText());
                 mapdata.add(personMap);
                 addFirstName.clear();
                 addLastName.clear();

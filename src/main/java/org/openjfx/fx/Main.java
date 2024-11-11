@@ -14,7 +14,7 @@ public class Main {
 				
 			//	VariablesFrame.main(args);
 			 
-		 //	 TableViewSample.main(args);
+		// 	 TableViewSample.main(args);
 			//	TableValueSample2.main(args);
 		 	
 		 	// TableSample3.main(args);

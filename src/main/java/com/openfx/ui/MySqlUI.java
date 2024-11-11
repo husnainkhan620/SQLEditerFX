@@ -24,11 +24,12 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
@@ -43,7 +44,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.SelectionModel;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
@@ -55,6 +55,7 @@ import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableView.TableViewSelectionModel;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
@@ -71,6 +72,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -366,7 +368,7 @@ public class MySqlUI {
 																		    		stmt.execute("use "+loadedDatabaseName.getValue());
 																		    		ResultSet rs = stmt.executeQuery("SHOW FULL TABLES IN "+ loadedDatabaseName.getValue() +" WHERE TABLE_TYPE LIKE 'BASE TABLE'");
 																		    		try {
-																						Thread.sleep(1000);
+																						Thread.sleep(100);
 																					} catch (InterruptedException e) {
 																						// TODO Auto-generated catch block
 																						e.printStackTrace();
@@ -385,15 +387,7 @@ public class MySqlUI {
 																									Boolean value = ((BooleanProperty)observable).getValue() ;
 																									if(value) {
 																										 System.out.println("Loaded Table Expanded!! "+ "Database Selected "+loadedDatabaseName.getValue() +" Tables Selected " +loadedTableName.getValue());
-																										/*
-																										 Tab particularTableTab = particularTableDoubleClickMethod(loadedTableName.getValue());
-																			        	            	 
-																			        	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
-
-																			        	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
-																									     singleSelectionModel.select(particularTableTab);
-																									     */
-																									     
+																										
 																									}else {
 																										System.out.println("Loaded Table Collpapsed!! "+ "Database Selected "+loadedDatabaseName.getValue() +" Tables Selected " +loadedTableName.getValue());
 																									}
@@ -907,7 +901,7 @@ public class MySqlUI {
 																										     public void run() {
 																										    	 try {
 																										    		  // stmt.execute("use "+loadedDatabaseName.getValue());
-																										    		   ResultSet rs = stmt.executeQuery("desc "+viewName.getValue());
+																										    		   ResultSet rs = currentConnection.createStatement().executeQuery("desc "+viewName.getValue());
 																										    		   viewName.getChildren().remove(0);  // Remove the Loading...
 																														while(rs.next()) {
 																															  
@@ -1115,7 +1109,6 @@ public class MySqlUI {
 																					  
 																					  while(rsFunctions.next()){
 																						  
-																						  System.out.println("Whay -->"+rsFunctions.getString(1));
 																						  if(rsFunctions.getString(1) != null &&  rsFunctions.getString(1).equals("IN")) {
 																							  TreeItem<String> procedureParameterIN = new TreeItem<String>(rsFunctions.getString(2)+","+rsFunctions.getString(5));
 																							  functionsParametersIN.getChildren().add(procedureParameterIN);
@@ -1143,6 +1136,57 @@ public class MySqlUI {
 																mySqlTreeItemFunctions.getChildren().add(loadingTreeItemFunctions);
 															}
 														}
+													 });
+													 
+													 // Triggers
+													 mySqlTreeItemTriggers.expandedProperty().addListener(new ChangeListener<Boolean>() {
+														@Override
+														public void changed(ObservableValue<? extends Boolean> observable,Boolean oldValue, Boolean newValue) {
+															System.out.println("observable : "+ "Bean : "+ ((TreeItem<String>)((BooleanProperty)observable).getBean()).getValue()     +" Name : "+((BooleanProperty)observable).getName() +" Value :" +((BooleanProperty)observable).getName() );
+															
+															String name = ((BooleanProperty)observable).getName();
+															Boolean value = ((BooleanProperty)observable).getValue() ;
+															
+															 if(value) {
+																System.out.println("Its Triggers expansion!!!");																	
+																// get the database name and display its tables 
+																TreeItem<String> currentDatabasebean = ((TreeItem<String>)((BooleanProperty)observable).getBean());
+																System.out.println("Current DatabaseSelected Name "+loadedDatabaseName.getValue());
+																
+																new Thread(new Runnable() {
+																     @Override
+																     public void run() {
+																         
+																    	try  {
+																    		
+																    		ResultSet rs = stmt.executeQuery(" select * from information_schema.triggers where trigger_schema = '"+loadedDatabaseName.getValue()+"'");
+																    		try {
+																				Thread.sleep(1000);
+																			} catch (InterruptedException e) {
+																				// TODO Auto-generated catch block
+																				e.printStackTrace();
+																			}
+																    		mySqlTreeItemTriggers.getChildren().remove(0);  // Remove the Loading...
+																			while(rs.next()) {
+																				  System.out.println(rs.getString(1));
+																				  TreeItem<String> triggerName = new TreeItem<String>(rs.getString(3));
+																				  mySqlTreeItemTriggers.getChildren().add(triggerName);																				
+																			}
+																			//stmt.close();
+																		} catch (SQLException e) {
+																			// TODO Auto-generated catch block
+																			e.printStackTrace();
+																		}
+																     }
+																}).start();
+															 }
+															 else {
+																   System.out.println("Collapsed!!! Events ");
+																   mySqlTreeItemTriggers.getChildren().clear();
+																   mySqlTreeItemTriggers.getChildren().add(loadingTreeItemTriggers);
+															 }															
+														}
+													
 													 });
 													 
 													 // Events
@@ -1480,7 +1524,7 @@ public class MySqlUI {
 					 }
 					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Tables")) {
 						
-						 Tab particularTableTab = particularTableDoubleClickMethod(getTreeItem().getValue());
+						 Tab particularTableTab = particularTableDoubleClickMethod(getTreeItem().getValue(),getTreeItem().getParent().getParent().getValue());
     	            	 
     	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
 
@@ -1490,7 +1534,57 @@ public class MySqlUI {
 					 }
 					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Views")) {
 							
-						 Tab particularTableTab = particularViewDoubleClickMethod(getTreeItem().getValue());
+						 Tab particularTableTab = particularViewDoubleClickMethod(getTreeItem().getValue(),getTreeItem().getParent().getParent().getValue());
+    	            	 
+    	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
+
+    	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+					     singleSelectionModel.select(particularTableTab);
+						 
+					 }
+					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Indexes")) {
+							
+						 Tab particularTableTab = particularIndexesDoubleClickMethod(getTreeItem().getValue(),getTreeItem().getParent().getParent().getValue());
+    	            	 
+    	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
+
+    	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+					     singleSelectionModel.select(particularTableTab);
+						 
+					 }
+					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Procedures")) {
+							
+						 Tab particularTableTab = particularProcedureDoubleClickMethod(getTreeItem().getValue(),getTreeItem().getParent().getParent().getValue());
+    	            	 
+    	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
+
+    	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+					     singleSelectionModel.select(particularTableTab);
+						 
+					 }
+					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Functions")) {
+							
+						 Tab particularTableTab = particularFunctionsDoubleClickMethod(getTreeItem().getValue());
+    	            	 
+    	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
+
+    	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+					     singleSelectionModel.select(particularTableTab);
+						 
+					 }
+					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Triggers")) {
+							
+						 Tab particularTableTab = particularTriggersDoubleClickMethod(getTreeItem().getValue());
+    	            	 
+    	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
+
+    	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+					     singleSelectionModel.select(particularTableTab);
+						 
+					 }
+					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Events")) {
+							
+						 Tab particularTableTab = particularEventssDoubleClickMethod(getTreeItem().getValue());
     	            	 
     	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
 
@@ -2921,7 +3015,7 @@ public class MySqlUI {
 	private TableView showResultSetInTheTableView(ResultSet rs)  throws SQLException{
 			
 		TableView tableView = new TableView();
-		tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);  // to remove the last empty column otherwise added
+		//tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);  // to remove the last empty column otherwise added
 		tableView.setEditable(true);
         
 		
@@ -2966,7 +3060,7 @@ public class MySqlUI {
 	        	columnTypes[i] =  md.getColumnType(i+1);	   
 	        	
 	        	tableColumnName = new TableColumn<>(columnNames[i]);
-	        	tableColumnName.setPrefWidth(150);
+	        	tableColumnName.setMinWidth(150);
 	        	tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[i]));
 	        	// Below code will do cell editing
 	        	tableColumnName.setCellFactory( new Callback<TableColumn<Map,String>, TableCell<Map,String>>() {
@@ -3011,12 +3105,14 @@ public class MySqlUI {
 		return tableView;
 }
 
+
+
 	private TableView showResultSetInTheTableView(ResultSet rs,TableView tableView)  throws SQLException{
 		
-		tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);  // to remove the last empty column otherwise added
+		//tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);  // to remove the last empty column otherwise added
 		tableView.setEditable(true);
 	
-        
+        /*
 		tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
 
 			@Override
@@ -3046,7 +3142,7 @@ public class MySqlUI {
 				
 			}	
 		});
-		
+		*/
 		if(rs.next()) {
 	
 	    	TableColumn<Map, String> tableColumnName;
@@ -3301,7 +3397,7 @@ public class MySqlUI {
 		return tableView;
 	}
 
-	private TableView showResultSetInTheTableViewDoubleClick(ResultSet rs,String sqlComponentForwhich)  throws SQLException{
+	private TableView showResultSetInTheTableViewDoubleClick(ResultSet rs,String sqlComponentForwhich,String databaseName)  throws SQLException{
 		
 		TableView tableView = new TableView();
 		tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);  // to remove the last empty column otherwise added
@@ -3337,7 +3433,7 @@ public class MySqlUI {
 	        	            
 	        	            if(sqlComponentForwhich.equalsIgnoreCase("Tables")) {
 	        	            	 System.out.println("Pop up a new Tab for Tables from here ");
-	        	            	 Tab particularTableTab = particularTableDoubleClickMethod(rowData.get("TABLE_NAME").toString());
+	        	            	 Tab particularTableTab = particularTableDoubleClickMethod(rowData.get("TABLE_NAME").toString(),databaseName);
 	        	            	 
 	        	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
 
@@ -3346,7 +3442,7 @@ public class MySqlUI {
 	        	            }
 	        	            if(sqlComponentForwhich.equalsIgnoreCase("Views")) {
 	        	            	 System.out.println("Pop up a new Tab for Tables from here ");
-	        	            	 Tab particularTableTab = particularViewDoubleClickMethod(rowData.get("TABLE_NAME").toString());
+	        	            	 Tab particularTableTab = particularViewDoubleClickMethod(rowData.get("TABLE_NAME").toString(),databaseName);
 	        	            	 
 	        	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
 
@@ -3364,7 +3460,7 @@ public class MySqlUI {
 	        	            
 	        	            if(sqlComponentForwhich.equalsIgnoreCase("Tables")) {
 	        	            	 System.out.println("Pop up a new Tab for Tables from here ");
-	        	            	 Tab particularTableTab = particularTableDoubleClickMethod(rowData.get("TABLE_NAME").toString());
+	        	            	 Tab particularTableTab = particularTableDoubleClickMethod(rowData.get("TABLE_NAME").toString(),databaseName);
 	        	            	 
 	        	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
 
@@ -3393,48 +3489,1116 @@ public class MySqlUI {
 		
 		return tableView;
 }
-	private Tab particularTableDoubleClickMethod(String tableName) {
+	private Tab particularTableDoubleClickMethod(String tableName,String databaseName) {
 		
-		Tab particularTableTab = new Tab(tableName);
+		Tab particularTableMainTab = new Tab(tableName);
 				
-		TabPane tabbedPane = new TabPane();
-		Tab columnsTab = new Tab("Columns");
-		Tab constraintsTab = new Tab("Constraints");
-		Tab foreignKeysTab = new Tab("Foreign Keys");
-		Tab referencesTab = new Tab("References");
-		Tab triggersTab = new Tab("Triggers");
-		Tab indexesTab = new Tab("Indexes");
-		Tab partitionsTab = new Tab("Partitions");
+		VBox particularTableMainTabVBox = new VBox();
+		particularTableMainTabVBox.setSpacing(10);
+		particularTableMainTabVBox.getChildren().add(addTopHBoxForInfo("Table "+tableName+" for Connection "+currentConnectionName));
 		
+		TabPane particularTableTabPane = new TabPane();
+		particularTableTabPane.setTabMinWidth(180);
+		particularTableTabPane.setTabMinHeight(30);
+		Tab particularTablePropertiesTab = new Tab("Properties");
+		particularTablePropertiesTab.setClosable(false);
+		Tab particularTableDataTab = new Tab("Data");
+		particularTableDataTab.setClosable(false);
+		Tab particularTableERDiagramTab = new Tab("ER Diagram");
+		particularTableERDiagramTab.setClosable(false);
+		Tab particularTableGraphVisualsTab = new Tab("Graph Visuals");
+		particularTableGraphVisualsTab.setClosable(false);
+		Tab particularTableAiPromptTab = new Tab("AI Prompt");
+		particularTableAiPromptTab.setClosable(false);
+		particularTableMainTabVBox.getChildren().addAll(particularTableTabPane)	;
 		
-		tabbedPane.getTabs().addAll(columnsTab,constraintsTab,foreignKeysTab,referencesTab,triggersTab,indexesTab,partitionsTab);
+		// Properties
+		TabPane particularTablePropertiesTabbedPane = new TabPane();
+		particularTablePropertiesTabbedPane.setSide(Side.LEFT);
+		particularTablePropertiesTabbedPane.setRotateGraphic(true);
+		particularTablePropertiesTabbedPane.setTabMinHeight(200); // Determines tab width. I know, its odd.
+		particularTablePropertiesTabbedPane.setTabMaxHeight(200);
+		particularTablePropertiesTabbedPane.setTabMinWidth(42);
+		particularTablePropertiesTabbedPane.setTabMaxWidth(42);
 		
-		particularTableTab.setContent(tabbedPane);
-		
-		return particularTableTab;
-	}
 	
-	private Tab particularViewDoubleClickMethod(String viewName) {
+		// Details
+		Tab particularTabledetailsTab = new Tab();
+		particularTabledetailsTab.setClosable(false);
+		Label l = new Label("Details");
+		l.setRotate(90);
+		StackPane stp = new StackPane(new Group(l));
+		particularTabledetailsTab.setGraphic(stp);
+		particularTabledetailsTab = getParticularTableDetailsTab(tableName, databaseName,particularTabledetailsTab);
 		
-		Tab particularViewTab = new Tab(viewName);
-				
-		TabPane tabbedPane = new TabPane();
-		Tab columnsTab = new Tab("Columns");
-		Tab constraintsTab = new Tab("Constraints");
-		Tab foreignKeysTab = new Tab("Foreign Keys");
-		Tab referencesTab = new Tab("References");
-		Tab triggersTab = new Tab("Triggers");
-		Tab indexesTab = new Tab("Indexes");
-		Tab partitionsTab = new Tab("Partitions");
+
+		// Columns
+		Tab particularTablecolumnsTab = new Tab();
+		particularTablecolumnsTab.setClosable(false);
+		l = new Label("Columns");
+		l.setRotate(90);
+		stp = new StackPane(new Group(l));
+		particularTablecolumnsTab.setGraphic(stp);
+		
+	
+		Tab particularTableconstraintsTab = new Tab();
+		particularTableconstraintsTab.setClosable(false);
+		l = new Label("Constraints");
+		l.setRotate(90);
+		stp = new StackPane(new Group(l));
+		particularTableconstraintsTab.setGraphic(stp);
+		
+
+		Tab particularTableforeignKeysTab = new Tab();
+		particularTableforeignKeysTab.setClosable(false);
+		l = new Label("Foreign Keys");
+		l.setRotate(90);
+		stp = new StackPane(new Group(l));
+		particularTableforeignKeysTab.setGraphic(stp);
+		
+
+		Tab particularTablereferencesTab = new Tab();
+		particularTablereferencesTab.setClosable(false);
+		l = new Label("References");
+		l.setRotate(90);
+		stp = new StackPane(new Group(l));
+		particularTablereferencesTab.setGraphic(stp);
+		
+		Tab particularTabletriggersTab = new Tab();
+		particularTabletriggersTab.setClosable(false);
+		l = new Label("Triggers");
+		l.setRotate(90);
+		stp = new StackPane(new Group(l));
+		particularTabletriggersTab.setGraphic(stp);
 		
 		
-		tabbedPane.getTabs().addAll(columnsTab,constraintsTab,foreignKeysTab,referencesTab,triggersTab,indexesTab,partitionsTab);
+		Tab particularTableindexesTab = new Tab();
+		particularTableindexesTab.setClosable(false);
+		l = new Label("Indexes");
+		l.setRotate(90);
+		stp = new StackPane(new Group(l));
+		particularTableindexesTab.setGraphic(stp);
 		
-		particularViewTab.setContent(tabbedPane);
+		Tab particularTablepartitionsTab = new Tab();
+		particularTablepartitionsTab.setClosable(false);
+		l = new Label("Partitions");
+		l.setRotate(90);
+		stp = new StackPane(new Group(l));
+		particularTablepartitionsTab.setGraphic(stp);
+
+		Tab particularTableDDLTab = new Tab();
+		particularTableDDLTab.setClosable(false);
+		l = new Label("Source/DDL");
+		l.setRotate(90);
+		stp = new StackPane(new Group(l));
+		particularTableDDLTab.setGraphic(stp);
 		
-		return particularViewTab;
+		particularTablePropertiesTabbedPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+			@Override
+			public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
+			
+				System.out.println("Tab swithced"+ ((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText());
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Columns")) {
+					 getParticularTableColumnsTab(tableName,databaseName,particularTablecolumnsTab);
+				}
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Constraints")) {
+					getParticularTableConstraintsTab(tableName,databaseName,particularTableconstraintsTab);
+				}
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Foreign Keys")) {
+					getParticularTableForeignKeysTab(tableName,databaseName,particularTableforeignKeysTab);
+				}
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("References")) {
+					getParticularTableReferencesTab(tableName,databaseName,particularTablereferencesTab);
+				}
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Triggers")) {
+					getParticularTableTriggerTab(tableName,databaseName,particularTabletriggersTab);
+				}
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Indexes")) {
+					getParticulatTableIndexesTab(tableName,databaseName,particularTableindexesTab);
+				}
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Partitions")) {
+					getParticularTablePartitionTab(tableName,databaseName,particularTablepartitionsTab);
+				}
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Source/DDL")) {
+					getParticularTableSourceDDLTab(tableName,databaseName,particularTableDDLTab);
+				}
+			}
+		});
+		
+		particularTableTabPane.getTabs().addAll(particularTablePropertiesTab,particularTableDataTab,particularTableERDiagramTab,particularTableGraphVisualsTab,particularTableAiPromptTab);
+		
+		particularTablePropertiesTabbedPane.getTabs().addAll(particularTabledetailsTab,particularTablecolumnsTab,particularTableconstraintsTab,particularTableforeignKeysTab,
+				particularTablereferencesTab,particularTabletriggersTab,particularTableindexesTab,particularTablepartitionsTab,particularTableDDLTab);
+		particularTablePropertiesTab.setContent(particularTablePropertiesTabbedPane);
+		
+		// Data
+		particularTableDataTab.setContent(new TableView());
+		
+		
+		particularTableMainTab.setContent(particularTableMainTabVBox);
+		
+		return particularTableMainTab;
 	}
 
+	private Tab getParticularTableSourceDDLTab(String tableName,String databaseName,Tab particularTableDDLTab) {
+		try {
+			
+			ResultSet rsTable = stmt.executeQuery("Show Create table "+databaseName+"."+tableName);
+			
+			VBox particularTableDDLTabVBox = new VBox();
+			particularTableDDLTabVBox.setSpacing(10);
+			particularTableDDLTabVBox.setPadding(new Insets(2,2,2,2));
+			TextArea particularTableDDLTextArea = new TextArea("/***/");
+			if(rsTable.next()) {
+				particularTableDDLTextArea = new TextArea(rsTable.getString(2));
+			}
+		
+			particularTableDDLTextArea.setEditable(false);
+			particularTableDDLTextArea.setWrapText(true);
+			particularTableDDLTextArea.setMinHeight(menu_Items_FX.size.getHeight()-280);
+			particularTableDDLTabVBox.getChildren().addAll(particularTableDDLTextArea);
+			particularTableDDLTab.setContent(particularTableDDLTabVBox);
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return particularTableDDLTab;
+	}
+
+	private Tab getParticularTablePartitionTab(String tableName,String databaseName,Tab particularTablepartitionsTab) {
+
+		try {
+			
+			String selectedColumns = "partition_name,subpartition_name,PARTITION_ORDINAL_POSITION ,SUBPARTITION_ORDINAL_POSITION,PARTITION_METHOD ,SUBPARTITION_METHOD,PARTITION_EXPRESSION , SUBPARTITION_EXPRESSION,PARTITION_DESCRIPTION,TABLE_ROWS ,AVG_ROW_LENGTH ,DATA_LENGTH,CREATE_TIME,UPDATE_TIME";
+			
+			System.out.println("select "+ selectedColumns +" from information_schema.partitions where table_schema = '"+ databaseName +"' and table_name = '"+ tableName+"' ");
+			ResultSet rsTable = stmt.executeQuery("select "+ selectedColumns +" from information_schema.partitions where table_schema = '"+ databaseName +"' and table_name = '"+ tableName+"' ");
+			 
+			VBox particularTablepartitionsTabVBox = new VBox();
+			particularTablepartitionsTabVBox.setSpacing(10);
+			particularTablepartitionsTabVBox.setPadding(new Insets(2,2,2,2));
+			TableView particularTablepartitionsView = showResultSetInTheTableView(rsTable); 
+			HBox particularTablepartitionsButtonsHBox = new HBox();
+			particularTablepartitionsButtonsHBox.setPadding(new Insets(10,10,10,10));
+			particularTablepartitionsButtonsHBox.getChildren().add(new Button("Create"));
+			particularTablepartitionsTabVBox.getChildren().addAll(particularTablepartitionsView,particularTablepartitionsButtonsHBox);
+			particularTablepartitionsTab.setContent(particularTablepartitionsTabVBox);
+		}catch(SQLException e) {
+			e.printStackTrace();;
+		}
+		return particularTablepartitionsTab;
+	}
+
+	private Tab getParticulatTableIndexesTab(String tableName,String databaseName,Tab particularTableindexesTab) {
+
+		try {
+			
+			String selectedColumns = "INDEX_NAME,COLUMN_NAME,INDEX_TYPE,NULLABLE,IS_VISIBLE,COMMENT,INDEX_COMMENT,COLLATION,CARDINALITY";
+			
+			System.out.println("select "+ selectedColumns +" from information_schema.statistics where table_schema = '"+ databaseName +"' and table_name = '"+ tableName+"' ");
+			ResultSet rsTable = stmt.executeQuery("select "+ selectedColumns +" from information_schema.statistics where table_schema = '"+ databaseName +"' and table_name = '"+ tableName+"' ");
+			
+			VBox particularTableindexesTabVBox = new VBox();
+			particularTableindexesTabVBox.setSpacing(10);
+			particularTableindexesTabVBox.setPadding(new Insets(2,2,2,2));
+			TableView particularTableindexesView = showResultSetInTheTableView(rsTable); 
+			HBox particularTableindexesButtonsHBox = new HBox();
+			particularTableindexesButtonsHBox.setPadding(new Insets(10,10,10,10));
+			particularTableindexesButtonsHBox.getChildren().add(new Button("Create"));
+			particularTableindexesTabVBox.getChildren().addAll(particularTableindexesView,particularTableindexesButtonsHBox);
+			particularTableindexesTab.setContent(particularTableindexesTabVBox);
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return particularTableindexesTab;
+	}
+
+	private Tab getParticularTableTriggerTab(String tableName,String databaseName,Tab particularTabletriggersTab) {
+
+		try {
+				String selectedColumns = "TRIGGER_NAME,EVENT_MANIPULATION,EVENT_OBJECT_TABLE,ACTION_ORDER,ACTION_ORIENTATION,ACTION_TIMING,CREATED";
+			
+				System.out.println("select "+ selectedColumns +" from information_schema.triggers where trigger_Schema = '"+ databaseName +"' and event_object_table = '"+ tableName+"' ");
+				ResultSet rsTable = stmt.executeQuery("select "+ selectedColumns +" from information_schema.triggers where trigger_Schema = '"+ databaseName +"' and event_object_table = '"+ tableName+"'");
+			
+				VBox particularTabletriggersTabVBox = new VBox();
+				particularTabletriggersTabVBox.setSpacing(10);
+				particularTabletriggersTabVBox.setPadding(new Insets(2,2,2,2));
+				TableView particularTabletriggersView = showResultSetInTheTableView(rsTable);
+				HBox particularTabletriggersButtonsHBox = new HBox();
+				particularTabletriggersButtonsHBox.setPadding(new Insets(10,10,10,10));
+				particularTabletriggersButtonsHBox.getChildren().add(new Button("Create"));
+				particularTabletriggersTabVBox.getChildren().addAll(particularTabletriggersView,particularTabletriggersButtonsHBox);
+				particularTabletriggersTab.setContent(particularTabletriggersTabVBox);
+			}catch(SQLException e) {
+			
+			}
+		return particularTabletriggersTab;
+	}
+
+	private Tab getParticularTableReferencesTab(String tableName,String databaseName,Tab particularTablereferencesTab) {
+
+		try {			
+			
+			String selectedColumns = "CONSTRAINT_NAME,TABLE_NAME,REFERENCED_TABLE_NAME,UNIQUE_CONSTRAINT_NAME,UPDATE_RULE,DELETE_RULE";
+			
+			System.out.println("select "+ selectedColumns +" from information_schema.referential_constraints where  referenced_table_name = '"+ tableName+"' ");
+			ResultSet rsTable = stmt.executeQuery("select "+ selectedColumns +" from information_schema.referential_constraints where  referenced_table_name = '"+ tableName+"'");
+		
+			VBox particularTablereferencesTabVBox = new VBox();
+			particularTablereferencesTabVBox.setSpacing(10);
+			particularTablereferencesTabVBox.setPadding(new Insets(2,2,2,2));
+			TableView particularTablereferencesView = showResultSetInTheTableView(rsTable); 
+			HBox particularTablereferencesButtonsHBox = new HBox();
+			particularTablereferencesButtonsHBox.setPadding(new Insets(10,10,10,10));
+			particularTablereferencesButtonsHBox.getChildren().add(new Button("Create"));
+			particularTablereferencesTabVBox.getChildren().addAll(particularTablereferencesView,particularTablereferencesButtonsHBox);
+			particularTablereferencesTab.setContent(particularTablereferencesTabVBox);
+		
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return particularTablereferencesTab;
+	}
+
+	private Tab getParticularTableForeignKeysTab(String tableName,String databaseName,Tab particularTableforeignKeysTab) {
+		
+		try {
+			
+			String selectedColumns = "CONSTRAINT_NAME,COLUMN_NAME,REFERENCED_COLUMN_NAME,REFERENCED_TABLE_NAME,REFERENCED_TABLE_SCHEMA,ORDINAL_POSITION,POSITION_IN_UNIQUE_CONSTRAINT";
+			
+			System.out.println("select "+ selectedColumns +" from information_schema.key_column_usage where table_schema = '"+ databaseName +"' and table_name='"+tableName+"' and referenced_column_name is not null ");
+			ResultSet rsTable = stmt.executeQuery("select "+ selectedColumns +" from information_schema.key_column_usage where table_schema = '"+ databaseName +"' and table_name='"+tableName+"' and referenced_column_name is not null ");
+		
+			VBox particularTableforeignKeysTabVBox = new VBox();
+			particularTableforeignKeysTabVBox.setSpacing(10);
+			particularTableforeignKeysTabVBox.setPadding(new Insets(2,2,2,2));
+			TableView particularTableforeignKeysView = showResultSetInTheTableView(rsTable);
+			HBox particularTableforeignKeysButtonsHBox = new HBox();
+			particularTableforeignKeysButtonsHBox.setPadding(new Insets(10,10,10,10));
+			particularTableforeignKeysButtonsHBox.getChildren().add(new Button("Create"));
+			particularTableforeignKeysTabVBox.getChildren().addAll(particularTableforeignKeysView,particularTableforeignKeysButtonsHBox);
+			particularTableforeignKeysTab.setContent(particularTableforeignKeysTabVBox);
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return particularTableforeignKeysTab;
+	}
+
+	private Tab getParticularTableConstraintsTab(String tableName,String databaseName,Tab particularTableconstraintsTab) {
+	
+		try {
+			String selectedColumns = "CONSTRAINT_NAME,COLUMN_NAME,REFERENCED_COLUMN_NAME,REFERENCED_TABLE_SCHEMA,REFERENCED_TABLE_NAME,ORDINAL_POSITION,POSITION_IN_UNIQUE_CONSTRAINT";
+			
+			System.out.println("select "+ selectedColumns +" from information_schema.key_column_usage where table_schema = '"+ databaseName +"' and table_name='"+tableName+"'");
+			ResultSet rsTable = stmt.executeQuery("select "+ selectedColumns +" from information_schema.key_column_usage where table_schema = '"+ databaseName +"' and table_name='"+tableName+"'");
+			
+			VBox particularTableconstraintsTabVBox = new VBox();
+			particularTableconstraintsTabVBox.setSpacing(10);
+			particularTableconstraintsTabVBox.setPadding(new Insets(2,2,2,2));
+			TableView particularTableconstraintsView = showResultSetInTheTableView(rsTable); 
+			HBox particularTableconstraintsButtonsHBox = new HBox();
+			particularTableconstraintsButtonsHBox.setPadding(new Insets(10,10,10,10));
+			particularTableconstraintsButtonsHBox.getChildren().add(new Button("Create"));
+			particularTableconstraintsTabVBox.getChildren().addAll(particularTableconstraintsView,particularTableconstraintsButtonsHBox);
+			particularTableconstraintsTab.setContent(particularTableconstraintsTabVBox);
+			
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
+		return particularTableconstraintsTab;
+	}
+
+	private Tab getParticularTableColumnsTab(String tableName,String databaseName,Tab particularTablecolumnsTab) {
+		
+		try {
+			
+			String selectedColumns = "COLUMN_NAME,ORDINAL_POSITION,COLUMN_DEFAULT,IS_NULLABLE,DATA_TYPE,"
+					+ "CHARACTER_MAXIMUM_LENGTH,CHARACTER_OCTET_LENGTH,NUMERIC_PRECISION,NUMERIC_SCALE,DATETIME_PRECISION,"
+					+ "CHARACTER_SET_NAME,COLLATION_NAME,COLUMN_TYPE,COLUMN_KEY,EXTRA,PRIVILEGES,COLUMN_COMMENT,GENERATION_EXPRESSION";
+			
+			ResultSet rsTable = stmt.executeQuery("select "+ selectedColumns +" from information_schema.columns where table_schema = '"+ databaseName +"' and table_name='"+tableName+"'");
+						
+			VBox particularTablecolumnsTabVBox = new VBox();
+			particularTablecolumnsTabVBox.setSpacing(10);
+			particularTablecolumnsTabVBox.setMinHeight(menu_Items_FX.size.getHeight()-300);
+			particularTablecolumnsTabVBox.setPadding(new Insets(2,2,2,2));
+
+			TableView particularTableColumnsView = showResultSetInTheTableView(rsTable);								
+				
+			HBox particularTableColumnsButtonsHBox = new HBox();
+			particularTableColumnsButtonsHBox.setPadding(new Insets(10,10,10,10));
+			particularTableColumnsButtonsHBox.getChildren().add(new Button("Create"));
+			particularTablecolumnsTabVBox.getChildren().addAll(particularTableColumnsView,particularTableColumnsButtonsHBox);
+			particularTablecolumnsTab.setContent(particularTablecolumnsTabVBox);
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return particularTablecolumnsTab;
+	}
+
+	
+	private Tab getParticularTableDetailsTab(String tableName,String databaseName,Tab particularTabledetailsTab) {
+		
+		try {
+			ResultSet rsTable = stmt.executeQuery("select * from information_schema.tables where table_schema = '"+ databaseName +"' and table_name= '"+tableName+"'");
+			try {
+				Thread.sleep(100);			
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+			while(rsTable.next()) {
+			
+				VBox particularTableDetailsVBox = new VBox();
+				particularTableDetailsVBox.setSpacing(10);
+				particularTableDetailsVBox.setPadding(new Insets(2,2,2,2));
+				particularTableDetailsVBox.setPadding(new Insets(20,10,10,200));
+				
+				GridPane tableDetailGridPane = new GridPane();
+				tableDetailGridPane.setVgap(8);
+				tableDetailGridPane.setHgap(10);
+				
+				String lableName[] = {"Engine:","Version:","Table Rows:","Auto Increment","Data Length:","Index Length:","Max Data Length:","Avg Row Length","Row Format:",
+						"Data Free:","Update Time:","Creation Time:","Table Collation:","Create Options:","Comment:"};
+				
+				String labelNameValue[] = {"ENGINE","VERSION","TABLE_ROWS","AUTO_INCREMENT","DATA_LENGTH","INDEX_LENGTH","MAX_DATA_LENGTH","AVG_ROW_LENGTH","ROW_FORMAT","DATA_FREE","UPDATE_TIME","CREATE_TIME",
+						"TABLE_COLLATION","CREATE_OPTIONS","TABLE_COMMENT"};
+				
+				
+				for(int i =0;i<lableName.length;i++) {
+					Label labelName = new Label(lableName[i]);
+					GridPane.setConstraints(labelName, 0, i);   // column 0 row 0
+					Label labelNameValueLabel= new Label(rsTable.getString(labelNameValue[i]));
+					labelNameValueLabel.setFont(Font.font("System Regular", FontWeight.BOLD, 12));
+					GridPane.setConstraints(labelNameValueLabel, 1, i);
+					
+					tableDetailGridPane.getChildren().addAll(labelName,labelNameValueLabel);
+				}
+				
+						particularTableDetailsVBox.getChildren().add(tableDetailGridPane);
+				particularTabledetailsTab.setContent(particularTableDetailsVBox);
+				
+			}
+			
+		}catch(SQLException e) {
+			
+		}
+		return particularTabledetailsTab;
+	}
+
+	private Tab getParticularViewDetailsTab(String tableName,String databaseName,Tab particularViewdetailsTab) {
+		
+	
+		try {
+			ResultSet rsTable = stmt.executeQuery("select * from information_schema.views where table_schema = '"+ databaseName +"' and table_name= '"+tableName+"'");
+			try {
+				Thread.sleep(1000);			
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+			while(rsTable.next()) {
+			
+				VBox particularViewDetailsVBox = new VBox();
+				particularViewDetailsVBox.setSpacing(10);
+				particularViewDetailsVBox.setPadding(new Insets(2,2,2,2));
+				particularViewDetailsVBox.setPadding(new Insets(20,10,10,200));
+				
+				GridPane viewDetailGridPane = new GridPane();
+				viewDetailGridPane.setVgap(8);
+				viewDetailGridPane.setHgap(10);
+				
+				String lableName[] = {"Check Option:","Is Updatable:","Definer:","Security Type","Character Set Client:","Collation Connection:"};
+				
+				String labelNameValue[] = {"CHECK_OPTION","IS_UPDATABLE","DEFINER","SECURITY_TYPE","CHARACTER_SET_CLIENT","COLLATION_CONNECTION"};
+				
+				
+				for(int i =0;i<lableName.length;i++) {
+					Label labelName = new Label(lableName[i]);
+					GridPane.setConstraints(labelName, 0, i);   // column 0 row 0
+					Label labelNameValueLabel= new Label(rsTable.getString(labelNameValue[i]));
+					labelNameValueLabel.setFont(Font.font("System Regular", FontWeight.BOLD, 12));
+					GridPane.setConstraints(labelNameValueLabel, 1, i);
+					
+					viewDetailGridPane.getChildren().addAll(labelName,labelNameValueLabel);
+				}
+				
+				particularViewDetailsVBox.getChildren().add(viewDetailGridPane);
+				particularViewdetailsTab.setContent(particularViewDetailsVBox);
+				
+			}
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return particularViewdetailsTab;
+	}
+
+	private Tab getParticularViewColumnsTab(String tableName,String databaseName,Tab particularViewcolumnsTab) {
+		
+		try {
+			
+			String selectedColumns = "COLUMN_NAME,ORDINAL_POSITION,COLUMN_DEFAULT,IS_NULLABLE,DATA_TYPE,"
+					+ "CHARACTER_MAXIMUM_LENGTH,CHARACTER_OCTET_LENGTH,NUMERIC_PRECISION,NUMERIC_SCALE,DATETIME_PRECISION,"
+					+ "CHARACTER_SET_NAME,COLLATION_NAME,COLUMN_TYPE,COLUMN_KEY,EXTRA,PRIVILEGES,COLUMN_COMMENT,GENERATION_EXPRESSION";
+			
+			ResultSet rsTable = stmt.executeQuery("select "+ selectedColumns +" from information_schema.columns where table_schema = '"+ databaseName +"' and table_name='"+tableName+"'");
+					
+			VBox particularViewcolumnsTabVBox = (VBox)particularViewcolumnsTab.getContent();
+			TableView particularViewColumnsView  = (TableView)particularViewcolumnsTabVBox.getChildren().get(0);
+			particularViewColumnsView = showResultSetInTheTableView(rsTable,particularViewColumnsView);
+			
+			/*VBox particularTablecolumnsTabVBox = new VBox();
+			particularTablecolumnsTabVBox.setSpacing(10);
+			particularTablecolumnsTabVBox.setMinHeight(menu_Items_FX.size.getHeight()-300);
+			particularTablecolumnsTabVBox.setPadding(new Insets(2,2,2,2));
+			TableView 								
+			HBox particularTableColumnsButtonsHBox = new HBox();
+			particularTableColumnsButtonsHBox.setPadding(new Insets(10,10,10,10));
+			particularTableColumnsButtonsHBox.getChildren().addAll(new Button("Create"),new Button("Delete"));
+			particularTablecolumnsTabVBox.getChildren().addAll(particularTableColumnsView,particularTableColumnsButtonsHBox);
+			particularTablecolumnsTab.setContent(particularTablecolumnsTabVBox);
+			*/
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return particularViewcolumnsTab;
+	}
+
+	private Tab particularViewDoubleClickMethod(String viewName,String databaseName) {
+		
+		Tab particularViewMainTab = new Tab(viewName);
+		
+		VBox particularViewMainTabVBox = new VBox();
+		particularViewMainTabVBox.setSpacing(10);
+		//clientConnectionsVBox.setPadding(new Insets(0,0,0,0));
+		particularViewMainTabVBox.getChildren().add(addTopHBoxForInfo("View "+viewName+" for Connection "+currentConnectionName));
+		
+		
+		TabPane particularViewTabPane = new TabPane();
+		particularViewTabPane.setTabMinWidth(180);
+		particularViewTabPane.setTabMinHeight(30);
+		Tab particularTablePropertiesTab = new Tab("Properties");
+		Tab particularTableDataTab = new Tab("Data");
+		Tab particularTableERDiagramTab = new Tab("ER Diagram");
+		Tab particularTableGraphVisualsTab = new Tab("Graph Visuals");
+		Tab particularTableAiPromptTab = new Tab("AI Prompt");
+		particularViewMainTabVBox.getChildren().addAll(particularViewTabPane)	;
+		
+		// Properties
+		TabPane particularViewPropertiesTabbedPane = new TabPane();
+		particularViewPropertiesTabbedPane.setSide(Side.LEFT);
+		particularViewPropertiesTabbedPane.setRotateGraphic(true);
+		particularViewPropertiesTabbedPane.setTabMinHeight(200); // Determines tab width. I know, its odd.
+		particularViewPropertiesTabbedPane.setTabMaxHeight(200);
+		particularViewPropertiesTabbedPane.setTabMinWidth(50);
+		particularViewPropertiesTabbedPane.setTabMaxWidth(50);
+		
+		//Details
+		Tab particularViewdetailsTab = new Tab();
+		particularViewdetailsTab.setClosable(false);
+		Label l = new Label("Details");
+		l.setRotate(90);
+		StackPane stp = new StackPane(new Group(l));
+		particularViewdetailsTab.setGraphic(stp);
+		
+		particularViewdetailsTab = getParticularViewDetailsTab(viewName,databaseName,particularViewdetailsTab);
+		
+		// Columns
+		Tab particularViewcolumnsTab = new Tab();
+		particularViewcolumnsTab.setClosable(false);
+		l = new Label("Columns");
+		l.setRotate(90);
+		stp = new StackPane(new Group(l));
+		particularViewcolumnsTab.setGraphic(stp);
+		VBox particularViewcolumnsTabVBox = new VBox();
+		particularViewcolumnsTabVBox.setSpacing(10);
+		particularViewcolumnsTabVBox.setMinHeight(menu_Items_FX.size.getWidth()-300);
+		particularViewcolumnsTabVBox.setPadding(new Insets(2,2,2,2));
+		TableView particularViewColumnsView = new TableView();								
+		HBox particularViewColumnsButtonsHBox = new HBox();
+		particularViewColumnsButtonsHBox.setPadding(new Insets(10,10,10,10));
+		particularViewColumnsButtonsHBox.getChildren().addAll(new Button("Create"),new Button("Delete"));
+		particularViewcolumnsTabVBox.getChildren().addAll(particularViewColumnsView,particularViewColumnsButtonsHBox);
+		particularViewcolumnsTab.setContent(particularViewcolumnsTabVBox);
+		
+		// Source/DDL
+		Tab particularViewDDLTab = new Tab();
+		particularViewDDLTab.setClosable(false);
+		l = new Label("Source/DDL");
+		l.setRotate(90);
+		stp = new StackPane(new Group(l));
+		particularViewDDLTab.setGraphic(stp);
+		
+		particularViewTabPane.getTabs().addAll(particularTablePropertiesTab,particularTableDataTab,particularTableERDiagramTab,particularTableGraphVisualsTab,particularTableAiPromptTab);
+		
+		particularViewPropertiesTabbedPane.getTabs().addAll(particularViewdetailsTab,particularViewcolumnsTab,particularViewDDLTab);
+		particularTablePropertiesTab.setContent(particularViewPropertiesTabbedPane);
+
+		particularViewPropertiesTabbedPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+			@Override
+			public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
+				System.out.println("Tab swithced"+ ((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText());
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Columns")) {
+					particularViewColumnsView.getItems().clear();
+					getParticularViewColumnsTab(viewName,databaseName,particularViewcolumnsTab);
+				}
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Source/DDL")) {
+					getParticularTableSourceDDLTab(viewName,databaseName,particularViewDDLTab);
+				}
+			}
+		});
+		// Data
+		particularTableDataTab.setContent(new TableView());
+		
+		
+		particularViewMainTab.setContent(particularViewMainTabVBox);
+		
+		return particularViewMainTab;
+	}
+
+	private Tab getParticularIndexColumnsTab(String indexesName,String databaseName,Tab particularIndexesColumnsTab){
+
+		System.out.println("Index Combination name "+indexesName);
+		String tableName = indexesName.split("\\.")[0];
+		String indexName = indexesName.split("\\.")[1];
+
+		String columnNames = "index_name,seq_in_index,column_name,table_name,table_schema,Index_type,collation,cardinality,nullable,non_unique,is_visible,comment,expression";
+		
+		try {
+			System.out.println("select "+columnNames+" from information_schema.statistics where table_schema = '"+ databaseName +"' and table_name = '"+tableName +"' and index_name= '"+indexName+"'");
+			ResultSet rsTable = stmt.executeQuery("select "+columnNames+" from information_schema.statistics where table_schema = '"+ databaseName +"' and table_name = '"+tableName +"' and index_name= '"+indexName+"'");
+			try {
+				Thread.sleep(1000);			
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+			VBox particularIndexcolumnsTabVBox = (VBox)particularIndexesColumnsTab.getContent();
+			TableView particularIndexesColumnsView  = (TableView)particularIndexcolumnsTabVBox.getChildren().get(0);
+			particularIndexesColumnsView = showResultSetInTheTableView(rsTable,particularIndexesColumnsView);
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return particularIndexesColumnsTab; 
+	}
+	private Tab getParticularIndexDetailsTab(String indexesName,String databaseName,Tab particularIndexesdetailsTab) {
+		
+		try {
+			
+			System.out.println("Index Combination name "+indexesName);
+			
+			String tableName = indexesName.split("\\.")[0];
+			String indexName = indexesName.split("\\.")[1];
+			
+			System.out.println("select * from information_schema.statistics where table_schema = '"+ databaseName +"' and index_name= '"+indexesName+"'");
+			ResultSet rsTable = stmt.executeQuery("select * from information_schema.statistics where table_schema = '"+ databaseName +"' and table_name = '"+tableName +"' and index_name= '"+indexName+"'");
+			try {
+				Thread.sleep(1000);			
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			String lableName[] = {"Index Name:","Seq In Index","Column Name:","Table Name:","Schema Name:","Index Type:","Collation:","Cardinality:","Nullable:","Non Unique:","Is Visible:","Comment:","Expression:"};
+			String labelNameValue[] = {"index_name","seq_in_index","column_name","table_name","table_schema","Index_type","collation","cardinality","nullable","non_unique","is_visible","comment","expression"};
+			
+			while(rsTable.next()) {
+			
+				VBox particularIndexDetailsVBox = new VBox();
+				particularIndexDetailsVBox.setSpacing(10);
+				particularIndexDetailsVBox.setPadding(new Insets(2,2,2,2));
+				particularIndexDetailsVBox.setPadding(new Insets(20,10,10,200));
+				
+				GridPane indexDetailGridPane = new GridPane();
+				indexDetailGridPane.setVgap(8);
+				indexDetailGridPane.setHgap(10);
+				
+				for(int i =0;i<lableName.length;i++) {
+					Label labelName = new Label(lableName[i]);
+					GridPane.setConstraints(labelName, 0, i);   // column 0 row 0
+					Label labelNameValueLabel= new Label(rsTable.getString(labelNameValue[i]));
+					labelNameValueLabel.setFont(Font.font("System Regular", FontWeight.BOLD, 12));
+					GridPane.setConstraints(labelNameValueLabel, 1, i);
+					
+					indexDetailGridPane.getChildren().addAll(labelName,labelNameValueLabel);
+				}
+				particularIndexDetailsVBox.getChildren().add(indexDetailGridPane);
+				particularIndexesdetailsTab.setContent(particularIndexDetailsVBox);
+			}	
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return particularIndexesdetailsTab;
+	}
+	
+
+	private Tab particularIndexesDoubleClickMethod(String indexesName,String databaseName)	
+	{
+	    Tab particularIndexesMainTab = new Tab(indexesName);
+		
+		VBox particularIndexesMainTabVBox = new VBox();
+		particularIndexesMainTabVBox.setSpacing(10);
+		//clientConnectionsVBox.setPadding(new Insets(0,0,0,0));
+		particularIndexesMainTabVBox.getChildren().add(addTopHBoxForInfo("Indexes "+indexesName+" for Connection "+currentConnectionName));
+		
+		
+		TabPane particularIndexesTabPane = new TabPane();
+		particularIndexesTabPane.setTabMinWidth(180);
+		particularIndexesTabPane.setTabMinHeight(30);
+		Tab particularTablePropertiesTab = new Tab("Properties");
+		particularTablePropertiesTab.setClosable(false);
+		particularIndexesMainTabVBox.getChildren().addAll(particularIndexesTabPane)	;
+		
+		// Properties
+		TabPane particularIndexesPropertiesTabbedPane = new TabPane();
+		particularIndexesPropertiesTabbedPane.setSide(Side.LEFT);
+		particularIndexesPropertiesTabbedPane.setRotateGraphic(true);
+		particularIndexesPropertiesTabbedPane.setTabMinHeight(200); // Determines tab width. I know, its odd.
+		particularIndexesPropertiesTabbedPane.setTabMaxHeight(200);
+		particularIndexesPropertiesTabbedPane.setTabMinWidth(50);
+		
+		Tab particularIndexesdetailsTab = new Tab();
+		particularIndexesdetailsTab.setClosable(false);
+		Label l = new Label("Details");
+		l.setRotate(90);
+		StackPane stp = new StackPane(new Group(l));
+		particularIndexesdetailsTab.setGraphic(stp);
+		
+		particularIndexesdetailsTab = getParticularIndexDetailsTab(indexesName,databaseName,particularIndexesdetailsTab);
+		
+		Tab particularIndexescolumnsTab = new Tab();
+		particularIndexescolumnsTab.setClosable(false);
+		l = new Label("Index Columns");
+		l.setRotate(90);
+		stp = new StackPane(new Group(l));
+		particularIndexescolumnsTab.setGraphic(stp);
+		VBox particularIndexescolumnsTabVBox = new VBox();
+		particularIndexescolumnsTabVBox.setSpacing(10);
+		particularIndexescolumnsTabVBox.setPadding(new Insets(2,2,2,2));
+		particularIndexescolumnsTabVBox.setMinHeight(menu_Items_FX.size.getWidth()-300);
+		TableView particularIndexesColumnsView = new TableView(); 
+		HBox particularIndexesColumnsButtonsHBox = new HBox();
+		particularIndexesColumnsButtonsHBox.setPadding(new Insets(10,10,10,10));
+		particularIndexesColumnsButtonsHBox.getChildren().add(new Button("Create"));
+		particularIndexescolumnsTabVBox.getChildren().addAll(particularIndexesColumnsView,particularIndexesColumnsButtonsHBox);
+		particularIndexescolumnsTab.setContent(particularIndexescolumnsTabVBox);
+	
+		particularIndexesTabPane.getTabs().addAll(particularTablePropertiesTab);
+
+		particularIndexesPropertiesTabbedPane.getTabs().addAll(particularIndexesdetailsTab,particularIndexescolumnsTab);
+		
+		particularIndexesPropertiesTabbedPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+			@Override
+			public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
+				System.out.println("Tab swithced"+ ((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText());
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Index Columns")) {
+					particularIndexesColumnsView.getItems().clear();
+					getParticularIndexColumnsTab(indexesName,databaseName,particularIndexescolumnsTab);
+				}
+			}
+		});
+		
+		particularTablePropertiesTab.setContent(particularIndexesPropertiesTabbedPane);
+		
+		particularIndexesMainTab.setContent(particularIndexesMainTabVBox);
+		
+		return particularIndexesMainTab;
+	}
+
+	private Tab getParticularProcedureDetailsTab(String procedureName,String databaseName,Tab particularProceduresdetailsTab) {
+
+		try {	
+			System.out.println("Procedure name "+procedureName);
+	
+			System.out.println("select routine_name,routine_body,sql_data_access,is_deterministic,security_type,definer,character_set_client,collation_connection,database_collation,created,last_altered  from information_schema.routines where  routine_type != 'FUNCTION' and  routine_schema = '"+databaseName+"'");
+			ResultSet rsTable = stmt.executeQuery("select routine_name,routine_body,sql_data_access,is_deterministic,security_type,definer,character_set_client,collation_connection,database_collation,created,last_altered  from information_schema.routines where  routine_type != 'FUNCTION' and  routine_schema = '"+databaseName+"'");
+			try {
+				Thread.sleep(1000);			
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			String lableName[] = {"Routine Name:","Routine Body:","Sql Data Access:","Is Deterministic:","Security Type:","Definer:","Character Set Client:","Collation Connection:","Database Collation:","Created:","Last Altered:"};
+			String labelNameValue[] = {"routine_name","routine_body","sql_data_access","is_deterministic","security_type","definer","character_set_client","collation_connection","database_collation","created","last_altered"};
+			
+			while(rsTable.next()) {
+			
+				VBox particularProcedureDetailsVBox = new VBox();
+				particularProcedureDetailsVBox.setSpacing(10);
+				particularProcedureDetailsVBox.setPadding(new Insets(2,2,2,2));
+				particularProcedureDetailsVBox.setPadding(new Insets(20,10,10,200));
+				
+				GridPane procedureDetailGridPane = new GridPane();
+				procedureDetailGridPane.setVgap(8);
+				procedureDetailGridPane.setHgap(10);
+				
+				for(int i =0;i<lableName.length;i++) {
+					Label labelName = new Label(lableName[i]);
+					GridPane.setConstraints(labelName, 0, i);   // column 0 row 0
+					Label labelNameValueLabel= new Label(rsTable.getString(labelNameValue[i]));
+					labelNameValueLabel.setFont(Font.font("System Regular", FontWeight.BOLD, 12));
+					GridPane.setConstraints(labelNameValueLabel, 1, i);
+					
+					procedureDetailGridPane.getChildren().addAll(labelName,labelNameValueLabel);
+				}
+				particularProcedureDetailsVBox.getChildren().add(procedureDetailGridPane);
+				particularProceduresdetailsTab.setContent(particularProcedureDetailsVBox);
+			}	
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}		
+		return particularProceduresdetailsTab;
+	}
+	
+
+	protected Tab getParticularProceduresParametersTab(String proceduresName, String databaseName,Tab particularProcedurescolumnsTab) {
+		
+			
+		   String columnNames = "specific_name,specific_schema ,ordinal_position,parameter_mode,parameter_name,data_type,dtd_identifier,character_maximum_length,numeric_precision,numeric_scale,datetime_precision,character_set_name,collation_name";
+			
+			try {
+				System.out.println("select "+columnNames+" from information_schema.parameters where specific_schema = '"+ databaseName +"' and specific_name = '"+proceduresName +"'and routine_type = 'PROCEDURE'");
+				ResultSet rsTable = stmt.executeQuery("select "+columnNames+" from information_schema.parameters where specific_schema = '"+ databaseName +"' and specific_name = '"+proceduresName +"'and routine_type = 'PROCEDURE'");
+				try {
+					Thread.sleep(1000);			
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+				
+				VBox particularProcedurescolumnsTabVBox = (VBox)particularProcedurescolumnsTab.getContent();
+				TableView particularProcedureColumnsView  = (TableView)particularProcedurescolumnsTabVBox.getChildren().get(0);
+				particularProcedureColumnsView = showResultSetInTheTableView(rsTable,particularProcedureColumnsView);
+				
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		 
+		return particularProcedurescolumnsTab;
+		
+	}
+	
+	private Tab getParticularProcedureSourceDDLTab(String proceduresName,String databaseName,Tab particularProcedureDDLTab) {
+		try {
+			
+			ResultSet rsTable = stmt.executeQuery("Show Create Procedure "+databaseName+"."+proceduresName);
+			
+			VBox particularProcedureDDLTabVBox = new VBox();
+			particularProcedureDDLTabVBox.setSpacing(10);
+			particularProcedureDDLTabVBox.setPadding(new Insets(2,2,2,2));
+			TextArea particularProcedureDDLTextArea = new TextArea("/***/");
+			if(rsTable.next()) {
+				particularProcedureDDLTextArea = new TextArea(rsTable.getString(3));
+			}
+		
+			particularProcedureDDLTextArea.setEditable(false);
+			particularProcedureDDLTextArea.setWrapText(true);
+			particularProcedureDDLTextArea.setMinHeight(menu_Items_FX.size.getHeight()-280);
+			particularProcedureDDLTabVBox.getChildren().addAll(particularProcedureDDLTextArea);
+			particularProcedureDDLTab.setContent(particularProcedureDDLTabVBox);
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return particularProcedureDDLTab;
+	}
+	
+	
+	public Tab particularProcedureDoubleClickMethod(String proceduresName,String databaseName) {
+	    Tab particularProceduresMainTab = new Tab(proceduresName);
+		
+		VBox particularProceduresMainTabVBox = new VBox();
+		particularProceduresMainTabVBox.setSpacing(10);
+		//clientConnectionsVBox.setPadding(new Insets(0,0,0,0));
+		particularProceduresMainTabVBox.getChildren().add(addTopHBoxForInfo("Procedures "+proceduresName+" for Connection "+currentConnectionName));
+		
+		
+		TabPane particularProceduresTabPane = new TabPane();
+		particularProceduresTabPane.setTabMinWidth(180);
+		particularProceduresTabPane.setTabMinHeight(30);
+		Tab particularTablePropertiesTab = new Tab("Properties");
+		particularTablePropertiesTab.setClosable(false);
+		particularProceduresMainTabVBox.getChildren().addAll(particularProceduresTabPane)	;
+		
+		// Properties
+		TabPane particularProceduresPropertiesTabbedPane = new TabPane();
+		particularProceduresPropertiesTabbedPane.setSide(Side.LEFT);
+		particularProceduresPropertiesTabbedPane.setRotateGraphic(true);
+		particularProceduresPropertiesTabbedPane.setTabMinHeight(200); // Determines tab width. I know, its odd.
+		particularProceduresPropertiesTabbedPane.setTabMaxHeight(200);
+		particularProceduresPropertiesTabbedPane.setTabMinWidth(50);
+		
+		Tab particularProceduresdetailsTab = new Tab();
+		particularProceduresdetailsTab.setClosable(false);
+		Label l = new Label("Details");
+		l.setRotate(90);
+		StackPane stp = new StackPane(new Group(l));
+		particularProceduresdetailsTab.setGraphic(stp);
+		
+		particularProceduresdetailsTab = getParticularProcedureDetailsTab(proceduresName,databaseName , particularProceduresdetailsTab);
+		
+		Tab particularProcedurescolumnsTab = new Tab();
+		particularProcedurescolumnsTab.setClosable(false);
+		l = new Label("Procedure Parameters");
+		l.setRotate(90);
+		stp = new StackPane(new Group(l));
+		particularProcedurescolumnsTab.setGraphic(stp);
+		VBox particularProcedurescolumnsTabVBox = new VBox();
+		particularProcedurescolumnsTabVBox.setSpacing(10);
+		particularProcedurescolumnsTabVBox.setPadding(new Insets(2,2,2,2));
+		particularProcedurescolumnsTabVBox.setMinHeight(menu_Items_FX.size.getWidth()-300);
+		TableView particularProceduresColumnsView = new TableView(); 
+		HBox particularProceduresColumnsButtonsHBox = new HBox();
+		particularProceduresColumnsButtonsHBox.setPadding(new Insets(10,10,10,10));
+		particularProceduresColumnsButtonsHBox.getChildren().add(new Button("Create"));
+		particularProcedurescolumnsTabVBox.getChildren().addAll(particularProceduresColumnsView,particularProceduresColumnsButtonsHBox);
+		particularProcedurescolumnsTab.setContent(particularProcedurescolumnsTabVBox);
+		
+		Tab particularProceduresDDLTab = new Tab();
+		particularProceduresDDLTab.setClosable(false);
+		l = new Label("Source/DDL");
+		l.setRotate(90);
+		stp = new StackPane(new Group(l));
+		particularProceduresDDLTab.setGraphic(stp);
+		VBox particularProceduresDDLTabVBox = new VBox();
+		particularProceduresDDLTabVBox.setSpacing(10);
+		particularProceduresDDLTabVBox.setPadding(new Insets(2,2,2,2));
+	
+		particularProceduresTabPane.getTabs().addAll(particularTablePropertiesTab);
+		
+		particularProceduresPropertiesTabbedPane.getTabs().addAll(particularProceduresdetailsTab,particularProcedurescolumnsTab,particularProceduresDDLTab);
+		
+		particularProceduresPropertiesTabbedPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+			@Override
+			public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
+				System.out.println("Tab swithced"+ ((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText());
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Procedure Parameters")) {
+					particularProceduresColumnsView.getItems().clear();
+					getParticularProceduresParametersTab(proceduresName,databaseName,particularProcedurescolumnsTab);
+				}
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Source/DDL")) {
+					getParticularProcedureSourceDDLTab(proceduresName,databaseName,particularProceduresDDLTab);
+				}
+			}
+		});
+		
+		particularTablePropertiesTab.setContent(particularProceduresPropertiesTabbedPane);
+		particularProceduresMainTab.setContent(particularProceduresMainTabVBox);
+		return particularProceduresMainTab;
+	}
+
+
+	public Tab particularFunctionsDoubleClickMethod(String functionsName) {
+	    
+		Tab particularFunctionsMainTab = new Tab(functionsName);
+		
+		VBox particularFunctionsMainTabVBox = new VBox();
+		particularFunctionsMainTabVBox.setSpacing(10);
+		//clientConnectionsVBox.setPadding(new Insets(0,0,0,0));
+		particularFunctionsMainTabVBox.getChildren().add(addTopHBoxForInfo("Functions "+functionsName+" for Connection "+currentConnectionName));
+		
+		
+		TabPane particularFunctionsTabPane = new TabPane();
+		particularFunctionsTabPane.setTabMinWidth(180);
+		particularFunctionsTabPane.setTabMinHeight(30);
+		Tab particularTablePropertiesTab = new Tab("Properties");
+		particularTablePropertiesTab.setClosable(false);
+		particularFunctionsMainTabVBox.getChildren().addAll(particularFunctionsTabPane)	;
+		
+		// Properties
+		TabPane particularFunctionsPropertiesTabbedPane = new TabPane();
+		particularFunctionsPropertiesTabbedPane.setSide(Side.LEFT);
+		particularFunctionsPropertiesTabbedPane.setRotateGraphic(true);
+		particularFunctionsPropertiesTabbedPane.setTabMinHeight(200); // Determines tab width. I know, its odd.
+		particularFunctionsPropertiesTabbedPane.setTabMaxHeight(200);
+		particularFunctionsPropertiesTabbedPane.setTabMinWidth(50);
+		
+		Tab particularFunctionsdetailsTab = new Tab();
+		particularFunctionsdetailsTab.setClosable(false);
+		Label l = new Label("Details");
+		l.setRotate(90);
+		StackPane stp = new StackPane(new Group(l));
+		particularFunctionsdetailsTab.setGraphic(stp);
+		
+		Tab particularFunctionscolumnsTab = new Tab();
+		particularFunctionscolumnsTab.setClosable(false);
+		l = new Label("Function Parameters");
+		l.setRotate(90);
+		stp = new StackPane(new Group(l));
+		particularFunctionscolumnsTab.setGraphic(stp);
+		VBox particularFunctionscolumnsTabVBox = new VBox();
+		particularFunctionscolumnsTabVBox.setSpacing(10);
+		particularFunctionscolumnsTabVBox.setPadding(new Insets(2,2,2,2));
+		particularFunctionscolumnsTabVBox.setMinHeight(menu_Items_FX.size.getWidth()-300);
+		TableView particularFunctionsColumnsView = new TableView(); 
+		HBox particularFunctionsColumnsButtonsHBox = new HBox();
+		particularFunctionsColumnsButtonsHBox.setPadding(new Insets(10,10,10,10));
+		particularFunctionsColumnsButtonsHBox.getChildren().add(new Button("Create"));
+		particularFunctionscolumnsTabVBox.getChildren().addAll(particularFunctionsColumnsView,particularFunctionsColumnsButtonsHBox);
+		particularFunctionscolumnsTab.setContent(particularFunctionscolumnsTabVBox);
+	
+		Tab particularFunctionsDDLTab = new Tab();
+		particularFunctionsDDLTab.setClosable(false);
+		l = new Label("Source/DDL");
+		l.setRotate(90);
+		stp = new StackPane(new Group(l));
+		particularFunctionsDDLTab.setGraphic(stp);
+		VBox particularFunctionsDDLTabVBox = new VBox();
+		particularFunctionsDDLTabVBox.setSpacing(10);
+		particularFunctionsDDLTabVBox.setPadding(new Insets(2,2,2,2));
+		TextArea particularFunctionsDDLTextArea = new TextArea("Souce DDL will come here \n Souce DDL will come here");
+		particularFunctionsDDLTextArea.setEditable(false);		
+		particularFunctionsDDLTextArea.setMinHeight(menu_Items_FX.size.getHeight()-280);
+		particularFunctionsDDLTabVBox.getChildren().addAll(particularFunctionsDDLTextArea);
+		particularFunctionsDDLTab.setContent(particularFunctionsDDLTabVBox);
+		
+		particularFunctionsTabPane.getTabs().addAll(particularTablePropertiesTab);
+		
+		particularFunctionsPropertiesTabbedPane.getTabs().addAll(particularFunctionsdetailsTab,particularFunctionscolumnsTab,particularFunctionsDDLTab);
+		particularTablePropertiesTab.setContent(particularFunctionsPropertiesTabbedPane);
+		
+		particularFunctionsMainTab.setContent(particularFunctionsMainTabVBox);
+		
+		return particularFunctionsMainTab;
+	}
+	
+	public Tab particularTriggersDoubleClickMethod(String triggersName) {
+		Tab particularTriggersMainTab = new Tab(triggersName);
+		
+		VBox particularTriggersMainTabVBox = new VBox();
+		particularTriggersMainTabVBox.setSpacing(10);
+		//clientConnectionsVBox.setPadding(new Insets(0,0,0,0));
+		particularTriggersMainTabVBox.getChildren().add(addTopHBoxForInfo("Triggers "+triggersName+" for Connection "+currentConnectionName));
+		
+		
+		TabPane particularTriggersTabPane = new TabPane();
+		particularTriggersTabPane.setTabMinWidth(180);
+		particularTriggersTabPane.setTabMinHeight(30);
+		Tab particularTablePropertiesTab = new Tab("Properties");
+		particularTriggersMainTabVBox.getChildren().addAll(particularTriggersTabPane)	;
+		
+		// Properties
+		TabPane particularTriggersPropertiesTabbedPane = new TabPane();
+		particularTriggersPropertiesTabbedPane.setSide(Side.LEFT);
+		particularTriggersPropertiesTabbedPane.setRotateGraphic(true);
+		particularTriggersPropertiesTabbedPane.setTabMinHeight(200); // Determines tab width. I know, its odd.
+		particularTriggersPropertiesTabbedPane.setTabMaxHeight(200);
+		particularTriggersPropertiesTabbedPane.setTabMinWidth(50);
+		
+		// use the query above to display triggers and show the following in details for the schema
+		// trigger_name,trigget_schema,event_manipulation,event_object_table,action_order,action_condition,action_orientation,action_timing,action_reference_old_table,action_reference_new_table,definer,created,
+		// character_set_client,collation_connection,database_collation
+		// and remove the above comments after you successfully add these details
+		Tab particularTriggersdetailsTab = new Tab();
+		particularTriggersdetailsTab.setClosable(false);
+		Label l = new Label("Details");
+		l.setRotate(90);
+		StackPane stp = new StackPane(new Group(l));
+		particularTriggersdetailsTab.setGraphic(stp);
+		VBox particularTableDetailsVBox = new VBox();
+		particularTableDetailsVBox.setSpacing(30);
+		particularTableDetailsVBox.setPadding(new Insets(10,10,10,10));
+		particularTableDetailsVBox.setMinHeight(menu_Items_FX.size.getWidth()-300);
+		particularTriggersdetailsTab.setContent(particularTableDetailsVBox);
+		
+		// use the column action_Statement from the above query and add the DDL/Source for the trigger selected
+		Tab particularTriggersDDLTab = new Tab();
+		particularTriggersDDLTab.setClosable(false);
+		l = new Label("Source/DDL");
+		l.setRotate(90);
+		stp = new StackPane(new Group(l));
+		particularTriggersDDLTab.setGraphic(stp);
+		VBox particularTriggersDDLTabVBox = new VBox();
+		particularTriggersDDLTabVBox.setSpacing(10);
+		particularTriggersDDLTabVBox.setPadding(new Insets(2,2,2,2));
+		TextArea particularTriggersDDLTextArea = new TextArea("Souce DDL will come here \n Souce DDL will come here");
+		//particularTriggersDDLTextArea.setMinHeight(menu_Items_FX.size.getHeight()-280);
+		particularTriggersDDLTextArea.setEditable(false);
+		particularTriggersDDLTabVBox.getChildren().addAll(particularTriggersDDLTextArea);
+		particularTriggersDDLTab.setContent(particularTriggersDDLTabVBox);
+		
+		particularTriggersTabPane.getTabs().addAll(particularTablePropertiesTab);
+		
+		particularTriggersPropertiesTabbedPane.getTabs().addAll(particularTriggersdetailsTab,particularTriggersDDLTab);
+		particularTablePropertiesTab.setContent(particularTriggersPropertiesTabbedPane);
+		
+		particularTriggersMainTab.setContent(particularTriggersMainTabVBox);
+		
+		return particularTriggersMainTab;
+	}
+	
+	public Tab particularEventssDoubleClickMethod(String eventsName) {
+		Tab particularEventsMainTab = new Tab(eventsName);
+		
+		VBox particularEventsMainTabVBox = new VBox();
+		particularEventsMainTabVBox.setSpacing(10);
+		//clientConnectionsVBox.setPadding(new Insets(0,0,0,0));
+		particularEventsMainTabVBox.getChildren().add(addTopHBoxForInfo("Events "+eventsName+" for Connection "+currentConnectionName));
+		
+		
+		TabPane particularEventsTabPane = new TabPane();
+		particularEventsTabPane.setTabMinWidth(180);
+		particularEventsTabPane.setTabMinHeight(30);
+		Tab particularTablePropertiesTab = new Tab("Properties");
+		particularEventsMainTabVBox.getChildren().addAll(particularEventsTabPane)	;
+		
+		// Properties
+		TabPane particularEventsPropertiesTabbedPane = new TabPane();
+		particularEventsPropertiesTabbedPane.setSide(Side.LEFT);
+		particularEventsPropertiesTabbedPane.setRotateGraphic(true);
+		particularEventsPropertiesTabbedPane.setTabMinHeight(200); // Determines tab width. I know, its odd.
+		particularEventsPropertiesTabbedPane.setTabMaxHeight(200);
+		particularEventsPropertiesTabbedPane.setTabMinWidth(50);
+		
+		// use the information_Schema.events table to get the following details and display them in details
+		// select event_name,event_Schema,event_type,event_body,interval_value,interval_field,starts,ends, definer from information_Schema.events where event_Schema=datbaseNam
+		Tab particularEventsdetailsTab = new Tab();
+		particularEventsdetailsTab.setClosable(false);
+		Label l = new Label("Details");
+		l.setRotate(90);
+		StackPane stp = new StackPane(new Group(l));
+		particularEventsdetailsTab.setGraphic(stp);
+		VBox particularTableDetailsVBox = new VBox();
+		particularTableDetailsVBox.setSpacing(30);
+		particularTableDetailsVBox.setPadding(new Insets(10,10,10,10));
+		particularTableDetailsVBox.setMinHeight(menu_Items_FX.size.getWidth()-300);
+		particularEventsdetailsTab.setContent(particularTableDetailsVBox);
+	
+	
+		// event_defination from the information_Schema.events will have this information.
+		Tab particularEventsDDLTab = new Tab();
+		particularEventsDDLTab.setClosable(false);
+		l = new Label("Source/DDL");
+		l.setRotate(90);
+		stp = new StackPane(new Group(l));
+		particularEventsDDLTab.setGraphic(stp);
+		VBox particularEventsDDLTabVBox = new VBox();
+		particularEventsDDLTabVBox.setSpacing(10);
+		particularEventsDDLTabVBox.setPadding(new Insets(2,2,2,2));
+		TextArea particularEventsDDLTextArea = new TextArea("");
+		particularEventsDDLTextArea.setMinHeight(menu_Items_FX.size.getHeight()-280);
+		particularEventsDDLTextArea.setEditable(false);		
+		particularEventsDDLTabVBox.getChildren().addAll(particularEventsDDLTextArea);
+		particularEventsDDLTab.setContent(particularEventsDDLTabVBox);
+		
+		particularEventsTabPane.getTabs().addAll(particularTablePropertiesTab);
+		
+		particularEventsPropertiesTabbedPane.getTabs().addAll(particularEventsdetailsTab,particularEventsDDLTab);
+		particularTablePropertiesTab.setContent(particularEventsPropertiesTabbedPane);
+		
+		particularEventsMainTab.setContent(particularEventsMainTabVBox);
+		
+		return particularEventsMainTab;
+	}
+
+	
+
+	
+
+	
+	
 	private HBox addBottomHBoxForVariables() {
 
 			 
@@ -4789,7 +5953,7 @@ public class MySqlUI {
 							  SplitPane tableDetailsSplitPane = new SplitPane();
 							  tableDetailsSplitPane.setOrientation(Orientation.VERTICAL);
 							  tableDetailsSplitPane.setDividerPositions(0.75); 
-							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Tables");
+							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Tables",loadedDatabaseName.getValue());
 							  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
 									@Override
 									public void changed(ObservableValue<? extends HashMap<String, String>> observable,
@@ -4847,7 +6011,7 @@ public class MySqlUI {
 							  SplitPane viewDetailsSplitPane = new SplitPane();
 							  viewDetailsSplitPane.setOrientation(Orientation.VERTICAL);
 							  viewDetailsSplitPane.setDividerPositions(0.75); 
-							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Views");
+							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Views",loadedDatabaseName.getValue());
 							  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
 									@Override
 									public void changed(ObservableValue<? extends HashMap<String, String>> observable,
@@ -4909,10 +6073,16 @@ public class MySqlUI {
 						  System.out.println("Indexes Tab selected ");
 						  	try {		  
 							  ResultSet rs = stmt.executeQuery("select  index_name,column_name,table_name,Index_type,packed,nullable,non_unique from information_schema.statistics where table_schema = '"+loadedDatabaseName.getValue()+"'");
+							  try {
+									Thread.sleep(1000);
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
 							  SplitPane indexesDetailsSplitPane = new SplitPane();
 							  indexesDetailsSplitPane.setOrientation(Orientation.VERTICAL);
 							  indexesDetailsSplitPane.setDividerPositions(0.75); 
-							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Indexes");
+							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Indexes",loadedDatabaseName.getValue());
 							  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
 									@Override
 									public void changed(ObservableValue<? extends HashMap<String, String>> observable,
@@ -4971,7 +6141,7 @@ public class MySqlUI {
 							  SplitPane proceduresDetailsSplitPane = new SplitPane();
 							  proceduresDetailsSplitPane.setOrientation(Orientation.VERTICAL);
 							  proceduresDetailsSplitPane.setDividerPositions(0.75); 
-							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Procedures");
+							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Procedures",loadedDatabaseName.getValue());
 							  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
 									@Override
 									public void changed(ObservableValue<? extends HashMap<String, String>> observable,
@@ -5030,7 +6200,7 @@ public class MySqlUI {
 							  SplitPane functionsDetailsSplitPane = new SplitPane();
 							  functionsDetailsSplitPane.setOrientation(Orientation.VERTICAL);
 							  functionsDetailsSplitPane.setDividerPositions(0.75); 
-							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Functions");
+							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Functions",loadedDatabaseName.getValue());
 							  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
 									@Override
 									public void changed(ObservableValue<? extends HashMap<String, String>> observable,
@@ -5089,7 +6259,7 @@ public class MySqlUI {
 							  SplitPane eventsDetailsSplitPane = new SplitPane();
 							  eventsDetailsSplitPane.setOrientation(Orientation.VERTICAL);
 							  eventsDetailsSplitPane.setDividerPositions(0.75); 
-							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Events");
+							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Events",loadedDatabaseName.getValue());
 							  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
 									@Override
 									public void changed(ObservableValue<? extends HashMap<String, String>> observable,
