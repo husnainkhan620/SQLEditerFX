@@ -89,6 +89,7 @@ public class MySqlUI {
 	private ConnectionPlaceHolder connectionPlaceHolder;
 	private Connection currentConnection ;
 	private String currentConnectionName;
+	private ImageView imagemySqlnode;
 	private Statement stmt ;
 	public Button refreshButton;
 	public TabPane statusSystemVariablesTabpane;
@@ -226,6 +227,7 @@ public class MySqlUI {
 	
 		this.connectionPlaceHolder = connectionPlaceHolder;
 		this.menu_Items_FX.treeConnectionsView.setCellFactory((TreeView<String> p) -> new MySQLTreecellImpl());
+		this.imagemySqlnode = imagemySqlnode;
 		
 		// the root level item , that is the connection name
 		TreeItem<String> mySqlTreeItem = new TreeItem<String>(connectionPlaceHolder.getConnectionName(),imagemySqlnode);
@@ -326,14 +328,7 @@ public class MySqlUI {
 																Boolean value = ((BooleanProperty)observable).getValue() ;
 																if(value) {
 																	System.out.println("Particular Database Expanded !!!"+loadedDatabaseName.getValue());
-																	/*
-																	Tab mainDatabaseTab = databaseDoubleClickMethod(loadedDatabaseName);
-																															
-																	menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);
 
-															        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
-															        singleSelectionModel.select(mainDatabaseTab);
-																		*/
 																	System.out.println("Create the Database Tabs heres");																}
 																
 																else {
@@ -363,10 +358,9 @@ public class MySqlUI {
 																		new Thread(new Runnable() {
 																		     @Override
 																		     public void run() {
-																		         
 																		    	try  {
 																		    		stmt.execute("use "+loadedDatabaseName.getValue());
-																		    		ResultSet rs = stmt.executeQuery("SHOW FULL TABLES IN "+ loadedDatabaseName.getValue() +" WHERE TABLE_TYPE LIKE 'BASE TABLE'");
+																		    		ResultSet rs = currentConnection.createStatement().executeQuery("SHOW FULL TABLES IN "+ loadedDatabaseName.getValue() +" WHERE TABLE_TYPE LIKE 'BASE TABLE'");
 																		    		try {
 																						Thread.sleep(100);
 																					} catch (InterruptedException e) {
@@ -1088,8 +1082,8 @@ public class MySqlUI {
 																	     public void run() {
 																	         
 																	    	try  {
-																	    		stmt.execute("use "+loadedDatabaseName.getValue());
-																	    		ResultSet rs = stmt.executeQuery(" SHOW FUNCTION STATUS WHERE Db = '"+ loadedDatabaseName.getValue() +"'");
+																	    		
+																	    		ResultSet rs = currentConnection.createStatement().executeQuery(" SHOW FUNCTION STATUS WHERE Db = '"+ loadedDatabaseName.getValue() +"'");
 																	    		try {
 																					Thread.sleep(1000);
 																				} catch (InterruptedException e) {
@@ -1159,7 +1153,7 @@ public class MySqlUI {
 																         
 																    	try  {
 																    		
-																    		ResultSet rs = stmt.executeQuery(" select * from information_schema.triggers where trigger_schema = '"+loadedDatabaseName.getValue()+"'");
+																    		ResultSet rs = currentConnection.createStatement().executeQuery(" select * from information_schema.triggers where trigger_schema = '"+loadedDatabaseName.getValue()+"'");
 																    		try {
 																				Thread.sleep(1000);
 																			} catch (InterruptedException e) {
@@ -1209,8 +1203,8 @@ public class MySqlUI {
 																	     public void run() {
 																	         
 																	    	try  {
-																	    		stmt.execute("use "+loadedDatabaseName.getValue());
-																	    		ResultSet rs = stmt.executeQuery("SHOW EVENTS FROM "+loadedDatabaseName.getValue());
+																	    		
+																	    		ResultSet rs = currentConnection.createStatement().executeQuery("SHOW EVENTS FROM "+loadedDatabaseName.getValue());
 																	    		try {
 																					Thread.sleep(1000);
 																				} catch (InterruptedException e) {
@@ -1512,15 +1506,27 @@ public class MySqlUI {
 					});
 				 
 				 if(event.getClickCount() == 2) {
+					 
+					 // check if database tab is already opened.
+					 if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty())
+						 if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null)
+							 System.out.println("Current Tab opened is---> "+ menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().toString() + " and  "  + menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText());
+					 
+					 // particular database is clicked
 					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Databases")) {
 							
-							Tab mainDatabaseTab = databaseDoubleClickMethod(getTreeItem());
-							
+							Tab mainDatabaseTab = databaseDoubleClickMethod(getTreeItem(),"Properties");
 							menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);
-
 					        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
 					        singleSelectionModel.select(mainDatabaseTab);
-						 
+					        return;
+					 }
+					 // if Tables on a whole is clicked
+					 if(getTreeItem().getValue().equalsIgnoreCase("Tables")) {
+							
+						Tab mainDatabaseTab = databaseDoubleClickMethod(getTreeItem().getParent(),"Tables");
+    	            	menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);
+    	            	return;
 					 }
 					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Tables")) {
 						
@@ -1530,73 +1536,110 @@ public class MySqlUI {
 
     	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
 					     singleSelectionModel.select(particularTableTab);
-						 
+					     return;
 					 }
+					// if Views on a whole is clicked
+					 if(getTreeItem().getValue().equalsIgnoreCase("Views")) {
+						 
+						  Tab mainDatabaseTab = databaseDoubleClickMethod(getTreeItem().getParent(),"Views");
+	    	              menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);	
+	    	              return;
+					  } 
 					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Views")) {
 							
-						 Tab particularTableTab = particularViewDoubleClickMethod(getTreeItem().getValue(),getTreeItem().getParent().getParent().getValue());
-    	            	 
+						 Tab particularTableTab = particularViewDoubleClickMethod(getTreeItem().getValue(),getTreeItem().getParent().getParent().getValue());    	            	 
     	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
 
     	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
 					     singleSelectionModel.select(particularTableTab);
+					     return;
+					 }
+					 // if Indexes on a whole is clicked
+					 if(getTreeItem().getValue().equalsIgnoreCase("Indexes")) {
 						 
+						  Tab mainDatabaseTab = databaseDoubleClickMethod(getTreeItem().getParent(),"Indexes");
+	    	              menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);	
+	    	              return;
 					 }
 					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Indexes")) {
 							
-						 Tab particularTableTab = particularIndexesDoubleClickMethod(getTreeItem().getValue(),getTreeItem().getParent().getParent().getValue());
-    	            	 
+						 Tab particularTableTab = particularIndexesDoubleClickMethod(getTreeItem().getValue(),getTreeItem().getParent().getParent().getValue());    	            	 
     	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
 
     	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
 					     singleSelectionModel.select(particularTableTab);
+					     return;
+					 }
+					 // if Procedures on a whole clicked
+					 if(getTreeItem().getValue().equalsIgnoreCase("Procedures")) {
 						 
+						  Tab mainDatabaseTab = databaseDoubleClickMethod(getTreeItem().getParent(),"Procedures");
+	    	              menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);	
+	    	              return;
 					 }
 					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Procedures")) {
 							
-						 Tab particularTableTab = particularProcedureDoubleClickMethod(getTreeItem().getValue(),getTreeItem().getParent().getParent().getValue());
-    	            	 
+						 Tab particularTableTab = particularProcedureDoubleClickMethod(getTreeItem().getValue(),getTreeItem().getParent().getParent().getValue());    	            	 
     	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
 
     	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
 					     singleSelectionModel.select(particularTableTab);
+					     return;
+					 }
+					 // if Functions on a whole clicked
+					 if(getTreeItem().getValue().equalsIgnoreCase("Functions")) {
 						 
+						  Tab mainDatabaseTab = databaseDoubleClickMethod(getTreeItem().getParent(),"Functions");
+	    	              menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);	
+	    	              return;
 					 }
 					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Functions")) {
 							
-						 Tab particularTableTab = particularFunctionsDoubleClickMethod(getTreeItem().getValue());
-    	            	 
+						 Tab particularTableTab = particularFunctionsDoubleClickMethod(getTreeItem().getValue());    	            	 
     	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
 
     	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
 					     singleSelectionModel.select(particularTableTab);
+					     return;
+					 }
+					 // if Triggers on a whole clicked
+					 if(getTreeItem().getValue().equalsIgnoreCase("Triggers")) {
 						 
+						  Tab mainDatabaseTab = databaseDoubleClickMethod(getTreeItem().getParent(),"Triggers");
+	    	              menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);	
+	    	              return;
 					 }
 					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Triggers")) {
 							
 						 Tab particularTableTab = particularTriggersDoubleClickMethod(getTreeItem().getValue());
-    	            	 
     	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
 
     	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
 					     singleSelectionModel.select(particularTableTab);
-						 
+					     return;
 					 }
-					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Events")) {
+					// if Events on a whole clicked
+					 if(getTreeItem().getValue().equals("Events")) {
+						 
+						  Tab mainDatabaseTab = databaseDoubleClickMethod(getTreeItem().getParent(),"Events");
+	    	              menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);	
+	    	              return;
+					 }
+					 if(getTreeItem().getParent().getValue().equals("Events")) {
 							
 						 Tab particularTableTab = particularEventssDoubleClickMethod(getTreeItem().getValue());
-    	            	 
     	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
 
     	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
 					     singleSelectionModel.select(particularTableTab);
-						 
+					     return;
 					 }
+					 
 				 }
 				 
 				 if(event.getClickCount() == 2) {
 					 for( int i=0;i<actionTypes.length;i++) {
-						 
+						 // Also do a parent check else we can have other components like tables,views with these names
 						 if(getTreeItem().getValue().equalsIgnoreCase(actionTypes[i])) {
 							 int index = i;
 						      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
@@ -1636,7 +1679,7 @@ public class MySqlUI {
 												((SplitPane) genericNode).getItems().addAll(topHalfResultTableView,secondHalfDisplayVBox); // Top half of query editer							      
 										    
 											}
-											else if(getTreeItem().getValue().equalsIgnoreCase("EVENTS")) {
+											else if(getTreeItem().getValue().equals("EVENTS") && getTreeItem().getParent().getValue().equalsIgnoreCase("System Info")) {
 												System.out.println("Show events");
 												ResultSet rsDatabases = stmt.executeQuery("SHOW DATABASES");
 										    	while(rsDatabases.next()){
@@ -1675,6 +1718,7 @@ public class MySqlUI {
 					 
 				 }
 				 
+				 // This check is skeptical make it more error proof.
 				 if(event.getClickCount() == 1) {
 					 displayPerformanceTableView(performanceReportsTypes, performanceReportQueries,getTreeItem().getValue());
 					 
@@ -3422,7 +3466,7 @@ public class MySqlUI {
 	        	tableColumnName.setPrefWidth(150);
 	        	tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[i]));
 	        		
-	        	tableView.setRowFactory( tv -> {
+	        	tableView.setRowFactory( tv -> { 
 	        	    TableRow<HashMap> row = new TableRow<>();
 	        	    row.setOnMouseClicked(event -> {
 	        	        if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
@@ -4592,12 +4636,6 @@ public class MySqlUI {
 		
 		return particularEventsMainTab;
 	}
-
-	
-
-	
-
-	
 	
 	private HBox addBottomHBoxForVariables() {
 
@@ -5907,10 +5945,381 @@ public class MySqlUI {
 		 }
 	}
 
-	private Tab databaseDoubleClickMethod(TreeItem<String> loadedDatabaseName) {
+	private void getdatabaseTablesDisplayTab(TreeItem<String> loadedDatabaseName, Tab databaseDetailsTablesTab) {
+		System.out.println("Tables Tab selected ");
+			
+		  try { 
+			  ResultSet rs = stmt.executeQuery("select table_name,engine,auto_increment,table_rows,data_length,create_time,update_time,create_options from information_schema.tables where table_comment != 'view' and table_schema='"+loadedDatabaseName.getValue()+"'");
+			  SplitPane tableDetailsSplitPane = new SplitPane();
+			  tableDetailsSplitPane.setOrientation(Orientation.VERTICAL);
+			  tableDetailsSplitPane.setDividerPositions(0.75); 
+			  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Tables",loadedDatabaseName.getValue());
+			  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
+					@Override
+					public void changed(ObservableValue<? extends HashMap<String, String>> observable,
+							HashMap<String, String> oldValue, HashMap<String, String> newValue) {
+						System.out.println("From Local oldValue --->"+oldValue);
+						System.out.println("From local newValue --->"+newValue.keySet().toString());
+						for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
+							System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
+						}
+						TableViewSelectionModel  selectionModel = tablesView.getSelectionModel();
+				        ObservableList selectedCells = selectionModel.getSelectedCells();
+				        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+				        Object val = tablePosition.getTableColumn().getCellData(newValue);
+				        System.out.println("Selected Value" + val);
+
+					}	
+			  });
+			  
+			  HBox allButtonsHBox = new HBox();
+			  allButtonsHBox.setSpacing(100);
+			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
+			  
+			  HBox tableButtonsHbox = new HBox();
+			  tableButtonsHbox.setSpacing(20);
+			  tableButtonsHbox.setPadding(new Insets(0,50,0,0));
+			  
+			  Button viewTableButton = new Button("View Table");
+			  Button createTableButton = new Button("Create Table");
+			  Button editTableButton = new Button("Edit Table");
+			  Button deleteTableButton = new Button("Delete Table");
+			  
+			  Button refreshTableButton = new Button("Refresh");
+			  createTableButton.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					
+					tableDetailsSplitPane.getItems().remove(tableButtonsHbox);
+					tableDetailsSplitPane.setDividerPositions(0.99);
+				}	
+			  });
+			  
+			  tableButtonsHbox.getChildren().addAll(viewTableButton,createTableButton,editTableButton,deleteTableButton);
+			  allButtonsHBox.getChildren().addAll(tableButtonsHbox,refreshTableButton);
+			  
+			  tableDetailsSplitPane.getItems().addAll(tablesView,allButtonsHBox);
+			  databaseDetailsTablesTab.setContent(tableDetailsSplitPane);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+	}
+
+	private void getdatabaseViewsDisplayTab(TreeItem<String> loadedDatabaseName, Tab databaseDetailsViewsTab) {
+		System.out.println("Views Tab selected ");
+		  	try {		  
+			  ResultSet rs = stmt.executeQuery("select table_name,check_option,is_updatable,definer,view_definition from information_schema.views where table_schema='"+loadedDatabaseName.getValue()+"'");
+			  SplitPane viewDetailsSplitPane = new SplitPane();
+			  viewDetailsSplitPane.setOrientation(Orientation.VERTICAL);
+			  viewDetailsSplitPane.setDividerPositions(0.75); 
+			  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Views",loadedDatabaseName.getValue());
+			  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
+					@Override
+					public void changed(ObservableValue<? extends HashMap<String, String>> observable,
+							HashMap<String, String> oldValue, HashMap<String, String> newValue) {
+						System.out.println("From Local oldValue --->"+oldValue);
+						System.out.println("From local newValue --->"+newValue.keySet().toString());
+						
+						
+						
+						
+						for(Map.Entry<String, String> tableValues : newValue.entrySet()) {	
+							System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
+						}
+						TableViewSelectionModel  selectionModel = tablesView.getSelectionModel();
+				        ObservableList selectedCells = selectionModel.getSelectedCells();
+				        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+				        Object val = tablePosition.getTableColumn().getCellData(newValue);
+				        System.out.println("Selected Value" + val);
+				     
+					}	
+			  });
+			  
+			  HBox allButtonsHBox = new HBox();
+			  allButtonsHBox.setSpacing(100);
+			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
+			  
+			  
+			  HBox viewButtonsHbox = new HBox();
+			  viewButtonsHbox.setSpacing(20);
+			  viewButtonsHbox.setPadding(new Insets(0,50,0,0));
+			  
+			  Button viewViewButton = new Button("View View");
+			  Button createViewButton = new Button("Create View");
+			  Button editViewButton = new Button("Edit View");
+			  Button deleteViewButton = new Button("Delete View");
+			  
+			  Button refreshViewButton = new Button("Refresh");
+			  createViewButton.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					
+					viewDetailsSplitPane.getItems().remove(viewButtonsHbox);
+					viewDetailsSplitPane.setDividerPositions(0.99);
+				}	
+			  });
+			  
+			  viewButtonsHbox.getChildren().addAll(viewViewButton,createViewButton,editViewButton,deleteViewButton);
+			  allButtonsHBox.getChildren().addAll(viewButtonsHbox,refreshViewButton);
+			  
+			  viewDetailsSplitPane.getItems().addAll(tablesView,allButtonsHBox);
+
+			  databaseDetailsViewsTab.setContent(viewDetailsSplitPane);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+	}
+
+	private void getdatabaseIndexesDisplayTab(TreeItem<String> loadedDatabaseName, Tab databaseDetailsIndexesTab) {
+		System.out.println("Indexes Tab selected ");
+		  	try {		  
+			  ResultSet rs = stmt.executeQuery("select  index_name,column_name,table_name,Index_type,packed,nullable,non_unique from information_schema.statistics where table_schema = '"+loadedDatabaseName.getValue()+"'");
+			  try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			  SplitPane indexesDetailsSplitPane = new SplitPane();
+			  indexesDetailsSplitPane.setOrientation(Orientation.VERTICAL);
+			  indexesDetailsSplitPane.setDividerPositions(0.75); 
+			  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Indexes",loadedDatabaseName.getValue());
+			  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
+					@Override
+					public void changed(ObservableValue<? extends HashMap<String, String>> observable,
+							HashMap<String, String> oldValue, HashMap<String, String> newValue) {
+
+						System.out.println("From Local oldValue --->"+oldValue);
+						System.out.println("From local newValue --->"+newValue.keySet().toString());
+						for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
+							
+							System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
+						}
+						TableViewSelectionModel  selectionModel = tablesView.getSelectionModel();
+				        ObservableList selectedCells = selectionModel.getSelectedCells();
+				        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+				        Object val = tablePosition.getTableColumn().getCellData(newValue);
+				        System.out.println("Selected Value" + val);
+					}	
+			  });
+			  
+			  HBox allButtonsHBox = new HBox();
+			  allButtonsHBox.setSpacing(300);
+			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
+			  
+			  HBox indexButtonsHbox = new HBox();
+			  indexButtonsHbox.setSpacing(20);
+			  
+			  Button viewIndexButton = new Button("View Index");
+			  Button createIndexButton = new Button("Create Index");
+			  Button editIndexButton = new Button("Edit Index");
+			  Button deleteIndexButton = new Button("Delete Imdex");
+			  
+			  Button refreshIndexButton = new Button("Refresh");
+			  createIndexButton.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					
+					indexesDetailsSplitPane.getItems().remove(indexButtonsHbox);
+					indexesDetailsSplitPane.setDividerPositions(0.99);
+				}	
+			  });
+			  
+			  indexButtonsHbox.getChildren().addAll(viewIndexButton,createIndexButton,editIndexButton,deleteIndexButton);
+			  allButtonsHBox.getChildren().addAll(indexButtonsHbox,refreshIndexButton);
+			  
+			  indexesDetailsSplitPane.getItems().addAll(tablesView,allButtonsHBox);
+
+			  databaseDetailsIndexesTab.setContent(indexesDetailsSplitPane);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+	}
+	
+	private void getdatabaseProceduresDisplayTab(TreeItem<String> loadedDatabaseName,Tab databaseDetailsProceduresTab) {
+		System.out.println("Procedures Tab selected ");
+		  	try {		  
+			  ResultSet rs = stmt.executeQuery("select  routine_name,definer,created,LAST_ALTERED,routine_comment from information_schema.routines where  routine_type != 'FUNCTION' and  routine_schema = '"+loadedDatabaseName.getValue()+"'");
+			  SplitPane proceduresDetailsSplitPane = new SplitPane();
+			  proceduresDetailsSplitPane.setOrientation(Orientation.VERTICAL);
+			  proceduresDetailsSplitPane.setDividerPositions(0.75); 
+			  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Procedures",loadedDatabaseName.getValue());
+			  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
+					@Override
+					public void changed(ObservableValue<? extends HashMap<String, String>> observable,
+							HashMap<String, String> oldValue, HashMap<String, String> newValue) {
+
+						System.out.println("From Local oldValue --->"+oldValue);
+						System.out.println("From local newValue --->"+newValue.keySet().toString());
+						for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
+							
+							System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
+						}
+						TableViewSelectionModel  selectionModel = tablesView.getSelectionModel();
+				        ObservableList selectedCells = selectionModel.getSelectedCells();
+				        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+				        Object val = tablePosition.getTableColumn().getCellData(newValue);
+				        System.out.println("Selected Value" + val);
+					}	
+			  });
+			  
+			  HBox allButtonsHBox = new HBox();
+			  allButtonsHBox.setSpacing(300);
+			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
+			  
+			  HBox proceduresButtonsHbox = new HBox();
+			  proceduresButtonsHbox.setSpacing(20);
+			  
+			  Button viewProcedureButton = new Button("View Procedure");
+			  Button createProcedureButton = new Button("Create Procedure");
+			  Button editProcedureButton = new Button("Edit Procedure");
+			  Button deleteProcedureButton = new Button("Delete Procedure");
+			  
+			  Button refreshProcedureButton = new Button("Refresh");
+			  createProcedureButton.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					
+					proceduresDetailsSplitPane.getItems().remove(proceduresButtonsHbox);
+					proceduresDetailsSplitPane.setDividerPositions(0.99);
+				}	
+			  });
+			  
+			  proceduresButtonsHbox.getChildren().addAll(viewProcedureButton,createProcedureButton,editProcedureButton,deleteProcedureButton);
+			  allButtonsHBox.getChildren().addAll(proceduresButtonsHbox,refreshProcedureButton);
+			  
+			  proceduresDetailsSplitPane.getItems().addAll(tablesView,allButtonsHBox);
+			  
+			  databaseDetailsProceduresTab.setContent(proceduresDetailsSplitPane);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+	}
+
+	private void getdatabaseFunctionsDisplayTab(TreeItem<String> loadedDatabaseName, Tab databaseDetailsFunctionsTab) {
+		System.out.println("Functions Tab selected ");
+		  	try {		  
+			  ResultSet rs = stmt.executeQuery("select  routine_name,definer,created,LAST_ALTERED,routine_comment from information_schema.routines where  routine_type != 'PROCEDURE' and  routine_schema = '"+loadedDatabaseName.getValue()+"'");
+			  SplitPane functionsDetailsSplitPane = new SplitPane();
+			  functionsDetailsSplitPane.setOrientation(Orientation.VERTICAL);
+			  functionsDetailsSplitPane.setDividerPositions(0.75); 
+			  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Functions",loadedDatabaseName.getValue());
+			  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
+					@Override
+					public void changed(ObservableValue<? extends HashMap<String, String>> observable,
+							HashMap<String, String> oldValue, HashMap<String, String> newValue) {
+
+						System.out.println("From Local oldValue --->"+oldValue);
+						System.out.println("From local newValue --->"+newValue.keySet().toString());
+						for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
+							
+							System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
+						}
+						TableViewSelectionModel  selectionModel = tablesView.getSelectionModel();
+				        ObservableList selectedCells = selectionModel.getSelectedCells();
+				        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+				        Object val = tablePosition.getTableColumn().getCellData(newValue);
+				        System.out.println("Selected Value" + val);
+					}	
+			  });
+			  
+			  HBox allButtonsHBox = new HBox();
+			  allButtonsHBox.setSpacing(300);
+			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
+			  
+			  HBox functionsButtonsHbox = new HBox();
+			  functionsButtonsHbox.setSpacing(20);
+			  
+			  Button viewFunctionButton = new Button("View Function");
+			  Button createFunctionButton = new Button("Create Function");
+			  Button editFunctionButton = new Button("Edit Function");
+			  Button deleteFunctionButton = new Button("Delete Function");
+			  
+			  Button refreshProcedureButton = new Button("Refresh");
+			  createFunctionButton.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					
+					functionsDetailsSplitPane.getItems().remove(functionsButtonsHbox);
+					functionsDetailsSplitPane.setDividerPositions(0.99);
+				}	
+			  });
+			  
+			  functionsButtonsHbox.getChildren().addAll(viewFunctionButton,createFunctionButton,editFunctionButton,deleteFunctionButton);
+			  allButtonsHBox.getChildren().addAll(functionsButtonsHbox,refreshProcedureButton);
+			  
+			  functionsDetailsSplitPane.getItems().addAll(tablesView,allButtonsHBox);  
+			  databaseDetailsFunctionsTab.setContent(functionsDetailsSplitPane);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+	}
+
+	private void getdatabaseTriggersDisplayTab(TreeItem<String> loadedDatabaseName, Tab databaseDetailsTriggersTab) {
+			System.out.println("Triggers Tab selected ");
+		  	try {		  
+		  		
+		  	  ResultSet rs = stmt.executeQuery("select trigger_name,trigger_Schema,event_manipulation,event_object_Schema,event_object_table,action_order,action_timing,definer,created from information_Schema.triggers where trigger_Schema = '"+loadedDatabaseName.getValue()+"'");
+			  SplitPane triggersDetailsSplitPane = new SplitPane();
+			  triggersDetailsSplitPane.setOrientation(Orientation.VERTICAL);
+			  triggersDetailsSplitPane.setDividerPositions(0.75); 
+			  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Triggers",loadedDatabaseName.getValue());
+			  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
+					@Override
+					public void changed(ObservableValue<? extends HashMap<String, String>> observable,
+							HashMap<String, String> oldValue, HashMap<String, String> newValue) {
+
+						System.out.println("From Local oldValue --->"+oldValue);
+						System.out.println("From local newValue --->"+newValue.keySet().toString());
+						for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
+							
+							System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
+						}
+						TableViewSelectionModel  selectionModel = tablesView.getSelectionModel();
+				        ObservableList selectedCells = selectionModel.getSelectedCells();
+				        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+				        Object val = tablePosition.getTableColumn().getCellData(newValue);
+				        System.out.println("Selected Value" + val);
+					}	
+			  });
+			  
+			  HBox allButtonsHBox = new HBox();
+			  allButtonsHBox.setSpacing(300);
+			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
+			  
+			  HBox triggersButtonsHbox = new HBox();
+			  triggersButtonsHbox.setSpacing(20);
+			  
+			  Button viewTriggersButton = new Button("View Trigger");
+			  Button createTriggersButton = new Button("Create Trigger");
+			  Button editTriggersButton = new Button("Edit Trigger");
+			  Button deleteTriggersButton = new Button("Delete Trigger");
+			  
+			  Button refreshTriggersButton = new Button("Refresh");
+			  createTriggersButton.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					
+					triggersDetailsSplitPane.getItems().remove(triggersButtonsHbox);
+					triggersDetailsSplitPane.setDividerPositions(0.99);
+				}	
+			  });
+			  
+			  triggersButtonsHbox.getChildren().addAll(viewTriggersButton,createTriggersButton,editTriggersButton,deleteTriggersButton);
+			  allButtonsHBox.getChildren().addAll(triggersButtonsHbox,refreshTriggersButton);
+			  
+			  triggersDetailsSplitPane.getItems().addAll(tablesView,allButtonsHBox);  
+			  databaseDetailsTriggersTab.setContent(triggersDetailsSplitPane);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+	}
+	
+	private Tab databaseDoubleClickMethod(TreeItem<String> loadedDatabaseName,String componentToFocus) {
 		
 		Tab mainDatabaseTab = new Tab();
-		mainDatabaseTab.setText(loadedDatabaseName.getValue());
+		mainDatabaseTab.setText( loadedDatabaseName.getValue());
+		mainDatabaseTab.setGraphic(this.imagemySqlnode);
 		
 		TabPane databaseTabPane = new TabPane();
 		databaseTabPane.setTabMinWidth(200);	
@@ -5930,9 +6339,10 @@ public class MySqlUI {
 		databaseDetailsProceduresTab.setClosable(false);
 		Tab databaseDetailsFunctionsTab = new Tab("Functions");
 		databaseDetailsFunctionsTab.setClosable(false);
+		Tab databaseDetailsTriggersTab = new Tab("Triggers");
+		databaseDetailsTriggersTab.setClosable(false);
 		Tab databaseDetailsEventsTab = new Tab("Events");
 		databaseDetailsEventsTab.setClosable(false);
-
 		
 		TabPane databaseDetailsTabPane = new TabPane();
 		databaseDetailsTabPane.setTabMinWidth(100);
@@ -5946,390 +6356,134 @@ public class MySqlUI {
 						  System.out.println("Properties Tab selected ");
 					  }
 					  if(newValue.getText().equalsIgnoreCase("Tables")) {
-						  System.out.println("Tables Tab selected ");
-							
-						  try { 
-							  ResultSet rs = stmt.executeQuery("select table_name,engine,auto_increment,table_rows,data_length,create_time,update_time,create_options from information_schema.tables where table_comment != 'view' and table_schema='"+loadedDatabaseName.getValue()+"'");
-							  SplitPane tableDetailsSplitPane = new SplitPane();
-							  tableDetailsSplitPane.setOrientation(Orientation.VERTICAL);
-							  tableDetailsSplitPane.setDividerPositions(0.75); 
-							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Tables",loadedDatabaseName.getValue());
-							  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
-									@Override
-									public void changed(ObservableValue<? extends HashMap<String, String>> observable,
-											HashMap<String, String> oldValue, HashMap<String, String> newValue) {
-										System.out.println("From Local oldValue --->"+oldValue);
-										System.out.println("From local newValue --->"+newValue.keySet().toString());
-										for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
-											System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
-										}
-										TableViewSelectionModel  selectionModel = tablesView.getSelectionModel();
-								        ObservableList selectedCells = selectionModel.getSelectedCells();
-								        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
-								        Object val = tablePosition.getTableColumn().getCellData(newValue);
-								        System.out.println("Selected Value" + val);
-
-									}	
-							  });
-							  
-							  HBox allButtonsHBox = new HBox();
-							  allButtonsHBox.setSpacing(100);
-							  allButtonsHBox.setPadding(new Insets(10,10,0,100));
-							  
-							  HBox tableButtonsHbox = new HBox();
-							  tableButtonsHbox.setSpacing(20);
-							  tableButtonsHbox.setPadding(new Insets(0,50,0,0));
-							  
-							  Button viewTableButton = new Button("View Table");
-							  Button createTableButton = new Button("Create Table");
-							  Button editTableButton = new Button("Edit Table");
-							  Button deleteTableButton = new Button("Delete Table");
-							  
-							  Button refreshTableButton = new Button("Refresh");
-							  createTableButton.setOnAction(new EventHandler<ActionEvent>() {
-								@Override
-								public void handle(ActionEvent event) {
-									
-									tableDetailsSplitPane.getItems().remove(tableButtonsHbox);
-									tableDetailsSplitPane.setDividerPositions(0.99);
-								}	
-							  });
-							  
-							  tableButtonsHbox.getChildren().addAll(viewTableButton,createTableButton,editTableButton,deleteTableButton);
-							  allButtonsHBox.getChildren().addAll(tableButtonsHbox,refreshTableButton);
-							  
-							  tableDetailsSplitPane.getItems().addAll(tablesView,allButtonsHBox);
-		  					  databaseDetailsTablesTab.setContent(tableDetailsSplitPane);
-							}catch(Exception e) {
-								e.printStackTrace();
-							}
+						  getdatabaseTablesDisplayTab(loadedDatabaseName, databaseDetailsTablesTab);
 					  }
 					  if(newValue.getText().equalsIgnoreCase("Views")) {
-						  System.out.println("Views Tab selected ");
-						  	try {		  
-							  ResultSet rs = stmt.executeQuery("select table_name,check_option,is_updatable,definer,view_definition from information_schema.views where table_schema='"+loadedDatabaseName.getValue()+"'");
-							  SplitPane viewDetailsSplitPane = new SplitPane();
-							  viewDetailsSplitPane.setOrientation(Orientation.VERTICAL);
-							  viewDetailsSplitPane.setDividerPositions(0.75); 
-							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Views",loadedDatabaseName.getValue());
-							  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
-									@Override
-									public void changed(ObservableValue<? extends HashMap<String, String>> observable,
-											HashMap<String, String> oldValue, HashMap<String, String> newValue) {
-										System.out.println("From Local oldValue --->"+oldValue);
-										System.out.println("From local newValue --->"+newValue.keySet().toString());
-										
-										
-										
-										
-										for(Map.Entry<String, String> tableValues : newValue.entrySet()) {	
-											System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
-										}
-										TableViewSelectionModel  selectionModel = tablesView.getSelectionModel();
-								        ObservableList selectedCells = selectionModel.getSelectedCells();
-								        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
-								        Object val = tablePosition.getTableColumn().getCellData(newValue);
-								        System.out.println("Selected Value" + val);
-								     
-									}	
-							  });
-							  
-							  HBox allButtonsHBox = new HBox();
-							  allButtonsHBox.setSpacing(100);
-							  allButtonsHBox.setPadding(new Insets(10,10,0,100));
-							  
-							  
-							  HBox viewButtonsHbox = new HBox();
-							  viewButtonsHbox.setSpacing(20);
-							  viewButtonsHbox.setPadding(new Insets(0,50,0,0));
-							  
-							  Button viewViewButton = new Button("View View");
-							  Button createViewButton = new Button("Create View");
-							  Button editViewButton = new Button("Edit View");
-							  Button deleteViewButton = new Button("Delete View");
-							  
-							  Button refreshViewButton = new Button("Refresh");
-							  createViewButton.setOnAction(new EventHandler<ActionEvent>() {
-								@Override
-								public void handle(ActionEvent event) {
-									
-									viewDetailsSplitPane.getItems().remove(viewButtonsHbox);
-									viewDetailsSplitPane.setDividerPositions(0.99);
-								}	
-							  });
-							  
-							  viewButtonsHbox.getChildren().addAll(viewViewButton,createViewButton,editViewButton,deleteViewButton);
-							  allButtonsHBox.getChildren().addAll(viewButtonsHbox,refreshViewButton);
-							  
-							  viewDetailsSplitPane.getItems().addAll(tablesView,allButtonsHBox);
-
-							  databaseDetailsViewsTab.setContent(viewDetailsSplitPane);
-							}catch(Exception e) {
-								e.printStackTrace();
-							}
+						  getdatabaseViewsDisplayTab(loadedDatabaseName, databaseDetailsViewsTab);
 					  }
 					  
 					  if(newValue.getText().equalsIgnoreCase("Indexes")) {
-						  System.out.println("Indexes Tab selected ");
-						  	try {		  
-							  ResultSet rs = stmt.executeQuery("select  index_name,column_name,table_name,Index_type,packed,nullable,non_unique from information_schema.statistics where table_schema = '"+loadedDatabaseName.getValue()+"'");
-							  try {
-									Thread.sleep(1000);
-								} catch (InterruptedException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-							  SplitPane indexesDetailsSplitPane = new SplitPane();
-							  indexesDetailsSplitPane.setOrientation(Orientation.VERTICAL);
-							  indexesDetailsSplitPane.setDividerPositions(0.75); 
-							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Indexes",loadedDatabaseName.getValue());
-							  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
-									@Override
-									public void changed(ObservableValue<? extends HashMap<String, String>> observable,
-											HashMap<String, String> oldValue, HashMap<String, String> newValue) {
-
-										System.out.println("From Local oldValue --->"+oldValue);
-										System.out.println("From local newValue --->"+newValue.keySet().toString());
-										for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
-											
-											System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
-										}
-										TableViewSelectionModel  selectionModel = tablesView.getSelectionModel();
-								        ObservableList selectedCells = selectionModel.getSelectedCells();
-								        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
-								        Object val = tablePosition.getTableColumn().getCellData(newValue);
-								        System.out.println("Selected Value" + val);
-									}	
-							  });
-							  
-							  HBox allButtonsHBox = new HBox();
-							  allButtonsHBox.setSpacing(300);
-							  allButtonsHBox.setPadding(new Insets(10,10,0,100));
-							  
-							  HBox indexButtonsHbox = new HBox();
-							  indexButtonsHbox.setSpacing(20);
-							  
-							  Button viewIndexButton = new Button("View Index");
-							  Button createIndexButton = new Button("Create Index");
-							  Button editIndexButton = new Button("Edit Index");
-							  Button deleteIndexButton = new Button("Delete Imdex");
-							  
-							  Button refreshIndexButton = new Button("Refresh");
-							  createIndexButton.setOnAction(new EventHandler<ActionEvent>() {
-								@Override
-								public void handle(ActionEvent event) {
-									
-									indexesDetailsSplitPane.getItems().remove(indexButtonsHbox);
-									indexesDetailsSplitPane.setDividerPositions(0.99);
-								}	
-							  });
-							  
-							  indexButtonsHbox.getChildren().addAll(viewIndexButton,createIndexButton,editIndexButton,deleteIndexButton);
-							  allButtonsHBox.getChildren().addAll(indexButtonsHbox,refreshIndexButton);
-							  
-							  indexesDetailsSplitPane.getItems().addAll(tablesView,allButtonsHBox);
-
-							  databaseDetailsIndexesTab.setContent(indexesDetailsSplitPane);
-							}catch(Exception e) {
-								e.printStackTrace();
-							}
+						  getdatabaseIndexesDisplayTab(loadedDatabaseName, databaseDetailsIndexesTab);
 					  }
 					  if(newValue.getText().equalsIgnoreCase("Procedures")) {
-						  System.out.println("Procedures Tab selected ");
-						  	try {		  
-							  ResultSet rs = stmt.executeQuery("select  routine_name,definer,created,LAST_ALTERED,routine_comment from information_schema.routines where  routine_type != 'FUNCTION' and  routine_schema = '"+loadedDatabaseName.getValue()+"'");
-							  SplitPane proceduresDetailsSplitPane = new SplitPane();
-							  proceduresDetailsSplitPane.setOrientation(Orientation.VERTICAL);
-							  proceduresDetailsSplitPane.setDividerPositions(0.75); 
-							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Procedures",loadedDatabaseName.getValue());
-							  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
-									@Override
-									public void changed(ObservableValue<? extends HashMap<String, String>> observable,
-											HashMap<String, String> oldValue, HashMap<String, String> newValue) {
-
-										System.out.println("From Local oldValue --->"+oldValue);
-										System.out.println("From local newValue --->"+newValue.keySet().toString());
-										for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
-											
-											System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
-										}
-										TableViewSelectionModel  selectionModel = tablesView.getSelectionModel();
-								        ObservableList selectedCells = selectionModel.getSelectedCells();
-								        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
-								        Object val = tablePosition.getTableColumn().getCellData(newValue);
-								        System.out.println("Selected Value" + val);
-									}	
-							  });
-							  
-							  HBox allButtonsHBox = new HBox();
-							  allButtonsHBox.setSpacing(300);
-							  allButtonsHBox.setPadding(new Insets(10,10,0,100));
-							  
-							  HBox proceduresButtonsHbox = new HBox();
-							  proceduresButtonsHbox.setSpacing(20);
-							  
-							  Button viewProcedureButton = new Button("View Procedure");
-							  Button createProcedureButton = new Button("Create Procedure");
-							  Button editProcedureButton = new Button("Edit Procedure");
-							  Button deleteProcedureButton = new Button("Delete Procedure");
-							  
-							  Button refreshProcedureButton = new Button("Refresh");
-							  createProcedureButton.setOnAction(new EventHandler<ActionEvent>() {
-								@Override
-								public void handle(ActionEvent event) {
-									
-									proceduresDetailsSplitPane.getItems().remove(proceduresButtonsHbox);
-									proceduresDetailsSplitPane.setDividerPositions(0.99);
-								}	
-							  });
-							  
-							  proceduresButtonsHbox.getChildren().addAll(viewProcedureButton,createProcedureButton,editProcedureButton,deleteProcedureButton);
-							  allButtonsHBox.getChildren().addAll(proceduresButtonsHbox,refreshProcedureButton);
-							  
-							  proceduresDetailsSplitPane.getItems().addAll(tablesView,allButtonsHBox);
-							  
-							  databaseDetailsProceduresTab.setContent(proceduresDetailsSplitPane);
-							}catch(Exception e) {
-								e.printStackTrace();
-							}
+						  getdatabaseProceduresDisplayTab(loadedDatabaseName, databaseDetailsProceduresTab);
 					  }
 					  if(newValue.getText().equalsIgnoreCase("Functions")) {
-						  System.out.println("Functions Tab selected ");
-						  	try {		  
-							  ResultSet rs = stmt.executeQuery("select  routine_name,definer,created,LAST_ALTERED,routine_comment from information_schema.routines where  routine_type != 'PROCEDURE' and  routine_schema = '"+loadedDatabaseName.getValue()+"'");
-							  SplitPane functionsDetailsSplitPane = new SplitPane();
-							  functionsDetailsSplitPane.setOrientation(Orientation.VERTICAL);
-							  functionsDetailsSplitPane.setDividerPositions(0.75); 
-							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Functions",loadedDatabaseName.getValue());
-							  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
-									@Override
-									public void changed(ObservableValue<? extends HashMap<String, String>> observable,
-											HashMap<String, String> oldValue, HashMap<String, String> newValue) {
-
-										System.out.println("From Local oldValue --->"+oldValue);
-										System.out.println("From local newValue --->"+newValue.keySet().toString());
-										for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
-											
-											System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
-										}
-										TableViewSelectionModel  selectionModel = tablesView.getSelectionModel();
-								        ObservableList selectedCells = selectionModel.getSelectedCells();
-								        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
-								        Object val = tablePosition.getTableColumn().getCellData(newValue);
-								        System.out.println("Selected Value" + val);
-									}	
-							  });
-							  
-							  HBox allButtonsHBox = new HBox();
-							  allButtonsHBox.setSpacing(300);
-							  allButtonsHBox.setPadding(new Insets(10,10,0,100));
-							  
-							  HBox functionsButtonsHbox = new HBox();
-							  functionsButtonsHbox.setSpacing(20);
-							  
-							  Button viewFunctionButton = new Button("View Function");
-							  Button createFunctionButton = new Button("Create Function");
-							  Button editFunctionButton = new Button("Edit Function");
-							  Button deleteFunctionButton = new Button("Delete Function");
-							  
-							  Button refreshProcedureButton = new Button("Refresh");
-							  createFunctionButton.setOnAction(new EventHandler<ActionEvent>() {
-								@Override
-								public void handle(ActionEvent event) {
-									
-									functionsDetailsSplitPane.getItems().remove(functionsButtonsHbox);
-									functionsDetailsSplitPane.setDividerPositions(0.99);
-								}	
-							  });
-							  
-							  functionsButtonsHbox.getChildren().addAll(viewFunctionButton,createFunctionButton,editFunctionButton,deleteFunctionButton);
-							  allButtonsHBox.getChildren().addAll(functionsButtonsHbox,refreshProcedureButton);
-							  
-							  functionsDetailsSplitPane.getItems().addAll(tablesView,allButtonsHBox);  
-							  databaseDetailsFunctionsTab.setContent(functionsDetailsSplitPane);
-							}catch(Exception e) {
-								e.printStackTrace();
-							}
+						  getdatabaseFunctionsDisplayTab(loadedDatabaseName, databaseDetailsFunctionsTab);
+					  }
+					  if(newValue.getText().equalsIgnoreCase("Triggers")) {
+						  getdatabaseTriggersDisplayTab(loadedDatabaseName, databaseDetailsTriggersTab);
 					  }
 					  if(newValue.getText().equalsIgnoreCase("Events")) {
-						  System.out.println("Events Tab selected ");
-						  	try {		  
-							  ResultSet rs = stmt.executeQuery("select  event_name,definer,event_type,interval_value,interval_field,starts,created,last_altered,last_executed from information_Schema.events where event_schema ='"+loadedDatabaseName.getValue()+"'");
-							  
-							  SplitPane eventsDetailsSplitPane = new SplitPane();
-							  eventsDetailsSplitPane.setOrientation(Orientation.VERTICAL);
-							  eventsDetailsSplitPane.setDividerPositions(0.75); 
-							  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Events",loadedDatabaseName.getValue());
-							  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
-									@Override
-									public void changed(ObservableValue<? extends HashMap<String, String>> observable,
-											HashMap<String, String> oldValue, HashMap<String, String> newValue) {
-
-										System.out.println("From Local oldValue --->"+oldValue);
-										System.out.println("From local newValue --->"+newValue.keySet().toString());
-										for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
-											
-											System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
-										}
-										TableViewSelectionModel  selectionModel = tablesView.getSelectionModel();
-								        ObservableList selectedCells = selectionModel.getSelectedCells();
-								        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
-								        Object val = tablePosition.getTableColumn().getCellData(newValue);
-								        System.out.println("Selected Value" + val);
-									}	
-							  });
-							  
-							  HBox allButtonsHBox = new HBox();
-							  allButtonsHBox.setSpacing(300);
-							  allButtonsHBox.setPadding(new Insets(10,10,0,100));
-							  
-							  HBox eventsButtonsHbox = new HBox();
-							  eventsButtonsHbox.setSpacing(20);
-							  
-							  Button viewEventButton = new Button("View Event");
-							  Button createEventButton = new Button("Create Event");
-							  Button editEventButton = new Button("Edit Event");
-							  Button deleteEventButton = new Button("Delete Event");
-							  
-							  Button refreshEventsButton = new Button("Refresh");
-							  createEventButton.setOnAction(new EventHandler<ActionEvent>() {
-								@Override
-								public void handle(ActionEvent event) {
-									
-									eventsDetailsSplitPane.getItems().remove(eventsButtonsHbox);
-									eventsDetailsSplitPane.setDividerPositions(0.99);
-								}	
-							  });
-							  
-							  
-							  eventsButtonsHbox.getChildren().addAll(viewEventButton,createEventButton,editEventButton,deleteEventButton);
-							  allButtonsHBox.getChildren().addAll(eventsButtonsHbox,refreshEventsButton);
-							  
-							  eventsDetailsSplitPane.getItems().addAll(tablesView,allButtonsHBox);  
-							  databaseDetailsEventsTab.setContent(eventsDetailsSplitPane);
-							}catch(Exception e) {
-								e.printStackTrace();
-							}
+						  getdatabaseEventsDisplayTab(loadedDatabaseName, databaseDetailsEventsTab);
 					  }
-					   
 				}
 		  });
 		
-		  databaseDetailsTabPane.getTabs().addAll(databaseDetailsPropertiesTab,databaseDetailsTablesTab,databaseDetailsViewsTab,databaseDetailsIndexesTab,
-				databaseDetailsProceduresTab,databaseDetailsFunctionsTab,databaseDetailsEventsTab);
+	   databaseDetailsTabPane.getTabs().addAll(databaseDetailsPropertiesTab,databaseDetailsTablesTab,databaseDetailsViewsTab,databaseDetailsIndexesTab,
+				databaseDetailsProceduresTab,databaseDetailsFunctionsTab,databaseDetailsTriggersTab,databaseDetailsEventsTab);
+				 
+	   if(componentToFocus.equals("Tables")) {
+			 getdatabaseTablesDisplayTab(loadedDatabaseName, databaseDetailsTablesTab);
+			 databaseDetailsTabPane.getSelectionModel().select(1);
+	   }
+	   if(componentToFocus.equals("Views")) {
+		   getdatabaseViewsDisplayTab(loadedDatabaseName, databaseDetailsTablesTab);
+			 databaseDetailsTabPane.getSelectionModel().select(2);
+	   }
+	   if(componentToFocus.equals("Indexes")) {
+		   getdatabaseIndexesDisplayTab(loadedDatabaseName, databaseDetailsTablesTab);
+			 databaseDetailsTabPane.getSelectionModel().select(3);
+	   }
+	   if(componentToFocus.equals("Procedures")) {
+		   getdatabaseProceduresDisplayTab(loadedDatabaseName, databaseDetailsTablesTab);
+			 databaseDetailsTabPane.getSelectionModel().select(4);
+	   }	
+	   if(componentToFocus.equals("Functions")) {
+		    getdatabaseFunctionsDisplayTab(loadedDatabaseName, databaseDetailsTablesTab);
+			 databaseDetailsTabPane.getSelectionModel().select(5);
+	   }
+	   if(componentToFocus.equals("Triggers")) {
+		    getdatabaseTriggersDisplayTab(loadedDatabaseName, databaseDetailsTablesTab);
+			 databaseDetailsTabPane.getSelectionModel().select(6);
+	   }
+	   if(componentToFocus.equals("Events")) {
+		    getdatabaseEventsDisplayTab(loadedDatabaseName, databaseDetailsTablesTab);
+			 databaseDetailsTabPane.getSelectionModel().select(7);
+	   }
+	   
+	   databaseDetails.setContent(databaseDetailsTabPane);
 		
-		databaseDetails.setContent(databaseDetailsTabPane);
-		
-		
-		Tab databaseERDiagram = new Tab("ER Diagram");
-		databaseERDiagram.setClosable(false);
-		Tab databaseGrahicsStats = new Tab("Graphics Stats");
-		databaseGrahicsStats.setClosable(false);
-		Tab databaseAIPrompt = new Tab("AI Prompt");
-		databaseAIPrompt.setClosable(false);				
-		databaseTabPane.getTabs().addAll(databaseDetails,databaseERDiagram,databaseGrahicsStats,databaseAIPrompt);
-		mainDatabaseTab.setContent(databaseTabPane);
-		return mainDatabaseTab;
+	   Tab databaseERDiagram = new Tab("ER Diagram");
+	   databaseERDiagram.setClosable(false);
+	   Tab databaseGrahicsStats = new Tab("Graphics Stats");
+	   databaseGrahicsStats.setClosable(false);
+	   Tab databaseAIPrompt = new Tab("AI Prompt");
+	   databaseAIPrompt.setClosable(false);				
+	   databaseTabPane.getTabs().addAll(databaseDetails,databaseERDiagram,databaseGrahicsStats,databaseAIPrompt);
+	   mainDatabaseTab.setContent(databaseTabPane);
+       return mainDatabaseTab;
+	}
+
+	private void getdatabaseEventsDisplayTab(TreeItem<String> loadedDatabaseName, Tab databaseDetailsEventsTab) {
+		System.out.println("Events Tab selected ");
+		  	try {		  
+			  ResultSet rs = stmt.executeQuery("select  event_name,definer,event_type,interval_value,interval_field,starts,created,last_altered,last_executed from information_Schema.events where event_schema ='"+loadedDatabaseName.getValue()+"'");
+			  
+			  SplitPane eventsDetailsSplitPane = new SplitPane();
+			  eventsDetailsSplitPane.setOrientation(Orientation.VERTICAL);
+			  eventsDetailsSplitPane.setDividerPositions(0.75); 
+			  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Events",loadedDatabaseName.getValue());
+			  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
+					@Override
+					public void changed(ObservableValue<? extends HashMap<String, String>> observable,
+							HashMap<String, String> oldValue, HashMap<String, String> newValue) {
+
+						System.out.println("From Local oldValue --->"+oldValue);
+						System.out.println("From local newValue --->"+newValue.keySet().toString());
+						for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
+							
+							System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
+						}
+						TableViewSelectionModel  selectionModel = tablesView.getSelectionModel();
+				        ObservableList selectedCells = selectionModel.getSelectedCells();
+				        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+				        Object val = tablePosition.getTableColumn().getCellData(newValue);
+				        System.out.println("Selected Value" + val);
+					}	
+			  });
+			  
+			  HBox allButtonsHBox = new HBox();
+			  allButtonsHBox.setSpacing(300);
+			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
+			  
+			  HBox eventsButtonsHbox = new HBox();
+			  eventsButtonsHbox.setSpacing(20);
+			  
+			  Button viewEventButton = new Button("View Event");
+			  Button createEventButton = new Button("Create Event");
+			  Button editEventButton = new Button("Edit Event");
+			  Button deleteEventButton = new Button("Delete Event");
+			  
+			  Button refreshEventsButton = new Button("Refresh");
+			  createEventButton.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					
+					eventsDetailsSplitPane.getItems().remove(eventsButtonsHbox);
+					eventsDetailsSplitPane.setDividerPositions(0.99);
+				}	
+			  });
+			  
+			  
+			  eventsButtonsHbox.getChildren().addAll(viewEventButton,createEventButton,editEventButton,deleteEventButton);
+			  allButtonsHBox.getChildren().addAll(eventsButtonsHbox,refreshEventsButton);
+			  
+			  eventsDetailsSplitPane.getItems().addAll(tablesView,allButtonsHBox);  
+			  databaseDetailsEventsTab.setContent(eventsDetailsSplitPane);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
 	}
 	 
 }
