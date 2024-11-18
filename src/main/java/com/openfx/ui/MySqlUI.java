@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -37,11 +39,13 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Data;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SingleSelectionModel;
@@ -368,8 +372,7 @@ public class MySqlUI {
 																						e.printStackTrace();
 																					}
 																		    		mySqlTreeItemTables.getChildren().remove(0);  // Remove the Loading...
-																					while(rs.next()) {
-																						  System.out.println(rs.getString(1));
+																					while(rs.next()) {			
 																						  
 																						  TreeItem<String> loadedTableName = new TreeItem<String>(rs.getString(1));  // get the table one by one 
 																						  loadedTableName.expandedProperty().addListener(new ChangeListener<Boolean>() {
@@ -462,7 +465,7 @@ public class MySqlUI {
 																											     public void run() {
 																											        
 																											    	 try {
-																											    		 
+																				
 																											    		    stmt.execute("use "+loadedDatabaseName.getValue());
 																											    		    ResultSet rs = stmt.executeQuery("SHOW CREATE TABLE "+loadedTableName.getValue());		
 																													        try {
@@ -860,8 +863,8 @@ public class MySqlUI {
 																	     public void run() {
 																	         
 																	    	try  {
-																	    		stmt.execute("use "+loadedDatabaseName.getValue());
-																	    		ResultSet rs = stmt.executeQuery("SHOW FULL TABLES IN "+ loadedDatabaseName.getValue() +" WHERE TABLE_TYPE LIKE 'VIEW'");
+																	    		currentConnection.createStatement().execute("use "+loadedDatabaseName.getValue());
+																	    		ResultSet rs = currentConnection.createStatement().executeQuery("SHOW FULL TABLES IN "+ loadedDatabaseName.getValue() +" WHERE TABLE_TYPE LIKE 'VIEW'");
 																	    		try {
 																					Thread.sleep(1000);
 																				} catch (InterruptedException e) {
@@ -1501,16 +1504,101 @@ public class MySqlUI {
 						@Override
 						public void handle(ActionEvent event) {
 							displayPerformanceTableView(performanceReportsTypes, performanceReportQueries,getTreeItem().getValue());
-							
 						}
 					});
+				
+				 int parentIndex = 0;
+				 TreeItem treeitem = getTreeItem();
+				 System.out.println("-------------");
+				 System.out.println(treeitem.getValue() );
+				 while(treeitem.getParent() != null) {
+					 treeitem = treeitem.getParent();
+					 System.out.println(treeitem.getValue());
+					 parentIndex++;
+				 }
+				 System.out.println("-------------");
 				 
-				 if(event.getClickCount() == 2) {
+				 /*
+				 -------------
+				Tables
+				sakila
+				Databases
+				local
+				Connections
+				-------------
+				*/
+				 
+				 if(parentIndex >= 2 && getTreeItem().getParent().getValue().equals("Databases") && getTreeItem().getParent().getParent().getValue().equals(currentConnectionName)) {
+					 
+					 System.out.println("Schema name clicked!!!!");
+					 
+				 }
+				 if(parentIndex >= 3 && getTreeItem().getParent().getParent().getValue().equals("Databases") && getTreeItem().getParent().getParent().getParent().getValue().equals(currentConnectionName)) {
+					 
+					 System.out.println("Schema components name clicked!!!!");
+					 
+				 }
+				 if(parentIndex >= 4 && getTreeItem().getParent().getValue().equals("Tables") && getTreeItem().getParent().getParent().getParent().getParent().getValue().equals(currentConnectionName)) {
+					 
+					 System.out.println("Schema sub components likely clicked!!!!");
+				 }
+				 
+				 if(event.getClickCount() == 2 && ( 
+						 	(parentIndex >= 2 && getTreeItem().getParent().getValue().equals("Databases") && getTreeItem().getParent().getParent(). getValue().equals(currentConnectionName))  
+						 || (parentIndex >= 3 && getTreeItem().getParent().getParent().getValue().equals("Databases") && getTreeItem().getParent().getParent().getParent().getValue().equals(currentConnectionName)) 
+						 || (parentIndex >= 4 && getTreeItem().getParent().getValue().equals("Tables") && getTreeItem().getParent().getParent().getParent().getParent().getValue().equals(currentConnectionName))
+						 ) 
+					)
+				 {
 					 
 					 // check if database tab is already opened.
-					 if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty())
-						 if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null)
+					 if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
+						 if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
 							 System.out.println("Current Tab opened is---> "+ menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().toString() + " and  "  + menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText());
+						 }
+					 }
+					 
+					 ObservableList<Tab> existingTabs = menu_Items_FX.alltabbedEditors.getTabs();
+					 for(int i=0;i<existingTabs.size();i++) {
+						 System.out.println("Existing Tab name : "+existingTabs.get(i).getText());
+						 if(existingTabs.get(i).getGraphic() != null) {
+							 if(existingTabs.get(i).getGraphic().getId().split("##")[1].equals(currentConnectionName) && existingTabs.get(i).getGraphic().getId().split("##")[0].equals("MySql") && existingTabs.get(i).getText().equals(getTreeItem().getParent().getValue()) ) { 
+								 System.out.println(" Match Found : "+existingTabs.get(i).getGraphic());
+								 Tab selectedSchemaTab = existingTabs.get(i);
+								 TabPane selectedSchemaTabPane = (TabPane) selectedSchemaTab.getContent();
+								 Tab selectedSchemaDetailsTab = selectedSchemaTabPane.getTabs().get(0);
+								 TabPane selectedSchemaDetailsTabPane = (TabPane) selectedSchemaDetailsTab.getContent();
+								 System.out.println("Selcted Schema Tab --> : "+ selectedSchemaDetailsTabPane.getSelectionModel().getSelectedItem().getText());
+								 
+								 if( getTreeItem().getValue().equals("Properies")) {
+									 selectedSchemaDetailsTabPane.getSelectionModel().select(0);
+								 }
+								 if( getTreeItem().getValue().equals("Tables")) {
+									 selectedSchemaDetailsTabPane.getSelectionModel().select(1);
+								 }
+								 if( getTreeItem().getValue().equals("Views")) {
+									 selectedSchemaDetailsTabPane.getSelectionModel().select(2);
+								 }
+								 if( getTreeItem().getValue().equals("Indexes")) {
+									 selectedSchemaDetailsTabPane.getSelectionModel().select(3);
+								 }
+								 if( getTreeItem().getValue().equals("Procedures")) {
+									 selectedSchemaDetailsTabPane.getSelectionModel().select(4);
+								 }
+								 if( getTreeItem().getValue().equals("Functions")) {
+									 selectedSchemaDetailsTabPane.getSelectionModel().select(5);
+								 }
+								 if( getTreeItem().getValue().equals("Triggers")) {
+									 selectedSchemaDetailsTabPane.getSelectionModel().select(6);
+								 }
+								 if( getTreeItem().getValue().equals("Events")) {
+									 selectedSchemaDetailsTabPane.getSelectionModel().select(7);
+								 }
+								 menu_Items_FX.alltabbedEditors.getSelectionModel().select(i);
+								 return;
+							 }
+						 }
+					 }
 					 
 					 // particular database is clicked
 					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Databases")) {
@@ -1525,15 +1613,15 @@ public class MySqlUI {
 					 if(getTreeItem().getValue().equalsIgnoreCase("Tables")) {
 							
 						Tab mainDatabaseTab = databaseDoubleClickMethod(getTreeItem().getParent(),"Tables");
-    	            	menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);
+    	            	menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);	    	            
+    	            	SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+						singleSelectionModel.select(mainDatabaseTab);
     	            	return;
 					 }
 					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Tables")) {
 						
-						 Tab particularTableTab = particularTableDoubleClickMethod(getTreeItem().getValue(),getTreeItem().getParent().getParent().getValue());
-    	            	 
+						 Tab particularTableTab = particularTableDoubleClickMethod(getTreeItem().getValue(),getTreeItem().getParent().getParent().getValue());    	            	 
     	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
-
     	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
 					     singleSelectionModel.select(particularTableTab);
 					     return;
@@ -1542,14 +1630,14 @@ public class MySqlUI {
 					 if(getTreeItem().getValue().equalsIgnoreCase("Views")) {
 						 
 						  Tab mainDatabaseTab = databaseDoubleClickMethod(getTreeItem().getParent(),"Views");
-	    	              menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);	
+	    	              menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);	    	              
+	    	              SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+						  singleSelectionModel.select(mainDatabaseTab);
 	    	              return;
 					  } 
-					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Views")) {
-							
+					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Views")) {							
 						 Tab particularTableTab = particularViewDoubleClickMethod(getTreeItem().getValue(),getTreeItem().getParent().getParent().getValue());    	            	 
     	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
-
     	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
 					     singleSelectionModel.select(particularTableTab);
 					     return;
@@ -1558,14 +1646,15 @@ public class MySqlUI {
 					 if(getTreeItem().getValue().equalsIgnoreCase("Indexes")) {
 						 
 						  Tab mainDatabaseTab = databaseDoubleClickMethod(getTreeItem().getParent(),"Indexes");
-	    	              menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);	
+	    	              menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);	    	              
+	    	              SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+						  singleSelectionModel.select(mainDatabaseTab);
 	    	              return;
 					 }
 					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Indexes")) {
 							
 						 Tab particularTableTab = particularIndexesDoubleClickMethod(getTreeItem().getValue(),getTreeItem().getParent().getParent().getValue());    	            	 
     	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
-
     	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
 					     singleSelectionModel.select(particularTableTab);
 					     return;
@@ -1574,14 +1663,15 @@ public class MySqlUI {
 					 if(getTreeItem().getValue().equalsIgnoreCase("Procedures")) {
 						 
 						  Tab mainDatabaseTab = databaseDoubleClickMethod(getTreeItem().getParent(),"Procedures");
-	    	              menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);	
+	    	              menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);	    	             
+	    	              SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+						  singleSelectionModel.select(mainDatabaseTab);
 	    	              return;
 					 }
 					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Procedures")) {
 							
 						 Tab particularTableTab = particularProcedureDoubleClickMethod(getTreeItem().getValue(),getTreeItem().getParent().getParent().getValue());    	            	 
     	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
-
     	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
 					     singleSelectionModel.select(particularTableTab);
 					     return;
@@ -1590,7 +1680,9 @@ public class MySqlUI {
 					 if(getTreeItem().getValue().equalsIgnoreCase("Functions")) {
 						 
 						  Tab mainDatabaseTab = databaseDoubleClickMethod(getTreeItem().getParent(),"Functions");
-	    	              menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);	
+	    	              menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);
+	    	              SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+						  singleSelectionModel.select(mainDatabaseTab);
 	    	              return;
 					 }
 					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Functions")) {
@@ -1606,7 +1698,9 @@ public class MySqlUI {
 					 if(getTreeItem().getValue().equalsIgnoreCase("Triggers")) {
 						 
 						  Tab mainDatabaseTab = databaseDoubleClickMethod(getTreeItem().getParent(),"Triggers");
-	    	              menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);	
+	    	              menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);
+	    	              SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+						  singleSelectionModel.select(mainDatabaseTab);
 	    	              return;
 					 }
 					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Triggers")) {
@@ -1622,7 +1716,10 @@ public class MySqlUI {
 					 if(getTreeItem().getValue().equals("Events")) {
 						 
 						  Tab mainDatabaseTab = databaseDoubleClickMethod(getTreeItem().getParent(),"Events");
-	    	              menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);	
+	    	              menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);
+
+	    	              SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+						  singleSelectionModel.select(mainDatabaseTab);
 	    	              return;
 					 }
 					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Events")) {
@@ -1636,8 +1733,12 @@ public class MySqlUI {
 					 }
 					 
 				 }
-				 
-				 if(event.getClickCount() == 2) {
+				 if(event.getClickCount() == 2 && getTreeItem().getParent().getValue().equals("System Info") ) {
+					 
+					 System.out.println("System info componets like clciked!!!");
+				 }
+					 
+				 if(event.getClickCount() == 2  &&  (getTreeItem().getParent().getValue().equals("System Info") || getTreeItem().getValue().equals("Server Logs") )  ) {
 					 for( int i=0;i<actionTypes.length;i++) {
 						 // Also do a parent check else we can have other components like tables,views with these names
 						 if(getTreeItem().getValue().equalsIgnoreCase(actionTypes[i])) {
@@ -1712,803 +1813,22 @@ public class MySqlUI {
 										}
 									  }
 									});
-						 }
-						 
+						 }		 
 					 }
-					 
+					return; 
 				 }
 				 
 				 // This check is skeptical make it more error proof.
-				 if(event.getClickCount() == 1) {
+				 if(event.getClickCount() == 1 && ( getTreeItem().getParent().getValue().equals("Memory Usage") || getTreeItem().getParent().getValue().equals("Hot Spots for I/O")
+						 || getTreeItem().getParent().getValue().equals("High Cost SQL Statements") || getTreeItem().getParent().getValue().equals("Database Schema Statistics") || getTreeItem().getParent().getValue().equals("Wait Times")
+						 || getTreeItem().getParent().getValue().equals("InnoDB Statistics") || getTreeItem().getParent().getValue().equals("User Resource Utilization") || getTreeItem().getParent().getValue().equals("Host Resource Utilization") 
+						 || getTreeItem().getParent().getValue().equals("Other Information")) &&  getTreeItem().getParent().getParent().getValue().equals("Reports")) {
+					 
+					 System.out.println("Perforemace Reports clicked");
 					 displayPerformanceTableView(performanceReportsTypes, performanceReportQueries,getTreeItem().getValue());
 					 
 				 }
-				 /*
-				 if(event.getClickCount() == 2 && (getTreeItem().getValue().equalsIgnoreCase("BINARY LOGS") || getTreeItem().getValue().equalsIgnoreCase("Server Logs"))) {   
-				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-						Platform.runLater(new Runnable() {
-							  @Override
-							  public void run() { 
-							    try  {
-							    	ResultSet rs = stmt.executeQuery("SHOW BINARY LOGS");
-							    	try {
-										Thread.sleep(1000);
-									} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-									}
-							    	
-							    	secondHalfDisplayVBox = new VBox();
-									Tab sessionManagerTab = new Tab();
-									
-									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
-										@Override
-										public void handle(Event event) {
-											System.out.println("On Tab close request ");
-											// sessionManagerTab = null;
-											menu_Items_FX.alltabbedEditors.getTabs().remove(sessionManagerTab);
-										}
-									});
-									
-									TableView resultAsTableView = showResultSetInTheTableView(rs,"binaryLogs");
-									VBox binaryLogsDescriptionTableView = new VBox();
-									if (getTreeItem().getValue().equalsIgnoreCase("BINARY LOGS")) {
-										sessionManagerTab.setText("BINARY LOGS " + connectionPlaceHolder.getConnectionName());
-										binaryLogsDescriptionTableView.getChildren().addAll(addTopHBoxForBinaryLogs("Binary"),resultAsTableView);
-									}
-									else if (getTreeItem().getValue().equalsIgnoreCase("Server Logs")) {
-										sessionManagerTab.setText("Server Logs " + connectionPlaceHolder.getConnectionName());
-										binaryLogsDescriptionTableView.getChildren().addAll(addTopHBoxForBinaryLogs("Server"),resultAsTableView);
-									}
-									
-									
-									SplitPane editerTabSplitPane = new SplitPane();
-							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.37);  // split pane divider moving a bit lower
-							    
-							        editerTabSplitPane.getItems().addAll(binaryLogsDescriptionTableView); // Top half of query editer
-							      
-							        editerTabSplitPane.getItems().add(secondHalfDisplayVBox); // bottom half of query editer
-							        
-							        
-									sessionManagerTab.setContent(editerTabSplitPane);
-									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
-
-							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
-							        singleSelectionModel.select(sessionManagerTab);
-							        
-								} catch (SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-								}
-							  }
-							});		
-				 } *
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("CHARACTER SET")) {   
-				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-						Platform.runLater(new Runnable() {
-							  @Override
-							  public void run() { 
-							    try  {
-							    	ResultSet rs = stmt.executeQuery("SHOW CHARACTER SET");
-							    	try {
-										Thread.sleep(1000);
-									} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-									}
-
-									Tab sessionManagerTab = new Tab("CHARACTER SET " + connectionPlaceHolder.getConnectionName());
-									
-									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
-										@Override
-										public void handle(Event event) {
-											System.out.println("On Tab close request ");
-											// sessionManagerTab = null;
-											menu_Items_FX.alltabbedEditors.getTabs().remove(sessionManagerTab);
-										}
-									});
-									
-									TableView resultAsTableView = showResultSetInTheTableView(rs);
-									SplitPane editerTabSplitPane = new SplitPane();
-							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.67);  // split pane divider moving a bit lower
-							    	
-							        editerTabSplitPane.getItems().add(resultAsTableView); // Top half of query editer
-							        editerTabSplitPane.getItems().add(new HBox()); // bottom half of query editer
-							        
-									sessionManagerTab.setContent(editerTabSplitPane);
-									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
-
-							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
-							        singleSelectionModel.select(sessionManagerTab);
-							        
-								} catch (SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-								}
-							  }
-							});		
-				 }/*
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("COLLATION")) {   
-				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-						Platform.runLater(new Runnable() {
-							  @Override
-							  public void run() { 
-							    try  {
-							    	ResultSet rs = stmt.executeQuery("SHOW COLLATION");
-							    	try {
-										Thread.sleep(1000);
-									} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-									}
-
-									Tab sessionManagerTab = new Tab("COLLATION " + connectionPlaceHolder.getConnectionName());
-									
-									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
-										@Override
-										public void handle(Event event) {
-											System.out.println("On Tab close request ");
-											// sessionManagerTab = null;
-											menu_Items_FX.alltabbedEditors.getTabs().remove(sessionManagerTab);
-										}
-									});
-									
-									TableView resultAsTableView = showResultSetInTheTableView(rs);
-									SplitPane editerTabSplitPane = new SplitPane();
-							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.67);  // split pane divider moving a bit lower
-							    	
-							        editerTabSplitPane.getItems().add(resultAsTableView); // Top half of query editer
-							        editerTabSplitPane.getItems().add(new HBox()); // bottom half of query editer
-							        
-									sessionManagerTab.setContent(editerTabSplitPane);
-									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
-
-							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
-							        singleSelectionModel.select(sessionManagerTab);
-							        
-								} catch (SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-								}
-							  }
-							});		
-				 }
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("ENGINES")) {   
-				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-						Platform.runLater(new Runnable() {
-							  @Override
-							  public void run() { 
-							    try  {
-							    	ResultSet rs = stmt.executeQuery("SHOW ENGINES");
-							    	try {
-										Thread.sleep(1000);
-									} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-									}
-									Tab sessionManagerTab = new Tab("ENGINES " + connectionPlaceHolder.getConnectionName());
-									
-									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
-										@Override
-										public void handle(Event event) {
-											System.out.println("On Tab close request ");
-											// sessionManagerTab = null;
-											menu_Items_FX.alltabbedEditors.getTabs().remove(sessionManagerTab);
-										}
-									});						
-									TableView resultAsTableView = showResultSetInTheTableView(rs);
-									SplitPane editerTabSplitPane = new SplitPane();
-							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.67);  // split pane divider moving a bit lower
-							    	
-							        editerTabSplitPane.getItems().add(resultAsTableView); // Top half of query editer
-							        editerTabSplitPane.getItems().add(new HBox()); // bottom half of query editer
-							        
-									sessionManagerTab.setContent(editerTabSplitPane);
-									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
-
-							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
-							        singleSelectionModel.select(sessionManagerTab);
-							        
-								} catch (SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-								}
-							  }
-							});		
-				 }
-				 // This can be mage a generic code think about it.
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("ERRORS")) {   
-				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-						Platform.runLater(new Runnable() {
-							  @Override
-							  public void run() { 
-							    try  {
-							    	ResultSet rs = stmt.executeQuery("SHOW ERRORS");
-							    	try {
-										Thread.sleep(1000);
-									} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-									}
-									Tab sessionManagerTab = new Tab("ERRORS " + connectionPlaceHolder.getConnectionName());
-									
-									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
-										@Override
-										public void handle(Event event) {
-											System.out.println("On Tab close request ");
-											// sessionManagerTab = null;
-											menu_Items_FX.alltabbedEditors.getTabs().remove(sessionManagerTab);
-										}
-									});						
-									TableView resultAsTableView = showResultSetInTheTableView(rs);
-									SplitPane editerTabSplitPane = new SplitPane();
-							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.67);  // split pane divider moving a bit lower
-							    	
-							        editerTabSplitPane.getItems().add(resultAsTableView); // Top half of query editer
-							        editerTabSplitPane.getItems().add(new HBox()); // bottom half of query editer
-							        
-									sessionManagerTab.setContent(editerTabSplitPane);
-									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
-
-							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
-							        singleSelectionModel.select(sessionManagerTab);
-							        
-								} catch (SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-								}
-							  }
-							});		
-				 }
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("EVENTS")) {   
-				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-						Platform.runLater(new Runnable() {
-							  @Override
-							  public void run() { 
-							    try  {
-							    	TableView resultAsTableView = new TableView();
-							    	ResultSet rsDatabases = stmt.executeQuery("SHOW DATABASES");
-							    	while(rsDatabases.next()){
-							    		System.out.println("Executing query "+"SHOW EVENTS FROM "+rsDatabases.getString(1));
-							    		stmt = innercurrentConnection.createStatement();
-							    		ResultSet rs = stmt.executeQuery("SHOW EVENTS FROM "+rsDatabases.getString(1));
-							    		resultAsTableView = showResultSetInTheTableView(rs,resultAsTableView);
-							    	}
-							    	try {
-										Thread.sleep(1000);
-									} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-									}
-									Tab sessionManagerTab = new Tab("EVENTS " + connectionPlaceHolder.getConnectionName());
-									
-									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
-										@Override
-										public void handle(Event event) {
-											System.out.println("On Tab close request ");
-											// sessionManagerTab = null;
-											menu_Items_FX.alltabbedEditors.getTabs().remove(sessionManagerTab);
-										}
-									});						
-								
-									SplitPane editerTabSplitPane = new SplitPane();
-							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.67);  // split pane divider moving a bit lower
-							    	
-							        editerTabSplitPane.getItems().add(resultAsTableView); // Top half of query editer
-							        editerTabSplitPane.getItems().add(new HBox()); // bottom half of query editer
-							        
-									sessionManagerTab.setContent(editerTabSplitPane);
-									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
-
-							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
-							        singleSelectionModel.select(sessionManagerTab);
-							        
-								} catch (SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-								}
-							  }
-							});		
-				 }
-				 
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("GRANTS")) {   
-				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-						Platform.runLater(new Runnable() {
-							  @Override
-							  public void run() { 
-							    try  {
-							    	TableView resultAsTableView = new TableView();
-							    	ResultSet rsUserDetails = stmt.executeQuery("SELECT USER,HOST FROM MYSQL.USER");
-							    	while(rsUserDetails.next()){
-							    		System.out.println("Executing query "+"SHOW GRANTS FOR '"+rsUserDetails.getString(1)+"'@'"+rsUserDetails.getString(2)+"'");
-							    		stmt = innercurrentConnection.createStatement();
-							    		ResultSet rs = stmt.executeQuery("SHOW GRANTS FOR '"+rsUserDetails.getString(1)+"'@'"+rsUserDetails.getString(2)+"'");
-							    		resultAsTableView = showResultSetInTheTableView(rs,resultAsTableView);
-							    	}
-							    	try {
-										Thread.sleep(1000);
-									} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-									}
-									Tab sessionManagerTab = new Tab("GRANTS " + connectionPlaceHolder.getConnectionName());
-									
-									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
-										@Override
-										public void handle(Event event) {
-											System.out.println("On Tab close request ");
-											// sessionManagerTab = null;
-											menu_Items_FX.alltabbedEditors.getTabs().remove(sessionManagerTab);
-										}
-									});						
-								
-									SplitPane editerTabSplitPane = new SplitPane();
-							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.67);  // split pane divider moving a bit lower
-							    	
-							        editerTabSplitPane.getItems().add(resultAsTableView); // Top half of query editer
-							        editerTabSplitPane.getItems().add(new HBox()); // bottom half of query editer
-							        
-									sessionManagerTab.setContent(editerTabSplitPane);
-									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
-
-							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
-							        singleSelectionModel.select(sessionManagerTab);
-							        
-								} catch (SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-								}
-							  }
-							});		
-				 }
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("OPEN TABLES")) {   
-				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-						Platform.runLater(new Runnable() {
-							  @Override
-							  public void run() { 
-							    try  {
-							    	ResultSet rs = stmt.executeQuery("SHOW OPEN TABLES");
-							    	try {
-										Thread.sleep(1000);
-									} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-									}
-									Tab sessionManagerTab = new Tab("OPEN TABLES " + connectionPlaceHolder.getConnectionName());
-									
-									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
-										@Override
-										public void handle(Event event) {
-											System.out.println("On Tab close request ");
-											// sessionManagerTab = null;
-											menu_Items_FX.alltabbedEditors.getTabs().remove(sessionManagerTab);
-										}
-									});						
-									TableView resultAsTableView = showResultSetInTheTableView(rs);
-									SplitPane editerTabSplitPane = new SplitPane();
-							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.67);  // split pane divider moving a bit lower
-							    	
-							        editerTabSplitPane.getItems().add(resultAsTableView); // Top half of query editer
-							        editerTabSplitPane.getItems().add(new HBox()); // bottom half of query editer
-							        
-									sessionManagerTab.setContent(editerTabSplitPane);
-									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
-
-							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
-							        singleSelectionModel.select(sessionManagerTab);
-							        
-								} catch (SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-								}
-							  }
-							});		
-				 }
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("PLUGINS")) {   
-				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-						Platform.runLater(new Runnable() {
-							  @Override
-							  public void run() { 
-							    try  {
-							    	ResultSet rs = stmt.executeQuery("SHOW PLUGINS");
-							    	try {
-										Thread.sleep(1000);
-									} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-									}
-									Tab sessionManagerTab = new Tab("PLUGINS " + connectionPlaceHolder.getConnectionName());
-									
-									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
-										@Override
-										public void handle(Event event) {
-											System.out.println("On Tab close request ");
-											// sessionManagerTab = null;
-											menu_Items_FX.alltabbedEditors.getTabs().remove(sessionManagerTab);
-										}
-									});						
-									TableView resultAsTableView = showResultSetInTheTableView(rs);
-									SplitPane editerTabSplitPane = new SplitPane();
-							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.67);  // split pane divider moving a bit lower
-							    	
-							        editerTabSplitPane.getItems().add(resultAsTableView); // Top half of query editer
-							        editerTabSplitPane.getItems().add(new HBox()); // bottom half of query editer
-							        
-									sessionManagerTab.setContent(editerTabSplitPane);
-									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
-
-							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
-							        singleSelectionModel.select(sessionManagerTab);
-							        
-								} catch (SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-								}
-							  }
-							});		
-				 } 
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("PRIVILEGES")) {   
-				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-						Platform.runLater(new Runnable() {
-							  @Override
-							  public void run() { 
-							    try  {
-							    	ResultSet rs = stmt.executeQuery("SHOW PRIVILEGES");
-							    	try {
-										Thread.sleep(1000);
-									} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-									}
-									Tab sessionManagerTab = new Tab("PRIVILEGES " + connectionPlaceHolder.getConnectionName());
-									
-									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
-										@Override
-										public void handle(Event event) {
-											System.out.println("On Tab close request ");
-											// sessionManagerTab = null;
-											menu_Items_FX.alltabbedEditors.getTabs().remove(sessionManagerTab);
-										}
-									});						
-									TableView resultAsTableView = showResultSetInTheTableView(rs);
-									SplitPane editerTabSplitPane = new SplitPane();
-							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.67);  // split pane divider moving a bit lower
-							    	
-							        editerTabSplitPane.getItems().add(resultAsTableView); // Top half of query editer
-							        editerTabSplitPane.getItems().add(new HBox()); // bottom half of query editer
-							        
-									sessionManagerTab.setContent(editerTabSplitPane);
-									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
-
-							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
-							        singleSelectionModel.select(sessionManagerTab);
-							        
-								} catch (SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-								}
-							  }
-							});		
-				 }
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("PROCESS LIST")) {   
-				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-						Platform.runLater(new Runnable() {
-							  @Override
-							  public void run() { 
-							    try  {	
-							    	ResultSet rs = stmt.executeQuery(" SHOW PROCESSLIST");
-							    	try {
-										Thread.sleep(1000);
-									} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-									}
-									Tab sessionManagerTab = new Tab("Session/Process List " + connectionPlaceHolder.getConnectionName());									
-									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
-										@Override
-										public void handle(Event event) {
-											System.out.println("On Tab close request ");
-											// sessionManagerTab = null;
-											menu_Items_FX.alltabbedEditors.getTabs().remove(sessionManagerTab);
-										}
-									});
-									
-									TableView resultAsTableView = showResultSetInTheTableView(rs);
-									SplitPane editerTabSplitPane = new SplitPane();
-							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.67);  // split pane divider moving a bit lower
-							    	
-							        editerTabSplitPane.getItems().add(resultAsTableView); // Top half of query editer
-							        editerTabSplitPane.getItems().add(new HBox()); // bottom half of query editer
-							        
-									sessionManagerTab.setContent(editerTabSplitPane);
-									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
-
-							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
-							        singleSelectionModel.select(sessionManagerTab);
-							        
-								} catch (SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-								}
-							  }
-							});		
-				 }   
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("PROFILES")) { // display individual profile  
-				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-						Platform.runLater(new Runnable() {
-							  @Override
-							  public void run() { 
-							    try  {	
-							    	ResultSet rs = stmt.executeQuery(" SHOW PROFILES");
-							    	try {
-										Thread.sleep(1000);
-									} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-									}
-									Tab sessionManagerTab = new Tab("PROFILES " + connectionPlaceHolder.getConnectionName());									
-									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
-										@Override
-										public void handle(Event event) {
-											System.out.println("On Tab close request ");
-											// sessionManagerTab = null;
-											menu_Items_FX.alltabbedEditors.getTabs().remove(sessionManagerTab);
-										}
-									});
-									
-									TableView resultAsTableView = showResultSetInTheTableView(rs);
-									SplitPane editerTabSplitPane = new SplitPane();
-							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.67);  // split pane divider moving a bit lower
-							    	
-							        editerTabSplitPane.getItems().add(resultAsTableView); // Top half of query editer
-							        editerTabSplitPane.getItems().add(new HBox()); // bottom half of query editer
-							        
-									sessionManagerTab.setContent(editerTabSplitPane);
-									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
-
-							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
-							        singleSelectionModel.select(sessionManagerTab);
-							        
-								} catch (SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-								}
-							  }
-							});		
-				 }  
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("REPLICAS")) { // display individual replica
-				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-						Platform.runLater(new Runnable() {
-							  @Override
-							  public void run() { 
-							    try  {	
-							    	ResultSet rs = stmt.executeQuery(" SHOW REPLICAS");
-							    	try {
-										Thread.sleep(1000);
-									} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-									}
-									Tab sessionManagerTab = new Tab("REPLICAS " + connectionPlaceHolder.getConnectionName());									
-									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
-										@Override
-										public void handle(Event event) {
-											System.out.println("On Tab close request ");
-											// sessionManagerTab = null;
-											menu_Items_FX.alltabbedEditors.getTabs().remove(sessionManagerTab);
-										}
-									});
-									
-									TableView resultAsTableView = showResultSetInTheTableView(rs);
-									SplitPane editerTabSplitPane = new SplitPane();
-							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.67);  // split pane divider moving a bit lower
-							    	
-							        editerTabSplitPane.getItems().add(resultAsTableView); // Top half of query editer
-							        editerTabSplitPane.getItems().add(new HBox()); // bottom half of query editer
-							        
-									sessionManagerTab.setContent(editerTabSplitPane);
-									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
-
-							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
-							        singleSelectionModel.select(sessionManagerTab);
-							        
-								} catch (SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-								}
-							  }
-							});		
-				 }   
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("SESSION STATUS")) { 
-				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-						Platform.runLater(new Runnable() {
-							  @Override
-							  public void run() { 
-							    try  {	
-							    	ResultSet rs = stmt.executeQuery(" SHOW SESSION STATUS");
-							    	try {
-										Thread.sleep(1000);
-									} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-									}
-									Tab sessionManagerTab = new Tab("SESSION " + connectionPlaceHolder.getConnectionName());									
-									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
-										@Override
-										public void handle(Event event) {
-											System.out.println("On Tab close request ");
-											// sessionManagerTab = null;
-											menu_Items_FX.alltabbedEditors.getTabs().remove(sessionManagerTab);
-										}
-									});
-									
-									TableView resultAsTableView = showResultSetInTheTableView(rs);
-									SplitPane editerTabSplitPane = new SplitPane();
-							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.67);  // split pane divider moving a bit lower
-							    	
-							        editerTabSplitPane.getItems().add(resultAsTableView); // Top half of query editer
-							        editerTabSplitPane.getItems().add(new HBox()); // bottom half of query editer
-							        
-									sessionManagerTab.setContent(editerTabSplitPane);
-									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
-
-							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
-							        singleSelectionModel.select(sessionManagerTab);
-							        
-								} catch (SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-								}
-							  }
-							});		
-				 } 
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("GLOBAL STATUS")) { 
-				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-						Platform.runLater(new Runnable() {
-							  @Override
-							  public void run() { 
-							    try  {	
-							    	ResultSet rs = stmt.executeQuery(" SHOW GLOBAL STATUS");
-							    	try {
-										Thread.sleep(1000);
-									} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-									}
-									Tab sessionManagerTab = new Tab("GLOBAL " + connectionPlaceHolder.getConnectionName());									
-									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
-										@Override
-										public void handle(Event event) {
-											System.out.println("On Tab close request ");
-											// sessionManagerTab = null;
-											menu_Items_FX.alltabbedEditors.getTabs().remove(sessionManagerTab);
-										}
-									});
-									
-									TableView resultAsTableView = showResultSetInTheTableView(rs);
-									SplitPane editerTabSplitPane = new SplitPane();
-							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.67);  // split pane divider moving a bit lower
-							    	
-							        editerTabSplitPane.getItems().add(resultAsTableView); // Top half of query editer
-							        editerTabSplitPane.getItems().add(new HBox()); // bottom half of query editer
-							        
-									sessionManagerTab.setContent(editerTabSplitPane);
-									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
-
-							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
-							        singleSelectionModel.select(sessionManagerTab);
-							        
-								} catch (SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-								}
-							  }
-							});		
-				 } 
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("SESSION VARIABLES")) { 
-				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-						Platform.runLater(new Runnable() {
-							  @Override
-							  public void run() { 
-							    try  {	
-							    	ResultSet rs = stmt.executeQuery(" SHOW SESSION VARIABLES");
-							    	try {
-										Thread.sleep(1000);
-									} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-									}
-									Tab sessionManagerTab = new Tab("SESSION VARIABLES " + connectionPlaceHolder.getConnectionName());									
-									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
-										@Override
-										public void handle(Event event) {
-											System.out.println("On Tab close request ");
-											// sessionManagerTab = null;
-											menu_Items_FX.alltabbedEditors.getTabs().remove(sessionManagerTab);
-										}
-									});
-									
-									TableView resultAsTableView = showResultSetInTheTableView(rs);
-									SplitPane editerTabSplitPane = new SplitPane();
-							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.67);  // split pane divider moving a bit lower
-							    	
-							        editerTabSplitPane.getItems().add(resultAsTableView); // Top half of query editer
-							        editerTabSplitPane.getItems().add(new HBox()); // bottom half of query editer
-							        
-									sessionManagerTab.setContent(editerTabSplitPane);
-									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
-
-							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
-							        singleSelectionModel.select(sessionManagerTab);
-							        
-								} catch (SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-								}
-							  }
-							});		
-				 }
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("GLOBAL VARIABLES")) { 
-				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-						Platform.runLater(new Runnable() {
-							  @Override
-							  public void run() { 
-							    try  {	
-							    	ResultSet rs = stmt.executeQuery(" SHOW GLOBAL VARIABLES");
-							    	try {
-										Thread.sleep(1000);
-									} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-									}
-									Tab sessionManagerTab = new Tab("GLOBAL VARIABLES " + connectionPlaceHolder.getConnectionName());									
-									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
-										@Override
-										public void handle(Event event) {
-											System.out.println("On Tab close request ");
-											// sessionManagerTab = null;
-											menu_Items_FX.alltabbedEditors.getTabs().remove(sessionManagerTab);
-										}
-									});
-									
-									TableView resultAsTableView = showResultSetInTheTableView(rs);
-									SplitPane editerTabSplitPane = new SplitPane();
-							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-							    	editerTabSplitPane.setDividerPositions(0.67);  // split pane divider moving a bit lower
-							    	
-							        editerTabSplitPane.getItems().add(resultAsTableView); // Top half of query editer
-							        editerTabSplitPane.getItems().add(new HBox()); // bottom half of query editer
-							        
-									sessionManagerTab.setContent(editerTabSplitPane);
-									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
-
-							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
-							        singleSelectionModel.select(sessionManagerTab);
-							        
-								} catch (SQLException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-								}
-							  }
-							});		
-				 }*/
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Dashboard")) { 
+				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Dashboard") && getTreeItem().getParent().getValue().equals("Performance") && getTreeItem().getParent().getParent().getValue().equals("Administer") ) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
 						Platform.runLater(new Runnable() {
 							  @Override
@@ -2559,12 +1879,12 @@ public class MySqlUI {
 							        lineChart.getData().add(dataSeries1);
 							        
 							        CategoryAxis xAxis1    = new CategoryAxis();
-							        xAxis.setLabel("Devices");
+							        xAxis.setLabel("Tables");
 
 							        NumberAxis yAxis1 = new NumberAxis();
-							        yAxis.setLabel("Visits");
+							        yAxis.setLabel("Size");
 
-							        BarChart     barChart = new BarChart(xAxis1, yAxis1);
+							        BarChart   barChart = new BarChart(xAxis1, yAxis1);
 
 							        XYChart.Series dataSeries2 = new XYChart.Series();
 							        dataSeries1.setName("2014");
@@ -2592,7 +1912,8 @@ public class MySqlUI {
 							  }
 							});		
 				 } 				 
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Performance Reports")) { 
+				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Performance Reports") && getTreeItem().getParent().getValue().equalsIgnoreCase("Performance")
+						 && getTreeItem().getParent().getParent().getValue().equalsIgnoreCase("Administer") ) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
 						Platform.runLater(new Runnable() {
 							  @Override
@@ -2677,7 +1998,7 @@ public class MySqlUI {
 
 							});		
 				 }
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Server Status")) { 
+				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Server Status") && getTreeItem().getParent().getValue().equals("Administration")) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
 						Platform.runLater(new Runnable() {
 							  @Override
@@ -2736,7 +2057,7 @@ public class MySqlUI {
 							  }
 							});
 				 }
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Client Connections")) { 
+				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Client Connections") && getTreeItem().getParent().getValue().equals("Administration")) { 
 				      System.out.println("Double clicked on this item"+ getTreeItem().getValue());
 						Platform.runLater(new Runnable() {
 							  @Override
@@ -2790,7 +2111,7 @@ public class MySqlUI {
 						
 							});		
 				 }
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Users and Privileges")) { 
+				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Users and Privileges") && getTreeItem().getParent().getValue().equals("Administration")) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
 						Platform.runLater(new Runnable() {
 							  @Override
@@ -2842,7 +2163,7 @@ public class MySqlUI {
 												ResultSet rsfullUserDetails = stmt.executeQuery("select * from mysql.user where user='"+newValue.get("User")+"' and host = '"+newValue.get("Host")+"'");
 												
 												System.out.println("select * from mysql.user where user='"+newValue.get("User")+"' and host = '"+newValue.get("Host")+"'");
-												while(rsfullUserDetails.next()) {
+												if(rsfullUserDetails.next()) {
 													
 													// Setting the login details below  
 													accountLockedStatus.setText( rsfullUserDetails.getString("account_locked"));
@@ -2896,28 +2217,7 @@ public class MySqlUI {
 													triggerPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Trigger_priv").equals("Y"));
 													updatePrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Update_priv").equals("Y"));
 													
-													// setting the addSchemaPriviliges below
-													selectSchemaPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Select_priv").equals("Y"));
-													updateSchemaPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Update_priv").equals("Y"));
-													insertSchemaPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Insert_priv").equals("Y"));
-													showViewSchemaPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Show_view_priv").equals("Y"));
-													deleteSchemaPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Delete_priv").equals("Y"));
-													executeSchemaPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Execute_priv").equals("Y"));
-													
-													createSchemaPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Create_priv").equals("Y"));
-													alterSchemaPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Alter_priv").equals("Y"));	
-													referencesSchemaPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("References_priv").equals("Y"));
-													indexSchemaPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Index_priv").equals("Y"));
-													createViewSchemaPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Create_view_priv").equals("Y"));
-													createRoutineSchemaPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Create_routine_priv").equals("Y")); 
-													
-													alterRoutineSchemaPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Alter_routine_priv").equals("Y"));
-													eventSchemaPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Event_priv").equals("Y"));
-													dropSchemaPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Drop_priv").equals("Y"));
-													triggerSchemaPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Trigger_priv").equals("Y"));
-													grantOptionSchemaPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Grant_priv").equals("Y"));
-													createTemporaryTablesSchemaPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Create_tmp_table_priv").equals("Y")); 
-													lockTablesSchemaPrivilegeCheckBox.setSelected(rsfullUserDetails.getString("Lock_tables_priv").equals("Y"));
+												
 													
 												}
 											} catch (SQLException e) {
@@ -2925,7 +2225,70 @@ public class MySqlUI {
 												e.printStackTrace();
 											}
 									        
+									        //we're pulling schema privileges
+									        System.out.println("select TABLE_SCHEMA,PRIVILEGE_TYPE from information_schema.SCHEMA_PRIVILEGES where grantee=\"'"+newValue.get("User")+"'@'"+newValue.get("Host")+"'\"");
+											try(ResultSet rsAvailableSchemaPrivileges = stmt.executeQuery("select TABLE_SCHEMA,PRIVILEGE_TYPE from information_schema.SCHEMA_PRIVILEGES where grantee=\"'"+newValue.get("User")+"'@'"+newValue.get("Host")+"'\"")) {
+																										
+												
+												HashMap<String,ArrayList> availableSchemasPrivilegesMap = new HashMap<String,ArrayList>();
+												
+												while(rsAvailableSchemaPrivileges.next()) {
+													 if(availableSchemasPrivilegesMap.containsKey( rsAvailableSchemaPrivileges.getString(1))) {
+														 availableSchemasPrivilegesMap.get(rsAvailableSchemaPrivileges.getString(1)).add(rsAvailableSchemaPrivileges.getString(2));
+													 }else {
+														 ArrayList<String> schemaPrivilegesList = new ArrayList<String>();
+														 schemaPrivilegesList.add(rsAvailableSchemaPrivileges.getString(2));
+														 availableSchemasPrivilegesMap.put(rsAvailableSchemaPrivileges.getString(1),schemaPrivilegesList);
+													 }
+												}
+												System.out.println("Populated values"+availableSchemasPrivilegesMap.toString());
+												
+												
+												schemaPriviligesMapdata.clear();
+										        HashMap<String,String> schemaPreviligesHashMap ;
+										        for (String schemaName : availableSchemasPrivilegesMap.keySet()) {
+										        	schemaPreviligesHashMap = new HashMap<String,String>();
+											        schemaPreviligesHashMap.put(schemaPriviligesColumnNames[0], schemaName);
+											        schemaPreviligesHashMap.put(schemaPriviligesColumnNames[1], availableSchemasPrivilegesMap.get(schemaName).toString());
+											        schemaPriviligesMapdata.add(schemaPreviligesHashMap);
+											        
+										        }
+										        if(!schemaPreviligestableView.getItems().isEmpty()) {
+										        	schemaPreviligestableView.getSelectionModel().select(0);
+										        	
+										        	String availablePriviliges = ((HashMap) schemaPreviligestableView.getSelectionModel().getSelectedItem()).get("Privileges").toString();
+										        	System.out.println( "<--------->" +availablePriviliges);
+										        	
+										        	// setting the addSchemaPriviliges below
+													selectSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("SELECT"));
+													updateSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("UPDATE"));
+													insertSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("INSERT"));
+													showViewSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("SHOW VIEW"));
+													deleteSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("DELETE"));
+													executeSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("EXECUTE"));
+													
+													createSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("CREATE"));
+													alterSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("ALTER"));	
+													referencesSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("REFERENCES"));
+													indexSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("INDEX"));
+													createViewSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("CREATE VIEW"));
+													createRoutineSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("CREATE ROUTINE")); 
+													
+													alterRoutineSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("ALTER ROUTINE"));
+													eventSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("EVENT"));
+													dropSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("DROP"));
+													triggerSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("TRIGGER"));
+													grantOptionSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("GRANT OPTION"));
+													createTemporaryTablesSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("CREATE TEMPORARY TABLES")); 
+													lockTablesSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("LOCK TABLES"));
+										        	
+										        }	
+										        
+											} catch (SQLException e) {
+												e.printStackTrace();;
+											}
 										}	
+										
 									});
 
 									BorderPane userAccountsBorderPane = new BorderPane();
@@ -3109,7 +2472,6 @@ public class MySqlUI {
 
 		if(rs.next()) {
 	
-	    	System.out.println("First calumne "+rs.getString(1));
 	    	TableColumn<Map, String> tableColumnName;
 	    	Map<String, Object> tableRowValue;
 	    	ObservableList<Map<String, Object>> items = FXCollections.<Map<String, Object>>observableArrayList();
@@ -3121,7 +2483,6 @@ public class MySqlUI {
 	        
 	        for (int i = 0; i < columnNames.length; i++) {
 	        	columnNames[i] = md.getColumnLabel(i+1);
-	        	System.out.println("Column Name : "+columnNames[i]);
 	        	columnTypes[i] =  md.getColumnType(i+1);	   
 	        	
 	        	tableColumnName = new TableColumn<>(columnNames[i]);
@@ -3185,7 +2546,6 @@ public class MySqlUI {
 					HashMap<String, String> oldValue, HashMap<String, String> newValue) {
 
 				System.out.println("oldValue --->"+oldValue);
-				System.out.println("newValue --->"+newValue.keySet().toString());
 				performanceCopySelected.setOnAction(new EventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent event) {
@@ -3476,7 +2836,6 @@ public class MySqlUI {
         
 		if(rs.next()) {
 	
-	    	System.out.println("First calumne "+rs.getString(1));
 	    	TableColumn<Map, String> tableColumnName;
 	    	Map<String, Object> tableRowValue;
 	    	ObservableList<Map<String, Object>> items = FXCollections.<Map<String, Object>>observableArrayList();
@@ -3487,7 +2846,6 @@ public class MySqlUI {
 	           
 	        for (int i = 0; i < columnNames.length; i++) {
 	        	columnNames[i] = md.getColumnLabel(i+1);
-	        	System.out.println("Column Name : "+columnNames[i]);
 	        	columnTypes[i] =  md.getColumnType(i+1);	   
 	        	
 	        	tableColumnName = new TableColumn<>(columnNames[i]);
@@ -5603,6 +4961,11 @@ public class MySqlUI {
 		return accountPrivilegesVBox;
 	}
 	
+	private TableView schemaPreviligestableView;
+	private String[] schemaPriviligesColumnNames = {"Schema","Privileges"};
+	private ObservableList<HashMap<String,String>> schemaPriviligesMapdata =
+            FXCollections.observableArrayList();
+
 	public VBox addSchemaPrivileges() {
 		
 		VBox schemaPrivilegesVbox = new VBox();
@@ -5654,7 +5017,7 @@ public class MySqlUI {
 		selectedSchemasRadioButton.setToggleGroup(group); 
 		GridPane.setConstraints(selectedSchemasRadioButton, 0, 2);   // column 0 row 0
 		ComboBox<String> selectedSchemascomboBox = new ComboBox();
-		selectedSchemascomboBox.getItems().addAll("mysql","sys","sakila","information_schema","world","others");
+		selectedSchemascomboBox.getItems().addAll("mysql","sys","sakila","information_schema","world","others"); // @TODO
 		selectedSchemascomboBox.setPrefHeight(15);
 		selectedSchemascomboBox.setPrefWidth(200);
 		//selectedSchemascomboBox.setValue("mysql");
@@ -5678,60 +5041,65 @@ public class MySqlUI {
 		existingSchemaPriviligesVBox.setMaxHeight(150);
 		existingSchemaPriviligesVBox.setPadding(new Insets(0,10,0,10));
 		
-		TableView tableView = new TableView();
-		tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);  // to remove the last empty column otherwise added
-		tableView.setEditable(true);
+		schemaPreviligestableView = new TableView();
+		schemaPreviligestableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);  // to remove the last empty column otherwise added
+		schemaPreviligestableView.setEditable(true);
         
-		tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
+		schemaPreviligestableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
 
 			@Override
 			public void changed(ObservableValue<? extends HashMap<String, String>> observable,
 					HashMap<String, String> oldValue, HashMap<String, String> newValue) {
 
 				System.out.println("oldValue --->"+oldValue);
-				System.out.println("newValue --->"+newValue.keySet().toString());
-				for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
+				System.out.println("newValue --->"+newValue);
+				if(newValue != null) {
+					String availablePriviliges = newValue.get("Privileges").toString();
+		        	System.out.println( "<--------->" +availablePriviliges);
+					// setting the addSchemaPriviliges below
+					selectSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("SELECT"));
+					updateSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("UPDATE"));
+					insertSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("INSERT"));
+					showViewSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("SHOW VIEW"));
+					deleteSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("DELETE"));
+					executeSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("EXECUTE"));
 					
-					System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
+					createSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("CREATE"));
+					alterSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("ALTER"));	
+					referencesSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("REFERENCES"));
+					indexSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("INDEX"));
+					createViewSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("CREATE VIEW"));
+					createRoutineSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("CREATE ROUTINE")); 
+					
+					alterRoutineSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("ALTER ROUTINE"));
+					eventSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("EVENT"));
+					dropSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("DROP"));
+					triggerSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("TRIGGER"));
+					grantOptionSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("GRANT OPTION"));
+					createTemporaryTablesSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("CREATE TEMPORARY TABLES")); 
+					lockTablesSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("LOCK TABLES"));
 				}
-				
-				TableViewSelectionModel  selectionModel = tableView.getSelectionModel();
-		        ObservableList selectedCells = selectionModel.getSelectedCells();
-		        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
-		        Object val = tablePosition.getTableColumn().getCellData(newValue);
-		        System.out.println("Selected Value" + val);
 				
 			}	
 		});
 		TableColumn tableColumnName;
-		String[] columnNames = {"Schema","Privileges"};
+		
 		   
-	    tableColumnName = new TableColumn<>(columnNames[0]);
+	    tableColumnName = new TableColumn<>(schemaPriviligesColumnNames[0]);
 	    tableColumnName.setMinWidth(50);
-	    tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[0]));
-	    tableView.getColumns().add(tableColumnName);
+	    tableColumnName.setCellValueFactory(new MapValueFactory<>(schemaPriviligesColumnNames[0]));
+	    schemaPreviligestableView.getColumns().add(tableColumnName);
 
-	    tableColumnName = new TableColumn<>(columnNames[1]);
+	    tableColumnName = new TableColumn<>(schemaPriviligesColumnNames[1]);
 	    tableColumnName.setMinWidth(250);
-	    tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[1]));
-	    tableView.getColumns().add(tableColumnName);
+	    tableColumnName.setCellValueFactory(new MapValueFactory<>(schemaPriviligesColumnNames[1]));
+	    schemaPreviligestableView.getColumns().add(tableColumnName);
 	    
-		ObservableList<HashMap<String,String>> mapdata =
-		            FXCollections.observableArrayList();
-        HashMap<String,String> schemaMap = new HashMap<String,String>();
-        
-        schemaMap.put(columnNames[0], "mysql");
-        schemaMap.put(columnNames[1], "none");
-        mapdata.add(schemaMap);
-        
-        schemaMap = new HashMap<String,String>();
-        schemaMap.put(columnNames[0], "world");
-        schemaMap.put(columnNames[1], "tocome");
-        mapdata.add(schemaMap);
+	
       
-        tableView.setItems(mapdata);
+        schemaPreviligestableView.setItems(schemaPriviligesMapdata);
         
-        existingSchemaPriviligesVBox.getChildren().add(tableView);
+        existingSchemaPriviligesVBox.getChildren().add(schemaPreviligestableView);
         
         HBox userAccessSchemaDescriptionHbox= new HBox();
         userAccessSchemaDescriptionHbox.setPadding(new Insets(5,5,5,5));
@@ -6241,7 +5609,7 @@ public class MySqlUI {
 		for( int i=0;i<performanceReportsTypes.length;i++) {
 			 if(currentTreeItemSelected.equalsIgnoreCase(performanceReportsTypes[i])) {
 				 int index = i;
-			      System.out.println("Duble clicked on this item"+ currentTreeItemSelected);
+			      System.out.println("clicked on this item"+ currentTreeItemSelected);
 					Platform.runLater(new Runnable() {
 						  @Override
 						  public void run() { 
@@ -6280,8 +5648,8 @@ public class MySqlUI {
 	private void getdatabaseTablesDisplayTab(TreeItem<String> loadedDatabaseName, Tab databaseDetailsTablesTab) {
 		System.out.println("Tables Tab selected ");
 			
-		  try { 
-			  ResultSet rs = stmt.executeQuery("select table_name,engine,auto_increment,table_rows,data_length,create_time,update_time,create_options from information_schema.tables where table_comment != 'view' and table_schema='"+loadedDatabaseName.getValue()+"'");
+		  try( ResultSet rs = currentConnection.createStatement().executeQuery("select table_name,engine,auto_increment,table_rows,data_length,index_length,create_time,update_time,create_options from information_schema.tables where table_comment != 'view' and table_schema='"+loadedDatabaseName.getValue()+"'"))
+		  { 			 
 			  SplitPane tableDetailsSplitPane = new SplitPane();
 			  tableDetailsSplitPane.setOrientation(Orientation.VERTICAL);
 			  tableDetailsSplitPane.setDividerPositions(0.75); 
@@ -6339,8 +5707,8 @@ public class MySqlUI {
 
 	private void getdatabaseViewsDisplayTab(TreeItem<String> loadedDatabaseName, Tab databaseDetailsViewsTab) {
 		System.out.println("Views Tab selected ");
-		  	try {		  
-			  ResultSet rs = stmt.executeQuery("select table_name,check_option,is_updatable,definer,view_definition from information_schema.views where table_schema='"+loadedDatabaseName.getValue()+"'");
+		  	try(ResultSet rs =  currentConnection.createStatement().executeQuery("select table_name,check_option,is_updatable,definer,view_definition from information_schema.views where table_schema='"+loadedDatabaseName.getValue()+"'"))
+		  	{		    
 			  SplitPane viewDetailsSplitPane = new SplitPane();
 			  viewDetailsSplitPane.setOrientation(Orientation.VERTICAL);
 			  viewDetailsSplitPane.setDividerPositions(0.75); 
@@ -6404,14 +5772,8 @@ public class MySqlUI {
 
 	private void getdatabaseIndexesDisplayTab(TreeItem<String> loadedDatabaseName, Tab databaseDetailsIndexesTab) {
 		System.out.println("Indexes Tab selected ");
-		  	try {		  
-			  ResultSet rs = stmt.executeQuery("select  index_name,column_name,table_name,Index_type,packed,nullable,non_unique from information_schema.statistics where table_schema = '"+loadedDatabaseName.getValue()+"'");
-			  try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		  	try( ResultSet rs =  currentConnection.createStatement().executeQuery("select  index_name,column_name,table_name,Index_type,packed,nullable,non_unique from information_schema.statistics where table_schema = '"+loadedDatabaseName.getValue()+"'")) 
+		  	{		   
 			  SplitPane indexesDetailsSplitPane = new SplitPane();
 			  indexesDetailsSplitPane.setOrientation(Orientation.VERTICAL);
 			  indexesDetailsSplitPane.setDividerPositions(0.75); 
@@ -6470,8 +5832,8 @@ public class MySqlUI {
 	
 	private void getdatabaseProceduresDisplayTab(TreeItem<String> loadedDatabaseName,Tab databaseDetailsProceduresTab) {
 		System.out.println("Procedures Tab selected ");
-		  	try {		  
-			  ResultSet rs = stmt.executeQuery("select  routine_name,definer,created,LAST_ALTERED,routine_comment from information_schema.routines where  routine_type != 'FUNCTION' and  routine_schema = '"+loadedDatabaseName.getValue()+"'");
+		  	try(ResultSet rs = currentConnection.createStatement().executeQuery("select  routine_name,definer,created,LAST_ALTERED,routine_comment from information_schema.routines where  routine_type != 'FUNCTION' and  routine_schema = '"+loadedDatabaseName.getValue()+"'"))
+		  	{		    
 			  SplitPane proceduresDetailsSplitPane = new SplitPane();
 			  proceduresDetailsSplitPane.setOrientation(Orientation.VERTICAL);
 			  proceduresDetailsSplitPane.setDividerPositions(0.75); 
@@ -6530,8 +5892,8 @@ public class MySqlUI {
 
 	private void getdatabaseFunctionsDisplayTab(TreeItem<String> loadedDatabaseName, Tab databaseDetailsFunctionsTab) {
 		System.out.println("Functions Tab selected ");
-		  	try {		  
-			  ResultSet rs = stmt.executeQuery("select  routine_name,definer,created,LAST_ALTERED,routine_comment from information_schema.routines where  routine_type != 'PROCEDURE' and  routine_schema = '"+loadedDatabaseName.getValue()+"'");
+		  	try(ResultSet rs = currentConnection.createStatement().executeQuery("select  routine_name,definer,created,LAST_ALTERED,routine_comment from information_schema.routines where  routine_type != 'PROCEDURE' and  routine_schema = '"+loadedDatabaseName.getValue()+"'")) 
+		  	{		  
 			  SplitPane functionsDetailsSplitPane = new SplitPane();
 			  functionsDetailsSplitPane.setOrientation(Orientation.VERTICAL);
 			  functionsDetailsSplitPane.setDividerPositions(0.75); 
@@ -6589,9 +5951,9 @@ public class MySqlUI {
 
 	private void getdatabaseTriggersDisplayTab(TreeItem<String> loadedDatabaseName, Tab databaseDetailsTriggersTab) {
 			System.out.println("Triggers Tab selected ");
-		  	try {		  
-		  		
-		  	  ResultSet rs = stmt.executeQuery("select trigger_name,trigger_Schema,event_manipulation,event_object_Schema,event_object_table,action_order,action_timing,definer,created from information_Schema.triggers where trigger_Schema = '"+loadedDatabaseName.getValue()+"'");
+		  	try(ResultSet rs = currentConnection.createStatement().executeQuery("select trigger_name,trigger_Schema,event_manipulation,event_object_Schema,event_object_table,action_order,action_timing,definer,created from information_schema.triggers where trigger_Schema = '"+loadedDatabaseName.getValue()+"'"))
+		  	{		  
+		  		  
 			  SplitPane triggersDetailsSplitPane = new SplitPane();
 			  triggersDetailsSplitPane.setOrientation(Orientation.VERTICAL);
 			  triggersDetailsSplitPane.setDividerPositions(0.75); 
@@ -6686,6 +6048,8 @@ public class MySqlUI {
 					  
 					  if(newValue.getText().equalsIgnoreCase("Properties")) {
 						  System.out.println("Properties Tab selected ");
+						  
+						  getdatabasePropertiesDisplayTab(loadedDatabaseName,databaseDetailsPropertiesTab);
 					  }
 					  if(newValue.getText().equalsIgnoreCase("Tables")) {
 						  getdatabaseTablesDisplayTab(loadedDatabaseName, databaseDetailsTablesTab);
@@ -6750,18 +6114,444 @@ public class MySqlUI {
 	   databaseERDiagram.setClosable(false);
 	   Tab databaseGrahicsStats = new Tab("Graphics Stats");
 	   databaseGrahicsStats.setClosable(false);
+	   
 	   Tab databaseAIPrompt = new Tab("AI Prompt");
 	   databaseAIPrompt.setClosable(false);				
+	   
+	   databaseTabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+		@Override
+		public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
+			
+			System.out.println("Selected tab under Scehama ---->"+newValue.getText());
+			
+			if(newValue.getText().equals("Graphics Stats")) {
+				getSchemaGraphicsStats(loadedDatabaseName,databaseGrahicsStats);
+			}
+		}
+	   });
+	   
 	   databaseTabPane.getTabs().addAll(databaseDetails,databaseERDiagram,databaseGrahicsStats,databaseAIPrompt);
 	   mainDatabaseTab.setContent(databaseTabPane);
        return mainDatabaseTab;
 	}
 
+	
+	protected Tab getSchemaGraphicsStats(TreeItem<String> loadedDatabaseName,Tab databaseGrahicsStats) {
+		   VBox vbox = new VBox();
+		   vbox.setPadding(new Insets(10,0,0,50));
+		   
+		   ArrayList<InformationSchemaSizes> informationSchemaSizesList = getAllSchemaSizesinDatabase();
+			
+
+		   ArrayList<InformationSchemaTable> tableDetailsInformationSchemaList = getSchemaTablesFromInformationSchema(loadedDatabaseName.getValue());
+			
+			PieChart pieChartSchemaSizes = new PieChart();
+			pieChartSchemaSizes.setTitle("Database size relative to other databases");
+			PieChart.Data slice ;
+			pieChartSchemaSizes.setMinWidth(400);
+			
+			for(InformationSchemaSizes informationSchemaSizes : informationSchemaSizesList) {
+			
+				pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizes.getSchemaName(), Double.valueOf(informationSchemaSizes.getDiskSize())/1024/1024 ));
+			}
+		   vbox.getChildren().add(pieChartSchemaSizes);
+		   databaseGrahicsStats.setContent(vbox);
+		
+		   return databaseGrahicsStats;
+	}
+
+	protected void getdatabasePropertiesDisplayTab(TreeItem<String> loadedDatabaseName,	Tab databaseDetailsPropertiesTab) {
+		
+		VBox databasePropertiesVBox = new VBox();
+		databasePropertiesVBox.setSpacing(5);
+		databasePropertiesVBox.setPadding(new Insets(10,0,0,80));
+		
+		GridPane databasePropertiesGridPane = new GridPane();
+		databasePropertiesGridPane.setPadding(new Insets(10,0,0,0));
+		databasePropertiesGridPane.setVgap(10);
+		databasePropertiesGridPane.setHgap(50);
+		
+		
+		Label defaultCharSetLabel = new Label("Default Character Set : "+"" );
+		defaultCharSetLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		GridPane.setConstraints(defaultCharSetLabel, 0, 0);   // column 0 row 0
+		
+		Label defaultCollationLabel = new Label("Default Collation Set : "+"" );
+		defaultCollationLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		GridPane.setConstraints(defaultCollationLabel, 1, 0);   // column 0 row 0
+		
+		Label defaultSqlPathLabel = new Label("Sql Path : "+"" );
+		defaultSqlPathLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		GridPane.setConstraints(defaultSqlPathLabel, 2, 0);   // column 0 row 0
+		
+		Label defaultEncrytptionLabel = new Label("Default Encryption : "+"" );
+		defaultEncrytptionLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		GridPane.setConstraints(defaultEncrytptionLabel, 3, 0);   // column 0 row 0
+
+		
+		ArrayList<InformationSchemaSizes> informationSchemaSizesList = getAllSchemaSizesinDatabase();
+		getSchemaDefaultProperties(loadedDatabaseName.getValue(),defaultCharSetLabel,defaultCollationLabel,defaultSqlPathLabel,defaultEncrytptionLabel);
+
+		ArrayList<InformationSchemaTable> tableDetailsInformationSchemaList = getSchemaTablesFromInformationSchema(loadedDatabaseName.getValue());
+		
+		Label totalDiskUsageLabel = new Label("Disk Usage : "+getSchemaDiskUsage(tableDetailsInformationSchemaList)+" MB");
+		totalDiskUsageLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		GridPane.setConstraints(totalDiskUsageLabel, 0, 1);   // column 0 row 0
+
+		String totalTables = String.valueOf( tableDetailsInformationSchemaList.size());
+		String totalViews = getSchemaViewsCount(loadedDatabaseName.getValue());
+		String totalIndexes = getSchemaIndexesCount(loadedDatabaseName.getValue());
+		String totalProcedures = getSchemaProceduresCount(loadedDatabaseName.getValue());
+		String totalFunctions = getSchemaFunctionsCount(loadedDatabaseName.getValue());
+		String totalTriggers = getSchemaTriggersCount(loadedDatabaseName.getValue());
+		String totalEvents = getSchemaEventsCount(loadedDatabaseName.getValue());
+		
+		String schemaPropertiesNames [] = {"Total Tables","Total Views","Total Indexdes","Total Procedures","Total Functions","Total Triggers","Total Events"};
+		String schemaPropertiesValues[] = {totalTables,totalViews,totalIndexes,totalProcedures,totalFunctions,totalTriggers,totalEvents};
+		
+		
+		Label totalTabelsLabel = new Label(schemaPropertiesNames[0]+" : "+totalTables);
+		totalTabelsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		GridPane.setConstraints(totalTabelsLabel, 1, 1);   // column 0 row 0
+	
+		Label totalViewsLabel = new Label(schemaPropertiesNames[1]+" : "+totalViews);
+		totalViewsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		GridPane.setConstraints(totalViewsLabel, 2, 1);   // column 0 row 0
+	
+		Label totalIndexesLabel = new Label(schemaPropertiesNames[2]+" : "+totalIndexes);
+		totalIndexesLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		GridPane.setConstraints(totalIndexesLabel, 3, 1);   // column 0 row 0
+		
+		Label totalProceduresLabel = new Label(schemaPropertiesNames[3]+" Procedures : "+totalProcedures);
+		totalProceduresLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		GridPane.setConstraints(totalProceduresLabel, 0, 2);   // column 0 row 0
+		
+		Label totalFunctionsLabel = new Label(schemaPropertiesNames[4]+" : "+totalFunctions);
+		totalFunctionsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		GridPane.setConstraints(totalFunctionsLabel, 1, 2);   // column 0 row 0
+		
+		Label totalTriggersLabel = new Label(schemaPropertiesNames[5]+" : "+totalTriggers);
+		totalTriggersLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		GridPane.setConstraints(totalTriggersLabel, 2, 2);   // column 0 row 0
+		
+		Label totalEventsLabel = new Label(schemaPropertiesNames[6]+" : "+totalEvents);
+		totalEventsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		GridPane.setConstraints(totalEventsLabel, 3, 2);   // column 0 row 0
+
+		
+		databasePropertiesGridPane.getChildren().addAll(defaultCharSetLabel,defaultCollationLabel,defaultSqlPathLabel,defaultEncrytptionLabel,totalDiskUsageLabel,totalTabelsLabel,totalViewsLabel,totalIndexesLabel,totalProceduresLabel
+				,totalFunctionsLabel,totalTriggersLabel,totalEventsLabel);
+		
+		HBox databasePropertiesSchemaChartHbox = new HBox();
+		databasePropertiesSchemaChartHbox.setSpacing(5);
+
+		VBox pieOrBarChartVBox = new VBox();
+		pieOrBarChartVBox.setSpacing(5);
+		
+		PieChart pieChartSchemaSizes = new PieChart();
+		pieChartSchemaSizes.setTitle("Database size relative to other databases");
+		PieChart.Data slice ;
+		pieChartSchemaSizes.setMinWidth(400);
+		
+		CategoryAxis xAxis    = new CategoryAxis();
+	    xAxis.setLabel("Databases");
+	    NumberAxis yAxis = new NumberAxis();
+	    yAxis.setLabel("Size (MB)");
+	     
+	     BarChart barChartScemaSizes = new BarChart(xAxis, yAxis);
+	     barChartScemaSizes.setTitle("Database size relative to other databases");
+	     barChartScemaSizes.setTitleSide(Side.TOP);
+	     barChartScemaSizes.setBarGap(2);
+	     barChartScemaSizes.setCategoryGap(15);
+	     barChartScemaSizes.setHorizontalGridLinesVisible(false);
+	     barChartScemaSizes.setVerticalGridLinesVisible(false);
+	     
+	     XYChart.Series dataSeries1 = new XYChart.Series();
+	     dataSeries1.setName("Disk Size");
+	     int counter = 0;
+	     
+	     InformationSchemaSizes informationSchemaSizes = new InformationSchemaSizes();
+	     informationSchemaSizes.setSchemaName(loadedDatabaseName.getValue());
+	     System.out.println("Schema position ---->"+informationSchemaSizesList.indexOf(informationSchemaSizes));
+	     int currentSchemaIndex = informationSchemaSizesList.indexOf(informationSchemaSizes);
+	     
+	     if(currentSchemaIndex-2 >= 0) {
+	    	 dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex-2).getSchemaName(),Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-2).getDiskSize())/1024/1024 ));
+	    	 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex-2).getSchemaName(), Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-2).getDiskSize())/1024/1024 ));
+	     }
+	     if(currentSchemaIndex-1 >= 0) {
+	    	 dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex-1).getSchemaName(),Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-1).getDiskSize())/1024/1024 ));
+	    	 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex-1).getSchemaName(), Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-1).getDiskSize())/1024/1024 ));
+	     }
+		 dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex-0).getSchemaName(),Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-0).getDiskSize())/1024/1024 ));
+		 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex-0).getSchemaName(), Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-0).getDiskSize())/1024/1024 ));
+		 
+		 if(currentSchemaIndex+1 <= informationSchemaSizesList.size()) {
+			 dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex+1).getSchemaName(),Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+1).getDiskSize())/1024/1024 ));
+			 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex+1).getSchemaName(), Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+1).getDiskSize())/1024/1024 ));
+		 }
+		 if(currentSchemaIndex+2 <= informationSchemaSizesList.size()) {
+			 dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex+2).getSchemaName(),Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+2).getDiskSize())/1024/1024 ));
+			 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex+2).getSchemaName(), Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+2).getDiskSize())/1024/1024 ));
+		 }
+	     barChartScemaSizes.setMinWidth(400);
+	     barChartScemaSizes.getData().addAll(dataSeries1);
+	    
+		Collections.sort(tableDetailsInformationSchemaList, (obj1, obj2) -> {
+			  InformationSchemaTable a = (InformationSchemaTable) obj1;
+			  InformationSchemaTable b = (InformationSchemaTable) obj2;
+			  
+			  Integer aSize =  Integer.valueOf(a.getDataLength()) + Integer.valueOf(a.getIndexLength());
+			  Integer bSize =  Integer.valueOf(b.getDataLength()) + Integer.valueOf(b.getIndexLength());
+			  
+			  if ( aSize > bSize ) return -1;
+			  if (aSize < bSize) return 1;
+			  return 0;
+		});
+		
+		VBox tableSizesBarChartVBox = new VBox();
+		tableSizesBarChartVBox.setSpacing(5);
+		
+		 CategoryAxis xAxis1    = new CategoryAxis();
+	     xAxis1.setLabel("Tables");
+	     NumberAxis yAxis1 = new NumberAxis();
+	     yAxis1.setLabel("Size (MB)");
+	     
+	     BarChart   barChart = new BarChart(xAxis1, yAxis1);
+	     barChart.setTitle("Top five tables by disk space");
+	     barChart.setTitleSide(Side.TOP);
+	     barChart.setBarGap(2);
+	     barChart.setCategoryGap(15);
+	     barChart.setHorizontalGridLinesVisible(false);
+	     barChart.setVerticalGridLinesVisible(false);
+	     
+	     dataSeries1 = new XYChart.Series();
+	     XYChart.Series dataSeries2 = new XYChart.Series();
+	     XYChart.Series dataSeries3 = new XYChart.Series();
+	     dataSeries1.setName("Index Size");
+	     dataSeries2.setName("Data Size");
+	     dataSeries3.setName("Total Size");
+	     counter = 0;
+	     for(InformationSchemaTable tableValues : tableDetailsInformationSchemaList) {
+	    	
+	    	 XYChart.Data xyChartData = new XYChart.Data(tableValues.getTable_name(),(Double.valueOf(tableValues.getDataLength()) + Double.valueOf(tableValues.getIndexLength()))/1024/1024 );
+	    	 dataSeries1.getData().add(new XYChart.Data(tableValues.getTable_name(),Double.valueOf(tableValues.getIndexLength())/1024/1024 ));
+	    	 dataSeries2.getData().add(new XYChart.Data(tableValues.getTable_name(),(Double.valueOf(tableValues.getDataLength()))/1024/1024 ));
+	    	 dataSeries3.getData().add(new XYChart.Data(tableValues.getTable_name(),(Double.valueOf(tableValues.getDataLength()) + Double.valueOf(tableValues.getIndexLength()))/1024/1024 ));
+	    	 counter++;
+	    	 if(counter >= 5) break;
+		}
+	     
+	    barChart.setMinWidth(400);
+	    barChart.getData().addAll(dataSeries1,dataSeries2,dataSeries3);
+	    
+	    HBox moreChartshbox = new HBox();
+	    moreChartshbox.setPadding( new Insets(0,0,0,400));
+	    Button moreChartsButton = new Button("More Charts");
+	    moreChartsButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				((TabPane) menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getContent()).getSelectionModel().select(2);
+			}
+		});
+	    moreChartshbox.getChildren().add(moreChartsButton);
+	    
+	    Button  showBarGraphButton =  new Button("Bar Graph");
+	    pieOrBarChartVBox.getChildren().addAll(pieChartSchemaSizes,showBarGraphButton);
+	    
+	    showBarGraphButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				 pieOrBarChartVBox.getChildren().clear();
+				 try {	Thread.sleep(100);	}catch(Exception e) { e.printStackTrace(); }
+				 if(showBarGraphButton.getText().equalsIgnoreCase("Bar Graph")) {
+				 	showBarGraphButton.setText("Pie Graph");
+				 	pieOrBarChartVBox.getChildren().addAll(barChartScemaSizes,showBarGraphButton);
+				 }
+				 else if(showBarGraphButton.getText().equalsIgnoreCase("Pie Graph")) {
+					 showBarGraphButton.setText("Bar Graph");
+					 pieOrBarChartVBox.getChildren().addAll(pieChartSchemaSizes,showBarGraphButton);
+				 }
+			}
+		});
+	    
+	    tableSizesBarChartVBox.getChildren().addAll(barChart,moreChartshbox);
+	    
+	    databasePropertiesSchemaChartHbox.getChildren().addAll(pieOrBarChartVBox,tableSizesBarChartVBox);
+		
+	    databasePropertiesVBox.getChildren().addAll(databasePropertiesGridPane,databasePropertiesSchemaChartHbox);
+		databaseDetailsPropertiesTab.setContent(databasePropertiesVBox);;
+	}
+
+	private ArrayList<InformationSchemaSizes> getAllSchemaSizesinDatabase() {
+		
+		ArrayList<InformationSchemaSizes> informationSchemaSizesList = new ArrayList<InformationSchemaSizes>();
+		InformationSchemaSizes informationSchemaSizes ;
+		try( ResultSet rsSchemaSizes = currentConnection.createStatement().executeQuery("select table_schema , sum( data_length + index_length ) as diskSize from information_schema.tables group by table_schema order by diskSize desc ")){	
+			while(rsSchemaSizes.next()) {
+				informationSchemaSizes = new InformationSchemaSizes();
+				informationSchemaSizes.setSchemaName(rsSchemaSizes.getString(1));
+				informationSchemaSizes.setDiskSize(rsSchemaSizes.getString(2));;
+				informationSchemaSizesList.add(informationSchemaSizes);
+			}
+			}catch(Exception e) {
+					e.printStackTrace();
+		}
+		
+		return informationSchemaSizesList;
+		
+	}
+
+	private void getSchemaDefaultProperties(String schemaName,Label defaultCharSetLabel, Label defaultCollationLabel,
+			Label defaultSqlPathLabel, Label defaultEncrytptionLabel) {
+		
+		String indexesCount = "0";
+		try( ResultSet rsSchemaProperties = currentConnection.createStatement().executeQuery("select default_character_set_name,default_collation_name,sql_path,default_encryption as indexCount from information_schema.schemata where schema_name = '"+schemaName+"'")){	
+			if(rsSchemaProperties.next()) {
+				defaultCharSetLabel.setText(defaultCharSetLabel.getText() + rsSchemaProperties.getString(1));
+				defaultCollationLabel.setText(defaultCollationLabel.getText() + rsSchemaProperties.getString(2));
+				defaultSqlPathLabel.setText(defaultSqlPathLabel.getText() + rsSchemaProperties.getString(3));
+				defaultEncrytptionLabel.setText(defaultEncrytptionLabel.getText() +  rsSchemaProperties.getString(4));
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private String getSchemaEventsCount(String schemaName) {	
+		String eventssCount = "0";
+		try( ResultSet rsEventsCountinSchema = currentConnection.createStatement().executeQuery("select count(*) as eventsCount from information_schema.events where event_schema = '"+schemaName+"'")){	
+			if(rsEventsCountinSchema.next()) {
+				eventssCount = rsEventsCountinSchema.getString(1);
+				System.out.println("Total Procedures in "+schemaName+" : " +rsEventsCountinSchema.getString(1));		
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return eventssCount;	
+	}
+
+	private String getSchemaTriggersCount(String schemaName) {
+		
+		String triggersCount = "0";
+		try( ResultSet rsTriggerssCountinSchema = currentConnection.createStatement().executeQuery("select count(*) as triggersCount from information_schema.triggers where trigger_Schema = '"+schemaName+"'")){	
+			if(rsTriggerssCountinSchema.next()) {
+				triggersCount = rsTriggerssCountinSchema.getString(1);
+				System.out.println("Total Procedures in "+schemaName+" : " +rsTriggerssCountinSchema.getString(1));		
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return triggersCount;		
+
+	}
+	
+	private String getSchemaFunctionsCount(String schemaName) {
+		
+		String functionsCount = "0";
+		try( ResultSet rsFunctionsCountinSchema = currentConnection.createStatement().executeQuery("select count(*) as functionsCount from information_schema.routines where  routine_type != 'PROCEDURE' and  routine_schema = '"+schemaName+"'")){	
+			if(rsFunctionsCountinSchema.next()) {
+				functionsCount = rsFunctionsCountinSchema.getString(1);
+				System.out.println("Total Procedures in "+schemaName+" : " +rsFunctionsCountinSchema.getString(1));		
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return functionsCount;		
+	}
+
+	private String getSchemaProceduresCount(String schemaName) {
+		
+		String proceduresCount = "0";
+		try( ResultSet rsProcedureCountinSchema = currentConnection.createStatement().executeQuery("select count(*) as procedureCount from information_schema.routines where  routine_type != 'FUNCTION' and  routine_schema = '"+schemaName+"'")){	
+			if(rsProcedureCountinSchema.next()) {
+				proceduresCount = rsProcedureCountinSchema.getString(1);
+				System.out.println("Total Procedures in "+schemaName+" : " +rsProcedureCountinSchema.getString(1));		
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return proceduresCount;		
+				
+	}
+
+	private String getSchemaIndexesCount(String schemaName) {
+		
+		String indexesCount = "0";
+		try( ResultSet rsIndexesCountinSchema = currentConnection.createStatement().executeQuery("select count(*) as indexCount from information_schema.statistics where table_schema = '"+schemaName+"'")){	
+			if(rsIndexesCountinSchema.next()) {
+				indexesCount = rsIndexesCountinSchema.getString(1);
+				System.out.println("Total Indexes in "+schemaName+" : " +rsIndexesCountinSchema.getString(1));		
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return indexesCount;
+	}
+
+	private String getSchemaViewsCount(String schemaName) {
+		
+		String viewsCount = "0";
+		try( ResultSet rsViewsCountinSchema = currentConnection.createStatement().executeQuery("select count(*) as viewsCount from information_schema.views where table_schema = '"+schemaName+"'")){
+			
+			if(rsViewsCountinSchema.next()) {
+				viewsCount = rsViewsCountinSchema.getString(1);
+				System.out.println("Total Views in "+schemaName+" : " +rsViewsCountinSchema.getString(1));		
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return viewsCount;
+	}
+
+	private ArrayList<InformationSchemaTable> getSchemaTablesFromInformationSchema(String schemaName) {
+		
+		ArrayList<InformationSchemaTable> tableDetailsInformationSchemaList = new ArrayList<InformationSchemaTable>(); 
+		InformationSchemaTable informationSchemaTable ;
+		try( ResultSet rsTablesInformationSchema = currentConnection.createStatement().executeQuery("select table_name,engine,version,table_rows,"
+				+ "avg_row_length,data_length,max_data_length,index_length,data_free,auto_increment from information_schema.tables where table_schema = '"+schemaName+"' and table_type = 'BASE TABLE'")){
+			
+			while(rsTablesInformationSchema.next()) {
+				informationSchemaTable = new InformationSchemaTable();
+				informationSchemaTable.setTable_name(rsTablesInformationSchema.getString(1));
+				informationSchemaTable.setEngine(rsTablesInformationSchema.getString(2));
+				informationSchemaTable.setEngineVersion(rsTablesInformationSchema.getString(3));
+				informationSchemaTable.setTableRows(rsTablesInformationSchema.getString(4));
+				informationSchemaTable.setAvgRowLength(rsTablesInformationSchema.getString(5));
+				informationSchemaTable.setDataLength(rsTablesInformationSchema.getString(6));		
+				informationSchemaTable.setMaxDataLength(rsTablesInformationSchema.getString(7));
+				informationSchemaTable.setIndexLength(rsTablesInformationSchema.getString(8));
+				informationSchemaTable.setDataFree(rsTablesInformationSchema.getString(9));
+				informationSchemaTable.setAutoIncrement(rsTablesInformationSchema.getString(10));	
+				tableDetailsInformationSchemaList.add(informationSchemaTable);
+			}
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return tableDetailsInformationSchemaList;
+	}
+	private Double getSchemaDiskUsage(ArrayList<InformationSchemaTable> tableDetailsInformationSchemaList) {
+	    
+		Double totalDiskSize = 0d;
+		for(InformationSchemaTable informationSchematable : tableDetailsInformationSchemaList) {
+			
+			totalDiskSize = totalDiskSize + Double.valueOf(informationSchematable.getDataLength()) + Double.valueOf(informationSchematable.getIndexLength()) ;
+		}
+		
+		if(totalDiskSize != 0)
+			return totalDiskSize/1024/1024;
+		else
+			return totalDiskSize;
+	}
+
 	private void getdatabaseEventsDisplayTab(TreeItem<String> loadedDatabaseName, Tab databaseDetailsEventsTab) {
 		System.out.println("Events Tab selected ");
-		  	try {		  
-			  ResultSet rs = stmt.executeQuery("select  event_name,definer,event_type,interval_value,interval_field,starts,created,last_altered,last_executed from information_Schema.events where event_schema ='"+loadedDatabaseName.getValue()+"'");
-			  
+		  	try(ResultSet rs =  currentConnection.createStatement() .executeQuery("select  event_name,definer,event_type,interval_value,interval_field,starts,created,last_altered,last_executed from information_Schema.events where event_schema ='"+loadedDatabaseName.getValue()+"'");) 
+		  	{		  
+			    
 			  SplitPane eventsDetailsSplitPane = new SplitPane();
 			  eventsDetailsSplitPane.setOrientation(Orientation.VERTICAL);
 			  eventsDetailsSplitPane.setDividerPositions(0.75); 
@@ -6819,6 +6609,7 @@ public class MySqlUI {
 	}
 	 
 }
+
 
 class EditingCell extends TableCell<Map, String> {
 	 
@@ -6888,4 +6679,124 @@ class EditingCell extends TableCell<Map, String> {
     
 }
 
+class InformationSchemaTable {
+	
+	private String table_name;
+	private String engine;
+	private String engineVersion;
+	private String tableRows;
+	private String avgRowLength;
+	private String dataLength;
+	private String maxDataLength;
+	private String indexLength;
+	private String dataFree;
+	private String autoIncrement;
+	
+	public String getTable_name() {
+		return table_name;
+	}
+	public void setTable_name(String table_name) {
+		this.table_name = table_name;
+	}
+	public String getEngine() {
+		return engine;
+	}
+	public void setEngine(String engine) {
+		this.engine = engine;
+	}
+	public String getEngineVersion() {
+		return engineVersion;
+	}
+	public void setEngineVersion(String engineVersion) {
+		this.engineVersion = engineVersion;
+	}
+	public String getTableRows() {
+		return tableRows;
+	}
+	public void setTableRows(String tableRows) {
+		this.tableRows = tableRows;
+	}
+	public String getAvgRowLength() {
+		return avgRowLength;
+	}
+	public void setAvgRowLength(String avgRowLength) {
+		this.avgRowLength = avgRowLength;
+	}
+	public String getDataLength() {
+		return dataLength;
+	}
+	public void setDataLength(String dataLength) {
+		this.dataLength = dataLength;
+	}
+	public String getMaxDataLength() {
+		return maxDataLength;
+	}
+	public void setMaxDataLength(String maxDataLength) {
+		this.maxDataLength = maxDataLength;
+	}
+	public String getIndexLength() {
+		return indexLength;
+	}
+	public void setIndexLength(String indexLength) {
+		this.indexLength = indexLength;
+	}
+	public String getDataFree() {
+		return dataFree;
+	}
+	public void setDataFree(String dataFree) {
+		this.dataFree = dataFree;
+	}
+	public String getAutoIncrement() {
+		return autoIncrement;
+	}
+	public void setAutoIncrement(String autoIncrement) {
+		this.autoIncrement = autoIncrement;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		
+		if( ((InformationSchemaTable)obj).table_name.equals(this.table_name) ) {
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.table_name.length();
+	}
+	
+}
 
+class InformationSchemaSizes {
+	
+	private String schemaName;
+	private String diskSize;
+	public String getSchemaName() {
+		return schemaName;
+	}
+	public void setSchemaName(String schemaName) {
+		this.schemaName = schemaName;
+	}
+	public String getDiskSize() {
+		return diskSize;
+	}
+	public void setDiskSize(String diskSize) {
+		this.diskSize = diskSize;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		
+		if( ((InformationSchemaSizes)obj).schemaName.equals(this.schemaName) ) {
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.schemaName.length();
+	}
+}
