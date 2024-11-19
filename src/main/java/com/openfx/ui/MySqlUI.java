@@ -1546,7 +1546,11 @@ public class MySqlUI {
 				 if(event.getClickCount() == 2 && ( 
 						 	(parentIndex >= 2 && getTreeItem().getParent().getValue().equals("Databases") && getTreeItem().getParent().getParent(). getValue().equals(currentConnectionName))  
 						 || (parentIndex >= 3 && getTreeItem().getParent().getParent().getValue().equals("Databases") && getTreeItem().getParent().getParent().getParent().getValue().equals(currentConnectionName)) 
-						 || (parentIndex >= 4 && getTreeItem().getParent().getValue().equals("Tables") && getTreeItem().getParent().getParent().getParent().getParent().getValue().equals(currentConnectionName))
+						 || ( (parentIndex >= 4 && getTreeItem().getParent().getValue().equals("Tables") || parentIndex >= 4 && getTreeItem().getParent().getValue().equals("Views") 
+						      || parentIndex >= 4 && getTreeItem().getParent().getValue().equals("Indexes") || parentIndex >= 4 && getTreeItem().getParent().getValue().equals("Procedures")
+						      || parentIndex >= 4 && getTreeItem().getParent().getValue().equals("Functions") || parentIndex >= 4 && getTreeItem().getParent().getValue().equals("Triggers")
+						      || parentIndex >= 4 && getTreeItem().getParent().getValue().equals("Events")) 
+						 && getTreeItem().getParent().getParent().getParent().getParent().getValue().equals(currentConnectionName))
 						 ) 
 					)
 				 {
@@ -2936,8 +2940,25 @@ public class MySqlUI {
 		particularTableDataTab.setClosable(false);
 		Tab particularTableERDiagramTab = new Tab("ER Diagram");
 		particularTableERDiagramTab.setClosable(false);
+		
 		Tab particularTableGraphVisualsTab = new Tab("Graph Visuals");
 		particularTableGraphVisualsTab.setClosable(false);
+		SplitPane graphVisualsForParticularTableMainSplitPane = new SplitPane();
+		graphVisualsForParticularTableMainSplitPane.setMinWidth(100);
+		graphVisualsForParticularTableMainSplitPane.setMaxWidth(300);
+		graphVisualsForParticularTableMainSplitPane.setOrientation(Orientation.HORIZONTAL);
+	    graphVisualsForParticularTableMainSplitPane.setDividerPositions(0.5);
+		
+	    
+	    SplitPane graphVisualsForParticularTableMainSplitPaneLeftHalfPane = new SplitPane();
+	    graphVisualsForParticularTableMainSplitPaneLeftHalfPane.setOrientation(Orientation.VERTICAL);
+	    graphVisualsForParticularTableMainSplitPaneLeftHalfPane.setDividerPositions(0.5);
+		
+	    
+	    graphVisualsForParticularTableMainSplitPane.getItems().add(graphVisualsForParticularTableMainSplitPaneLeftHalfPane);
+		graphVisualsForParticularTableMainSplitPane.getItems().add(new HBox());
+		particularTableGraphVisualsTab.setContent(graphVisualsForParticularTableMainSplitPane);
+		
 		Tab particularTableAiPromptTab = new Tab("AI Prompt");
 		particularTableAiPromptTab.setClosable(false);
 		particularTableMainTabVBox.getChildren().addAll(particularTableTabPane)	;
@@ -3061,13 +3082,55 @@ public class MySqlUI {
 				particularTablereferencesTab,particularTabletriggersTab,particularTableindexesTab,particularTablepartitionsTab,particularTableDDLTab);
 		particularTablePropertiesTab.setContent(particularTablePropertiesTabbedPane);
 		
-		// Data
-		particularTableDataTab.setContent(new TableView());
+		// Individual Tabs selected under the main table tab
+		particularTableTabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+			@Override
+			public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
+				
+				System.out.println("Tab under Table Selected is "+newValue.getText());
+				
+				if(newValue.getText().equals("Data")) {
+					System.out.println("Data Tab under Table selected");
+					// Data
+					particularTableDataTab.setContent(new TableView());
+					
+				}
+				
+				if(newValue.getText().equals("Graph Visuals")) {
+					System.out.println("Graph Visual Tab under Table selected");
+					//particularTableGraphVisualsTab.setContent(getGraphVisualsForParticulatTable(tableName));
+				}
+			}
+			
+		});
 		
-		
+				
 		particularTableMainTab.setContent(particularTableMainTabVBox);
 		
 		return particularTableMainTab;
+	}
+
+	protected SplitPane getGraphVisualsForParticulatTable(String tableName) {
+		
+		VBox graphVisualsForParticularTableVBox = new VBox();
+		graphVisualsForParticularTableVBox.setSpacing(10);
+		graphVisualsForParticularTableVBox.setPadding(new Insets(10,0,0,5));
+		
+		SplitPane graphVisualsForParticularTableMainSplitPane = new SplitPane();
+		graphVisualsForParticularTableMainSplitPane.setOrientation(Orientation.VERTICAL);
+		graphVisualsForParticularTableMainSplitPane.setDividerPositions(0.6);
+		
+		HBox hbox = new HBox();
+		hbox.setMinSize(300, 300);
+		hbox.getChildren().add(new Label("Thsiasdasd asd asd asd asdasda"));
+		graphVisualsForParticularTableMainSplitPane.getItems().addAll(hbox);
+		
+		
+		
+		graphVisualsForParticularTableVBox.getChildren().add(graphVisualsForParticularTableMainSplitPane);
+		
+		return graphVisualsForParticularTableMainSplitPane;
+		
 	}
 
 	private Tab getParticularTableSourceDDLTab(String tableName,String databaseName,Tab particularTableDDLTab) {
@@ -3286,7 +3349,7 @@ public class MySqlUI {
 				VBox particularTableDetailsVBox = new VBox();
 				particularTableDetailsVBox.setSpacing(10);
 				particularTableDetailsVBox.setPadding(new Insets(2,2,2,2));
-				particularTableDetailsVBox.setPadding(new Insets(20,10,10,200));
+				particularTableDetailsVBox.setPadding(new Insets(20,10,10,50));
 				
 				GridPane tableDetailGridPane = new GridPane();
 				tableDetailGridPane.setVgap(8);
@@ -3298,8 +3361,15 @@ public class MySqlUI {
 				String labelNameValue[] = {"ENGINE","VERSION","TABLE_ROWS","AUTO_INCREMENT","DATA_LENGTH","INDEX_LENGTH","MAX_DATA_LENGTH","AVG_ROW_LENGTH","ROW_FORMAT","DATA_FREE","UPDATE_TIME","CREATE_TIME",
 						"TABLE_COLLATION","CREATE_OPTIONS","TABLE_COMMENT"};
 				
+				Double tableSize = 0d;
 				
 				for(int i =0;i<lableName.length;i++) {
+					if(lableName[i].equals("Data Length:")) {
+						tableSize = tableSize + rsTable.getInt(labelNameValue[i]);
+					}
+					if(lableName[i].equals("Index Length:")) {
+						tableSize = tableSize + rsTable.getInt(labelNameValue[i]);
+					}
 					Label labelName = new Label(lableName[i]);
 					GridPane.setConstraints(labelName, 0, i);   // column 0 row 0
 					Label labelNameValueLabel= new Label(rsTable.getString(labelNameValue[i]));
@@ -3309,7 +3379,32 @@ public class MySqlUI {
 					tableDetailGridPane.getChildren().addAll(labelName,labelNameValueLabel);
 				}
 				
-						particularTableDetailsVBox.getChildren().add(tableDetailGridPane);
+				ArrayList<InformationSchemaTable> tableDetailsInformationSchemaList = getSchemaTablesFromInformationSchema(databaseName);
+				Double totalDiskUsage = getSchemaDiskUsage(tableDetailsInformationSchemaList);
+				tableSize =  tableSize/1024/1024;
+				System.out.println("Schema Size:"+totalDiskUsage);
+				System.out.println("Table Zise :"+tableSize);
+				
+				Label tableSizeLabelName = new Label("Table Size :");
+				GridPane.setConstraints(tableSizeLabelName, 0, lableName.length);   // column 0 row 0
+				Label tableSizeLabelNameValue= new Label(tableSize+" MB / "+totalDiskUsage+" MB");
+				tableSizeLabelNameValue.setFont(Font.font("System Regular", FontWeight.BOLD, 12));
+				GridPane.setConstraints(tableSizeLabelNameValue, 1, lableName.length);
+				tableDetailGridPane.getChildren().addAll(tableSizeLabelName,tableSizeLabelNameValue);
+				
+				HBox tablesDetailAndGraphHBox = new HBox();
+				tablesDetailAndGraphHBox.setSpacing(10);
+				
+				PieChart tableDetailsPieChart = new PieChart();
+				tableDetailsPieChart.setTitle("Table Size of "+tableSize +" MB in Schema Size of "+totalDiskUsage+" MB");
+				PieChart.Data slice ;
+				tableDetailsPieChart.setMinWidth(300);
+				
+				tableDetailsPieChart.getData().add(new PieChart.Data(tableName,tableSize));
+				tableDetailsPieChart.getData().add(new PieChart.Data("Other Tables", totalDiskUsage - tableSize));
+				
+				tablesDetailAndGraphHBox.getChildren().addAll(tableDetailGridPane,tableDetailsPieChart);
+				particularTableDetailsVBox.getChildren().add(tablesDetailAndGraphHBox);
 				particularTabledetailsTab.setContent(particularTableDetailsVBox);
 				
 			}
