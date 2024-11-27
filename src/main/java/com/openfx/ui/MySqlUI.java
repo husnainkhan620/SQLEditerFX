@@ -2118,7 +2118,8 @@ public class MySqlUI {
 				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Users and Privileges") && getTreeItem().getParent().getValue().equals("Administration")) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
 						Platform.runLater(new Runnable() {
-							  @Override
+							 
+							@Override
 							  public void run() { 
 							    try  {	
 							    	
@@ -2142,7 +2143,8 @@ public class MySqlUI {
 									TableView resultAsTableView =  showResultSetInTheTableView(rsUsers);
 									// Can move this to invidual invocations as each call of this will ha`ve custom usage based on selection 
 									resultAsTableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
-									
+												
+									//	private Labeled userAccessSchemaDescriptionLabel;
 
 										@Override
 										public void changed(ObservableValue<? extends HashMap<String, String>> observable,
@@ -2154,20 +2156,20 @@ public class MySqlUI {
 												
 												System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
 											}
-											
-											
+																						
 											TableViewSelectionModel  selectionModel = resultAsTableView.getSelectionModel();
 									        ObservableList selectedCells = selectionModel.getSelectedCells();
 									        TablePosition tablePosition = (TablePosition) selectedCells.get(0);
 									        Object val = tablePosition.getTableColumn().getCellData(newValue);
 									        System.out.println("Selected Value" + val);
-											
-									        try {							        	
-									        										        	
+																		        	
+									        	try {		
+									        		
 												ResultSet rsfullUserDetails = stmt.executeQuery("select * from mysql.user where user='"+newValue.get("User")+"' and host = '"+newValue.get("Host")+"'");
 												
 												System.out.println("select * from mysql.user where user='"+newValue.get("User")+"' and host = '"+newValue.get("Host")+"'");
 												if(rsfullUserDetails.next()) {
+													//userAccessSchemaDescriptionLabel.setText("The user "+rsfullUserDetails.getString(newValue.get("User"))+"@"+rsfullUserDetails.getString(newValue.get("Host"))+" will have the following access rights to the schema "+rsfullUserDetails.getString(newValue.get("Schema")));
 													
 													// Setting the login details below  
 													accountLockedStatus.setText( rsfullUserDetails.getString("account_locked"));
@@ -2259,7 +2261,8 @@ public class MySqlUI {
 										        }
 										        if(!schemaPreviligestableView.getItems().isEmpty()) {
 										        	schemaPreviligestableView.getSelectionModel().select(0);
-										        	
+										       
+										        	schemaValueHolder = ((HashMap) schemaPreviligestableView.getSelectionModel().getSelectedItem()).get("Schema").toString();
 										        	String availablePriviliges = ((HashMap) schemaPreviligestableView.getSelectionModel().getSelectedItem()).get("Privileges").toString();
 										        	System.out.println( "<--------->" +availablePriviliges);
 										        	
@@ -2334,10 +2337,24 @@ public class MySqlUI {
 									VBox vBoxCenterTop = new VBox();
 									vBoxCenterTop.setPadding(new Insets(5,5,5,5));
 									vBoxCenterTop.setSpacing(5);
-									Label detailForAccountLabel =  new Label("Details for Account - xxxx");
+									Label detailForAccountLabel =  new Label();
 									//detailForAccountLabel.setTextFill(Color.BLUEVIOLET);
+									resultAsTableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
+										
+										@Override
+										public void changed(ObservableValue<? extends HashMap<String, String>> observable,
+												HashMap<String, String> oldValue, HashMap<String, String> newValue) {
+
+											System.out.println("oldValue --->"+oldValue);
+											System.out.println("newValue --->"+newValue.keySet().toString());
+											for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
+												
+												System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
+											}
+											detailForAccountLabel.setText("Details for Account -"+newValue.get("User"));
+										}
+									});
 									vBoxCenterTop.getChildren().add(detailForAccountLabel);
-									
 									TabPane accountDetailsTabs = new TabPane();
 									accountDetailsTabs.getStyleClass().addAll("databasesflowPane");  // box for the connection tabbed pane
 									Tab loginTab = new Tab("Login");
@@ -2351,7 +2368,7 @@ public class MySqlUI {
 									accountPrivilegesTab.setContent(addAccountPrivileges());
 									Tab schemaPrivilegesTab = new Tab("Schema Privileges");
 									schemaPrivilegesTab.setClosable(false);
-									schemaPrivilegesTab.setContent(addSchemaPrivileges());
+									schemaPrivilegesTab.setContent(addSchemaPrivileges(resultAsTableView,schemaPreviligestableView));
 									
 									accountDetailsTabs.getTabs().addAll(loginTab,accountLimitsTab,accountPrivilegesTab,schemaPrivilegesTab);
 									vBoxCenterTop.getChildren().add(accountDetailsTabs);
@@ -3086,24 +3103,37 @@ public class MySqlUI {
 		particularTableTabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
 			@Override
 			public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
-				
+
 				System.out.println("Tab under Table Selected is "+newValue.getText());
-				
+
 				if(newValue.getText().equals("Data")) {
 					System.out.println("Data Tab under Table selected");
-					// Data
-					particularTableDataTab.setContent(new TableView());
-					
+					try {
+						ResultSet rsTableData = stmt.executeQuery("SELECT * FROM " + databaseName + "." + tableName);
+						System.out.println(("SELECT * FROM " + databaseName + "." + tableName));
+												
+						VBox particularTableDataTabVBox = new VBox();
+						particularTableDataTabVBox.setSpacing(10);
+						particularTableDataTabVBox.setPadding(new Insets(2,2,2,2));
+						TableView particularTableDatapartitionsView = showResultSetInTheTableView(rsTableData); 
+						HBox particularTableDatapartitionsButtonsHBox = new HBox();
+						particularTableDatapartitionsButtonsHBox.setPadding(new Insets(10,10,10,10));
+						particularTableDatapartitionsButtonsHBox.getChildren().add(new Button("Create"));
+						particularTableDataTabVBox.getChildren().addAll(particularTableDatapartitionsView,particularTableDatapartitionsButtonsHBox);
+						particularTableDataTab.setContent(particularTableDataTabVBox);
+						//particularTableDataTab.setContent(new TableView());
+					}catch(SQLException e) {
+						e.printStackTrace();
+					}		
 				}
-				
 				if(newValue.getText().equals("Graph Visuals")) {
 					System.out.println("Graph Visual Tab under Table selected");
-					//particularTableGraphVisualsTab.setContent(getGraphVisualsForParticulatTable(tableName));
+					particularTableGraphVisualsTab.setContent(getGraphVisualsForParticulatTable(tableName));
 				}
 			}
-			
+
 		});
-		
+
 				
 		particularTableMainTab.setContent(particularTableMainTabVBox);
 		
@@ -3577,9 +3607,37 @@ public class MySqlUI {
 				}
 			}
 		});
-		// Data
-		particularTableDataTab.setContent(new TableView());
-		
+		//Data
+		particularViewTabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+			@Override
+			public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
+
+				System.out.println("Tab under Table Selected is "+newValue.getText());
+
+				if(newValue.getText().equals("Data")) {
+					System.out.println("Data Tab under Table selected");
+					try {
+						ResultSet rsTableData = stmt.executeQuery("SELECT * FROM " + databaseName + "." + viewName);
+						System.out.println("SELECT * FROM " + databaseName + "." + viewName);
+												
+						VBox particularViewDataTabVBox = new VBox();
+						particularViewDataTabVBox.setSpacing(10);
+						particularViewDataTabVBox.setPadding(new Insets(2,2,2,2));
+						TableView particularViewDatapartitionsView = showResultSetInTheTableView(rsTableData); 
+						HBox particularViewDatapartitionsButtonsHBox = new HBox();
+						particularViewDatapartitionsButtonsHBox.setPadding(new Insets(10,10,10,10));
+						particularViewDatapartitionsButtonsHBox.getChildren().add(new Button("Create"));
+						particularViewDataTabVBox.getChildren().addAll(particularViewDatapartitionsView,particularViewDatapartitionsButtonsHBox);
+						particularTableDataTab.setContent(particularViewDataTabVBox);
+						//particularTableDataTab.setContent(new TableView());
+					}catch(SQLException e) {
+						e.printStackTrace();
+					}		
+				}
+				
+			}
+
+		});	
 		
 		particularViewMainTab.setContent(particularViewMainTabVBox);
 		
@@ -4250,51 +4308,45 @@ public class MySqlUI {
 	}
 	
 	
-	private Tab getParticularEventDetailsTab(String eventName,String databaseName,Tab particularEventsdetailsTab) {
+	private Tab getParticularEventDetailsTab(String eventName, String databaseName, Tab particularEventsdetailsTab) {
+	    try {
+	        System.out.println("Event Name " + eventName);
+	        String query = "SELECT event_name, event_schema, event_type, event_body, interval_value,interval_field, starts, ends, definer FROM information_schema.events WHERE event_schema = '" + databaseName + "' AND event_name = '" + eventName + "'";
+			  System.out.println("SELECT event_name, event_schema, event_type, event_body, interval_value,interval_field, starts, ends, definer FROM information_schema.events WHERE event_schema = '" + databaseName + "' AND event_name = '" + eventName + "'");			   
+	        ResultSet rsTable = stmt.executeQuery(query);
 
-		try {	
-			System.out.println("Event name "+eventName);
-	
-			System.out.println("select event_name,event_Schema,event_type,event_body,interval_value,interval_field,starts,ends, definer from information_Schema.events where event_Schema= '"+databaseName+"'");
-			ResultSet rsTable = stmt.executeQuery("select event_name,event_Schema,event_type,event_body,interval_value,interval_field,starts,ends, definer from information_Schema.events where event_Schema = '"+databaseName+"'");
-			
-			try {
-				Thread.sleep(1000);			
-			}catch(Exception e) {
-				e.printStackTrace();
-			}
-			String lableName[] = {"Event Name:","Event Schema:","Event Type:","Event Body:","Interval Value:","Interval Field:","Starts:",",Ends:","definer:"};
-			String labelNameValue[] = {"event_name","event_schema","event_type","event_body","interval_value","interval_field","starts",",ends","definer","action_reference_new_table","definer"};
-			
-			while(rsTable.next()) {
-			
-				VBox particularEventDetailsVBox = new VBox();
-				particularEventDetailsVBox.setSpacing(10);
-				particularEventDetailsVBox.setPadding(new Insets(2,2,2,2));
-				particularEventDetailsVBox.setPadding(new Insets(20,10,10,200));
-				
-				GridPane eventDetailGridPane = new GridPane();
-				eventDetailGridPane.setVgap(8);
-				eventDetailGridPane.setHgap(10);
-				
-				for(int i =0;i<lableName.length;i++) {
-					Label labelName = new Label(lableName[i]);
-					GridPane.setConstraints(labelName, 0, i);   // column 0 row 0
-					Label labelNameValueLabel= new Label(rsTable.getString(labelNameValue[i]));
-					labelNameValueLabel.setFont(Font.font("System Regular", FontWeight.BOLD, 12));
-					GridPane.setConstraints(labelNameValueLabel, 1, i);
-					
-					eventDetailGridPane.getChildren().addAll(labelName,labelNameValueLabel);
-				}
-				particularEventDetailsVBox.getChildren().add(eventDetailGridPane);
-				particularEventsdetailsTab.setContent(particularEventDetailsVBox);
-			}	
-		}catch(SQLException e) {
-			e.printStackTrace();
-		}		
-		return particularEventsdetailsTab;
+	        String labelName[] = {"Event Name:", "Event Schema:", "Event Type:", "Event Body:","Interval Value:", "Interval Field:", "Starts:", "Ends:", "Definer:"};
+	      
+	        String labelNameValue[] = {"event_name", "event_schema", "event_type", "event_body","interval_value", "interval_field", "starts", "ends", "definer"};
+	        
+	        while (rsTable.next()) {
+	            VBox particularEventDetailsVBox = new VBox();
+	            particularEventDetailsVBox .setSpacing(10);
+	            particularEventDetailsVBox .setPadding(new Insets(20, 10, 10, 200));
+
+	            GridPane eventDetailGridPane = new GridPane();
+	            eventDetailGridPane.setVgap(8);
+	            eventDetailGridPane.setHgap(10);
+
+	            for (int i = 0; i < labelName.length; i++) {
+	                Label label = new Label(labelName[i]);
+	                GridPane.setConstraints(label, 0, i);
+
+	                Label labelNameValueLabel = new Label(rsTable.getString(labelNameValue[i]));
+	                labelNameValueLabel.setFont(Font.font("System Regular", FontWeight.BOLD, 12));
+	                GridPane.setConstraints(labelNameValueLabel, 1, i);
+
+	                eventDetailGridPane.getChildren().addAll(label, labelNameValueLabel);
+	            }
+
+	            particularEventDetailsVBox .getChildren().add(eventDetailGridPane);
+	            particularEventsdetailsTab.setContent(particularEventDetailsVBox );
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return particularEventsdetailsTab;
 	}
-	
 	
 	private Tab getParticularEventSourceDDLTab(String eventsName,String databaseName,Tab particularEventDDLTab) {
 		try {
@@ -4333,7 +4385,8 @@ public class MySqlUI {
 		particularEventsTabPane.setTabMinWidth(180);
 		particularEventsTabPane.setTabMinHeight(30);
 		Tab particularTablePropertiesTab = new Tab("Properties");
-		particularEventsMainTabVBox.getChildren().addAll(particularEventsTabPane);
+		particularTablePropertiesTab.setClosable(false);	
+		particularEventsMainTabVBox.getChildren().addAll(particularEventsTabPane)	;
 		
 		// Properties
 		TabPane particularEventsPropertiesTabbedPane = new TabPane();
@@ -4351,15 +4404,14 @@ public class MySqlUI {
 		l.setRotate(90);
 		StackPane stp = new StackPane(new Group(l));
 		particularEventsdetailsTab.setGraphic(stp);
+		particularEventsdetailsTab = getParticularEventDetailsTab(eventsName, databaseName,particularEventsdetailsTab);
 		
-		particularEventsdetailsTab= getParticularEventDetailsTab(eventsName,databaseName,particularEventsdetailsTab);
-//		
 //		VBox particularTableDetailsVBox = new VBox();
 //		particularTableDetailsVBox.setSpacing(30);
 //		particularTableDetailsVBox.setPadding(new Insets(10,10,10,10));
 //		particularTableDetailsVBox.setMinHeight(menu_Items_FX.size.getWidth()-300);
 //		particularEventsdetailsTab.setContent(particularTableDetailsVBox);
-//	
+	
 	
 		// event_defination from the information_Schema.events will have this information.
 		Tab particularEventsDDLTab = new Tab();
@@ -4372,7 +4424,7 @@ public class MySqlUI {
 		particularEventsDDLTabVBox.setSpacing(10);
 		particularEventsDDLTabVBox.setPadding(new Insets(2,2,2,2));
 		TextArea particularEventsDDLTextArea = new TextArea("");
-//		particularEventsDDLTextArea.setMinHeight(menu_Items_FX.size.getHeight()-280);
+		particularEventsDDLTextArea.setMinHeight(menu_Items_FX.size.getHeight()-280);
 		particularEventsDDLTextArea.setEditable(false);		
 		particularEventsDDLTabVBox.getChildren().addAll(particularEventsDDLTextArea);
 		particularEventsDDLTab.setContent(particularEventsDDLTabVBox);
@@ -4385,10 +4437,7 @@ public class MySqlUI {
 			@Override
 			public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
 				System.out.println("Tab swithced"+ ((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText());
-//				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Procedure Parameters")) {
-//					particularTriggersColumnsView.getItems().clear();
-//					getParticularProceduresParametersTab(triggersName,databaseName,particularTriggerscolumnsTab);
-//				}
+
 				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Source/DDL")) {
 					getParticularEventSourceDDLTab(eventsName,databaseName,particularEventsDDLTab);
 				}
@@ -4401,6 +4450,7 @@ public class MySqlUI {
 		
 		return particularEventsMainTab;
 	}
+	
 	
 	private HBox addBottomHBoxForVariables() {
 
@@ -5057,20 +5107,38 @@ public class MySqlUI {
 	}
 	
 	private TableView schemaPreviligestableView;
+	private  Label userAccessSchemaDescriptionLabel;
+	private String schemaValueHolder;
 	private String[] schemaPriviligesColumnNames = {"Schema","Privileges"};
 	private ObservableList<HashMap<String,String>> schemaPriviligesMapdata =
             FXCollections.observableArrayList();
 
-	public VBox addSchemaPrivileges() {
+	public VBox addSchemaPrivileges(TableView resultAsTableView,TableView rsAvailableSchemaPrivileges) {
+		
 		
 		VBox schemaPrivilegesVbox = new VBox();
 		schemaPrivilegesVbox.setSpacing(5);
 		schemaPrivilegesVbox.setPadding(new Insets(5,10,00,20));
 		
-		Label selectSchemaDescription = new Label("Select the Schema/s for which the user 'khan' will have the previleges you want to define");
+		Label selectSchemaDescription = new Label();
 		//selectSchemaDescription.setFont(new Font(12));
+		resultAsTableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
+			
+			@Override
+			public void changed(ObservableValue<? extends HashMap<String, String>> observable,
+					HashMap<String, String> oldValue, HashMap<String, String> newValue) {
+
+				System.out.println("oldValue --->"+oldValue);
+				System.out.println("newValue --->"+newValue.keySet().toString());
+				for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
+					
+					System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
+				}
+				selectSchemaDescription.setText("Select the Schema/s for which the user "+newValue.get("User")+" will have the previleges you want to define");
+			}
+		});
 		selectSchemaDescription.setTextFill(Color.BLUEVIOLET);
-		schemaPrivilegesVbox.getChildren().add(selectSchemaDescription);	
+		schemaPrivilegesVbox.getChildren().add(selectSchemaDescription);
 		final ToggleGroup group = new ToggleGroup();
 		
 		GridPane schemaPrivilegesGridPane = new GridPane();
@@ -5148,8 +5216,10 @@ public class MySqlUI {
 
 				System.out.println("oldValue --->"+oldValue);
 				System.out.println("newValue --->"+newValue);
+
 				if(newValue != null) {
 					String availablePriviliges = newValue.get("Privileges").toString();
+					schemaValueHolder =newValue.get("Schema").toString();
 		        	System.out.println( "<--------->" +availablePriviliges);
 					// setting the addSchemaPriviliges below
 					selectSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("SELECT"));
@@ -5173,6 +5243,7 @@ public class MySqlUI {
 					grantOptionSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("GRANT OPTION"));
 					createTemporaryTablesSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("CREATE TEMPORARY TABLES")); 
 					lockTablesSchemaPrivilegeCheckBox.setSelected(availablePriviliges.contains("LOCK TABLES"));
+					//userAccessSchemaDescriptionLabel.setText("The use "+ newValue.get("User")+"@"+newValue.get("Host")+" will have the following access rights to the schema 'mysql'");
 				}
 				
 			}	
@@ -5199,13 +5270,33 @@ public class MySqlUI {
         HBox userAccessSchemaDescriptionHbox= new HBox();
         userAccessSchemaDescriptionHbox.setPadding(new Insets(5,5,5,5));
         userAccessSchemaDescriptionHbox.setSpacing(50);
-        Label userAccessSchemaDescriptionLabel = new Label("The use 'khan'@'localhost' will have the following access rights to the schema 'mysql'");
+        userAccessSchemaDescriptionLabel = new Label();
+        resultAsTableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
+
+		
+
+			@Override
+			public void changed(ObservableValue<? extends HashMap<String, String>> observable,
+					HashMap<String, String> oldValue, HashMap<String, String> newValue) {
+
+				System.out.println("oldValue --->"+oldValue);
+				System.out.println("newValue --->"+newValue);
+				for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
+					
+					System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
+				}
+				
+				userAccessSchemaDescriptionLabel.setText("The user "+newValue.get("User")+"@"+newValue.get("Host")+" will have the following access rights to the schema "+schemaValueHolder);
+			}
+			
+		});
+        //userAccessSchemaDescriptionLabel.setText("The use "+ newValue.get("User")+"@"+newValue.get("Host")+" will have the following access rights to the schema"+newValue.get("Schema"));
         selectSchemaDescription.setTextFill(Color.BLUEVIOLET);
      	Button deleteSchemaPrivilegesEntryButton = new Button("Delete Schema Entry");
      	deleteSchemaPrivilegesEntryButton.setDisable(true);  // enable it when one of the schema entry is selected
         userAccessSchemaDescriptionHbox.getChildren().addAll(userAccessSchemaDescriptionLabel,deleteSchemaPrivilegesEntryButton);
         
-        
+       
         HBox userAccessSchemaPriviligeshBox = new HBox();
         userAccessSchemaPriviligeshBox.setSpacing(10);		
         
