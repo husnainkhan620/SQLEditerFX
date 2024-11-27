@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,16 +40,16 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.chart.XYChart.Data;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Labeled;
-import javafx.scene.control.Pagination;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.SingleSelectionModel;
+import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -117,6 +118,8 @@ public class MySqlUI {
 	public Button exportPerformanceButton = new Button("Export");
 	public Button performanceCopySelected = new Button("Copy Selected");
 	
+ 	DecimalFormat decimalFormat = new DecimalFormat("#.##");
+ 	
 	public Button performanceCopyQuery = new Button("Copy Query");
     public Clipboard clipboard = Clipboard.getSystemClipboard();
     public ClipboardContent clipBoardcontent = new ClipboardContent();
@@ -1849,61 +1852,8 @@ public class MySqlUI {
 										}
 									});
 									
-									PieChart pieChart = new PieChart();
-
-								    PieChart.Data slice1 = new PieChart.Data("Desktop", 213);
-								    PieChart.Data slice2 = new PieChart.Data("Phone"  , 67);
-								    PieChart.Data slice3 = new PieChart.Data("Tablet" , 36);
-
-								    pieChart.getData().add(slice1);
-								    pieChart.getData().add(slice2);
-								    pieChart.getData().add(slice3);
-								    
-								    
-								    
-								    NumberAxis xAxis = new NumberAxis();
-							        xAxis.setLabel("No of employees");
-
-							        NumberAxis yAxis = new NumberAxis();
-							        yAxis.setLabel("Revenue per employee");
-
-							        LineChart lineChart = new LineChart(xAxis, yAxis);
-
-							        XYChart.Series dataSeries1 = new XYChart.Series();
-							        dataSeries1.setName("2014");
-
-							        dataSeries1.getData().add(new XYChart.Data( 1, 567));
-							        dataSeries1.getData().add(new XYChart.Data( 5, 612));
-							        dataSeries1.getData().add(new XYChart.Data(10, 800));
-							        dataSeries1.getData().add(new XYChart.Data(20, 480));
-							        dataSeries1.getData().add(new XYChart.Data(40, 810));
-							        dataSeries1.getData().add(new XYChart.Data(60, 110));
-							        dataSeries1.getData().add(new XYChart.Data(80, 850));
-
-							        lineChart.getData().add(dataSeries1);
-							        
-							        CategoryAxis xAxis1    = new CategoryAxis();
-							        xAxis.setLabel("Tables");
-
-							        NumberAxis yAxis1 = new NumberAxis();
-							        yAxis.setLabel("Size");
-
-							        BarChart   barChart = new BarChart(xAxis1, yAxis1);
-
-							        XYChart.Series dataSeries2 = new XYChart.Series();
-							        dataSeries1.setName("2014");
-
-							        dataSeries2.getData().add(new XYChart.Data("Desktop", 567));
-							        dataSeries2.getData().add(new XYChart.Data("Phone"  , 65));
-							        dataSeries2.getData().add(new XYChart.Data("Tablet"  , 23));
-
-							        barChart.getData().add(dataSeries2);
-							        
-								    VBox piechartvbox = new VBox();
-								    piechartvbox.setSpacing(10);
-								    piechartvbox.getChildren().addAll(pieChart,lineChart);
-								    
-								    sessionManagerTab.setContent(piechartvbox);
+									getDashBoardStats(null,sessionManagerTab,"showPieGraph");
+								  
 									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
 
 							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
@@ -2960,21 +2910,7 @@ public class MySqlUI {
 		
 		Tab particularTableGraphVisualsTab = new Tab("Graph Visuals");
 		particularTableGraphVisualsTab.setClosable(false);
-		SplitPane graphVisualsForParticularTableMainSplitPane = new SplitPane();
-		graphVisualsForParticularTableMainSplitPane.setMinWidth(100);
-		graphVisualsForParticularTableMainSplitPane.setMaxWidth(300);
-		graphVisualsForParticularTableMainSplitPane.setOrientation(Orientation.HORIZONTAL);
-	    graphVisualsForParticularTableMainSplitPane.setDividerPositions(0.5);
 		
-	    
-	    SplitPane graphVisualsForParticularTableMainSplitPaneLeftHalfPane = new SplitPane();
-	    graphVisualsForParticularTableMainSplitPaneLeftHalfPane.setOrientation(Orientation.VERTICAL);
-	    graphVisualsForParticularTableMainSplitPaneLeftHalfPane.setDividerPositions(0.5);
-		
-	    
-	    graphVisualsForParticularTableMainSplitPane.getItems().add(graphVisualsForParticularTableMainSplitPaneLeftHalfPane);
-		graphVisualsForParticularTableMainSplitPane.getItems().add(new HBox());
-		particularTableGraphVisualsTab.setContent(graphVisualsForParticularTableMainSplitPane);
 		
 		Tab particularTableAiPromptTab = new Tab("AI Prompt");
 		particularTableAiPromptTab.setClosable(false);
@@ -3128,7 +3064,11 @@ public class MySqlUI {
 				}
 				if(newValue.getText().equals("Graph Visuals")) {
 					System.out.println("Graph Visual Tab under Table selected");
+<<<<<<< Updated upstream
 					particularTableGraphVisualsTab.setContent(getGraphVisualsForParticulatTable(tableName));
+=======
+					particularTableGraphVisualsTab.setContent(getGraphVisualsForParticulatTable(tableName,databaseName));
+>>>>>>> Stashed changes
 				}
 			}
 
@@ -3140,27 +3080,90 @@ public class MySqlUI {
 		return particularTableMainTab;
 	}
 
-	protected SplitPane getGraphVisualsForParticulatTable(String tableName) {
-		
-		VBox graphVisualsForParticularTableVBox = new VBox();
-		graphVisualsForParticularTableVBox.setSpacing(10);
-		graphVisualsForParticularTableVBox.setPadding(new Insets(10,0,0,5));
+	protected SplitPane getGraphVisualsForParticulatTable(String tableName,String databaseName) {
 		
 		SplitPane graphVisualsForParticularTableMainSplitPane = new SplitPane();
-		graphVisualsForParticularTableMainSplitPane.setOrientation(Orientation.VERTICAL);
-		graphVisualsForParticularTableMainSplitPane.setDividerPositions(0.6);
+		//graphVisualsForParticularTableMainSplitPane.setMinWidth(300);
+		//graphVisualsForParticularTableMainSplitPane.setMaxWidth(350);
+		graphVisualsForParticularTableMainSplitPane.setOrientation(Orientation.HORIZONTAL);
+	    graphVisualsForParticularTableMainSplitPane.setDividerPositions(0.5);
 		
-		HBox hbox = new HBox();
-		hbox.setMinSize(300, 300);
-		hbox.getChildren().add(new Label("Thsiasdasd asd asd asd asdasda"));
-		graphVisualsForParticularTableMainSplitPane.getItems().addAll(hbox);
+	    
+	    SplitPane graphVisualsForParticularTableMainSplitPaneLeftHalfPane = new SplitPane();
+	    graphVisualsForParticularTableMainSplitPaneLeftHalfPane.setMinWidth(250);
+	    graphVisualsForParticularTableMainSplitPaneLeftHalfPane.setMaxWidth(350);
+	    graphVisualsForParticularTableMainSplitPaneLeftHalfPane.setOrientation(Orientation.VERTICAL);
+	    graphVisualsForParticularTableMainSplitPaneLeftHalfPane.setDividerPositions(0.5);
+	    
+	    CategoryAxis xAxis1    = new CategoryAxis();
+	    xAxis1.setLabel("Tables");
+	    NumberAxis yAxis1 = new NumberAxis();
+	    yAxis1.setLabel("Size (MB)");
+	     
+	    
+	    BarChart   barChart = new BarChart(xAxis1, yAxis1);
+	    barChart.setTitle("Table disk Usage");
+	    barChart.setTitleSide(Side.TOP);
+	    barChart.setBarGap(2);
+	    barChart.setCategoryGap(15);
+	    barChart.setHorizontalGridLinesVisible(true);
+	    barChart.setVerticalGridLinesVisible(true);
+	     
+	    XYChart.Series dataSeries1 = new XYChart.Series();
+	    XYChart.Series dataSeries2 = new XYChart.Series();
+	    XYChart.Series dataSeries3 = new XYChart.Series();
+	    dataSeries1.setName("Index Size");
+	    dataSeries2.setName("Data Size");
+	    dataSeries3.setName("Total Size");
+	    
+	    String indexLength = "0";
+	    String dataLength = "0";
+	    try {
+			ResultSet rsTable = stmt.executeQuery("select DATA_LENGTH,INDEX_LENGTH from information_schema.tables where table_schema = '"+ databaseName +"' and table_name= '"+tableName+"'");
+			
+			if(rsTable.next()) {
+				dataLength = rsTable.getString(1);
+				indexLength = rsTable.getString(2);
+			}
+	    }catch(Exception e) {
+	    	e.printStackTrace();;
+	    }
+	  
+	    dataSeries1.getData().add(new XYChart.Data(tableName,get2digitDoublePrecisionValue( Double.valueOf(indexLength)/1024/1024 )));
+	    dataSeries2.getData().add(new XYChart.Data(tableName,get2digitDoublePrecisionValue( (Double.valueOf(dataLength))/1024/1024 )));
+	    dataSeries3.getData().add(new XYChart.Data(tableName,get2digitDoublePrecisionValue((Double.valueOf(indexLength) + Double.valueOf(dataLength))/1024/1024 )));
+	    barChart.getData().addAll(dataSeries1,dataSeries2,dataSeries3);
+	    
+	    for (final  XYChart.Series series : (ObservableList<XYChart.Series>) barChart.getData()) {
+	         for (final XYChart.Data<String, Double> data : ( ObservableList<XYChart.Data<String, Double>>)series.getData()) {
+	             Tooltip tooltip = new Tooltip();
+	             tooltip.setText(data.getXValue().toString() +" "+ 
+	                          data.getYValue().toString());
+	             Tooltip.install(data.getNode(), tooltip);
+	         }
+	     }
+	    
+	    Double tableSize = get2digitDoublePrecisionValue( (Double.valueOf(indexLength) + Double.valueOf(dataLength))/1024/1024);
+		ArrayList<InformationSchemaTable> tableDetailsInformationSchemaList = getSchemaTablesFromInformationSchema(databaseName);
+		Double totalDiskUsage = getSchemaDiskUsage(tableDetailsInformationSchemaList);
+		System.out.println("Schema Size zz:"+totalDiskUsage);
+		System.out.println("Table Zise zz:"+tableSize);
 		
+	    PieChart tableDetailsPieChart = new PieChart();
+		tableDetailsPieChart.setTitle("Table usage : "+ tableSize +" MB / "+totalDiskUsage+" MB");
+		PieChart.Data slice ;
+		tableDetailsPieChart.setMinWidth(300);
 		
+		tableDetailsPieChart.getData().add(new PieChart.Data(tableName +" "+(tableSize) + " MB",(tableSize)));
+		tableDetailsPieChart.getData().add(new PieChart.Data("Other Tables"+" "+(totalDiskUsage - tableSize) + " MB", totalDiskUsage - tableSize)
+				);
 		
-		graphVisualsForParticularTableVBox.getChildren().add(graphVisualsForParticularTableMainSplitPane);
-		
+	    graphVisualsForParticularTableMainSplitPaneLeftHalfPane.getItems().add(barChart);
+	    graphVisualsForParticularTableMainSplitPaneLeftHalfPane.getItems().add(tableDetailsPieChart);
+	    
+	    graphVisualsForParticularTableMainSplitPane.getItems().add(graphVisualsForParticularTableMainSplitPaneLeftHalfPane);
+		graphVisualsForParticularTableMainSplitPane.getItems().add(new HBox());
 		return graphVisualsForParticularTableMainSplitPane;
-		
 	}
 
 	private Tab getParticularTableSourceDDLTab(String tableName,String databaseName,Tab particularTableDDLTab) {
@@ -3426,12 +3429,12 @@ public class MySqlUI {
 				tablesDetailAndGraphHBox.setSpacing(10);
 				
 				PieChart tableDetailsPieChart = new PieChart();
-				tableDetailsPieChart.setTitle("Table Size of "+tableSize +" MB in Schema Size of "+totalDiskUsage+" MB");
+				tableDetailsPieChart.setTitle("Table Size of "+get2digitDoublePrecisionValue( tableSize) +" MB in Schema Size of "+totalDiskUsage+" MB");
 				PieChart.Data slice ;
 				tableDetailsPieChart.setMinWidth(300);
 				
-				tableDetailsPieChart.getData().add(new PieChart.Data(tableName,tableSize));
-				tableDetailsPieChart.getData().add(new PieChart.Data("Other Tables", totalDiskUsage - tableSize));
+				tableDetailsPieChart.getData().add(new PieChart.Data(tableName + " "+ get2digitDoublePrecisionValue(tableSize)+" MB",tableSize));
+				tableDetailsPieChart.getData().add(new PieChart.Data("Other Tables"+ " "+ get2digitDoublePrecisionValue(totalDiskUsage - tableSize)+" MB", totalDiskUsage - tableSize));
 				
 				tablesDetailAndGraphHBox.getChildren().addAll(tableDetailGridPane,tableDetailsPieChart);
 				particularTableDetailsVBox.getChildren().add(tablesDetailAndGraphHBox);
@@ -6311,7 +6314,7 @@ public class MySqlUI {
 			System.out.println("Selected tab under Scehama ---->"+newValue.getText());
 			
 			if(newValue.getText().equals("Graphics Stats")) {
-				getSchemaGraphicsStats(loadedDatabaseName,databaseGrahicsStats);
+			//	getSchemaGraphicsStats(loadedDatabaseName,databaseGrahicsStats);
 			}
 		}
 	   });
@@ -6321,31 +6324,201 @@ public class MySqlUI {
        return mainDatabaseTab;
 	}
 
-	
-	protected Tab getSchemaGraphicsStats(TreeItem<String> loadedDatabaseName,Tab databaseGrahicsStats) {
+	private Integer currentSchemaIndex;
+	private Button dashBoardPieBarButton;
+	protected Tab getDashBoardStats(TreeItem<String> loadedDatabaseName,Tab databaseGrahicsStats,String showGraphType) {
 		   VBox vbox = new VBox();
-		   vbox.setPadding(new Insets(10,0,0,50));
-		   
+		   vbox.setPadding(new Insets(10,0,0,10));
 		   ArrayList<InformationSchemaSizes> informationSchemaSizesList = getAllSchemaSizesinDatabase();
-			
-
-		   ArrayList<InformationSchemaTable> tableDetailsInformationSchemaList = getSchemaTablesFromInformationSchema(loadedDatabaseName.getValue());
-			
-			PieChart pieChartSchemaSizes = new PieChart();
-			pieChartSchemaSizes.setTitle("Database size relative to other databases");
-			PieChart.Data slice ;
-			pieChartSchemaSizes.setMinWidth(400);
-			
-			for(InformationSchemaSizes informationSchemaSizes : informationSchemaSizesList) {
-			
-				pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizes.getSchemaName(), Double.valueOf(informationSchemaSizes.getDiskSize())/1024/1024 ));
-			}
-		   vbox.getChildren().add(pieChartSchemaSizes);
-		   databaseGrahicsStats.setContent(vbox);
 		
+		   // Schema Size relative to other 
+		   PieChart pieChartSchemaSizes = new PieChart();
+		   pieChartSchemaSizes.setTitle("TOP SCHEMAS BY SIZES IN MB");
+		   PieChart.Data slice ;
+		   pieChartSchemaSizes.setPrefSize(menu_Items_FX.size.getSize().getWidth()-300,menu_Items_FX.size.getSize().getHeight()-300);
+		   currentSchemaIndex=0;
+		   if(loadedDatabaseName != null) {  // this will be null in case of Performance Schema click
+			   InformationSchemaSizes informationSchemaSizes = new InformationSchemaSizes();
+			   informationSchemaSizes.setSchemaName(loadedDatabaseName.getValue());
+			   System.out.println("Schema position ---->"+informationSchemaSizesList.indexOf(informationSchemaSizes));
+			   currentSchemaIndex = informationSchemaSizesList.indexOf(informationSchemaSizes);
+		   }
+		   
+		   getDashBoardPieChart(informationSchemaSizesList, pieChartSchemaSizes,currentSchemaIndex);
+		
+		   CategoryAxis xAxis    = new CategoryAxis();
+		   xAxis.setLabel("Databases");
+		   NumberAxis yAxis = new NumberAxis();
+		   yAxis.setLabel("Size (MB)");
+		    
+		   BarChart barChartSchemaSizes = new BarChart(xAxis,yAxis);
+		   barChartSchemaSizes.setTitle("TOP SCHEMAS BY SIZES IN MB");
+		   barChartSchemaSizes.setTitleSide(Side.TOP);
+		   barChartSchemaSizes.setBarGap(5);
+		   barChartSchemaSizes.setHorizontalGridLinesVisible(false);
+		   barChartSchemaSizes.setVerticalGridLinesVisible(false);
+		   barChartSchemaSizes.setPrefWidth(informationSchemaSizesList.size()*120);
+		     
+		   getDashBoardBarChart(informationSchemaSizesList, barChartSchemaSizes,currentSchemaIndex);
+		   
+		   ScrollPane barChartScrollPane = new ScrollPane();
+		   barChartScrollPane.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
+		   barChartScrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
+		   barChartScrollPane.setPrefSize(menu_Items_FX.size.getSize().getWidth()-300, menu_Items_FX.size.getSize().getHeight()-300);
+		   barChartScrollPane.setContent(barChartSchemaSizes);
+		   
+		   int totalNumberofSchemas =  informationSchemaSizesList.size(); 
+		   
+		   Slider barChartSlider = new Slider(0, totalNumberofSchemas, currentSchemaIndex);
+		   barChartSlider.setMajorTickUnit(1);
+		   barChartSlider.setMinorTickCount(0);
+		   barChartSlider.setShowTickMarks(true);
+		   barChartSlider.setShowTickLabels(true);
+		   barChartSlider.setBlockIncrement(1);
+
+		   barChartSlider.valueProperty().addListener(new ChangeListener<Number>() {
+	            public void changed(ObservableValue<? extends Number> ov,
+	                Number old_val, Number new_val) {
+	                   System.out.println("Slider Old_Value --> "+old_val.intValue());
+	                   System.out.println("Slider New_Val --> "+   new_val.intValue());  
+	                   getDashBoardBarChart(informationSchemaSizesList, barChartSchemaSizes, new_val.intValue());
+	            }
+	        });
+		   
+		   Button peiChartRotateLEftButton = new Button("Next Schema");
+		   peiChartRotateLEftButton.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					currentSchemaIndex = currentSchemaIndex-1;
+					getDashBoardPieChart(informationSchemaSizesList, pieChartSchemaSizes,currentSchemaIndex);
+				}
+			   });  
+		   Button peiChartRotateRightButton = new Button("Previous Schema");
+			   peiChartRotateRightButton.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					currentSchemaIndex = currentSchemaIndex+1;
+					getDashBoardPieChart(informationSchemaSizesList, pieChartSchemaSizes,currentSchemaIndex);
+				}
+		  });
+			   
+		   HBox pieBarGraphHBox = new HBox(); 
+		   pieBarGraphHBox.getChildren().add(pieChartSchemaSizes);
+		   HBox hBoxButtons = new HBox();
+		   hBoxButtons.setSpacing(20);
+		   hBoxButtons.setPadding(new Insets(0,10,0,50));
+		   dashBoardPieBarButton = new Button("Bar Graph");
+		   hBoxButtons.getChildren().addAll(dashBoardPieBarButton,peiChartRotateLEftButton,peiChartRotateRightButton);
+		   dashBoardPieBarButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				if(dashBoardPieBarButton.getText().equals("Bar Graph")) {
+					dashBoardPieBarButton.setText("Pie Graph");
+					 hBoxButtons.getChildren().clear();
+					 pieBarGraphHBox.getChildren().clear();
+					 pieBarGraphHBox.getChildren().add(barChartScrollPane);
+					 hBoxButtons.getChildren().addAll(dashBoardPieBarButton/*,barChartSlider*/);
+				}
+				else if(dashBoardPieBarButton.getText().equals("Pie Graph")) {
+					dashBoardPieBarButton.setText("Bar Graph");
+					hBoxButtons.getChildren().clear();
+					pieBarGraphHBox.getChildren().clear();
+					pieBarGraphHBox.getChildren().add(pieChartSchemaSizes);
+					hBoxButtons.getChildren().addAll(dashBoardPieBarButton,peiChartRotateLEftButton,peiChartRotateRightButton);
+				}
+			}
+		   });
+		   
+		   vbox.getChildren().add(pieBarGraphHBox);
+		   
+		   vbox.getChildren().add(hBoxButtons);
+		   databaseGrahicsStats.setContent(vbox);
 		   return databaseGrahicsStats;
 	}
 
+	private void getDashBoardPieChart(ArrayList<InformationSchemaSizes> informationSchemaSizesList, PieChart pieChartSchemaSizes,
+			int currentSchemaIndex) {
+		
+		  pieChartSchemaSizes.getData().clear();
+		   if(currentSchemaIndex-4 >= 0) {
+		    	 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex-4).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-4).getDiskSize())/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-4).getDiskSize())/1024/1024 )));
+		   }
+		   if(currentSchemaIndex-3 >= 0) {
+		    	 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex-3).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-3).getDiskSize())/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-3).getDiskSize())/1024/1024 )));
+		   }
+		   if(currentSchemaIndex-2 >= 0) {
+		    	 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex-2).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-2).getDiskSize())/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-2).getDiskSize())/1024/1024 )));
+		   }
+		   if(currentSchemaIndex-1 >= 0) {
+		    	 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex-1).getSchemaName() +" "+get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-1).getDiskSize())/1024/1024)  + " MB", get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-1).getDiskSize())/1024/1024 )));
+		   }
+		   pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex-0).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-0).getDiskSize())/1024/1024 ) + " MB",get2digitDoublePrecisionValue( Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-0).getDiskSize())/1024/1024 )));
+			 
+		   if(currentSchemaIndex+1 <= informationSchemaSizesList.size()-1) {
+				 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex+1).getSchemaName() +" "+get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+1).getDiskSize())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+1).getDiskSize())/1024/1024 )));
+		   }
+		   if(currentSchemaIndex+2 <= informationSchemaSizesList.size()-1) {
+				 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex+2).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+2).getDiskSize())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+2).getDiskSize())/1024/1024 )));
+		   }
+		   if(currentSchemaIndex+3 <= informationSchemaSizesList.size()-1) {
+				 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex+3).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+3).getDiskSize())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+3).getDiskSize())/1024/1024 )));
+		   }
+		   if(currentSchemaIndex+4 <= informationSchemaSizesList.size()-1) {
+				 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex+4).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+4).getDiskSize())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+4).getDiskSize())/1024/1024 )));
+		   }
+		   if(currentSchemaIndex+5 <= informationSchemaSizesList.size()-1) {
+				 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex+5).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+5).getDiskSize())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+5).getDiskSize())/1024/1024 )));
+		   }
+	}
+
+
+	private void getDashBoardBarChart(ArrayList<InformationSchemaSizes> informationSchemaSizesList, BarChart barChartSchemaSizes,
+			int currentSchemaIndex) {
+		
+		 barChartSchemaSizes.getData().clear();
+		
+		 XYChart.Series dataSeries1 = new XYChart.Series();
+	     dataSeries1.setName("Disk Size");
+	     
+	     for(int i=0;i<informationSchemaSizesList.size();i++) {
+	    	  dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(i).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(i).getDiskSize())/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(informationSchemaSizesList.get(i).getDiskSize())/1024/1024 )));
+	     }
+	       /*
+		   if(currentSchemaIndex-4 >= 0) { 
+		    	 dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex-4).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-4).getDiskSize())/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-4).getDiskSize())/1024/1024 )));
+		   }
+		   if(currentSchemaIndex-3 >= 0) {
+			   dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex-3).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-3).getDiskSize())/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-3).getDiskSize())/1024/1024 )));
+		    	 
+		   }
+		   if(currentSchemaIndex-2 >= 0) {
+			   dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex-2).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-2).getDiskSize())/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-2).getDiskSize())/1024/1024 )));
+		   }
+		   if(currentSchemaIndex-1 >= 0) {
+			   dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex-1).getSchemaName() +" "+get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-1).getDiskSize())/1024/1024)  + " MB", get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-1).getDiskSize())/1024/1024 )));
+		   }
+		   dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex-0).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-0).getDiskSize())/1024/1024 ) + " MB",get2digitDoublePrecisionValue( Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-0).getDiskSize())/1024/1024 )));
+			 
+		   if(currentSchemaIndex+1 <= informationSchemaSizesList.size()-1) {
+			   dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex+1).getSchemaName() +" "+get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+1).getDiskSize())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+1).getDiskSize())/1024/1024 )));
+		   }
+		   if(currentSchemaIndex+2 <= informationSchemaSizesList.size()-1) {
+			   dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex+2).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+2).getDiskSize())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+2).getDiskSize())/1024/1024 )));
+		   }
+		   if(currentSchemaIndex+3 <= informationSchemaSizesList.size()-1) {
+			   dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex+3).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+3).getDiskSize())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+3).getDiskSize())/1024/1024 )));
+		   }
+		   if(currentSchemaIndex+4 <= informationSchemaSizesList.size()-1) {
+			   dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex+4).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+4).getDiskSize())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+4).getDiskSize())/1024/1024 )));
+		   }
+		   if(currentSchemaIndex+5 <= informationSchemaSizesList.size()-1) {
+			   dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex+5).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+5).getDiskSize())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+5).getDiskSize())/1024/1024 )));
+		   }
+		   */
+		   barChartSchemaSizes.getData().addAll(dataSeries1);
+	}
+
+	
 	protected void getdatabasePropertiesDisplayTab(TreeItem<String> loadedDatabaseName,	Tab databaseDetailsPropertiesTab) {
 		
 		VBox databasePropertiesVBox = new VBox();
@@ -6462,27 +6635,35 @@ public class MySqlUI {
 	     int currentSchemaIndex = informationSchemaSizesList.indexOf(informationSchemaSizes);
 	     
 	     if(currentSchemaIndex-2 >= 0) {
-	    	 dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex-2).getSchemaName(),Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-2).getDiskSize())/1024/1024 ));
-	    	 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex-2).getSchemaName(), Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-2).getDiskSize())/1024/1024 ));
+	    	 dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex-2).getSchemaName(),get2digitDoublePrecisionValue( Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-2).getDiskSize())/1024/1024 )));
+	    	 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex-2).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-2).getDiskSize())/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-2).getDiskSize())/1024/1024 )));
 	     }
 	     if(currentSchemaIndex-1 >= 0) {
-	    	 dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex-1).getSchemaName(),Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-1).getDiskSize())/1024/1024 ));
-	    	 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex-1).getSchemaName(), Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-1).getDiskSize())/1024/1024 ));
+	    	 dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex-1).getSchemaName(), get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-1).getDiskSize())/1024/1024 )));
+	    	 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex-1).getSchemaName() +" "+get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-1).getDiskSize())/1024/1024)  + " MB", get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-1).getDiskSize())/1024/1024 )));
 	     }
-		 dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex-0).getSchemaName(),Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-0).getDiskSize())/1024/1024 ));
-		 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex-0).getSchemaName(), Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-0).getDiskSize())/1024/1024 ));
+		 dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex-0).getSchemaName(),get2digitDoublePrecisionValue( Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-0).getDiskSize())/1024/1024 )));
+		 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex-0).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-0).getDiskSize())/1024/1024 ) + " MB",get2digitDoublePrecisionValue( Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-0).getDiskSize())/1024/1024 )));
 		 
-		 if(currentSchemaIndex+1 <= informationSchemaSizesList.size()) {
-			 dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex+1).getSchemaName(),Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+1).getDiskSize())/1024/1024 ));
-			 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex+1).getSchemaName(), Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+1).getDiskSize())/1024/1024 ));
+		 if(currentSchemaIndex+1 <= informationSchemaSizesList.size()-1) {
+			 dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex+1).getSchemaName(),get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+1).getDiskSize())/1024/1024 )));
+			 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex+1).getSchemaName() +" "+get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+1).getDiskSize())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+1).getDiskSize())/1024/1024 )));
 		 }
-		 if(currentSchemaIndex+2 <= informationSchemaSizesList.size()) {
-			 dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex+2).getSchemaName(),Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+2).getDiskSize())/1024/1024 ));
-			 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex+2).getSchemaName(), Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+2).getDiskSize())/1024/1024 ));
+		 if(currentSchemaIndex+2 <= informationSchemaSizesList.size()-1) {
+			 dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex+2).getSchemaName() ,get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+2).getDiskSize())/1024/1024 )));
+			 pieChartSchemaSizes.getData().add(new PieChart.Data(informationSchemaSizesList.get(currentSchemaIndex+2).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+2).getDiskSize())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+2).getDiskSize())/1024/1024 )));
 		 }
 	     barChartScemaSizes.setMinWidth(400);
 	     barChartScemaSizes.getData().addAll(dataSeries1);
-	    
+	     for (final  XYChart.Series series : (ObservableList<XYChart.Series>) barChartScemaSizes.getData()) {
+	         for (final XYChart.Data<String, Double> data : ( ObservableList<XYChart.Data<String, Double>>)series.getData()) {
+	             Tooltip tooltip = new Tooltip();
+	             tooltip.setText(data.getXValue().toString() +" "+ 
+	                          data.getYValue().toString());
+	             Tooltip.install(data.getNode(), tooltip);
+	         }
+	     }
+	     
 		Collections.sort(tableDetailsInformationSchemaList, (obj1, obj2) -> {
 			  InformationSchemaTable a = (InformationSchemaTable) obj1;
 			  InformationSchemaTable b = (InformationSchemaTable) obj2;
@@ -6520,17 +6701,27 @@ public class MySqlUI {
 	     counter = 0;
 	     for(InformationSchemaTable tableValues : tableDetailsInformationSchemaList) {
 	    	
-	    	 XYChart.Data xyChartData = new XYChart.Data(tableValues.getTable_name(),(Double.valueOf(tableValues.getDataLength()) + Double.valueOf(tableValues.getIndexLength()))/1024/1024 );
-	    	 dataSeries1.getData().add(new XYChart.Data(tableValues.getTable_name(),Double.valueOf(tableValues.getIndexLength())/1024/1024 ));
-	    	 dataSeries2.getData().add(new XYChart.Data(tableValues.getTable_name(),(Double.valueOf(tableValues.getDataLength()))/1024/1024 ));
-	    	 dataSeries3.getData().add(new XYChart.Data(tableValues.getTable_name(),(Double.valueOf(tableValues.getDataLength()) + Double.valueOf(tableValues.getIndexLength()))/1024/1024 ));
+	    	 dataSeries1.getData().add(new XYChart.Data(tableValues.getTable_name(),get2digitDoublePrecisionValue((Double.valueOf(tableValues.getIndexLength())/1024/1024 ))));
+	    	 dataSeries2.getData().add(new XYChart.Data(tableValues.getTable_name(),get2digitDoublePrecisionValue((Double.valueOf(tableValues.getDataLength()))/1024/1024 )));
+	    	 dataSeries3.getData().add(new XYChart.Data(tableValues.getTable_name(),get2digitDoublePrecisionValue( (Double.valueOf(tableValues.getDataLength()) + Double.valueOf(tableValues.getIndexLength()))/1024/1024 )));
 	    	 counter++;
 	    	 if(counter >= 5) break;
 		}
 	     
+
+	     
 	    barChart.setMinWidth(400);
 	    barChart.getData().addAll(dataSeries1,dataSeries2,dataSeries3);
-	    
+
+	     for (final  XYChart.Series series : (ObservableList<XYChart.Series>) barChart.getData()) {
+	         for (final XYChart.Data<String, Double> data : ( ObservableList<XYChart.Data<String, Double>>)series.getData()) {
+	             Tooltip tooltip = new Tooltip();
+	             tooltip.setText(data.getXValue().toString() +" "+ 
+	                          data.getYValue().toString());
+	             Tooltip.install(data.getNode(), tooltip);
+	         }
+	     }
+	     
 	    HBox moreChartshbox = new HBox();
 	    moreChartshbox.setPadding( new Insets(0,0,0,400));
 	    Button moreChartsButton = new Button("More Charts");
@@ -6549,7 +6740,6 @@ public class MySqlUI {
 			@Override
 			public void handle(ActionEvent event) {
 				 pieOrBarChartVBox.getChildren().clear();
-				 try {	Thread.sleep(100);	}catch(Exception e) { e.printStackTrace(); }
 				 if(showBarGraphButton.getText().equalsIgnoreCase("Bar Graph")) {
 				 	showBarGraphButton.setText("Pie Graph");
 				 	pieOrBarChartVBox.getChildren().addAll(barChartScemaSizes,showBarGraphButton);
@@ -6569,11 +6759,15 @@ public class MySqlUI {
 		databaseDetailsPropertiesTab.setContent(databasePropertiesVBox);;
 	}
 
+	private Double get2digitDoublePrecisionValue(Double inputValue) {
+		
+		return 	Double.valueOf(decimalFormat.format(inputValue));
+	}
 	private ArrayList<InformationSchemaSizes> getAllSchemaSizesinDatabase() {
 		
 		ArrayList<InformationSchemaSizes> informationSchemaSizesList = new ArrayList<InformationSchemaSizes>();
 		InformationSchemaSizes informationSchemaSizes ;
-		try( ResultSet rsSchemaSizes = currentConnection.createStatement().executeQuery("select table_schema , sum( data_length + index_length ) as diskSize from information_schema.tables group by table_schema order by diskSize desc ")){	
+		try( ResultSet rsSchemaSizes = stmt.executeQuery("select table_schema , sum( data_length + index_length ) as diskSize from information_schema.tables where table_schema not in ('information_schema','performance_schema')  group by table_schema order by diskSize desc ")){	
 			while(rsSchemaSizes.next()) {
 				informationSchemaSizes = new InformationSchemaSizes();
 				informationSchemaSizes.setSchemaName(rsSchemaSizes.getString(1));
@@ -6728,9 +6922,9 @@ public class MySqlUI {
 		}
 		
 		if(totalDiskSize != 0)
-			return totalDiskSize/1024/1024;
+			return get2digitDoublePrecisionValue(totalDiskSize/1024/1024);
 		else
-			return totalDiskSize;
+			return get2digitDoublePrecisionValue(totalDiskSize);
 	}
 
 	private void getdatabaseEventsDisplayTab(TreeItem<String> loadedDatabaseName, Tab databaseDetailsEventsTab) {

@@ -18,7 +18,12 @@ public class Main {
 			//	TableValueSample2.main(args);
 		 	
 		 	// TableSample3.main(args);
-	 
+/*
+		String tableName = "Vehicles";
+		for(int i=0;i<1000;i++) {
+			System.out.println("insert into "+ tableName +" values("+i+",'khan','Husnain','Edmonton','Alberta');");
+		}
+	*/
 	}
 
 }
