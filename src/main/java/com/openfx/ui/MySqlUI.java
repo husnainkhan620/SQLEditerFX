@@ -3064,11 +3064,7 @@ public class MySqlUI {
 				}
 				if(newValue.getText().equals("Graph Visuals")) {
 					System.out.println("Graph Visual Tab under Table selected");
-<<<<<<< Updated upstream
-					particularTableGraphVisualsTab.setContent(getGraphVisualsForParticulatTable(tableName));
-=======
 					particularTableGraphVisualsTab.setContent(getGraphVisualsForParticulatTable(tableName,databaseName));
->>>>>>> Stashed changes
 				}
 			}
 
