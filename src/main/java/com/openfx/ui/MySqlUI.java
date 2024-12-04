@@ -1599,7 +1599,7 @@ public class MySqlUI {
 									 selectedSchemaDetailsTabPane.getSelectionModel().select(6);
 								 }
 								 if( getTreeItem().getValue().equals("Events")) {
-									 selectedSchemaDetailsTabPane.getSelectionModel().select(7);
+									 selectedSchemaDetailsTabPane.getSelectionModel().select(7);  
 								 }
 								 menu_Items_FX.alltabbedEditors.getSelectionModel().select(i);
 								 return;
@@ -1752,7 +1752,8 @@ public class MySqlUI {
 							 int index = i;
 						      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
 								Platform.runLater(new Runnable() {
-									  @Override
+			
+									@Override
 									  public void run() { 
 									    try  {
 									    	ResultSet rs = stmt.executeQuery(actionTypeQuery[index]);
@@ -1765,7 +1766,7 @@ public class MySqlUI {
 									    	
 									    	secondHalfDisplayVBox = new VBox();
 											Tab mainDisplayTab = new Tab();
-											
+											mainDisplayTab.setGraphic(imagemySqlnode);
 											mainDisplayTab.setOnClosed(new EventHandler<Event>() {
 												@Override
 												public void handle(Event event) {
@@ -1807,7 +1808,7 @@ public class MySqlUI {
 											}
 											
 											mainDisplayTab.setText(getTreeItem().getValue() + connectionPlaceHolder.getConnectionName());
-											
+									
 									        mainDisplayTab.setContent(genericNode);
 											menu_Items_FX.alltabbedEditors.getTabs().add(mainDisplayTab);
 
@@ -1855,7 +1856,7 @@ public class MySqlUI {
 									getDashBoardStats(null,sessionManagerTab,"showPieGraph");
 								  
 									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
-
+									sessionManagerTab.setGraphic(imagemySqlnode);
 							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
 							        singleSelectionModel.select(sessionManagerTab);
 							        
@@ -1870,7 +1871,8 @@ public class MySqlUI {
 						 && getTreeItem().getParent().getParent().getValue().equalsIgnoreCase("Administer") ) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
 						Platform.runLater(new Runnable() {
-							  @Override
+							 
+							@Override
 							  public void run() { 
 							    try  {	
 							    	
@@ -1878,7 +1880,8 @@ public class MySqlUI {
 							    	
 							    	System.out.println("Connection Name :"+ connectionName);
 							    	
-									Tab sessionManagerTab = new Tab("Performance Reports " + connectionPlaceHolder.getConnectionName());									
+									Tab sessionManagerTab = new Tab("Performance Reports " + connectionPlaceHolder.getConnectionName());	
+									
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
 										@Override
 										public void handle(Event event) {
@@ -1937,7 +1940,7 @@ public class MySqlUI {
 									performanceReportsBorderPane.setCenter(vBoxCenterTop);
 
 									
-									
+									sessionManagerTab.setGraphic(imagemySqlnode);
 									sessionManagerTab.setContent(performanceReportsBorderPane);
 									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
 
@@ -1995,7 +1998,7 @@ public class MySqlUI {
 										}
 									});
 									
-									
+									sessionManagerTab.setGraphic(imagemySqlnode);
 									VBox serverStatusVBox = addServerStatus(allVariables,allStatus,allPlugins);
 									
 									sessionManagerTab.setContent(serverStatusVBox);
@@ -2035,7 +2038,8 @@ public class MySqlUI {
 							    	ResultSet rsThreads = stmt.executeQuery("SELECT COALESCE(th.PROCESSLIST_ID,0) as Id,COALESCE(th.PROCESSLIST_USER,'None') as User,COALESCE(th.PROCESSLIST_HOST,'None') as Host,COALESCE(th.PROCESSLIST_DB,'None') as DB,COALESCE(th.PROCESSLIST_COMMAND,'None') as Command,COALESCE(th.PROCESSLIST_TIME,0) as Time,COALESCE(th.PROCESSLIST_STATE,'None') as State,th.THREAD_ID as Thread,th.TYPE as Type,th.NAME as Name,COALESCE(th.PARENT_THREAD_ID,0) as ParentThread,th.INSTRUMENTED as Instrumented,COALESCE(th.PROCESSLIST_INFO,'None') as Info,"
 							    			+ "COALESCE(attr.ATTR_VALUE,'None') as Program FROM performance_schema.threads th  LEFT OUTER JOIN performance_schema.session_connect_attrs attr ON th.processlist_id = attr.processlist_id AND (attr.attr_name IS NULL OR attr.attr_name = 'program_name') WHERE th.TYPE <> 'BACKGROUND' ");  // 
 							    	
-									Tab sessionManagerTab = new Tab("Client Connections " + connectionPlaceHolder.getConnectionName());									
+									Tab sessionManagerTab = new Tab("Client Connections " + connectionPlaceHolder.getConnectionName());	
+									sessionManagerTab.setGraphic(imagemySqlnode);
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
 										@Override
 										public void handle(Event event) {
@@ -2079,7 +2083,8 @@ public class MySqlUI {
 							    	
 							    	System.out.println("Connection Name :"+ connectionName);
 							    	
-									Tab sessionManagerTab = new Tab("Users and Privileges " + connectionPlaceHolder.getConnectionName());									
+									Tab sessionManagerTab = new Tab("Users and Privileges " + connectionPlaceHolder.getConnectionName());	
+									sessionManagerTab.setGraphic(imagemySqlnode);
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
 										@Override
 										public void handle(Event event) {
@@ -2352,7 +2357,7 @@ public class MySqlUI {
 							    	System.out.println("Connection Name :"+ connectionName);
 							    	
 							    	BorderPane mainPopUpborderPane = new BorderPane();
-									HBox topHbox = addTopHBoxForInfo("Server Variables");
+							    	HBox topHbox = addTopHBoxForInfo("Server Variables");
 									TabPane centerTabPane = addCenterTabbedPaneForVariables();
 									HBox bottomHbox = addBottomHBoxForVariables();
 									mainPopUpborderPane.setTop(topHbox);
@@ -2360,7 +2365,8 @@ public class MySqlUI {
 								//	mainPopUpborderPane.setBottom(bottomHbox);
 									
 							    	
-									Tab sessionManagerTab = new Tab("Status and System Variables " + connectionPlaceHolder.getConnectionName());									
+									Tab sessionManagerTab = new Tab("Status and System Variables " + connectionPlaceHolder.getConnectionName());	
+									sessionManagerTab.setGraphic(imagemySqlnode);
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
 										@Override
 										public void handle(Event event) {
@@ -2554,7 +2560,7 @@ public class MySqlUI {
 	        	columnTypes[i] =  md.getColumnType(i+1);	   
 	        	
 	        	tableColumnName = new TableColumn<>(columnNames[i]);
-	        	tableColumnName.setMinWidth(150);
+	        	tableColumnName.setMinWidth(150);	
 	        	tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[i]));
 	        	// Below code will do cell editing
 	        	tableColumnName.setCellFactory( new Callback<TableColumn<Map,String>, TableCell<Map,String>>() {
@@ -2603,9 +2609,7 @@ public class MySqlUI {
 		
 		TableView tableView = new TableView();
 		tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);  // to remove the last empty column otherwise added
-		tableView.setEditable(true);
-	
-        
+		tableView.setEditable(true);	
 		tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
 
 			@Override
@@ -2727,7 +2731,7 @@ public class MySqlUI {
 	        	
 	        	tableColumnName = new TableColumn<>(columnNames[i]);
 	        	tableColumnName.setMinWidth(150);
-	        	tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[i]));
+	         	tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[i]));
 	        	// Below code will do cell editing
 	        	tableColumnName.setCellFactory( new Callback<TableColumn<Map,String>, TableCell<Map,String>>() {
 					@Override
@@ -2803,7 +2807,7 @@ public class MySqlUI {
 	private TableView showResultSetInTheTableViewDoubleClick(ResultSet rs,String sqlComponentForwhich,String databaseName)  throws SQLException{
 		
 		TableView tableView = new TableView();
-		tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);  // to remove the last empty column otherwise added
+		tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);  //to ensure columns do not resize proportionally
         
 		if(rs.next()) {
 	
@@ -2820,7 +2824,7 @@ public class MySqlUI {
 	        	columnTypes[i] =  md.getColumnType(i+1);	   
 	        	
 	        	tableColumnName = new TableColumn<>(columnNames[i]);
-	        	tableColumnName.setPrefWidth(150);
+	            tableColumnName.setPrefWidth(250);	            tableColumnName.setMinWidth(150);
 	        	tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[i]));
 	        		
 	        	tableView.setRowFactory( tv -> { 
@@ -2842,7 +2846,7 @@ public class MySqlUI {
 							     singleSelectionModel.select(particularTableTab);
 	        	            }
 	        	            if(sqlComponentForwhich.equalsIgnoreCase("Views")) {
-	        	            	 System.out.println("Pop up a new Tab for Tables from here ");
+	        	            	 System.out.println("Pop up a new Tab for Views from here ");
 	        	            	 Tab particularTableTab = particularViewDoubleClickMethod(rowData.get("TABLE_NAME").toString(),databaseName);
 	        	            	 
 	        	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
@@ -2893,7 +2897,8 @@ public class MySqlUI {
 	private Tab particularTableDoubleClickMethod(String tableName,String databaseName) {
 		
 		Tab particularTableMainTab = new Tab(tableName);
-				
+		particularTableMainTab.setGraphic(this.imagemySqlnode);
+		
 		VBox particularTableMainTabVBox = new VBox();
 		particularTableMainTabVBox.setSpacing(10);
 		particularTableMainTabVBox.getChildren().add(addTopHBoxForInfo("Table "+tableName+" for Connection "+currentConnectionName));
@@ -3265,7 +3270,7 @@ public class MySqlUI {
 			
 			System.out.println("select "+ selectedColumns +" from information_schema.referential_constraints where  referenced_table_name = '"+ tableName+"' ");
 			ResultSet rsTable = stmt.executeQuery("select "+ selectedColumns +" from information_schema.referential_constraints where  referenced_table_name = '"+ tableName+"'");
-		
+			
 			VBox particularTablereferencesTabVBox = new VBox();
 			particularTablereferencesTabVBox.setSpacing(10);
 			particularTablereferencesTabVBox.setPadding(new Insets(2,2,2,2));
@@ -3275,7 +3280,6 @@ public class MySqlUI {
 			particularTablereferencesButtonsHBox.getChildren().add(new Button("Create"));
 			particularTablereferencesTabVBox.getChildren().addAll(particularTablereferencesView,particularTablereferencesButtonsHBox);
 			particularTablereferencesTab.setContent(particularTablereferencesTabVBox);
-		
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -3526,6 +3530,7 @@ public class MySqlUI {
 	private Tab particularViewDoubleClickMethod(String viewName,String databaseName) {
 		
 		Tab particularViewMainTab = new Tab(viewName);
+		particularViewMainTab.setGraphic(this.imagemySqlnode);
 		
 		VBox particularViewMainTabVBox = new VBox();
 		particularViewMainTabVBox.setSpacing(10);
@@ -3617,8 +3622,8 @@ public class MySqlUI {
 					System.out.println("Data Tab under Table selected");
 					try {
 						ResultSet rsTableData = stmt.executeQuery("SELECT * FROM " + databaseName + "." + viewName);
-						System.out.println("SELECT * FROM " + databaseName + "." + viewName);
-												
+						System.out.println("SELECT * FROM " + databaseName + "." + viewName);									
+						
 						VBox particularViewDataTabVBox = new VBox();
 						particularViewDataTabVBox.setSpacing(10);
 						particularViewDataTabVBox.setPadding(new Insets(2,2,2,2));
@@ -3722,7 +3727,7 @@ public class MySqlUI {
 	private Tab particularIndexesDoubleClickMethod(String indexesName,String databaseName)	
 	{
 	    Tab particularIndexesMainTab = new Tab(indexesName);
-		
+	    particularIndexesMainTab.setGraphic(this.imagemySqlnode);
 		VBox particularIndexesMainTabVBox = new VBox();
 		particularIndexesMainTabVBox.setSpacing(10);
 		//clientConnectionsVBox.setPadding(new Insets(0,0,0,0));
@@ -3890,7 +3895,8 @@ public class MySqlUI {
 	
 	public Tab particularProcedureDoubleClickMethod(String proceduresName,String databaseName) {
 	    Tab particularProceduresMainTab = new Tab(proceduresName);
-		
+	    particularProceduresMainTab.setGraphic(this.imagemySqlnode);
+	    
 		VBox particularProceduresMainTabVBox = new VBox();
 		particularProceduresMainTabVBox.setSpacing(10);
 		//clientConnectionsVBox.setPadding(new Insets(0,0,0,0));
@@ -4069,6 +4075,7 @@ public class MySqlUI {
 	public Tab particularFunctionsDoubleClickMethod(String functionsName,String databaseName) {
 	    
 		Tab particularFunctionsMainTab = new Tab(functionsName);
+		particularFunctionsMainTab.setGraphic(this.imagemySqlnode);
 		
 		VBox particularFunctionsMainTabVBox = new VBox();
 		particularFunctionsMainTabVBox.setSpacing(10);
@@ -4230,6 +4237,7 @@ public class MySqlUI {
 	
 	public Tab particularTriggersDoubleClickMethod(String triggersName,String databaseName) {
 	    Tab particularTriggersMainTab = new Tab(triggersName);
+	    particularTriggersMainTab.setGraphic(this.imagemySqlnode);
 		
 		VBox particularTriggersMainTabVBox = new VBox();
 		particularTriggersMainTabVBox.setSpacing(10);
@@ -4373,6 +4381,7 @@ public class MySqlUI {
 	
 	public Tab particularEventssDoubleClickMethod(String eventsName, String databaseName) {
 		Tab particularEventsMainTab = new Tab(eventsName);
+		particularEventsMainTab.setGraphic(this.imagemySqlnode);
 		
 		VBox particularEventsMainTabVBox = new VBox();
 		particularEventsMainTabVBox.setSpacing(10);
@@ -4475,7 +4484,7 @@ public class MySqlUI {
 		 statusSystemVariablesTabpane = new TabPane();  
 		  statusSystemVariablesTabpane.setTabMinWidth(250);
 		  statusSystemVariablesTabpane.setTabMinHeight(20);
-		
+		 		  
 		  statusVariablesTab = new Tab("Status Variables");
 		  statusVariablesTab.setClosable(false);
 		  statusVariablesTab.setContent(getStatusVariables());
@@ -5856,7 +5865,7 @@ public class MySqlUI {
 
 					}	
 			  });
-			  
+			 
 			  HBox allButtonsHBox = new HBox();
 			  allButtonsHBox.setSpacing(100);
 			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
@@ -5897,7 +5906,7 @@ public class MySqlUI {
 			  SplitPane viewDetailsSplitPane = new SplitPane();
 			  viewDetailsSplitPane.setOrientation(Orientation.VERTICAL);
 			  viewDetailsSplitPane.setDividerPositions(0.75); 
-			  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Views",loadedDatabaseName.getValue());
+			  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Views",loadedDatabaseName.getValue());	 
 			  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
 					@Override
 					public void changed(ObservableValue<? extends HashMap<String, String>> observable,
@@ -6201,8 +6210,8 @@ public class MySqlUI {
 		mainDatabaseTab.setGraphic(this.imagemySqlnode);
 		
 		TabPane databaseTabPane = new TabPane();
-		databaseTabPane.setTabMinWidth(200);	
-		
+		databaseTabPane.setTabMinWidth(200);
+				
 		Tab databaseDetails = new Tab("Details");
 		databaseDetails.setClosable(false);
 		
