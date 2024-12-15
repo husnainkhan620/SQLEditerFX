@@ -17,6 +17,7 @@ import org.openjfx.fx.Menu_Items_FX;
 import com.openfx.constants.MySQLConstants;
 import com.openfx.handlers.NewMenuItemEventHandler;
 import com.openfx.placeholders.ConnectionPlaceHolder;
+import com.openfx.placeholders.ImageItemsHolder;
 
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -149,7 +150,7 @@ public class MySqlUI {
 		this.menu_Items_FX = menu_Items_FX;
 		this.newMenuItemEventHandler = newMenuItemEventHandler;
 	}
-
+    		
 	public VBox addConnectionCredentials() {
 		
 		 VBox connectionDetailsVbox = new VBox();
@@ -1474,8 +1475,7 @@ public class MySqlUI {
 		
 	}
 	
-	
-		
+			
 	// This is inner class within the main class to capture when tree elements are double clicked.
 	final class MySQLTreecellImpl extends TreeCell<String>{
 		
@@ -1531,19 +1531,22 @@ public class MySqlUI {
 				-------------
 				*/
 				 
-				 if(parentIndex >= 2 && getTreeItem().getParent().getValue().equals("Databases") && getTreeItem().getParent().getParent().getValue().equals(currentConnectionName)) {
+				 if(parentIndex >= 2  && getTreeItem().getParent().getValue().equals("Databases") && getTreeItem().getParent().getParent().getValue().equals(currentConnectionName)) {
 					 
 					 System.out.println("Schema name clicked!!!!");
-					 
+					
+					
 				 }
 				 if(parentIndex >= 3 && getTreeItem().getParent().getParent().getValue().equals("Databases") && getTreeItem().getParent().getParent().getParent().getValue().equals(currentConnectionName)) {
 					 
 					 System.out.println("Schema components name clicked!!!!");
+					
 					 
 				 }
 				 if(parentIndex >= 4 && getTreeItem().getParent().getValue().equals("Tables") && getTreeItem().getParent().getParent().getParent().getParent().getValue().equals(currentConnectionName)) {
 					 
 					 System.out.println("Schema sub components likely clicked!!!!");
+
 				 }
 				 
 				 if(event.getClickCount() == 2 && ( 
@@ -1599,7 +1602,7 @@ public class MySqlUI {
 									 selectedSchemaDetailsTabPane.getSelectionModel().select(6);
 								 }
 								 if( getTreeItem().getValue().equals("Events")) {
-									 selectedSchemaDetailsTabPane.getSelectionModel().select(7);
+									 selectedSchemaDetailsTabPane.getSelectionModel().select(7);  
 								 }
 								 menu_Items_FX.alltabbedEditors.getSelectionModel().select(i);
 								 return;
@@ -1610,10 +1613,25 @@ public class MySqlUI {
 					 // particular database is clicked
 					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Databases")) {
 							
+						 if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
+					    	  if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
+					    		  System.out.println("Current Tab opened is---> "+ menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().toString() + " and  "  + menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText());
+					    	  }
+					    	  ObservableList<Tab> existingDatabaseTabs = menu_Items_FX.alltabbedEditors.getTabs();  // sakila,EVENTS,PLUGINS,Server Logs.
+					    	  for(int i=0;i<existingDatabaseTabs.size();i++) {
+					    		  System.out.println("Existing Tab name : "+existingDatabaseTabs.get(i).getText());
+					    		  System.out.println("getTreeItem().getValue() -->"+getTreeItem().getValue() +" existingDatabaseTabs.get(i).getText().split(\"-\")[0] " + existingDatabaseTabs.get(i).getText().split("-")[0]);
+					    		  if( getTreeItem().getValue().equals(existingDatabaseTabs.get(i).getText().split("-")[0])){
+					    			  menu_Items_FX.alltabbedEditors.getSelectionModel().select(i);
+					    			  return;
+					    		  }
+					    	  }
+					      } 
 							Tab mainDatabaseTab = databaseDoubleClickMethod(getTreeItem(),"Properties");
 							menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);
 					        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
 					        singleSelectionModel.select(mainDatabaseTab);
+					        
 					        return;
 					 }
 					 // if Tables on a whole is clicked
@@ -1627,9 +1645,23 @@ public class MySqlUI {
 					 }
 					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Tables")) {
 						
+						 if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
+					    	  if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
+					    		  System.out.println("Current Tab opened is---> "+ menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().toString() + " and  "  + menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText());
+					    	  }
+					    	  ObservableList<Tab> existingTableTabs = menu_Items_FX.alltabbedEditors.getTabs();  // sakila,EVENTS,PLUGINS,Server Logs.
+					    	  for(int i=0;i<existingTableTabs.size();i++) {
+					    		  System.out.println("Existing Tab name : "+existingTabs.get(i).getText());
+					    		  System.out.println("getTreeItem().getValue() -->"+getTreeItem().getValue() +" existingTableTabs.get(i).getText().split(\"-\")[0] " + existingTableTabs.get(i).getText().split("-")[0]);
+					    		  if( getTreeItem().getValue().equals(existingTableTabs.get(i).getText().split("-")[0])){
+					    			  menu_Items_FX.alltabbedEditors.getSelectionModel().select(i);
+					    			  return;
+					    		  }
+					    	  }
+					      } 
 						 Tab particularTableTab = particularTableDoubleClickMethod(getTreeItem().getValue(),getTreeItem().getParent().getParent().getValue());    	            	 
     	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
-    	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+    	               	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
 					     singleSelectionModel.select(particularTableTab);
 					     return;
 					 }
@@ -1742,17 +1774,34 @@ public class MySqlUI {
 				 }
 				 if(event.getClickCount() == 2 && getTreeItem().getParent().getValue().equals("System Info") ) {
 					 
-					 System.out.println("System info componets like clciked!!!");
+					 System.out.println("System info components like clicked!!!");
 				 }
 					 
 				 if(event.getClickCount() == 2  &&  (getTreeItem().getParent().getValue().equals("System Info") || getTreeItem().getValue().equals("Server Logs") )  ) {
+					
+					 if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
+						 if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
+							 System.out.println("Current Tab opened is---> "+ menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().toString() + " and  "  + menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText());
+						 }
+						 ObservableList<Tab> existingTabs = menu_Items_FX.alltabbedEditors.getTabs();  // sakila,EVENTS,PLUGINS,Server Logs.
+						 for(int i=0;i<existingTabs.size();i++) {
+						 System.out.println("Existing Tab name : "+existingTabs.get(i).getText());
+						 System.out.println("getTreeItem().getValue() -->"+getTreeItem().getValue() +" existingTabs.get(i).getText().split(\"-\")[0] " + existingTabs.get(i).getText().split("-")[0]);
+						 if( getTreeItem().getValue().equals(existingTabs.get(i).getText().split("-")[0])){
+						 menu_Items_FX.alltabbedEditors.getSelectionModel().select(i);
+						 return;
+						 }
+						 
+					 }
+					 }
 					 for( int i=0;i<actionTypes.length;i++) {
 						 // Also do a parent check else we can have other components like tables,views with these names
 						 if(getTreeItem().getValue().equalsIgnoreCase(actionTypes[i])) {
 							 int index = i;
 						      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
 								Platform.runLater(new Runnable() {
-									  @Override
+			
+									@Override
 									  public void run() { 
 									    try  {
 									    	ResultSet rs = stmt.executeQuery(actionTypeQuery[index]);
@@ -1765,7 +1814,7 @@ public class MySqlUI {
 									    	
 									    	secondHalfDisplayVBox = new VBox();
 											Tab mainDisplayTab = new Tab();
-											
+											mainDisplayTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
 											mainDisplayTab.setOnClosed(new EventHandler<Event>() {
 												@Override
 												public void handle(Event event) {
@@ -1806,8 +1855,8 @@ public class MySqlUI {
 												((VBox)genericNode).getChildren().add(topHalfResultTableView);
 											}
 											
-											mainDisplayTab.setText(getTreeItem().getValue() + connectionPlaceHolder.getConnectionName());
-											
+											mainDisplayTab.setText(getTreeItem().getValue() + "-"+ connectionPlaceHolder.getConnectionName());
+									
 									        mainDisplayTab.setContent(genericNode);
 											menu_Items_FX.alltabbedEditors.getTabs().add(mainDisplayTab);
 
@@ -1837,12 +1886,28 @@ public class MySqlUI {
 				 }
 				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Dashboard") && getTreeItem().getParent().getValue().equals("Performance") && getTreeItem().getParent().getParent().getValue().equals("Administer") ) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-						Platform.runLater(new Runnable() {
+				      
+				      if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
+							 if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
+								 System.out.println("Current Tab opened is---> "+ menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().toString() + " and  "  + menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText());
+							 }
+							 ObservableList<Tab> existingTabs = menu_Items_FX.alltabbedEditors.getTabs();  // sakila,EVENTS,PLUGINS,Server Logs.
+							 for(int i=0;i<existingTabs.size();i++) {
+							 System.out.println("Existing Tab name : "+existingTabs.get(i).getText());
+							 System.out.println("getTreeItem().getValue() -->"+getTreeItem().getValue() +" existingTabs.get(i).getText().split(\"-\")[0] " + existingTabs.get(i).getText().split("-")[0]);
+							 if( getTreeItem().getValue().equals(existingTabs.get(i).getText().split("-")[0])){
+							 menu_Items_FX.alltabbedEditors.getSelectionModel().select(i);
+							 return;
+							 }
+							 
+						 }
+						 }
+				    Platform.runLater(new Runnable() {
 							  @Override
 							  public void run() { 
 							    try  {	
 							    	
-									Tab sessionManagerTab = new Tab("Dashboard " + connectionPlaceHolder.getConnectionName());									
+									Tab sessionManagerTab = new Tab("Dashboard" +"-"+ connectionPlaceHolder.getConnectionName());									
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
 										@Override
 										public void handle(Event event) {
@@ -1855,7 +1920,7 @@ public class MySqlUI {
 									getDashBoardStats(null,sessionManagerTab,"showPieGraph");
 								  
 									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
-
+									sessionManagerTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
 							        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
 							        singleSelectionModel.select(sessionManagerTab);
 							        
@@ -1864,13 +1929,31 @@ public class MySqlUI {
 										e.printStackTrace();
 								}
 							  }
-							});		
+							});
+				      
 				 } 				 
 				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Performance Reports") && getTreeItem().getParent().getValue().equalsIgnoreCase("Performance")
 						 && getTreeItem().getParent().getParent().getValue().equalsIgnoreCase("Administer") ) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-						Platform.runLater(new Runnable() {
-							  @Override
+				      
+				      if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
+				    	  if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
+				    		  System.out.println("Current Tab opened is---> "+ menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().toString() + " and  "  + menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText());
+				    	  }
+				    	  ObservableList<Tab> existingTabs = menu_Items_FX.alltabbedEditors.getTabs();  // sakila,EVENTS,PLUGINS,Server Logs.
+				    	  for(int i=0;i<existingTabs.size();i++) {
+				    		  System.out.println("Existing Tab name : "+existingTabs.get(i).getText());
+				    		  System.out.println("getTreeItem().getValue() -->"+getTreeItem().getValue() +" existingTabs.get(i).getText().split(\"-\")[0] " + existingTabs.get(i).getText().split("-")[0]);
+				    		  if( getTreeItem().getValue().equals(existingTabs.get(i).getText().split("-")[0])){
+				    			  menu_Items_FX.alltabbedEditors.getSelectionModel().select(i);
+				    			  return;
+				    		  }
+				    	  }
+				      }
+				      
+				     Platform.runLater(new Runnable() {
+							 
+							@Override
 							  public void run() { 
 							    try  {	
 							    	
@@ -1878,7 +1961,8 @@ public class MySqlUI {
 							    	
 							    	System.out.println("Connection Name :"+ connectionName);
 							    	
-									Tab sessionManagerTab = new Tab("Performance Reports " + connectionPlaceHolder.getConnectionName());									
+									Tab sessionManagerTab = new Tab("Performance Reports" +"-"+connectionPlaceHolder.getConnectionName());	
+									
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
 										@Override
 										public void handle(Event event) {
@@ -1937,7 +2021,7 @@ public class MySqlUI {
 									performanceReportsBorderPane.setCenter(vBoxCenterTop);
 
 									
-									
+									sessionManagerTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
 									sessionManagerTab.setContent(performanceReportsBorderPane);
 									menu_Items_FX.alltabbedEditors.getTabs().add(sessionManagerTab);
 
@@ -1952,9 +2036,24 @@ public class MySqlUI {
 
 							});		
 				 }
+				      
 				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Server Status") && getTreeItem().getParent().getValue().equals("Administration")) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-						Platform.runLater(new Runnable() {
+				      if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
+				    	  if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
+				    		  System.out.println("Current Tab opened is---> "+ menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().toString() + " and  "  + menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText());
+				    	  }
+				    	  ObservableList<Tab> existingTabs = menu_Items_FX.alltabbedEditors.getTabs();  // sakila,EVENTS,PLUGINS,Server Logs.
+				    	  for(int i=0;i<existingTabs.size();i++) {
+				    		  System.out.println("Existing Tab name : "+existingTabs.get(i).getText());
+				    		  System.out.println("getTreeItem().getValue() -->"+getTreeItem().getValue() +" existingTabs.get(i).getText().split(\"-\")[0] " + existingTabs.get(i).getText().split("-")[0]);
+				    		  if( getTreeItem().getValue().equals(existingTabs.get(i).getText().split("-")[0])){
+				    			  menu_Items_FX.alltabbedEditors.getSelectionModel().select(i);
+				    			  return;
+				    		  }
+				    	  }
+				      }
+				      Platform.runLater(new Runnable() {
 							  @Override
 							  public void run() { 
 							    try  {
@@ -1985,7 +2084,7 @@ public class MySqlUI {
 							    	String connectionName = connectionPlaceHolder.getConnectionName();
 							    	
 							    	
-									Tab sessionManagerTab = new Tab("SERVER STATUS " + connectionPlaceHolder.getConnectionName());									
+									Tab sessionManagerTab = new Tab("Server Status" +"-"+connectionPlaceHolder.getConnectionName());									
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
 										@Override
 										public void handle(Event event) {
@@ -1995,7 +2094,7 @@ public class MySqlUI {
 										}
 									});
 									
-									
+									sessionManagerTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
 									VBox serverStatusVBox = addServerStatus(allVariables,allStatus,allPlugins);
 									
 									sessionManagerTab.setContent(serverStatusVBox);
@@ -2013,6 +2112,21 @@ public class MySqlUI {
 				 }
 				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Client Connections") && getTreeItem().getParent().getValue().equals("Administration")) { 
 				      System.out.println("Double clicked on this item"+ getTreeItem().getValue());
+				      if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
+							 if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
+								 System.out.println("Current Tab opened is---> "+ menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().toString() + " and  "  + menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText());
+							 }
+							 ObservableList<Tab> existingTabs = menu_Items_FX.alltabbedEditors.getTabs();  // sakila,EVENTS,PLUGINS,Server Logs.
+							 for(int i=0;i<existingTabs.size();i++) {
+							 System.out.println("Existing Tab name : "+existingTabs.get(i).getText());
+							 System.out.println("getTreeItem().getValue() -->"+getTreeItem().getValue() +" existingTabs.get(i).getText().split(\"-\")[0] " + existingTabs.get(i).getText().split("-")[0]);
+							 if( getTreeItem().getValue().equals(existingTabs.get(i).getText().split("-")[0])){
+							 menu_Items_FX.alltabbedEditors.getSelectionModel().select(i);
+							 return;
+							 }
+							 
+						 }
+						 }
 						Platform.runLater(new Runnable() {
 							  @Override
 							  public void run() { 
@@ -2035,7 +2149,8 @@ public class MySqlUI {
 							    	ResultSet rsThreads = stmt.executeQuery("SELECT COALESCE(th.PROCESSLIST_ID,0) as Id,COALESCE(th.PROCESSLIST_USER,'None') as User,COALESCE(th.PROCESSLIST_HOST,'None') as Host,COALESCE(th.PROCESSLIST_DB,'None') as DB,COALESCE(th.PROCESSLIST_COMMAND,'None') as Command,COALESCE(th.PROCESSLIST_TIME,0) as Time,COALESCE(th.PROCESSLIST_STATE,'None') as State,th.THREAD_ID as Thread,th.TYPE as Type,th.NAME as Name,COALESCE(th.PARENT_THREAD_ID,0) as ParentThread,th.INSTRUMENTED as Instrumented,COALESCE(th.PROCESSLIST_INFO,'None') as Info,"
 							    			+ "COALESCE(attr.ATTR_VALUE,'None') as Program FROM performance_schema.threads th  LEFT OUTER JOIN performance_schema.session_connect_attrs attr ON th.processlist_id = attr.processlist_id AND (attr.attr_name IS NULL OR attr.attr_name = 'program_name') WHERE th.TYPE <> 'BACKGROUND' ");  // 
 							    	
-									Tab sessionManagerTab = new Tab("Client Connections " + connectionPlaceHolder.getConnectionName());									
+									Tab sessionManagerTab = new Tab("Client Connections" + "-" +connectionPlaceHolder.getConnectionName());	
+									sessionManagerTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
 										@Override
 										public void handle(Event event) {
@@ -2067,6 +2182,21 @@ public class MySqlUI {
 				 }
 				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Users and Privileges") && getTreeItem().getParent().getValue().equals("Administration")) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
+				      if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
+							 if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
+								 System.out.println("Current Tab opened is---> "+ menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().toString() + " and  "  + menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText());
+							 }
+							 ObservableList<Tab> existingTabs = menu_Items_FX.alltabbedEditors.getTabs();  // sakila,EVENTS,PLUGINS,Server Logs.
+							 for(int i=0;i<existingTabs.size();i++) {
+							 System.out.println("Existing Tab name : "+existingTabs.get(i).getText());
+							 System.out.println("getTreeItem().getValue() -->"+getTreeItem().getValue() +" existingTabs.get(i).getText().split(\"-\")[0] " + existingTabs.get(i).getText().split("-")[0]);
+							 if( getTreeItem().getValue().equals(existingTabs.get(i).getText().split("-")[0])){
+							 menu_Items_FX.alltabbedEditors.getSelectionModel().select(i);
+							 return;
+							 }
+							 
+						 }
+						 }
 						Platform.runLater(new Runnable() {
 							 
 							@Override
@@ -2079,7 +2209,8 @@ public class MySqlUI {
 							    	
 							    	System.out.println("Connection Name :"+ connectionName);
 							    	
-									Tab sessionManagerTab = new Tab("Users and Privileges " + connectionPlaceHolder.getConnectionName());									
+									Tab sessionManagerTab = new Tab("Users and Privileges" +"-"+ connectionPlaceHolder.getConnectionName());	
+									sessionManagerTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
 										@Override
 										public void handle(Event event) {
@@ -2343,6 +2474,21 @@ public class MySqlUI {
 				 if(event.getClickCount() == 2 && (getTreeItem().getValue().equalsIgnoreCase("Status and System Variables") || getTreeItem().getValue().equalsIgnoreCase("SESSION STATUS")
 						 || getTreeItem().getValue().equalsIgnoreCase("GLOBAL STATUS") || getTreeItem().getValue().equalsIgnoreCase("SESSION VARIABLES") || getTreeItem().getValue().equalsIgnoreCase("GLOBAL VARIABLES"))) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
+				      if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
+							 if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
+								 System.out.println("Current Tab opened is---> "+ menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().toString() + " and  "  + menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText());
+							 }
+							 ObservableList<Tab> existingTabs = menu_Items_FX.alltabbedEditors.getTabs();  // sakila,EVENTS,PLUGINS,Server Logs.
+							 for(int i=0;i<existingTabs.size();i++) {
+							 System.out.println("Existing Tab name : "+existingTabs.get(i).getText());
+							 System.out.println("getTreeItem().getValue() -->"+getTreeItem().getValue() +" existingTabs.get(i).getText().split(\"-\")[0] " + existingTabs.get(i).getText().split("-")[0]);
+							 if( getTreeItem().getValue().equals(existingTabs.get(i).getText().split("-")[0])){
+							 menu_Items_FX.alltabbedEditors.getSelectionModel().select(i);
+							 return;
+							 }
+							 
+						 }
+						 }
 						Platform.runLater(new Runnable() {
 							  @Override
 							  public void run() { 
@@ -2352,7 +2498,7 @@ public class MySqlUI {
 							    	System.out.println("Connection Name :"+ connectionName);
 							    	
 							    	BorderPane mainPopUpborderPane = new BorderPane();
-									HBox topHbox = addTopHBoxForInfo("Server Variables");
+							    	HBox topHbox = addTopHBoxForInfo("Server Variables");
 									TabPane centerTabPane = addCenterTabbedPaneForVariables();
 									HBox bottomHbox = addBottomHBoxForVariables();
 									mainPopUpborderPane.setTop(topHbox);
@@ -2360,7 +2506,8 @@ public class MySqlUI {
 								//	mainPopUpborderPane.setBottom(bottomHbox);
 									
 							    	
-									Tab sessionManagerTab = new Tab("Status and System Variables " + connectionPlaceHolder.getConnectionName());									
+									Tab sessionManagerTab = new Tab("Status and System Variables" + "-"+ connectionPlaceHolder.getConnectionName());	
+									sessionManagerTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
 										@Override
 										public void handle(Event event) {
@@ -2554,7 +2701,7 @@ public class MySqlUI {
 	        	columnTypes[i] =  md.getColumnType(i+1);	   
 	        	
 	        	tableColumnName = new TableColumn<>(columnNames[i]);
-	        	tableColumnName.setMinWidth(150);
+	        	tableColumnName.setMinWidth(150);	
 	        	tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[i]));
 	        	// Below code will do cell editing
 	        	tableColumnName.setCellFactory( new Callback<TableColumn<Map,String>, TableCell<Map,String>>() {
@@ -2603,9 +2750,7 @@ public class MySqlUI {
 		
 		TableView tableView = new TableView();
 		tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);  // to remove the last empty column otherwise added
-		tableView.setEditable(true);
-	
-        
+		tableView.setEditable(true);	
 		tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
 
 			@Override
@@ -2727,7 +2872,7 @@ public class MySqlUI {
 	        	
 	        	tableColumnName = new TableColumn<>(columnNames[i]);
 	        	tableColumnName.setMinWidth(150);
-	        	tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[i]));
+	         	tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[i]));
 	        	// Below code will do cell editing
 	        	tableColumnName.setCellFactory( new Callback<TableColumn<Map,String>, TableCell<Map,String>>() {
 					@Override
@@ -2803,7 +2948,7 @@ public class MySqlUI {
 	private TableView showResultSetInTheTableViewDoubleClick(ResultSet rs,String sqlComponentForwhich,String databaseName)  throws SQLException{
 		
 		TableView tableView = new TableView();
-		tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);  // to remove the last empty column otherwise added
+		tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);  //to ensure columns do not resize proportionally
         
 		if(rs.next()) {
 	
@@ -2820,7 +2965,7 @@ public class MySqlUI {
 	        	columnTypes[i] =  md.getColumnType(i+1);	   
 	        	
 	        	tableColumnName = new TableColumn<>(columnNames[i]);
-	        	tableColumnName.setPrefWidth(150);
+	            tableColumnName.setPrefWidth(250);	            tableColumnName.setMinWidth(150);
 	        	tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[i]));
 	        		
 	        	tableView.setRowFactory( tv -> { 
@@ -2842,7 +2987,7 @@ public class MySqlUI {
 							     singleSelectionModel.select(particularTableTab);
 	        	            }
 	        	            if(sqlComponentForwhich.equalsIgnoreCase("Views")) {
-	        	            	 System.out.println("Pop up a new Tab for Tables from here ");
+	        	            	 System.out.println("Pop up a new Tab for Views from here ");
 	        	            	 Tab particularTableTab = particularViewDoubleClickMethod(rowData.get("TABLE_NAME").toString(),databaseName);
 	        	            	 
 	        	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
@@ -2893,7 +3038,8 @@ public class MySqlUI {
 	private Tab particularTableDoubleClickMethod(String tableName,String databaseName) {
 		
 		Tab particularTableMainTab = new Tab(tableName);
-				
+		particularTableMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
+		
 		VBox particularTableMainTabVBox = new VBox();
 		particularTableMainTabVBox.setSpacing(10);
 		particularTableMainTabVBox.getChildren().add(addTopHBoxForInfo("Table "+tableName+" for Connection "+currentConnectionName));
@@ -3265,7 +3411,7 @@ public class MySqlUI {
 			
 			System.out.println("select "+ selectedColumns +" from information_schema.referential_constraints where  referenced_table_name = '"+ tableName+"' ");
 			ResultSet rsTable = stmt.executeQuery("select "+ selectedColumns +" from information_schema.referential_constraints where  referenced_table_name = '"+ tableName+"'");
-		
+			
 			VBox particularTablereferencesTabVBox = new VBox();
 			particularTablereferencesTabVBox.setSpacing(10);
 			particularTablereferencesTabVBox.setPadding(new Insets(2,2,2,2));
@@ -3275,7 +3421,6 @@ public class MySqlUI {
 			particularTablereferencesButtonsHBox.getChildren().add(new Button("Create"));
 			particularTablereferencesTabVBox.getChildren().addAll(particularTablereferencesView,particularTablereferencesButtonsHBox);
 			particularTablereferencesTab.setContent(particularTablereferencesTabVBox);
-		
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -3526,6 +3671,7 @@ public class MySqlUI {
 	private Tab particularViewDoubleClickMethod(String viewName,String databaseName) {
 		
 		Tab particularViewMainTab = new Tab(viewName);
+		particularViewMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
 		
 		VBox particularViewMainTabVBox = new VBox();
 		particularViewMainTabVBox.setSpacing(10);
@@ -3617,8 +3763,8 @@ public class MySqlUI {
 					System.out.println("Data Tab under Table selected");
 					try {
 						ResultSet rsTableData = stmt.executeQuery("SELECT * FROM " + databaseName + "." + viewName);
-						System.out.println("SELECT * FROM " + databaseName + "." + viewName);
-												
+						System.out.println("SELECT * FROM " + databaseName + "." + viewName);									
+						
 						VBox particularViewDataTabVBox = new VBox();
 						particularViewDataTabVBox.setSpacing(10);
 						particularViewDataTabVBox.setPadding(new Insets(2,2,2,2));
@@ -3722,7 +3868,7 @@ public class MySqlUI {
 	private Tab particularIndexesDoubleClickMethod(String indexesName,String databaseName)	
 	{
 	    Tab particularIndexesMainTab = new Tab(indexesName);
-		
+	    particularIndexesMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
 		VBox particularIndexesMainTabVBox = new VBox();
 		particularIndexesMainTabVBox.setSpacing(10);
 		//clientConnectionsVBox.setPadding(new Insets(0,0,0,0));
@@ -3890,12 +4036,12 @@ public class MySqlUI {
 	
 	public Tab particularProcedureDoubleClickMethod(String proceduresName,String databaseName) {
 	    Tab particularProceduresMainTab = new Tab(proceduresName);
-		
+	    particularProceduresMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
+	    
 		VBox particularProceduresMainTabVBox = new VBox();
 		particularProceduresMainTabVBox.setSpacing(10);
 		//clientConnectionsVBox.setPadding(new Insets(0,0,0,0));
 		particularProceduresMainTabVBox.getChildren().add(addTopHBoxForInfo("Procedures "+proceduresName+" for Connection "+currentConnectionName));
-		
 		
 		TabPane particularProceduresTabPane = new TabPane();
 		particularProceduresTabPane.setTabMinWidth(180);
@@ -4069,6 +4215,7 @@ public class MySqlUI {
 	public Tab particularFunctionsDoubleClickMethod(String functionsName,String databaseName) {
 	    
 		Tab particularFunctionsMainTab = new Tab(functionsName);
+		particularFunctionsMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
 		
 		VBox particularFunctionsMainTabVBox = new VBox();
 		particularFunctionsMainTabVBox.setSpacing(10);
@@ -4230,6 +4377,7 @@ public class MySqlUI {
 	
 	public Tab particularTriggersDoubleClickMethod(String triggersName,String databaseName) {
 	    Tab particularTriggersMainTab = new Tab(triggersName);
+	    particularTriggersMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
 		
 		VBox particularTriggersMainTabVBox = new VBox();
 		particularTriggersMainTabVBox.setSpacing(10);
@@ -4373,6 +4521,7 @@ public class MySqlUI {
 	
 	public Tab particularEventssDoubleClickMethod(String eventsName, String databaseName) {
 		Tab particularEventsMainTab = new Tab(eventsName);
+		particularEventsMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
 		
 		VBox particularEventsMainTabVBox = new VBox();
 		particularEventsMainTabVBox.setSpacing(10);
@@ -4475,7 +4624,7 @@ public class MySqlUI {
 		 statusSystemVariablesTabpane = new TabPane();  
 		  statusSystemVariablesTabpane.setTabMinWidth(250);
 		  statusSystemVariablesTabpane.setTabMinHeight(20);
-		
+		 		  
 		  statusVariablesTab = new Tab("Status Variables");
 		  statusVariablesTab.setClosable(false);
 		  statusVariablesTab.setContent(getStatusVariables());
@@ -5804,7 +5953,7 @@ public class MySqlUI {
 						    	
 						    	String connectionName = connectionPlaceHolder.getConnectionName();
 						    	
-						    	System.out.println("Connection Name :"+ connectionName);
+						    	System.out.println("Connection Name :"+connectionName);
 						    	particularPerformanceReportLabel.setText(performanceReportsTypes[index]);
 						    	performanceReportTableView.getColumns().clear();
 						    	performanceReportTableView.getItems().clear();
@@ -5856,7 +6005,7 @@ public class MySqlUI {
 
 					}	
 			  });
-			  
+			 
 			  HBox allButtonsHBox = new HBox();
 			  allButtonsHBox.setSpacing(100);
 			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
@@ -5897,7 +6046,7 @@ public class MySqlUI {
 			  SplitPane viewDetailsSplitPane = new SplitPane();
 			  viewDetailsSplitPane.setOrientation(Orientation.VERTICAL);
 			  viewDetailsSplitPane.setDividerPositions(0.75); 
-			  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Views",loadedDatabaseName.getValue());
+			  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Views",loadedDatabaseName.getValue());	 
 			  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
 					@Override
 					public void changed(ObservableValue<? extends HashMap<String, String>> observable,
@@ -6198,11 +6347,11 @@ public class MySqlUI {
 		
 		Tab mainDatabaseTab = new Tab();
 		mainDatabaseTab.setText( loadedDatabaseName.getValue());
-		mainDatabaseTab.setGraphic(this.imagemySqlnode);
+		mainDatabaseTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
 		
 		TabPane databaseTabPane = new TabPane();
-		databaseTabPane.setTabMinWidth(200);	
-		
+		databaseTabPane.setTabMinWidth(200);
+				
 		Tab databaseDetails = new Tab("Details");
 		databaseDetails.setClosable(false);
 		
