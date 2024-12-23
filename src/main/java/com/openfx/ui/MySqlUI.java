@@ -1785,16 +1785,10 @@ public class MySqlUI {
 				 if(event.getClickCount() == 2  &&  (getTreeItem().getParent().getValue().equals("System Info") || getTreeItem().getValue().equals("Server Logs") )  ) {
 					 
 					 if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
-<<<<<<< Updated upstream
 						 if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {																			   
 							 System.out.println("Current Tab opened is---> " + menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText());
 						}
 					 
-=======
-							 System.out.println("Current Tab opened is---> " + menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText());
-						
-					 }
->>>>>>> Stashed changes
 					 
 					 ObservableList<Tab> existingTabs = menu_Items_FX.alltabbedEditors.getTabs();  // sakila,EVENTS,PLUGINS,Server Logs.
 					 for(int i=0;i<existingTabs.size();i++) {
@@ -1804,13 +1798,9 @@ public class MySqlUI {
 							 menu_Items_FX.alltabbedEditors.getSelectionModel().select(i);
 							 return;
 						 }
-<<<<<<< Updated upstream
 	   
 					 }
 					} 
-=======
-					 }
->>>>>>> Stashed changes
 					 
 					 
 					 for( int i=0;i<actionTypes.length;i++) {
@@ -6370,15 +6360,9 @@ public class MySqlUI {
 	private Tab databaseDoubleClickMethod(TreeItem<String> loadedDatabaseName,String componentToFocus) {
 		
 		Tab mainDatabaseTab = new Tab();
-<<<<<<< Updated upstream
 		mainDatabaseTab.setText( loadedDatabaseName.getValue());
 		mainDatabaseTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
 
-=======
-		mainDatabaseTab.setText( loadedDatabaseName.getValue()+"-"+connectionPlaceHolder.getConnectionName());
-		ImageView imageMySQLnode = ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName());
-		mainDatabaseTab.setGraphic(imageMySQLnode);
->>>>>>> Stashed changes
 		
 		TabPane databaseTabPane = new TabPane();
 		databaseTabPane.setTabMinWidth(200);	
@@ -6571,11 +6555,7 @@ public class MySqlUI {
 			try( ResultSet rs = stmt.executeQuery(sqlQuery)){	
 				if(rs.next()) {
 					Integer columnCount = rs.getMetaData().getColumnCount();
-<<<<<<< Updated upstream
 					for(int i=1;i<columnCount;i++) {
-=======
-					for(int i=0;i<columnCount;i++) {
->>>>>>> Stashed changes
 						columnNames.add(rs.getMetaData().getColumnName(i));
 					}
 				}
@@ -6731,18 +6711,12 @@ public class MySqlUI {
 				public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 					System.out.println("The Selected choice box value is "+newValue);
 					if(newValue.equalsIgnoreCase("User")) {
-<<<<<<< Updated upstream
 						/*
 						 ArrayList<TotalMemoryByUser> totalMemoryByUserList = getTotalMemoryByUser("total_allocated");
 						 getMemoryUsageUserPieChart(totalMemoryByUserList, pieChartMemorySizes,currentUserIndex);
 						 getMemoryUsageUserBarChart(totalMemoryByUserList, barChartMemorySizes,currentUserIndex);
 						 */
 						 getTopMemoryUsageByUsersVBox(loadedDatabaseName,columnNamesForGraph);
-=======
-						 ArrayList<TotalMemoryByUser> totalMemoryByUserList = getTotalMemoryByUser("total_allocated");
-						 getMemoryUsageUserPieChart(totalMemoryByUserList, pieChartMemorySizes,currentUserIndex);
-						 getMemoryUsageUserBarChart(totalMemoryByUserList, barChartMemorySizes,currentUserIndex);
->>>>>>> Stashed changes
 					}
 					if(newValue.equalsIgnoreCase("Host")) {
 						
@@ -6829,11 +6803,7 @@ public class MySqlUI {
 	   VBox graphDisplaySelectVBox = new VBox();
 	   Label toalMemoryByLabel = new Label("Total Memory By");
 	   totalMemoryByChoiceBox = new ChoiceBox();
-<<<<<<< Updated upstream
 	   totalMemoryByChoiceBox.getItems().add("User");
-=======
-	   totalMemoryByChoiceBox.getItems().add("User ");
->>>>>>> Stashed changes
 	   totalMemoryByChoiceBox.getItems().add("Host");
 	   totalMemoryByChoiceBox.getSelectionModel().select(1);
 	   
@@ -6893,17 +6863,12 @@ public class MySqlUI {
 			}
 	   });
 
-<<<<<<< Updated upstream
 	   
-=======
-	   /*
->>>>>>> Stashed changes
 	   totalMemoryByChoiceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				System.out.println("The Selected choice box value is "+newValue);
 				if(newValue.equalsIgnoreCase("User")) {
-<<<<<<< Updated upstream
 					/*   ArrayList<TotalMemoryByUser> totalMemoryByUserList = getTotalMemoryByUser("total_allocated");
 					 getMemoryUsageUserPieChart(totalMemoryByUserList, pieChartMemorySizes,currentUserIndex);
 					 getMemoryUsageUserBarChart(totalMemoryByUserList, barChartMemorySizes,currentUserIndex);
@@ -6912,11 +6877,6 @@ public class MySqlUI {
 						ArrayList<String> columnNamesForGraph =   getTopMemoryByUserHostColumnNames("User");	
 						VBox memoryUsageTabMainvBox = getTopMemoryUsageByUsersVBox(loadedDatabaseName,columnNamesForGraph);
 						memoryUsageTab.setContent(memoryUsageTabMainvBox); 
-=======
-					 ArrayList<TotalMemoryByUser> totalMemoryByUserList = getTotalMemoryByUser("total_allocated");
-					 getMemoryUsagePieChart(totalMemoryByUserList, pieChartMemorySizes,currentUserIndex);
-					 getMemoryUsageBarChart(totalMemoryByUserList, barChartMemorySizes,currentUserIndex);
->>>>>>> Stashed changes
 				}
 				if(newValue.equalsIgnoreCase("Host")) {
 					ArrayList<String> columnNamesForGraph =   getTopMemoryByUserHostColumnNames("Host");	
@@ -6925,11 +6885,7 @@ public class MySqlUI {
 				}	
 			}
 		   });
-<<<<<<< Updated upstream
 	   
-=======
-	   */
->>>>>>> Stashed changes
 	   Button peiChartRotateLEftButton = new Button("Previous Schema");
 	   peiChartRotateLEftButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -6991,11 +6947,8 @@ public class MySqlUI {
 	   dashBoardTabMainvBox.getChildren().addAll(hBoxButtons);
 	   return dashBoardTabMainvBox;
    }
-<<<<<<< Updated upstream
 	
 	
-=======
->>>>>>> Stashed changes
 	private VBox getTopSchemasBySizeVBox(TreeItem<String> loadedDatabaseName) {
 		VBox dashBoardTabMainvBox = new VBox();
 		   dashBoardTabMainvBox.setPadding(new Insets(10,0,20,10)); 
@@ -7039,7 +6992,6 @@ public class MySqlUI {
 		   barChartScrollPane.setContent(barChartSchemaSizes);
 		   
 		   int totalNumberofSchemas =  informationSchemaSizesList.size(); 
-<<<<<<< Updated upstream
 	 
 																					 
 										
@@ -7056,9 +7008,6 @@ public class MySqlUI {
 																											  
 			  
 			
-=======
-
->>>>>>> Stashed changes
 		   
 		   Button peiChartRotateLEftButton = new Button("Previous Schema");
 		   peiChartRotateLEftButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -7118,15 +7067,10 @@ public class MySqlUI {
 		   });
 		            
 		   dashBoardTabMainvBox.getChildren().addAll(pieBarGraphHBox);
-<<<<<<< Updated upstream
 	 
 		   dashBoardTabMainvBox.getChildren().addAll(hBoxButtons);
 		return dashBoardTabMainvBox;
 								 
-=======
-		   dashBoardTabMainvBox.getChildren().addAll(hBoxButtons);
-		return dashBoardTabMainvBox;
->>>>>>> Stashed changes
 	}
 
 	private void getDashBoardPieChart(ArrayList<InformationSchemaSizes> informationSchemaSizesList, PieChart pieChartSchemaSizes,
@@ -7164,77 +7108,7 @@ public class MySqlUI {
 		   }
 	}
 
-	private void getMemoryUsageUserPieChart(ArrayList<TotalMemoryByUser> totalMemoryByUserList, PieChart pieChartMemorySizes,
-			int currentUserIndex) {
-		
-		pieChartMemorySizes.getData().clear();
-		   if(currentUserIndex-4 >= 0) {
-			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByUserList.get(currentUserIndex-4).getUser() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex-4).getColumnValue()  )/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(totalMemoryByUserList.get(currentUserIndex-4).getColumnValue() )/1024/1024 )));
-		   }
-		   if(currentUserIndex-3 >= 0) {
-			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByUserList.get(currentUserIndex-3).getUser() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex-3).getColumnValue())/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(totalMemoryByUserList.get(currentUserIndex-3).getColumnValue())/1024/1024 )));
-		   }
-		   if(currentUserIndex-2 >= 0) {
-			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByUserList.get(currentUserIndex-2).getUser() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex-2).getColumnValue())/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(totalMemoryByUserList.get(currentUserIndex-2).getColumnValue())/1024/1024 )));
-		   }
-		   if(currentUserIndex-1 >= 0) {
-			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByUserList.get(currentUserIndex-1).getUser() +" "+get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex-1).getColumnValue())/1024/1024)  + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex-1).getColumnValue())/1024/1024 )));
-		   }
-		   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByUserList.get(currentUserIndex-0).getUser() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex-0).getColumnValue())/1024/1024 ) + " MB",get2digitDoublePrecisionValue( Double.valueOf(totalMemoryByUserList.get(currentUserIndex-0).getColumnValue())/1024/1024 )));
-			 
-		   if(currentUserIndex+1 <= totalMemoryByUserList.size()-1) {
-			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByUserList.get(currentUserIndex+1).getUser() +" "+get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex+1).getColumnValue())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex+1).getColumnValue())/1024/1024 )));
-		   }
-		   if(currentUserIndex+2 <= totalMemoryByUserList.size()-1) {
-			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByUserList.get(currentUserIndex+2).getUser() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex+2).getColumnValue())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex+2).getColumnValue())/1024/1024 )));
-		   }
-		   if(currentUserIndex+3 <= totalMemoryByUserList.size()-1) {
-			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByUserList.get(currentUserIndex+3).getUser() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex+3).getColumnValue())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex+3).getColumnValue())/1024/1024 )));
-		   }
-		   if(currentUserIndex+4 <= totalMemoryByUserList.size()-1) {
-			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByUserList.get(currentUserIndex+4).getUser() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex+4).getColumnValue())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex+4).getColumnValue())/1024/1024 )));
-		   }
-		   if(currentUserIndex+5 <= totalMemoryByUserList.size()-1) {
-			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByUserList.get(currentUserIndex+5).getUser() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex+5).getColumnValue())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex+5).getColumnValue())/1024/1024 )));
-		   }
-	}
-	
-	private void getMemoryUsageHostPieChart(ArrayList<TotalMemoryByHost> totalMemoryByHostList, PieChart pieChartMemorySizes,
-			int currentUserIndex) {
-		
-		pieChartMemorySizes.getData().clear();
-		   if(currentUserIndex-4 >= 0) {
-			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByHostList.get(currentUserIndex-4).getHost() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex-4).getColumnValue()  )/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(totalMemoryByHostList.get(currentUserIndex-4).getColumnValue() )/1024/1024 )));
-		   }
-		   if(currentUserIndex-3 >= 0) {
-			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByHostList.get(currentUserIndex-3).getHost() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex-3).getColumnValue())/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(totalMemoryByHostList.get(currentUserIndex-3).getColumnValue())/1024/1024 )));
-		   }
-		   if(currentUserIndex-2 >= 0) {
-			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByHostList.get(currentUserIndex-2).getHost() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex-2).getColumnValue())/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(totalMemoryByHostList.get(currentUserIndex-2).getColumnValue())/1024/1024 )));
-		   }
-		   if(currentUserIndex-1 >= 0) {
-			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByHostList.get(currentUserIndex-1).getHost() +" "+get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex-1).getColumnValue())/1024/1024)  + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex-1).getColumnValue())/1024/1024 )));
-		   }
-		   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByHostList.get(currentUserIndex-0).getHost() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex-0).getColumnValue())/1024/1024 ) + " MB",get2digitDoublePrecisionValue( Double.valueOf(totalMemoryByHostList.get(currentUserIndex-0).getColumnValue())/1024/1024 )));
-			 
-		   if(currentUserIndex+1 <= totalMemoryByHostList.size()-1) {
-			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByHostList.get(currentUserIndex+1).getHost() +" "+get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex+1).getColumnValue())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex+1).getColumnValue())/1024/1024 )));
-		   }
-		   if(currentUserIndex+2 <= totalMemoryByHostList.size()-1) {
-			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByHostList.get(currentUserIndex+2).getHost() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex+2).getColumnValue())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex+2).getColumnValue())/1024/1024 )));
-		   }
-		   if(currentUserIndex+3 <= totalMemoryByHostList.size()-1) {
-			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByHostList.get(currentUserIndex+3).getHost() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex+3).getColumnValue())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex+3).getColumnValue())/1024/1024 )));
-		   }
-		   if(currentUserIndex+4 <= totalMemoryByHostList.size()-1) {
-			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByHostList.get(currentUserIndex+4).getHost() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex+4).getColumnValue())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex+4).getColumnValue())/1024/1024 )));
-		   }
-		   if(currentUserIndex+5 <= totalMemoryByHostList.size()-1) {
-			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByHostList.get(currentUserIndex+5).getHost() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex+5).getColumnValue())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex+5).getColumnValue())/1024/1024 )));
-		   }
-	}
 
-<<<<<<< Updated upstream
 	private void getMemoryUsageUserPieChart(ArrayList<TotalMemoryByUser> totalMemoryByUserList, PieChart pieChartMemorySizes,
 			int currentUserIndex) {
 		
@@ -7312,8 +7186,6 @@ public class MySqlUI {
 		   }
 	}
 
-=======
->>>>>>> Stashed changes
 	
 	private void getDashBoardBarChart(ArrayList<InformationSchemaSizes> informationSchemaSizesList, BarChart barChartSchemaSizes,
 			int currentSchemaIndex) {
@@ -8089,7 +7961,4 @@ class TotalMemoryByHost{
 		return this.columnValue.length();
 	}
 }
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes

@@ -85,6 +85,7 @@ public class ERDiagramApplication extends Application{
 		tabletitledPane.setText("actor");
 		tabletitledPane.setTooltip(new Tooltip("This is a table in RDBD \n This is tool tip for table"));
 		VBox titledPaneVBox = new VBox();
+		titledPaneVBox.setBackground(new Background(  new BackgroundFill(javafx.scene.paint.Color.SILVER,  CornerRadii.EMPTY,Insets.EMPTY )));
 		titledPaneVBox.setSpacing(3);
 		titledPaneVBox.getChildren().add(new Label("actorId"));
 		titledPaneVBox.getChildren().add(new Label("actorName"));
