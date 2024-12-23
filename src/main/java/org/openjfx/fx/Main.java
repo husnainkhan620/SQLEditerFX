@@ -21,7 +21,7 @@ public class Main {
 		 	
 		 	// TableSample3.main(args);
 		 	
-		 	ERDiagramApplication.main(args);
+		ERDiagramApplication.main(args);
 /*
 		String tableName = "Vehicles";
 		for(int i=0;i<1000;i++) {

@@ -17,18 +17,11 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
@@ -49,7 +42,7 @@ public class ERDiagramApplication extends Application{
 		mainPane.setPrefSize(size.getWidth(),size.getHeight());
 		
 		
-		
+		// Diagram using VBox stackpane and rectangles
 		VBox rectangleVBox = new VBox();
 		rectangleVBox.setSpacing(0);
 		StackPane stackPane1 = new StackPane();
@@ -60,7 +53,6 @@ public class ERDiagramApplication extends Application{
 		tableNameRectangle.setArcWidth(8);
 		tableNameRectangle.setStrokeWidth(1);	
 		tableNameRectangle.setFill(Color.SILVER);
-		//tableNameRectangle.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.GREEN,  CornerRadii.EMPTY,Insets.EMPTY ) ));
 		stackPane1.getChildren().addAll(tableNameRectangle,new Label("actor"));
 		
 		StackPane stackPane2 = new StackPane();
@@ -70,36 +62,37 @@ public class ERDiagramApplication extends Application{
 		columnNamesRectangle.setArcHeight(8);
 		columnNamesRectangle.setArcWidth(8);
 		columnNamesRectangle.setStrokeWidth(1);
-		columnNamesRectangle.setFill(Color.SILVER);
+		columnNamesRectangle.setFill(Color.AZURE);
 		VBox vBoxColumns = new VBox();
 		vBoxColumns.getChildren().addAll(new Label(" actorId"),new Label(" actorName"),new Label(" actorCity"));
 		stackPane2.getChildren().addAll(columnNamesRectangle,vBoxColumns);
 		vBoxColumns.getChildren().add(new Label(" actorState"));
 		rectangleVBox.getChildren().addAll(stackPane1,stackPane2);
-		rectangleVBox.setLayoutX(100);
-		rectangleVBox.setLayoutY(300);
+		rectangleVBox.setLayoutX(100);  // used to place it a particular X location on screen
+		rectangleVBox.setLayoutY(300);  // used to place it a particular Y location on screen
 		mainPane.getChildren().add(rectangleVBox);
 		
+		// Diagram using TitledPane
 		TitledPane tabletitledPane = new TitledPane();
 		tabletitledPane.setPrefWidth(150);
 		tabletitledPane.setText("actor");
 		tabletitledPane.setTooltip(new Tooltip("This is a table in RDBD \n This is tool tip for table"));
 		VBox titledPaneVBox = new VBox();
-		titledPaneVBox.setBackground(new Background(  new BackgroundFill(javafx.scene.paint.Color.SILVER,  CornerRadii.EMPTY,Insets.EMPTY )));
+		titledPaneVBox.setBackground(new Background(  new BackgroundFill(javafx.scene.paint.Color.AZURE,  CornerRadii.EMPTY,Insets.EMPTY )));
 		titledPaneVBox.setSpacing(3);
 		titledPaneVBox.getChildren().add(new Label("actorId"));
 		titledPaneVBox.getChildren().add(new Label("actorName"));
 		titledPaneVBox.getChildren().add(new Label("actorCity"));
 		tabletitledPane.setContent(titledPaneVBox);
 		tabletitledPane.setCollapsible(false);
-		tabletitledPane.setLayoutX(100);
-		tabletitledPane.setLayoutY(100);
+		tabletitledPane.setLayoutX(100);   // used to place it a particular X location on screen
+		tabletitledPane.setLayoutY(100);   // used to place it a particular Y location on screen
 		mainPane.getChildren().add(tabletitledPane);
-		
+	//	mainPane.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.WHITE,  CornerRadii.EMPTY,Insets.EMPTY ) ));
 		
 		ZoomableScrollPane zoomableScrollPane = new ZoomableScrollPane(mainPane);
 		
-	    Scene scene = new Scene(zoomableScrollPane, 600, 600/* , Color.rgb(35, 39, 50) */);  
+	    Scene scene = new Scene(zoomableScrollPane, 600, 600/* Color.rgb(35, 39, 50) */);  
 	//    scene.getStylesheets().add(ERDiagramApplication.class.getResource("/testLayout.css").toExternalForm());
 		primaryStage.setTitle("No DataBase Connection ");   
 		primaryStage.setScene(scene);
