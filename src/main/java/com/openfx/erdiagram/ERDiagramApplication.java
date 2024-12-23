@@ -88,7 +88,9 @@ public class ERDiagramApplication extends Application{
 		tabletitledPane.setLayoutX(100);   // used to place it a particular X location on screen
 		tabletitledPane.setLayoutY(100);   // used to place it a particular Y location on screen
 		mainPane.getChildren().add(tabletitledPane);
-	//	mainPane.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.WHITE,  CornerRadii.EMPTY,Insets.EMPTY ) ));
+	
+		// This will set the backgroud color the Zoom Pane
+		mainPane.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.WHITE,  CornerRadii.EMPTY,Insets.EMPTY ) ));
 		
 		ZoomableScrollPane zoomableScrollPane = new ZoomableScrollPane(mainPane);
 		
