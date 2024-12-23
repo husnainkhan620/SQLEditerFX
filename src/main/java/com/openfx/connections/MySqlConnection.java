@@ -61,6 +61,7 @@ public class MySqlConnection {
 		
 		try  
 		{
+			DriverManager.getDriver("jdbc:mysql://127.0.0.1:3306");
 			mySqlConnection = DriverManager.getConnection(url+":"+port,connectionProperties);
 			Statement stmt = mySqlConnection.createStatement();
 				

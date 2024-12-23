@@ -42,6 +42,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.Separator;
@@ -359,6 +360,10 @@ public class Menu_Items_FX extends Application {
         mainSplitPane.getItems().addAll(vBoxleft,vBoxright);
         contentHBox.getChildren().add(mainSplitPane);
         rootPane.getChildren().add(contentHBox);
+        
+        HBox statushbox = new HBox();
+        statushbox.getChildren().add(new ProgressBar(70));
+        rootPane.getChildren().add(statushbox);
 	
 		scene = new Scene(rootPane,size.getWidth(),size.getHeight()-70);
 		
