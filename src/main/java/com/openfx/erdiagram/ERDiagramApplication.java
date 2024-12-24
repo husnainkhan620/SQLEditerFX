@@ -46,7 +46,7 @@ public class ERDiagramApplication extends Application{
 		VBox rectangleVBox = new VBox();
 		rectangleVBox.setSpacing(0);
 		StackPane stackPane1 = new StackPane();
-		Rectangle tableNameRectangle = new Rectangle(150,20);
+		Rectangle tableNameRectangle = new Rectangle(150,25);
 		tableNameRectangle.setFill(Color.WHITE);
 		tableNameRectangle.setStroke(Color.BLACK);
 		tableNameRectangle.setArcHeight(8);
@@ -64,9 +64,11 @@ public class ERDiagramApplication extends Application{
 		columnNamesRectangle.setStrokeWidth(1);
 		columnNamesRectangle.setFill(Color.AZURE);
 		VBox vBoxColumns = new VBox();
-		vBoxColumns.getChildren().addAll(new Label(" actorId"),new Label(" actorName"),new Label(" actorCity"));
+		vBoxColumns.setPadding(new Insets(10,0,0,10));
+		vBoxColumns.setSpacing(5);
+		vBoxColumns.getChildren().addAll(new Label(" actorId"),new Label(" actorName"),new Label(" actorCity"),new Label(" actorId"),new Label(" actorName"),new Label(" actorCity"));
+		columnNamesRectangle.setHeight(vBoxColumns.getChildren().size()*25);
 		stackPane2.getChildren().addAll(columnNamesRectangle,vBoxColumns);
-		vBoxColumns.getChildren().add(new Label(" actorState"));
 		rectangleVBox.getChildren().addAll(stackPane1,stackPane2);
 		rectangleVBox.setLayoutX(100);  // used to place it a particular X location on screen
 		rectangleVBox.setLayoutY(300);  // used to place it a particular Y location on screen
@@ -80,6 +82,9 @@ public class ERDiagramApplication extends Application{
 		VBox titledPaneVBox = new VBox();
 		titledPaneVBox.setBackground(new Background(  new BackgroundFill(javafx.scene.paint.Color.AZURE,  CornerRadii.EMPTY,Insets.EMPTY )));
 		titledPaneVBox.setSpacing(3);
+		titledPaneVBox.getChildren().add(new Label("actorId"));
+		titledPaneVBox.getChildren().add(new Label("actorName"));
+		titledPaneVBox.getChildren().add(new Label("actorCity"));
 		titledPaneVBox.getChildren().add(new Label("actorId"));
 		titledPaneVBox.getChildren().add(new Label("actorName"));
 		titledPaneVBox.getChildren().add(new Label("actorCity"));
