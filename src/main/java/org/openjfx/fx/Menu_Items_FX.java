@@ -42,6 +42,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.Separator;
@@ -60,7 +61,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -359,7 +363,12 @@ public class Menu_Items_FX extends Application {
         mainSplitPane.getItems().addAll(vBoxleft,vBoxright);
         contentHBox.getChildren().add(mainSplitPane);
         rootPane.getChildren().add(contentHBox);
-	
+        
+        HBox statushbox = new HBox();
+        statushbox.getChildren().add(new ProgressBar(70));
+        rootPane.getChildren().add(statushbox);
+        rootPane.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.GREEN,  CornerRadii.EMPTY,Insets.EMPTY ) ));
+        
 		scene = new Scene(rootPane,size.getWidth(),size.getHeight()-70);
 		
 		primaryStage.setTitle("Menu Item Application \u0627 \u0628 \u0629 \u062A \u062B \u062C \u062D ");  

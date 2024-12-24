@@ -1,12 +1,14 @@
 package org.openjfx.fx;
 
+import com.openfx.erdiagram.ERDiagramApplication;
+
 public class Main {
 
 	public static void main(String[] args) {
 		
 		 //Sample_FX.main(args);
 
-		 	Menu_Items_FX.main(args);	
+		 //	Menu_Items_FX.main(args);	
 				
 			//	LayoutSampleCSS.main(args);
 				
@@ -18,6 +20,8 @@ public class Main {
 			//	TableValueSample2.main(args);
 		 	
 		 	// TableSample3.main(args);
+		 	
+		ERDiagramApplication.main(args);
 /*
 		String tableName = "Vehicles";
 		for(int i=0;i<1000;i++) {

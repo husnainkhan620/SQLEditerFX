@@ -41,9 +41,12 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
@@ -63,6 +66,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeCell;
@@ -150,7 +154,7 @@ public class MySqlUI {
 		this.menu_Items_FX = menu_Items_FX;
 		this.newMenuItemEventHandler = newMenuItemEventHandler;
 	}
-    		
+
 	public VBox addConnectionCredentials() {
 		
 		 VBox connectionDetailsVbox = new VBox();
@@ -1475,7 +1479,8 @@ public class MySqlUI {
 		
 	}
 	
-			
+	
+		
 	// This is inner class within the main class to capture when tree elements are double clicked.
 	final class MySQLTreecellImpl extends TreeCell<String>{
 		
@@ -1531,16 +1536,16 @@ public class MySqlUI {
 				-------------
 				*/
 				 
-				 if(parentIndex >= 2  && getTreeItem().getParent().getValue().equals("Databases") && getTreeItem().getParent().getParent().getValue().equals(currentConnectionName)) {
+				 if(parentIndex >= 2 && getTreeItem().getParent().getValue().equals("Databases") && getTreeItem().getParent().getParent().getValue().equals(currentConnectionName)) {
 					 
 					 System.out.println("Schema name clicked!!!!");
-					
-					
+					 
+	 
 				 }
 				 if(parentIndex >= 3 && getTreeItem().getParent().getParent().getValue().equals("Databases") && getTreeItem().getParent().getParent().getParent().getValue().equals(currentConnectionName)) {
 					 
 					 System.out.println("Schema components name clicked!!!!");
-					
+	 
 					 
 				 }
 				 if(parentIndex >= 4 && getTreeItem().getParent().getValue().equals("Tables") && getTreeItem().getParent().getParent().getParent().getParent().getValue().equals(currentConnectionName)) {
@@ -1602,7 +1607,7 @@ public class MySqlUI {
 									 selectedSchemaDetailsTabPane.getSelectionModel().select(6);
 								 }
 								 if( getTreeItem().getValue().equals("Events")) {
-									 selectedSchemaDetailsTabPane.getSelectionModel().select(7);  
+									 selectedSchemaDetailsTabPane.getSelectionModel().select(7);
 								 }
 								 menu_Items_FX.alltabbedEditors.getSelectionModel().select(i);
 								 return;
@@ -1613,7 +1618,7 @@ public class MySqlUI {
 					 // particular database is clicked
 					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Databases")) {
 							
-						 if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
+					    if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
 					    	  if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
 					    		  System.out.println("Current Tab opened is---> "+ menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().toString() + " and  "  + menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText());
 					    	  }
@@ -1626,12 +1631,12 @@ public class MySqlUI {
 					    			  return;
 					    		  }
 					    	  }
-					      } 
+					      } 									
 							Tab mainDatabaseTab = databaseDoubleClickMethod(getTreeItem(),"Properties");
 							menu_Items_FX.alltabbedEditors.getTabs().add(mainDatabaseTab);
 					        SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
 					        singleSelectionModel.select(mainDatabaseTab);
-					        
+			 
 					        return;
 					 }
 					 // if Tables on a whole is clicked
@@ -1658,10 +1663,10 @@ public class MySqlUI {
 					    			  return;
 					    		  }
 					    	  }
-					      } 
+					      } 											
 						 Tab particularTableTab = particularTableDoubleClickMethod(getTreeItem().getValue(),getTreeItem().getParent().getParent().getValue());    	            	 
     	            	 menu_Items_FX.alltabbedEditors.getTabs().add(particularTableTab);
-    	               	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
+    	            	 SingleSelectionModel<Tab> singleSelectionModel =  menu_Items_FX.alltabbedEditors.getSelectionModel();
 					     singleSelectionModel.select(particularTableTab);
 					     return;
 					 }
@@ -1774,34 +1779,38 @@ public class MySqlUI {
 				 }
 				 if(event.getClickCount() == 2 && getTreeItem().getParent().getValue().equals("System Info") ) {
 					 
-					 System.out.println("System info components like clicked!!!");
+					 System.out.println("System info componets like clciked!!!");
 				 }
 					 
 				 if(event.getClickCount() == 2  &&  (getTreeItem().getParent().getValue().equals("System Info") || getTreeItem().getValue().equals("Server Logs") )  ) {
-					
+					 
 					 if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
-						 if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
-							 System.out.println("Current Tab opened is---> "+ menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().toString() + " and  "  + menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText());
-						 }
-						 ObservableList<Tab> existingTabs = menu_Items_FX.alltabbedEditors.getTabs();  // sakila,EVENTS,PLUGINS,Server Logs.
-						 for(int i=0;i<existingTabs.size();i++) {
+						 if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {																			   
+							 System.out.println("Current Tab opened is---> " + menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText());
+						}
+					 
+					 
+					 ObservableList<Tab> existingTabs = menu_Items_FX.alltabbedEditors.getTabs();  // sakila,EVENTS,PLUGINS,Server Logs.
+					 for(int i=0;i<existingTabs.size();i++) {
 						 System.out.println("Existing Tab name : "+existingTabs.get(i).getText());
-						 System.out.println("getTreeItem().getValue() -->"+getTreeItem().getValue() +" existingTabs.get(i).getText().split(\"-\")[0] " + existingTabs.get(i).getText().split("-")[0]);
+						 System.out.println("getTreeItem().getValue() -->"+getTreeItem().getValue() +" existingTabs.get(i).getText().split(\"-\")[0] " + existingTabs.get(i).getText().split("-")[0]);						 
 						 if( getTreeItem().getValue().equals(existingTabs.get(i).getText().split("-")[0])){
-						 menu_Items_FX.alltabbedEditors.getSelectionModel().select(i);
-						 return;
+							 menu_Items_FX.alltabbedEditors.getSelectionModel().select(i);
+							 return;
 						 }
-						 
+	   
 					 }
-					 }
+					} 
+					 
+					 
 					 for( int i=0;i<actionTypes.length;i++) {
 						 // Also do a parent check else we can have other components like tables,views with these names
 						 if(getTreeItem().getValue().equalsIgnoreCase(actionTypes[i])) {
 							 int index = i;
 						      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
 								Platform.runLater(new Runnable() {
-			
-									@Override
+   
+									  @Override
 									  public void run() { 
 									    try  {
 									    	ResultSet rs = stmt.executeQuery(actionTypeQuery[index]);
@@ -1855,8 +1864,8 @@ public class MySqlUI {
 												((VBox)genericNode).getChildren().add(topHalfResultTableView);
 											}
 											
-											mainDisplayTab.setText(getTreeItem().getValue() + "-"+ connectionPlaceHolder.getConnectionName());
-									
+											mainDisplayTab.setText(getTreeItem().getValue() +"-"+ connectionPlaceHolder.getConnectionName());
+											
 									        mainDisplayTab.setContent(genericNode);
 											menu_Items_FX.alltabbedEditors.getTabs().add(mainDisplayTab);
 
@@ -1886,8 +1895,8 @@ public class MySqlUI {
 				 }
 				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Dashboard") && getTreeItem().getParent().getValue().equals("Performance") && getTreeItem().getParent().getParent().getValue().equals("Administer") ) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-				      
-				      if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
+		  
+					  if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
 							 if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
 								 System.out.println("Current Tab opened is---> "+ menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().toString() + " and  "  + menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText());
 							 }
@@ -1901,8 +1910,8 @@ public class MySqlUI {
 							 }
 							 
 						 }
-						 }
-				    Platform.runLater(new Runnable() {
+						 }										   
+						Platform.runLater(new Runnable() {
 							  @Override
 							  public void run() { 
 							    try  {	
@@ -1929,14 +1938,14 @@ public class MySqlUI {
 										e.printStackTrace();
 								}
 							  }
-							});
-				      
+							});		
+		  
 				 } 				 
 				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Performance Reports") && getTreeItem().getParent().getValue().equalsIgnoreCase("Performance")
 						 && getTreeItem().getParent().getParent().getValue().equalsIgnoreCase("Administer") ) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-				      
-				      if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
+		  
+					  if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
 				    	  if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
 				    		  System.out.println("Current Tab opened is---> "+ menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().toString() + " and  "  + menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText());
 				    	  }
@@ -1949,11 +1958,11 @@ public class MySqlUI {
 				    			  return;
 				    		  }
 				    	  }
-				      }
-				      
-				     Platform.runLater(new Runnable() {
-							 
-							@Override
+				      }												   
+			
+						Platform.runLater(new Runnable() {
+		
+							  @Override
 							  public void run() { 
 							    try  {	
 							    	
@@ -1961,8 +1970,8 @@ public class MySqlUI {
 							    	
 							    	System.out.println("Connection Name :"+ connectionName);
 							    	
-									Tab sessionManagerTab = new Tab("Performance Reports" +"-"+connectionPlaceHolder.getConnectionName());	
-									
+									Tab sessionManagerTab = new Tab("Performance Reports" +"-"+connectionPlaceHolder.getConnectionName());										
+		 
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
 										@Override
 										public void handle(Event event) {
@@ -2036,10 +2045,10 @@ public class MySqlUI {
 
 							});		
 				 }
-				      
+		  
 				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Server Status") && getTreeItem().getParent().getValue().equals("Administration")) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-				      if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
+					  if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
 				    	  if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
 				    		  System.out.println("Current Tab opened is---> "+ menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().toString() + " and  "  + menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText());
 				    	  }
@@ -2052,8 +2061,8 @@ public class MySqlUI {
 				    			  return;
 				    		  }
 				    	  }
-				      }
-				      Platform.runLater(new Runnable() {
+				      }											   
+					  Platform.runLater(new Runnable() {
 							  @Override
 							  public void run() { 
 							    try  {
@@ -2084,7 +2093,7 @@ public class MySqlUI {
 							    	String connectionName = connectionPlaceHolder.getConnectionName();
 							    	
 							    	
-									Tab sessionManagerTab = new Tab("Server Status" +"-"+connectionPlaceHolder.getConnectionName());									
+									Tab sessionManagerTab = new Tab("Server Status" +"-"+connectionPlaceHolder.getConnectionName());																	
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
 										@Override
 										public void handle(Event event) {
@@ -2112,7 +2121,7 @@ public class MySqlUI {
 				 }
 				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Client Connections") && getTreeItem().getParent().getValue().equals("Administration")) { 
 				      System.out.println("Double clicked on this item"+ getTreeItem().getValue());
-				      if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
+					  if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
 							 if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
 								 System.out.println("Current Tab opened is---> "+ menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().toString() + " and  "  + menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText());
 							 }
@@ -2126,7 +2135,7 @@ public class MySqlUI {
 							 }
 							 
 						 }
-						 }
+						}											
 						Platform.runLater(new Runnable() {
 							  @Override
 							  public void run() { 
@@ -2181,8 +2190,8 @@ public class MySqlUI {
 							});		
 				 }
 				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Users and Privileges") && getTreeItem().getParent().getValue().equals("Administration")) { 
-				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-				      if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
+				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());											   
+					  if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
 							 if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
 								 System.out.println("Current Tab opened is---> "+ menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().toString() + " and  "  + menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText());
 							 }
@@ -2196,7 +2205,7 @@ public class MySqlUI {
 							 }
 							 
 						 }
-						 }
+						 }																				
 						Platform.runLater(new Runnable() {
 							 
 							@Override
@@ -2210,7 +2219,7 @@ public class MySqlUI {
 							    	System.out.println("Connection Name :"+ connectionName);
 							    	
 									Tab sessionManagerTab = new Tab("Users and Privileges" +"-"+ connectionPlaceHolder.getConnectionName());	
-									sessionManagerTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
+									sessionManagerTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));																			 
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
 										@Override
 										public void handle(Event event) {
@@ -2473,8 +2482,8 @@ public class MySqlUI {
 				 }
 				 if(event.getClickCount() == 2 && (getTreeItem().getValue().equalsIgnoreCase("Status and System Variables") || getTreeItem().getValue().equalsIgnoreCase("SESSION STATUS")
 						 || getTreeItem().getValue().equalsIgnoreCase("GLOBAL STATUS") || getTreeItem().getValue().equalsIgnoreCase("SESSION VARIABLES") || getTreeItem().getValue().equalsIgnoreCase("GLOBAL VARIABLES"))) { 
-				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
-				      if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
+				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());											   
+					  if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
 							 if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
 								 System.out.println("Current Tab opened is---> "+ menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic().toString() + " and  "  + menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getText());
 							 }
@@ -2488,7 +2497,7 @@ public class MySqlUI {
 							 }
 							 
 						 }
-						 }
+						 }																					
 						Platform.runLater(new Runnable() {
 							  @Override
 							  public void run() { 
@@ -2498,7 +2507,7 @@ public class MySqlUI {
 							    	System.out.println("Connection Name :"+ connectionName);
 							    	
 							    	BorderPane mainPopUpborderPane = new BorderPane();
-							    	HBox topHbox = addTopHBoxForInfo("Server Variables");
+									HBox topHbox = addTopHBoxForInfo("Server Variables");
 									TabPane centerTabPane = addCenterTabbedPaneForVariables();
 									HBox bottomHbox = addBottomHBoxForVariables();
 									mainPopUpborderPane.setTop(topHbox);
@@ -2506,8 +2515,8 @@ public class MySqlUI {
 								//	mainPopUpborderPane.setBottom(bottomHbox);
 									
 							    	
-									Tab sessionManagerTab = new Tab("Status and System Variables" + "-"+ connectionPlaceHolder.getConnectionName());	
-									sessionManagerTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
+									Tab sessionManagerTab = new Tab("Status and System Variables " + connectionPlaceHolder.getConnectionName());									
+									sessionManagerTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));																			 
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
 										@Override
 										public void handle(Event event) {
@@ -2701,7 +2710,7 @@ public class MySqlUI {
 	        	columnTypes[i] =  md.getColumnType(i+1);	   
 	        	
 	        	tableColumnName = new TableColumn<>(columnNames[i]);
-	        	tableColumnName.setMinWidth(150);	
+	        	tableColumnName.setMinWidth(150);
 	        	tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[i]));
 	        	// Below code will do cell editing
 	        	tableColumnName.setCellFactory( new Callback<TableColumn<Map,String>, TableCell<Map,String>>() {
@@ -2750,7 +2759,9 @@ public class MySqlUI {
 		
 		TableView tableView = new TableView();
 		tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);  // to remove the last empty column otherwise added
-		tableView.setEditable(true);	
+		tableView.setEditable(true);
+	
+        
 		tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
 
 			@Override
@@ -2872,7 +2883,7 @@ public class MySqlUI {
 	        	
 	        	tableColumnName = new TableColumn<>(columnNames[i]);
 	        	tableColumnName.setMinWidth(150);
-	         	tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[i]));
+	        	tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[i]));
 	        	// Below code will do cell editing
 	        	tableColumnName.setCellFactory( new Callback<TableColumn<Map,String>, TableCell<Map,String>>() {
 					@Override
@@ -2965,7 +2976,8 @@ public class MySqlUI {
 	        	columnTypes[i] =  md.getColumnType(i+1);	   
 	        	
 	        	tableColumnName = new TableColumn<>(columnNames[i]);
-	            tableColumnName.setPrefWidth(250);	            tableColumnName.setMinWidth(150);
+	        	tableColumnName.setPrefWidth(250);
+	            tableColumnName.setMinWidth(150);							  
 	        	tableColumnName.setCellValueFactory(new MapValueFactory<>(columnNames[i]));
 	        		
 	        	tableView.setRowFactory( tv -> { 
@@ -3038,8 +3050,8 @@ public class MySqlUI {
 	private Tab particularTableDoubleClickMethod(String tableName,String databaseName) {
 		
 		Tab particularTableMainTab = new Tab(tableName);
-		particularTableMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
-		
+		particularTableMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));		
+  
 		VBox particularTableMainTabVBox = new VBox();
 		particularTableMainTabVBox.setSpacing(10);
 		particularTableMainTabVBox.getChildren().add(addTopHBoxForInfo("Table "+tableName+" for Connection "+currentConnectionName));
@@ -3411,7 +3423,7 @@ public class MySqlUI {
 			
 			System.out.println("select "+ selectedColumns +" from information_schema.referential_constraints where  referenced_table_name = '"+ tableName+"' ");
 			ResultSet rsTable = stmt.executeQuery("select "+ selectedColumns +" from information_schema.referential_constraints where  referenced_table_name = '"+ tableName+"'");
-			
+		
 			VBox particularTablereferencesTabVBox = new VBox();
 			particularTablereferencesTabVBox.setSpacing(10);
 			particularTablereferencesTabVBox.setPadding(new Insets(2,2,2,2));
@@ -3421,6 +3433,7 @@ public class MySqlUI {
 			particularTablereferencesButtonsHBox.getChildren().add(new Button("Create"));
 			particularTablereferencesTabVBox.getChildren().addAll(particularTablereferencesView,particularTablereferencesButtonsHBox);
 			particularTablereferencesTab.setContent(particularTablereferencesTabVBox);
+		
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}
@@ -3671,7 +3684,7 @@ public class MySqlUI {
 	private Tab particularViewDoubleClickMethod(String viewName,String databaseName) {
 		
 		Tab particularViewMainTab = new Tab(viewName);
-		particularViewMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
+																											  
 		
 		VBox particularViewMainTabVBox = new VBox();
 		particularViewMainTabVBox.setSpacing(10);
@@ -3763,8 +3776,8 @@ public class MySqlUI {
 					System.out.println("Data Tab under Table selected");
 					try {
 						ResultSet rsTableData = stmt.executeQuery("SELECT * FROM " + databaseName + "." + viewName);
-						System.out.println("SELECT * FROM " + databaseName + "." + viewName);									
-						
+						System.out.println("SELECT * FROM " + databaseName + "." + viewName);
+												
 						VBox particularViewDataTabVBox = new VBox();
 						particularViewDataTabVBox.setSpacing(10);
 						particularViewDataTabVBox.setPadding(new Insets(2,2,2,2));
@@ -3868,7 +3881,7 @@ public class MySqlUI {
 	private Tab particularIndexesDoubleClickMethod(String indexesName,String databaseName)	
 	{
 	    Tab particularIndexesMainTab = new Tab(indexesName);
-	    particularIndexesMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
+		  particularIndexesMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
 		VBox particularIndexesMainTabVBox = new VBox();
 		particularIndexesMainTabVBox.setSpacing(10);
 		//clientConnectionsVBox.setPadding(new Insets(0,0,0,0));
@@ -4036,12 +4049,13 @@ public class MySqlUI {
 	
 	public Tab particularProcedureDoubleClickMethod(String proceduresName,String databaseName) {
 	    Tab particularProceduresMainTab = new Tab(proceduresName);
-	    particularProceduresMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
-	    
+		particularProceduresMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
+	 
 		VBox particularProceduresMainTabVBox = new VBox();
 		particularProceduresMainTabVBox.setSpacing(10);
 		//clientConnectionsVBox.setPadding(new Insets(0,0,0,0));
 		particularProceduresMainTabVBox.getChildren().add(addTopHBoxForInfo("Procedures "+proceduresName+" for Connection "+currentConnectionName));
+		
 		
 		TabPane particularProceduresTabPane = new TabPane();
 		particularProceduresTabPane.setTabMinWidth(180);
@@ -4215,7 +4229,7 @@ public class MySqlUI {
 	public Tab particularFunctionsDoubleClickMethod(String functionsName,String databaseName) {
 	    
 		Tab particularFunctionsMainTab = new Tab(functionsName);
-		particularFunctionsMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
+		particularFunctionsMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));																										   
 		
 		VBox particularFunctionsMainTabVBox = new VBox();
 		particularFunctionsMainTabVBox.setSpacing(10);
@@ -4377,7 +4391,7 @@ public class MySqlUI {
 	
 	public Tab particularTriggersDoubleClickMethod(String triggersName,String databaseName) {
 	    Tab particularTriggersMainTab = new Tab(triggersName);
-	    particularTriggersMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
+		particularTriggersMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));																											 
 		
 		VBox particularTriggersMainTabVBox = new VBox();
 		particularTriggersMainTabVBox.setSpacing(10);
@@ -4521,7 +4535,7 @@ public class MySqlUI {
 	
 	public Tab particularEventssDoubleClickMethod(String eventsName, String databaseName) {
 		Tab particularEventsMainTab = new Tab(eventsName);
-		particularEventsMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
+		particularEventsMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));																										
 		
 		VBox particularEventsMainTabVBox = new VBox();
 		particularEventsMainTabVBox.setSpacing(10);
@@ -4624,7 +4638,7 @@ public class MySqlUI {
 		 statusSystemVariablesTabpane = new TabPane();  
 		  statusSystemVariablesTabpane.setTabMinWidth(250);
 		  statusSystemVariablesTabpane.setTabMinHeight(20);
-		 		  
+		
 		  statusVariablesTab = new Tab("Status Variables");
 		  statusVariablesTab.setClosable(false);
 		  statusVariablesTab.setContent(getStatusVariables());
@@ -5953,7 +5967,7 @@ public class MySqlUI {
 						    	
 						    	String connectionName = connectionPlaceHolder.getConnectionName();
 						    	
-						    	System.out.println("Connection Name :"+connectionName);
+						    	System.out.println("Connection Name :"+ connectionName);
 						    	particularPerformanceReportLabel.setText(performanceReportsTypes[index]);
 						    	performanceReportTableView.getColumns().clear();
 						    	performanceReportTableView.getItems().clear();
@@ -6005,7 +6019,7 @@ public class MySqlUI {
 
 					}	
 			  });
-			 
+			  
 			  HBox allButtonsHBox = new HBox();
 			  allButtonsHBox.setSpacing(100);
 			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
@@ -6046,7 +6060,7 @@ public class MySqlUI {
 			  SplitPane viewDetailsSplitPane = new SplitPane();
 			  viewDetailsSplitPane.setOrientation(Orientation.VERTICAL);
 			  viewDetailsSplitPane.setDividerPositions(0.75); 
-			  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Views",loadedDatabaseName.getValue());	 
+			  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Views",loadedDatabaseName.getValue());
 			  tablesView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
 					@Override
 					public void changed(ObservableValue<? extends HashMap<String, String>> observable,
@@ -6348,10 +6362,11 @@ public class MySqlUI {
 		Tab mainDatabaseTab = new Tab();
 		mainDatabaseTab.setText( loadedDatabaseName.getValue());
 		mainDatabaseTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
+
 		
 		TabPane databaseTabPane = new TabPane();
-		databaseTabPane.setTabMinWidth(200);
-				
+		databaseTabPane.setTabMinWidth(200);	
+		
 		Tab databaseDetails = new Tab("Details");
 		databaseDetails.setClosable(false);
 		
@@ -6471,16 +6486,480 @@ public class MySqlUI {
 
 	private Integer currentSchemaIndex;
 	private Button dashBoardPieBarButton;
+	private Tab topSchemasBySizesTab;
+	private Tab memoryUsageTab;
+	private Tab fileTableHotSpotsTab;
+	private Tab highCostSqlStatementsTab ;
+	private   Tab databaseScehamStatisticsTab;
+	private   Tab userResourceUtilizationTab;
+    private Tab hostResourceUtilizationTab;
+
 	protected Tab getDashBoardStats(TreeItem<String> loadedDatabaseName,Tab databaseGrahicsStats,String showGraphType) {
-		   VBox vbox = new VBox();
-		   vbox.setPadding(new Insets(10,0,0,10));
+		   
+		   TabPane dashBoardMainTabPane = new TabPane();
+		
+		   topSchemasBySizesTab = new Tab("Top Scehams by Sizes");
+	       memoryUsageTab = new Tab("Memory Usage");
+	       fileTableHotSpotsTab = new Tab("Files/Tables Hot Spots");
+		   highCostSqlStatementsTab = new Tab("High Cost SQL Statements");
+		   databaseScehamStatisticsTab = new Tab("Databse Schema Statistics");
+		   userResourceUtilizationTab = new Tab("User Resource Utilization");
+	       hostResourceUtilizationTab = new Tab("Host Resource Utilization");
+			 
+	       dashBoardMainTabPane.getTabs().addAll(topSchemasBySizesTab,memoryUsageTab,fileTableHotSpotsTab,highCostSqlStatementsTab,databaseScehamStatisticsTab,userResourceUtilizationTab,
+	    		   hostResourceUtilizationTab);
+	       
+		  
+		   VBox dashBoardTabMainvBox = getTopSchemasBySizeVBox(loadedDatabaseName);
+		   topSchemasBySizesTab.setContent(dashBoardTabMainvBox);
+		   
+		   dashBoardMainTabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+			@Override
+			public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {				
+				System.out.println("Current Tab Clicked in Performance Reports is  "+newValue.getText());
+				if(newValue.getText().equals("Memory Usage")) {
+					
+					ArrayList<String> columnNamesForGraph =   getTopMemoryByUserHostColumnNames("User");	
+					VBox memoryUsageTabMainvBox = getTopMemoryUsageByUsersVBox(loadedDatabaseName,columnNamesForGraph);
+					memoryUsageTab.setContent(memoryUsageTabMainvBox);
+				}
+			}
+		   });
+		   
+		   
+		   databaseGrahicsStats.setContent(dashBoardMainTabPane);
+		   return databaseGrahicsStats;
+	}
+
+	private ArrayList<String> getTopMemoryByUserHostColumnNames(String userOrHost){
+		
+		ArrayList<String> columnNames = new ArrayList<String>();
+		
+		if(userOrHost.equalsIgnoreCase("User")) {
+			String sqlQuery = "Select * from sys.x$memory_by_user_by_current_bytes";
+			try( ResultSet rs = stmt.executeQuery(sqlQuery)){	
+				if(rs.next()) {
+					Integer columnCount = rs.getMetaData().getColumnCount();
+					for(int i=1;i<=columnCount;i++) {
+						System.out.println(rs.getMetaData().getColumnName(i));
+						columnNames.add(rs.getMetaData().getColumnName(i));
+					}
+				}
+				}catch(Exception e) {
+						e.printStackTrace();
+			}
+		}
+		
+		if(userOrHost.equalsIgnoreCase("Host")) {
+			String sqlQuery = "Select * from sys.x$memory_by_host_by_current_bytes";
+			try( ResultSet rs = stmt.executeQuery(sqlQuery)){	
+				if(rs.next()) {
+					Integer columnCount = rs.getMetaData().getColumnCount();
+					for(int i=1;i<columnCount;i++) {
+						columnNames.add(rs.getMetaData().getColumnName(i));
+					}
+				}
+				}catch(Exception e) {
+						e.printStackTrace();
+			}
+		}
+		return columnNames;	
+	}
+	
+	private ArrayList<TotalMemoryByUser> getTotalMemoryByUser(String columnName) {
+		
+		String sqlQuery = "Select user,"+columnName +" from sys.x$memory_by_user_by_current_bytes order by "+columnName;
+		
+
+		ArrayList<TotalMemoryByUser> totalMemoryByUserList = new ArrayList<TotalMemoryByUser>();
+		TotalMemoryByUser totalMemoryByUser ;
+		try( ResultSet rsSchemaSizes = stmt.executeQuery(sqlQuery)){	
+			while(rsSchemaSizes.next()) {
+				totalMemoryByUser = new TotalMemoryByUser();
+				totalMemoryByUser.setUser(rsSchemaSizes.getString(1));
+				totalMemoryByUser.setColumnValue(rsSchemaSizes.getString(2));;
+				totalMemoryByUserList.add(totalMemoryByUser);
+			}
+			}catch(Exception e) {
+					e.printStackTrace();
+		}
+		
+		return totalMemoryByUserList;
+		
+	}
+
+	private ArrayList<TotalMemoryByHost> getTotalMemoryByHost(String columnName) {
+		
+		String sqlQuery = "Select host,"+columnName +" from sys.x$memory_by_host_by_current_bytes order by "+columnName;
+		
+		ArrayList<TotalMemoryByHost> totalMemoryByHostList = new ArrayList<TotalMemoryByHost>();
+		TotalMemoryByHost totalMemoryByHost ;
+		try( ResultSet rsSchemaSizes = stmt.executeQuery(sqlQuery)){	
+			while(rsSchemaSizes.next()) {
+				totalMemoryByHost = new TotalMemoryByHost();
+				totalMemoryByHost.setHost(rsSchemaSizes.getString(1));
+				totalMemoryByHost.setColumnValue(rsSchemaSizes.getString(2));;
+				totalMemoryByHostList.add(totalMemoryByHost);
+			}
+			}catch(Exception e) {
+					e.printStackTrace();
+		}
+		
+		return totalMemoryByHostList;
+		
+	}
+	private String currentLoggedInUser;
+	private String currentLoggedInHost;
+	private String getCurrentLoggedInUserHost() {
+		
+		String sqlQuery = "Select user()";
+		String loggedInUserHost ="";
+		try { 
+			ResultSet rs= stmt.executeQuery(sqlQuery);
+			if(rs.next())
+				loggedInUserHost = rs.getString(1);
+			System.out.println("Currently Logged In user is ------------->"+loggedInUserHost);
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		currentLoggedInUser = loggedInUserHost.split("@")[0];
+		currentLoggedInHost = loggedInUserHost.split("@")[1];
+		return loggedInUserHost;
+	}
+	
+	private Integer currentUserIndex;
+	private ChoiceBox totalMemoryByChoiceBox;
+	private ChoiceBox memoryDistributionUserByChoiceBox;
+	private VBox getTopMemoryUsageByUsersVBox(TreeItem<String> loadedDatabaseName,ArrayList<String> columnNamesForGraph) {
+		
+			if(currentLoggedInUser ==null || currentLoggedInHost == null) {
+				getCurrentLoggedInUserHost();
+			}
+		
+		   VBox dashBoardTabMainvBox = new VBox();
+		   dashBoardTabMainvBox.setPadding(new Insets(10,0,20,10)); 
+	
+		   VBox graphDisplaySelectVBox = new VBox();
+		   Label toalMemoryByLabel = new Label("Total Memory By");
+		   totalMemoryByChoiceBox = new ChoiceBox();
+		   totalMemoryByChoiceBox.getItems().add("User ");
+		   totalMemoryByChoiceBox.getItems().add("Host");
+		   totalMemoryByChoiceBox.getSelectionModel().select(0);
+		   
+	
+		   
+		   Label memoryDistributionByLabel = new Label("Memory Distribution By");
+		   memoryDistributionUserByChoiceBox = new ChoiceBox();
+		   for(int i=0;i<columnNamesForGraph.size();i++) {
+			   memoryDistributionUserByChoiceBox.getItems().add(columnNamesForGraph.get(i));   
+		   }
+		   memoryDistributionUserByChoiceBox.getSelectionModel().select(columnNamesForGraph.size()-1);
+		   graphDisplaySelectVBox.getChildren().addAll(toalMemoryByLabel,totalMemoryByChoiceBox,memoryDistributionByLabel,memoryDistributionUserByChoiceBox);
+		   
+		   
+		   
+		   ArrayList<TotalMemoryByUser> totalMemoryByUserList = getTotalMemoryByUser("total_allocated");
+		   // Schema Size relative to other 
+		   PieChart pieChartMemorySizes = new PieChart();
+		   pieChartMemorySizes.setTitle("TOP MEMORY BY USER IN MB");
+		   PieChart.Data slice ;
+		   pieChartMemorySizes.setPrefSize(menu_Items_FX.size.getSize().getWidth()-450,menu_Items_FX.size.getSize().getHeight()-200);
+		   currentUserIndex=0;
+		   if(loadedDatabaseName != null) {  // this will be null in case of Performance Schema click
+			   TotalMemoryByUser totalMemoryByUser = new TotalMemoryByUser();
+			   totalMemoryByUser.setUser(currentLoggedInUser);
+			   System.out.println("USer position ---->"+totalMemoryByUserList.indexOf(totalMemoryByUser));
+			   currentUserIndex = totalMemoryByUserList.indexOf(totalMemoryByUser);
+		   }
+		   
+		   getMemoryUsageUserPieChart(totalMemoryByUserList, pieChartMemorySizes,currentUserIndex);
+		
+		   CategoryAxis xAxis    = new CategoryAxis();
+		   xAxis.setLabel("Databases");
+		   NumberAxis yAxis = new NumberAxis();
+		   yAxis.setLabel("Size (MB)");
+		    
+		   BarChart barChartMemorySizes = new BarChart(xAxis,yAxis);
+		   barChartMemorySizes.setTitle("TOP MEMORY BY USER IN MB");
+		   barChartMemorySizes.setTitleSide(Side.TOP);
+		   barChartMemorySizes.setBarGap(5);
+		   barChartMemorySizes.setHorizontalGridLinesVisible(false);
+		   barChartMemorySizes.setVerticalGridLinesVisible(false);
+		   barChartMemorySizes.setPrefWidth(totalMemoryByUserList.size()*120);  // This will cause the scroll bar
+		     
+		   getMemoryUsageUserBarChart(totalMemoryByUserList, barChartMemorySizes,currentUserIndex);
+		   
+		   ScrollPane barChartScrollPane = new ScrollPane();
+		   barChartScrollPane.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
+		   barChartScrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
+		   barChartScrollPane.setPrefHeight( menu_Items_FX.size.getSize().getHeight()-200);
+		   barChartScrollPane.setContent(barChartMemorySizes);
+		   
+		 
+		   memoryDistributionUserByChoiceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+				@Override
+				public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+					System.out.println("Selected memoryDistributionByChoiceBox choice is --->"+newValue);
+					   ArrayList<TotalMemoryByUser> totalMemoryByUserList = getTotalMemoryByUser(newValue);
+					   getMemoryUsageUserPieChart(totalMemoryByUserList, pieChartMemorySizes,currentUserIndex);
+					   getMemoryUsageUserBarChart(totalMemoryByUserList, barChartMemorySizes,currentUserIndex);
+				}
+		   });
+	
+		   totalMemoryByChoiceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+				@Override
+				public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+					System.out.println("The Selected choice box value is "+newValue);
+					if(newValue.equalsIgnoreCase("User")) {
+						/*
+						 ArrayList<TotalMemoryByUser> totalMemoryByUserList = getTotalMemoryByUser("total_allocated");
+						 getMemoryUsageUserPieChart(totalMemoryByUserList, pieChartMemorySizes,currentUserIndex);
+						 getMemoryUsageUserBarChart(totalMemoryByUserList, barChartMemorySizes,currentUserIndex);
+						 */
+						 getTopMemoryUsageByUsersVBox(loadedDatabaseName,columnNamesForGraph);
+					}
+					if(newValue.equalsIgnoreCase("Host")) {
+						
+						ArrayList<String> columnNamesForGraph =   getTopMemoryByUserHostColumnNames("Host");	
+						VBox memoryUsageTabMainvBox = getTopMemoryUsageByHostsVBox(loadedDatabaseName,columnNamesForGraph);
+						memoryUsageTab.setContent(memoryUsageTabMainvBox);
+					}	
+				}
+			   });
+		   
+		   Button peiChartRotateLEftButton = new Button("Previous Schema");
+		   peiChartRotateLEftButton.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					currentUserIndex = currentUserIndex-1;
+					getMemoryUsageUserPieChart  (totalMemoryByUserList, pieChartMemorySizes,currentUserIndex);
+				}
+		   });  
+		   Button peiChartRotateRightButton = new Button("Next Schema");
+			   peiChartRotateRightButton.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					currentUserIndex = currentUserIndex+1;
+					getMemoryUsageUserPieChart(totalMemoryByUserList, pieChartMemorySizes,currentUserIndex);
+				}
+		  });
+			   
+		   HBox pieBarGraphHBox = new HBox(); 
+		   pieBarGraphHBox.setPadding(new Insets(0,0,0,0));
+		   pieBarGraphHBox.setSpacing(5); 
+		   pieBarGraphHBox.getChildren().addAll(pieChartMemorySizes,graphDisplaySelectVBox);
+		 
+		   HBox dashBoardPieBarButtonHBox = new HBox();
+		   dashBoardPieBarButtonHBox.setPadding(new Insets(10,0,0,10));
+		   dashBoardPieBarButton = new Button("Show As Bar Graph");
+		   dashBoardPieBarButtonHBox.getChildren().addAll(dashBoardPieBarButton);
+		   
+		   HBox hBoxButtons = new HBox();
+		   hBoxButtons.setSpacing(20);
+		   hBoxButtons.setPadding(new Insets(10,10,0,0));
+		   
+		   HBox pieChartRotationButtonHBox = new HBox();
+		   pieChartRotationButtonHBox.setSpacing(20);
+		   pieChartRotationButtonHBox.setPadding(new Insets(10,10,0,200));
+		   pieChartRotationButtonHBox.getChildren().addAll(peiChartRotateLEftButton,peiChartRotateRightButton);
+		   
+		   hBoxButtons.getChildren().addAll(dashBoardPieBarButtonHBox,pieChartRotationButtonHBox);
+		   
+		   dashBoardPieBarButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				if(dashBoardPieBarButton.getText().equals("Show As Bar Graph")) {
+					dashBoardPieBarButton.setText("Show As Pie Graph");
+					 pieChartRotationButtonHBox.getChildren().clear();
+					 pieBarGraphHBox.getChildren().clear();
+					 pieBarGraphHBox.getChildren().addAll(barChartScrollPane,graphDisplaySelectVBox);
+					// hBoxButtons.getChildren().addAll(dashBoardPieBarButtonHBox);
+				}
+				else if(dashBoardPieBarButton.getText().equals("Show As Pie Graph")) {
+					dashBoardPieBarButton.setText("Show As Bar Graph");
+					pieChartRotationButtonHBox.getChildren().clear();
+					pieBarGraphHBox.getChildren().clear();
+					pieBarGraphHBox.getChildren().addAll(pieChartMemorySizes,graphDisplaySelectVBox);
+					pieChartRotationButtonHBox.getChildren().addAll(peiChartRotateLEftButton,peiChartRotateRightButton);
+				}
+			}
+		   });    
+		   dashBoardTabMainvBox.getChildren().addAll(pieBarGraphHBox);
+		   dashBoardTabMainvBox.getChildren().addAll(hBoxButtons);
+		   return dashBoardTabMainvBox;
+	}
+
+	private Integer currentHostIndex=0;
+	private ChoiceBox memoryDistributionHostByChoiceBox;
+	private VBox getTopMemoryUsageByHostsVBox(TreeItem<String> loadedDatabaseName,ArrayList<String> columnNamesForGraph) {
+		
+		if(currentLoggedInUser ==null || currentLoggedInHost == null) {
+			getCurrentLoggedInUserHost();
+		}
+	
+	   VBox dashBoardTabMainvBox = new VBox();
+	   dashBoardTabMainvBox.setPadding(new Insets(10,0,20,10)); 
+
+	   VBox graphDisplaySelectVBox = new VBox();
+	   Label toalMemoryByLabel = new Label("Total Memory By");
+	   totalMemoryByChoiceBox = new ChoiceBox();
+	   totalMemoryByChoiceBox.getItems().add("User");
+	   totalMemoryByChoiceBox.getItems().add("Host");
+	   totalMemoryByChoiceBox.getSelectionModel().select(1);
+	   
+	   Label memoryDistributionByLabel = new Label("Memory Distribution By");
+	   memoryDistributionHostByChoiceBox = new ChoiceBox();
+	   for(int i=0;i<columnNamesForGraph.size();i++) {
+		   memoryDistributionHostByChoiceBox.getItems().add(columnNamesForGraph.get(i));   
+	   }
+	   memoryDistributionHostByChoiceBox.getSelectionModel().select(columnNamesForGraph.size()-1);
+	   graphDisplaySelectVBox.getChildren().addAll(toalMemoryByLabel,totalMemoryByChoiceBox,memoryDistributionByLabel,memoryDistributionHostByChoiceBox);
+	   
+	   ArrayList<TotalMemoryByHost> totalMemoryByHostList = getTotalMemoryByHost("total_allocated");
+	   // Schema Size relative to other 
+	   PieChart pieChartMemorySizes = new PieChart();
+	   pieChartMemorySizes.setTitle("TOP MEMORY BY HOST IN MB");
+	   PieChart.Data slice ;
+	   pieChartMemorySizes.setPrefSize(menu_Items_FX.size.getSize().getWidth()-450,menu_Items_FX.size.getSize().getHeight()-200);
+	   currentHostIndex=0;
+	   if(loadedDatabaseName != null) {  // this will be null in case of Performance Schema click
+		   TotalMemoryByHost totalMemoryByHost = new TotalMemoryByHost();
+		   totalMemoryByHost.setHost (currentLoggedInUser);
+		   System.out.println("Host position ---->"+totalMemoryByHostList.indexOf(totalMemoryByHost));
+		   currentHostIndex = totalMemoryByHostList.indexOf(totalMemoryByHost);
+	   }
+	   
+	   getMemoryUsageHostPieChart(totalMemoryByHostList, pieChartMemorySizes,currentHostIndex);
+	
+	   CategoryAxis xAxis    = new CategoryAxis();
+	   xAxis.setLabel("Databases");
+	   NumberAxis yAxis = new NumberAxis();
+	   yAxis.setLabel("Size (MB)");
+	    
+	   BarChart barChartMemorySizes = new BarChart(xAxis,yAxis);
+	   barChartMemorySizes.setTitle("TOP MEMORY BY HOST IN MB");
+	   barChartMemorySizes.setTitleSide(Side.TOP);
+	   barChartMemorySizes.setBarGap(5);
+	   barChartMemorySizes.setHorizontalGridLinesVisible(false);
+	   barChartMemorySizes.setVerticalGridLinesVisible(false);
+	   barChartMemorySizes.setPrefWidth(totalMemoryByHostList.size()*120);  // This will cause the scroll bar
+	     
+	   getMemoryUsageHostBarChart(totalMemoryByHostList, barChartMemorySizes,currentHostIndex);
+	   
+	   ScrollPane barChartScrollPane = new ScrollPane();
+	   barChartScrollPane.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
+	   barChartScrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
+	   barChartScrollPane.setPrefHeight( menu_Items_FX.size.getSize().getHeight()-200);
+	   barChartScrollPane.setContent(barChartMemorySizes);
+	   
+	 
+	   memoryDistributionHostByChoiceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				System.out.println("Selected memoryDistributionByChoiceBox choice is --->"+newValue);
+				   ArrayList<TotalMemoryByHost> totalMemoryByHostList = getTotalMemoryByHost(newValue);
+				   getMemoryUsageHostPieChart(totalMemoryByHostList, pieChartMemorySizes,currentHostIndex);
+				   getMemoryUsageHostBarChart(totalMemoryByHostList, barChartMemorySizes,currentHostIndex);
+			}
+	   });
+
+	   
+	   totalMemoryByChoiceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				System.out.println("The Selected choice box value is "+newValue);
+				if(newValue.equalsIgnoreCase("User")) {
+					/*   ArrayList<TotalMemoryByUser> totalMemoryByUserList = getTotalMemoryByUser("total_allocated");
+					 getMemoryUsageUserPieChart(totalMemoryByUserList, pieChartMemorySizes,currentUserIndex);
+					 getMemoryUsageUserBarChart(totalMemoryByUserList, barChartMemorySizes,currentUserIndex);
+					 */
+
+						ArrayList<String> columnNamesForGraph =   getTopMemoryByUserHostColumnNames("User");	
+						VBox memoryUsageTabMainvBox = getTopMemoryUsageByUsersVBox(loadedDatabaseName,columnNamesForGraph);
+						memoryUsageTab.setContent(memoryUsageTabMainvBox); 
+				}
+				if(newValue.equalsIgnoreCase("Host")) {
+					ArrayList<String> columnNamesForGraph =   getTopMemoryByUserHostColumnNames("Host");	
+					VBox memoryUsageTabMainvBox = getTopMemoryUsageByHostsVBox(loadedDatabaseName,columnNamesForGraph);
+					memoryUsageTab.setContent(memoryUsageTabMainvBox);
+				}	
+			}
+		   });
+	   
+	   Button peiChartRotateLEftButton = new Button("Previous Schema");
+	   peiChartRotateLEftButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				currentUserIndex = currentUserIndex-1;
+				getMemoryUsageHostPieChart(totalMemoryByHostList, pieChartMemorySizes,currentHostIndex);
+			}
+	   });  
+	   Button peiChartRotateRightButton = new Button("Next Schema");
+		   peiChartRotateRightButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				currentUserIndex = currentUserIndex+1;
+				getMemoryUsageHostPieChart(totalMemoryByHostList, pieChartMemorySizes,currentHostIndex);
+			}
+	  });
+		   
+	   HBox pieBarGraphHBox = new HBox(); 
+	   pieBarGraphHBox.setPadding(new Insets(0,0,0,0));
+	   pieBarGraphHBox.setSpacing(5); 
+	   pieBarGraphHBox.getChildren().addAll(pieChartMemorySizes,graphDisplaySelectVBox);
+	 
+	   HBox dashBoardPieBarButtonHBox = new HBox();
+	   dashBoardPieBarButtonHBox.setPadding(new Insets(10,0,0,10));
+	   dashBoardPieBarButton = new Button("Show As Bar Graph");
+	   dashBoardPieBarButtonHBox.getChildren().addAll(dashBoardPieBarButton);
+	   
+	   HBox hBoxButtons = new HBox();
+	   hBoxButtons.setSpacing(20);
+	   hBoxButtons.setPadding(new Insets(10,10,0,0));
+	   
+	   HBox pieChartRotationButtonHBox = new HBox();
+	   pieChartRotationButtonHBox.setSpacing(20);
+	   pieChartRotationButtonHBox.setPadding(new Insets(10,10,0,200));
+	   pieChartRotationButtonHBox.getChildren().addAll(peiChartRotateLEftButton,peiChartRotateRightButton);
+	   
+	   hBoxButtons.getChildren().addAll(dashBoardPieBarButtonHBox,pieChartRotationButtonHBox);
+	   
+	   dashBoardPieBarButton.setOnAction(new EventHandler<ActionEvent>() {
+		@Override
+		public void handle(ActionEvent event) {
+			if(dashBoardPieBarButton.getText().equals("Show As Bar Graph")) {
+				dashBoardPieBarButton.setText("Show As Pie Graph");
+				 pieChartRotationButtonHBox.getChildren().clear();
+				 pieBarGraphHBox.getChildren().clear();
+				 pieBarGraphHBox.getChildren().addAll(barChartScrollPane,graphDisplaySelectVBox);
+				// hBoxButtons.getChildren().addAll(dashBoardPieBarButtonHBox);
+			}
+			else if(dashBoardPieBarButton.getText().equals("Show As Pie Graph")) {
+				dashBoardPieBarButton.setText("Show As Bar Graph");
+				pieChartRotationButtonHBox.getChildren().clear();
+				pieBarGraphHBox.getChildren().clear();
+				pieBarGraphHBox.getChildren().addAll(pieChartMemorySizes,graphDisplaySelectVBox);
+				pieChartRotationButtonHBox.getChildren().addAll(peiChartRotateLEftButton,peiChartRotateRightButton);
+			}
+		}
+	   });    
+	   dashBoardTabMainvBox.getChildren().addAll(pieBarGraphHBox);
+	   dashBoardTabMainvBox.getChildren().addAll(hBoxButtons);
+	   return dashBoardTabMainvBox;
+   }
+	
+	
+	private VBox getTopSchemasBySizeVBox(TreeItem<String> loadedDatabaseName) {
+		VBox dashBoardTabMainvBox = new VBox();
+		   dashBoardTabMainvBox.setPadding(new Insets(10,0,20,10)); 
+		   
 		   ArrayList<InformationSchemaSizes> informationSchemaSizesList = getAllSchemaSizesinDatabase();
 		
 		   // Schema Size relative to other 
 		   PieChart pieChartSchemaSizes = new PieChart();
 		   pieChartSchemaSizes.setTitle("TOP SCHEMAS BY SIZES IN MB");
 		   PieChart.Data slice ;
-		   pieChartSchemaSizes.setPrefSize(menu_Items_FX.size.getSize().getWidth()-300,menu_Items_FX.size.getSize().getHeight()-300);
+		   pieChartSchemaSizes.setPrefSize(menu_Items_FX.size.getSize().getWidth()-450,menu_Items_FX.size.getSize().getHeight()-200);
 		   currentSchemaIndex=0;
 		   if(loadedDatabaseName != null) {  // this will be null in case of Performance Schema click
 			   InformationSchemaSizes informationSchemaSizes = new InformationSchemaSizes();
@@ -6502,35 +6981,35 @@ public class MySqlUI {
 		   barChartSchemaSizes.setBarGap(5);
 		   barChartSchemaSizes.setHorizontalGridLinesVisible(false);
 		   barChartSchemaSizes.setVerticalGridLinesVisible(false);
-		   barChartSchemaSizes.setPrefWidth(informationSchemaSizesList.size()*120);
+		   barChartSchemaSizes.setPrefWidth(informationSchemaSizesList.size()*120);  // This will cause the scroll bar
 		     
 		   getDashBoardBarChart(informationSchemaSizesList, barChartSchemaSizes,currentSchemaIndex);
 		   
 		   ScrollPane barChartScrollPane = new ScrollPane();
 		   barChartScrollPane.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
 		   barChartScrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
-		   barChartScrollPane.setPrefSize(menu_Items_FX.size.getSize().getWidth()-300, menu_Items_FX.size.getSize().getHeight()-300);
+		   barChartScrollPane.setPrefHeight( menu_Items_FX.size.getSize().getHeight()-200);
 		   barChartScrollPane.setContent(barChartSchemaSizes);
 		   
 		   int totalNumberofSchemas =  informationSchemaSizesList.size(); 
-		   
-		   Slider barChartSlider = new Slider(0, totalNumberofSchemas, currentSchemaIndex);
-		   barChartSlider.setMajorTickUnit(1);
-		   barChartSlider.setMinorTickCount(0);
-		   barChartSlider.setShowTickMarks(true);
-		   barChartSlider.setShowTickLabels(true);
-		   barChartSlider.setBlockIncrement(1);
+	 
+																					 
+										
+										 
+										   
+											
+										 
 
-		   barChartSlider.valueProperty().addListener(new ChangeListener<Number>() {
-	            public void changed(ObservableValue<? extends Number> ov,
-	                Number old_val, Number new_val) {
-	                   System.out.println("Slider Old_Value --> "+old_val.intValue());
-	                   System.out.println("Slider New_Val --> "+   new_val.intValue());  
-	                   getDashBoardBarChart(informationSchemaSizesList, barChartSchemaSizes, new_val.intValue());
-	            }
-	        });
+																			  
+																	  
+												  
+																				   
+																					  
+																											  
+			  
+			
 		   
-		   Button peiChartRotateLEftButton = new Button("Next Schema");
+		   Button peiChartRotateLEftButton = new Button("Previous Schema");
 		   peiChartRotateLEftButton.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
@@ -6538,7 +7017,7 @@ public class MySqlUI {
 					getDashBoardPieChart(informationSchemaSizesList, pieChartSchemaSizes,currentSchemaIndex);
 				}
 			   });  
-		   Button peiChartRotateRightButton = new Button("Previous Schema");
+		   Button peiChartRotateRightButton = new Button("Next Schema");
 			   peiChartRotateRightButton.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
@@ -6548,37 +7027,50 @@ public class MySqlUI {
 		  });
 			   
 		   HBox pieBarGraphHBox = new HBox(); 
-		   pieBarGraphHBox.getChildren().add(pieChartSchemaSizes);
+		   pieBarGraphHBox.setSpacing(10); 
+		   pieBarGraphHBox.getChildren().addAll(pieChartSchemaSizes);
+		 
+		   HBox dashBoardPieBarButtonHBox = new HBox();
+		   dashBoardPieBarButtonHBox.setPadding(new Insets(10,0,0,10));
+		   dashBoardPieBarButton = new Button("Show As Bar Graph");
+		   dashBoardPieBarButtonHBox.getChildren().addAll(dashBoardPieBarButton);
+		   
 		   HBox hBoxButtons = new HBox();
 		   hBoxButtons.setSpacing(20);
-		   hBoxButtons.setPadding(new Insets(0,10,0,50));
-		   dashBoardPieBarButton = new Button("Bar Graph");
-		   hBoxButtons.getChildren().addAll(dashBoardPieBarButton,peiChartRotateLEftButton,peiChartRotateRightButton);
+		   hBoxButtons.setPadding(new Insets(10,10,0,0));
+		   
+		   HBox pieChartRotationButtonHBox = new HBox();
+		   pieChartRotationButtonHBox.setSpacing(20);
+		   pieChartRotationButtonHBox.setPadding(new Insets(10,10,0,200));
+		   pieChartRotationButtonHBox.getChildren().addAll(peiChartRotateLEftButton,peiChartRotateRightButton);
+		   
+		   hBoxButtons.getChildren().addAll(dashBoardPieBarButtonHBox,pieChartRotationButtonHBox);
+		   
 		   dashBoardPieBarButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				if(dashBoardPieBarButton.getText().equals("Bar Graph")) {
-					dashBoardPieBarButton.setText("Pie Graph");
-					 hBoxButtons.getChildren().clear();
+				if(dashBoardPieBarButton.getText().equals("Show As Bar Graph")) {
+					dashBoardPieBarButton.setText("Show As Pie Graph");
+					 pieChartRotationButtonHBox.getChildren().clear();
 					 pieBarGraphHBox.getChildren().clear();
 					 pieBarGraphHBox.getChildren().add(barChartScrollPane);
-					 hBoxButtons.getChildren().addAll(dashBoardPieBarButton/*,barChartSlider*/);
+					// hBoxButtons.getChildren().addAll(dashBoardPieBarButtonHBox);
 				}
-				else if(dashBoardPieBarButton.getText().equals("Pie Graph")) {
-					dashBoardPieBarButton.setText("Bar Graph");
-					hBoxButtons.getChildren().clear();
+				else if(dashBoardPieBarButton.getText().equals("Show As Pie Graph")) {
+					dashBoardPieBarButton.setText("Show As Bar Graph");
+					pieChartRotationButtonHBox.getChildren().clear();
 					pieBarGraphHBox.getChildren().clear();
 					pieBarGraphHBox.getChildren().add(pieChartSchemaSizes);
-					hBoxButtons.getChildren().addAll(dashBoardPieBarButton,peiChartRotateLEftButton,peiChartRotateRightButton);
+					pieChartRotationButtonHBox.getChildren().addAll(peiChartRotateLEftButton,peiChartRotateRightButton);
 				}
 			}
 		   });
-		   
-		   vbox.getChildren().add(pieBarGraphHBox);
-		   
-		   vbox.getChildren().add(hBoxButtons);
-		   databaseGrahicsStats.setContent(vbox);
-		   return databaseGrahicsStats;
+		            
+		   dashBoardTabMainvBox.getChildren().addAll(pieBarGraphHBox);
+	 
+		   dashBoardTabMainvBox.getChildren().addAll(hBoxButtons);
+		return dashBoardTabMainvBox;
+								 
 	}
 
 	private void getDashBoardPieChart(ArrayList<InformationSchemaSizes> informationSchemaSizesList, PieChart pieChartSchemaSizes,
@@ -6617,6 +7109,84 @@ public class MySqlUI {
 	}
 
 
+	private void getMemoryUsageUserPieChart(ArrayList<TotalMemoryByUser> totalMemoryByUserList, PieChart pieChartMemorySizes,
+			int currentUserIndex) {
+		
+		pieChartMemorySizes.getData().clear();
+		   if(currentUserIndex-4 >= 0) {
+			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByUserList.get(currentUserIndex-4).getUser() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex-4).getColumnValue()  )/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(totalMemoryByUserList.get(currentUserIndex-4).getColumnValue() )/1024/1024 )));
+		   }
+		   if(currentUserIndex-3 >= 0) {
+			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByUserList.get(currentUserIndex-3).getUser() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex-3).getColumnValue())/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(totalMemoryByUserList.get(currentUserIndex-3).getColumnValue())/1024/1024 )));
+		   }
+		   if(currentUserIndex-2 >= 0) {
+			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByUserList.get(currentUserIndex-2).getUser() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex-2).getColumnValue())/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(totalMemoryByUserList.get(currentUserIndex-2).getColumnValue())/1024/1024 )));
+		   }
+		   if(currentUserIndex-1 >= 0) {
+			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByUserList.get(currentUserIndex-1).getUser() +" "+get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex-1).getColumnValue())/1024/1024)  + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex-1).getColumnValue())/1024/1024 )));
+		   }
+		   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByUserList.get(currentUserIndex-0).getUser() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex-0).getColumnValue())/1024/1024 ) + " MB",get2digitDoublePrecisionValue( Double.valueOf(totalMemoryByUserList.get(currentUserIndex-0).getColumnValue())/1024/1024 )));
+			 
+		   if(currentUserIndex+1 <= totalMemoryByUserList.size()-1) {
+			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByUserList.get(currentUserIndex+1).getUser() +" "+get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex+1).getColumnValue())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex+1).getColumnValue())/1024/1024 )));
+		   }
+		   if(currentUserIndex+2 <= totalMemoryByUserList.size()-1) {
+			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByUserList.get(currentUserIndex+2).getUser() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex+2).getColumnValue())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex+2).getColumnValue())/1024/1024 )));
+		   }
+		   if(currentUserIndex+3 <= totalMemoryByUserList.size()-1) {
+			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByUserList.get(currentUserIndex+3).getUser() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex+3).getColumnValue())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex+3).getColumnValue())/1024/1024 )));
+		   }
+		   if(currentUserIndex+4 <= totalMemoryByUserList.size()-1) {
+			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByUserList.get(currentUserIndex+4).getUser() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex+4).getColumnValue())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex+4).getColumnValue())/1024/1024 )));
+		   }
+		   if(currentUserIndex+5 <= totalMemoryByUserList.size()-1) {
+			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByUserList.get(currentUserIndex+5).getUser() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex+5).getColumnValue())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(currentUserIndex+5).getColumnValue())/1024/1024 )));
+		   }
+	}
+	
+	private void getMemoryUsageHostPieChart(ArrayList<TotalMemoryByHost> totalMemoryByHostList, PieChart pieChartMemorySizes,
+			int currentUserIndex) {
+		
+		pieChartMemorySizes.getData().clear();
+									   
+	  
+															
+																																																																																		  
+	   
+		  
+		   if(currentUserIndex-4 >= 0) {
+			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByHostList.get(currentUserIndex-4).getHost() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex-4).getColumnValue()  )/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(totalMemoryByHostList.get(currentUserIndex-4).getColumnValue() )/1024/1024 )));
+		   }
+		   if(currentUserIndex-3 >= 0) {
+			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByHostList.get(currentUserIndex-3).getHost() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex-3).getColumnValue())/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(totalMemoryByHostList.get(currentUserIndex-3).getColumnValue())/1024/1024 )));
+		
+		   }
+		   if(currentUserIndex-2 >= 0) {
+			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByHostList.get(currentUserIndex-2).getHost() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex-2).getColumnValue())/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(totalMemoryByHostList.get(currentUserIndex-2).getColumnValue())/1024/1024 )));
+		   }
+		   if(currentUserIndex-1 >= 0) {
+			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByHostList.get(currentUserIndex-1).getHost() +" "+get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex-1).getColumnValue())/1024/1024)  + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex-1).getColumnValue())/1024/1024 )));
+		   }
+		   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByHostList.get(currentUserIndex-0).getHost() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex-0).getColumnValue())/1024/1024 ) + " MB",get2digitDoublePrecisionValue( Double.valueOf(totalMemoryByHostList.get(currentUserIndex-0).getColumnValue())/1024/1024 )));
+			 
+		   if(currentUserIndex+1 <= totalMemoryByHostList.size()-1) {
+			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByHostList.get(currentUserIndex+1).getHost() +" "+get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex+1).getColumnValue())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex+1).getColumnValue())/1024/1024 )));
+		   }
+		   if(currentUserIndex+2 <= totalMemoryByHostList.size()-1) {
+			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByHostList.get(currentUserIndex+2).getHost() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex+2).getColumnValue())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex+2).getColumnValue())/1024/1024 )));
+		   }
+		   if(currentUserIndex+3 <= totalMemoryByHostList.size()-1) {
+			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByHostList.get(currentUserIndex+3).getHost() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex+3).getColumnValue())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex+3).getColumnValue())/1024/1024 )));
+		   }
+		   if(currentUserIndex+4 <= totalMemoryByHostList.size()-1) {
+			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByHostList.get(currentUserIndex+4).getHost() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex+4).getColumnValue())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex+4).getColumnValue())/1024/1024 )));
+		   }
+		   if(currentUserIndex+5 <= totalMemoryByHostList.size()-1) {
+			   pieChartMemorySizes.getData().add(new PieChart.Data(totalMemoryByHostList.get(currentUserIndex+5).getHost() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex+5).getColumnValue())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByHostList.get(currentUserIndex+5).getColumnValue())/1024/1024 )));
+		   }
+	}
+
+	
 	private void getDashBoardBarChart(ArrayList<InformationSchemaSizes> informationSchemaSizesList, BarChart barChartSchemaSizes,
 			int currentSchemaIndex) {
 		
@@ -6628,39 +7198,33 @@ public class MySqlUI {
 	     for(int i=0;i<informationSchemaSizesList.size();i++) {
 	    	  dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(i).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(i).getDiskSize())/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(informationSchemaSizesList.get(i).getDiskSize())/1024/1024 )));
 	     }
-	       /*
-		   if(currentSchemaIndex-4 >= 0) { 
-		    	 dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex-4).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-4).getDiskSize())/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-4).getDiskSize())/1024/1024 )));
-		   }
-		   if(currentSchemaIndex-3 >= 0) {
-			   dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex-3).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-3).getDiskSize())/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-3).getDiskSize())/1024/1024 )));
-		    	 
-		   }
-		   if(currentSchemaIndex-2 >= 0) {
-			   dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex-2).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-2).getDiskSize())/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-2).getDiskSize())/1024/1024 )));
-		   }
-		   if(currentSchemaIndex-1 >= 0) {
-			   dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex-1).getSchemaName() +" "+get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-1).getDiskSize())/1024/1024)  + " MB", get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-1).getDiskSize())/1024/1024 )));
-		   }
-		   dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex-0).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-0).getDiskSize())/1024/1024 ) + " MB",get2digitDoublePrecisionValue( Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex-0).getDiskSize())/1024/1024 )));
-			 
-		   if(currentSchemaIndex+1 <= informationSchemaSizesList.size()-1) {
-			   dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex+1).getSchemaName() +" "+get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+1).getDiskSize())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+1).getDiskSize())/1024/1024 )));
-		   }
-		   if(currentSchemaIndex+2 <= informationSchemaSizesList.size()-1) {
-			   dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex+2).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+2).getDiskSize())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+2).getDiskSize())/1024/1024 )));
-		   }
-		   if(currentSchemaIndex+3 <= informationSchemaSizesList.size()-1) {
-			   dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex+3).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+3).getDiskSize())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+3).getDiskSize())/1024/1024 )));
-		   }
-		   if(currentSchemaIndex+4 <= informationSchemaSizesList.size()-1) {
-			   dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex+4).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+4).getDiskSize())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+4).getDiskSize())/1024/1024 )));
-		   }
-		   if(currentSchemaIndex+5 <= informationSchemaSizesList.size()-1) {
-			   dataSeries1.getData().add(new XYChart.Data(informationSchemaSizesList.get(currentSchemaIndex+5).getSchemaName() +" "+ get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+5).getDiskSize())/1024/1024 ) + " MB", get2digitDoublePrecisionValue(Double.valueOf(informationSchemaSizesList.get(currentSchemaIndex+5).getDiskSize())/1024/1024 )));
-		   }
-		   */
-		   barChartSchemaSizes.getData().addAll(dataSeries1);
+		 barChartSchemaSizes.getData().addAll(dataSeries1);
+	}
+	
+	private void getMemoryUsageUserBarChart(ArrayList<TotalMemoryByUser> totalMemoryByUserList, BarChart barChartMemoryUsage,
+			int currentSchemaIndex) {
+		
+		barChartMemoryUsage.getData().clear();
+		XYChart.Series dataSeries1 = new XYChart.Series();
+	    dataSeries1.setName("Disk Size");
+	     
+	    for(int i=0;i<totalMemoryByUserList.size();i++) {
+	    	  dataSeries1.getData().add(new XYChart.Data(totalMemoryByUserList.get(i).getUser() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserList.get(i).getColumnValue())/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(totalMemoryByUserList.get(i).getColumnValue())/1024/1024 )));
+	    }
+	    barChartMemoryUsage.getData().addAll(dataSeries1);
+	}
+	
+	private void getMemoryUsageHostBarChart(ArrayList<TotalMemoryByHost> totalMemoryByUserHostList, BarChart barChartMemoryUsage,
+			int currentSchemaIndex) {
+		
+		barChartMemoryUsage.getData().clear();
+		XYChart.Series dataSeries1 = new XYChart.Series();
+	    dataSeries1.setName("Disk Size");
+	     
+	    for(int i=0;i<totalMemoryByUserHostList.size();i++) {
+	    	  dataSeries1.getData().add(new XYChart.Data(totalMemoryByUserHostList.get(i).getHost() +" "+ get2digitDoublePrecisionValue(Double.valueOf(totalMemoryByUserHostList.get(i).getColumnValue())/1024/1024)  + " MB",get2digitDoublePrecisionValue( Double.valueOf(totalMemoryByUserHostList.get(i).getColumnValue())/1024/1024 )));
+	    }
+	    barChartMemoryUsage.getData().addAll(dataSeries1);
 	}
 
 	
@@ -7294,7 +7858,7 @@ class InformationSchemaTable {
 	
 }
 
-class InformationSchemaSizes {
+class InformationSchemaSizes{
 	
 	private String schemaName;
 	private String diskSize;
@@ -7325,3 +7889,76 @@ class InformationSchemaSizes {
 		return this.schemaName.length();
 	}
 }
+
+class TotalMemoryByUser{
+	
+	private String user;
+	private String columnValue;
+	
+	public String getUser() {
+		return user;
+	}
+
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+	public String getColumnValue() {
+		return columnValue;
+	}
+
+	public void setColumnValue(String columnValue) {
+		this.columnValue = columnValue;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		
+		if( ((TotalMemoryByUser)obj).columnValue.equals(this.columnValue) ) {
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.columnValue.length();
+	}
+}
+
+class TotalMemoryByHost{
+	
+	private String host;
+	private String columnValue;
+	
+	public String getHost() {
+		return host;
+	}
+
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	public String getColumnValue() {
+		return columnValue;
+	}
+
+	public void setColumnValue(String columnValue) {
+		this.columnValue = columnValue;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		
+		if( ((TotalMemoryByHost)obj).columnValue.equals(this.columnValue) ) {
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.columnValue.length();
+	}
+}
+
