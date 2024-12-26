@@ -6,6 +6,7 @@ import java.awt.Toolkit;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -43,41 +44,42 @@ public class ERDiagramApplication extends Application{
 		
 		
 		// Diagram using VBox stackpane and rectangles
-		VBox rectangleVBox = new VBox();
-		rectangleVBox.setSpacing(0);
-		StackPane stackPane1 = new StackPane();
-		Rectangle tableNameRectangle = new Rectangle(150,25);
-		tableNameRectangle.setFill(Color.WHITE);
-		tableNameRectangle.setStroke(Color.BLACK);
-		tableNameRectangle.setArcHeight(8);
-		tableNameRectangle.setArcWidth(8);
-		tableNameRectangle.setStrokeWidth(1);	
-		tableNameRectangle.setFill(Color.SILVER);
-		stackPane1.getChildren().addAll(tableNameRectangle,new Label("actor"));
-		
-		StackPane stackPane2 = new StackPane();
-		Rectangle columnNamesRectangle = new Rectangle(150,80);
-		columnNamesRectangle.setFill(Color.WHITE);
-		columnNamesRectangle.setStroke(Color.BLACK);
-		columnNamesRectangle.setArcHeight(8);
-		columnNamesRectangle.setArcWidth(8);
-		columnNamesRectangle.setStrokeWidth(1);
-		columnNamesRectangle.setFill(Color.AZURE);
-		VBox vBoxColumns = new VBox();
-		vBoxColumns.setPadding(new Insets(10,0,0,10));
-		vBoxColumns.setSpacing(5);
-		vBoxColumns.getChildren().addAll(new Label(" actorId"),new Label(" actorName"),new Label(" actorCity"),new Label(" actorId"),new Label(" actorName"),new Label(" actorCity"));
-		columnNamesRectangle.setHeight(vBoxColumns.getChildren().size()*25);
-		stackPane2.getChildren().addAll(columnNamesRectangle,vBoxColumns);
-		rectangleVBox.getChildren().addAll(stackPane1,stackPane2);
-		rectangleVBox.setLayoutX(100);  // used to place it a particular X location on screen
-		rectangleVBox.setLayoutY(300);  // used to place it a particular Y location on screen
-		mainPane.getChildren().add(rectangleVBox);
+//		VBox rectangleVBox = new VBox();
+//		rectangleVBox.setSpacing(0);
+//		StackPane stackPane1 = new StackPane();
+//		Rectangle tableNameRectangle = new Rectangle(150,25);
+//		tableNameRectangle.setFill(Color.WHITE);
+//		tableNameRectangle.setStroke(Color.BLACK);
+//		tableNameRectangle.setArcHeight(8);
+//		tableNameRectangle.setArcWidth(8);
+//		tableNameRectangle.setStrokeWidth(1);	
+//		tableNameRectangle.setFill(Color.SILVER);
+//		stackPane1.getChildren().addAll(tableNameRectangle,new Label("actor"));
+//		
+//		StackPane stackPane2 = new StackPane();
+//		Rectangle columnNamesRectangle = new Rectangle(150,80);
+//		columnNamesRectangle.setFill(Color.WHITE);
+//		columnNamesRectangle.setStroke(Color.BLACK);
+//		columnNamesRectangle.setArcHeight(8);
+//		columnNamesRectangle.setArcWidth(8);
+//		columnNamesRectangle.setStrokeWidth(1);
+//		columnNamesRectangle.setFill(Color.AZURE);
+//		VBox vBoxColumns = new VBox();
+//		vBoxColumns.setPadding(new Insets(10,0,0,10));
+//		vBoxColumns.setSpacing(5);
+//		vBoxColumns.getChildren().addAll(new Label(" actorId"),new Label(" actorName"),new Label(" actorCity"),new Label(" actorId"),new Label(" actorName"),new Label(" actorCity"));
+//		columnNamesRectangle.setHeight(vBoxColumns.getChildren().size()*25);
+//		stackPane2.getChildren().addAll(columnNamesRectangle,vBoxColumns);
+//		rectangleVBox.getChildren().addAll(stackPane1,stackPane2);
+//		rectangleVBox.setLayoutX(100);  // used to place it a particular X location on screen
+//		rectangleVBox.setLayoutY(300);  // used to place it a particular Y location on screen
+//		mainPane.getChildren().add(rectangleVBox);
 		
 		// Diagram using TitledPane
 		TitledPane tabletitledPane = new TitledPane();
 		tabletitledPane.setPrefWidth(150);
 		tabletitledPane.setText("actor");
+		tabletitledPane.alignmentProperty().setValue(Pos.CENTER);
 		tabletitledPane.setTooltip(new Tooltip("This is a table in RDBD \n This is tool tip for table"));
 		VBox titledPaneVBox = new VBox();
 		titledPaneVBox.setBackground(new Background(  new BackgroundFill(javafx.scene.paint.Color.AZURE,  CornerRadii.EMPTY,Insets.EMPTY )));
@@ -92,7 +94,33 @@ public class ERDiagramApplication extends Application{
 		tabletitledPane.setCollapsible(false);
 		tabletitledPane.setLayoutX(100);   // used to place it a particular X location on screen
 		tabletitledPane.setLayoutY(100);   // used to place it a particular Y location on screen
+	    enableDragAndDrop(tabletitledPane, mainPane);
 		mainPane.getChildren().add(tabletitledPane);
+		
+		TitledPane tabletitled1Pane = new TitledPane();
+		tabletitled1Pane.setPrefWidth(150);
+		tabletitled1Pane.setText("address");
+		tabletitled1Pane.alignmentProperty().setValue(Pos.CENTER);
+		tabletitled1Pane.setTooltip(new Tooltip("This is a table in RDBD \n This is tool tip for table"));
+		VBox titledPane1VBox = new VBox();
+		titledPane1VBox.setBackground(new Background(  new BackgroundFill(javafx.scene.paint.Color.AZURE,  CornerRadii.EMPTY,Insets.EMPTY )));
+		titledPane1VBox.setSpacing(3);
+		titledPane1VBox.getChildren().add(new Label("address_id"));
+		titledPane1VBox.getChildren().add(new Label("address"));
+		titledPane1VBox.getChildren().add(new Label("address2"));
+		titledPane1VBox.getChildren().add(new Label("district"));
+		titledPane1VBox.getChildren().add(new Label("city_id"));
+		titledPane1VBox.getChildren().add(new Label("postal_code"));
+		titledPane1VBox.getChildren().add(new Label("phone"));
+		titledPane1VBox.getChildren().add(new Label("location"));
+		titledPane1VBox.getChildren().add(new Label("last_update"));
+		tabletitled1Pane.setContent(titledPane1VBox);
+		tabletitled1Pane.setCollapsible(false);
+		tabletitled1Pane.setLayoutX(300);   // used to place it a particular X location on screen
+		tabletitled1Pane.setLayoutY(300); // used to place it a particular Y location on screen
+		enableDragAndDrop(tabletitled1Pane, mainPane);
+		
+		mainPane.getChildren().add(tabletitled1Pane);
 	
 		// This will set the backgroud color the Zoom Pane
 		mainPane.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.WHITE,  CornerRadii.EMPTY,Insets.EMPTY ) ));
@@ -108,6 +136,34 @@ public class ERDiagramApplication extends Application{
 		
 	}
 	
+	private void enableDragAndDrop(TitledPane tabletitledPane, Pane mainPane) {
+        final double[] offset = new double[2];
+
+        // When the mouse is pressed, record the offset between the mouse position and the TitledPane position
+        tabletitledPane.setOnMousePressed(event -> {
+            offset[0] = event.getSceneX() - tabletitledPane.getLayoutX();
+            offset[1] = event.getSceneY() - tabletitledPane.getLayoutY();
+        });
+
+        // When dragging, update the TitledPane position
+        tabletitledPane.setOnMouseDragged(event -> {
+            double newX = event.getSceneX() - offset[0];
+            double newY = event.getSceneY() - offset[1];
+
+            // Restrict movement within the bounds of the mainPane
+            if (newX >= 0 && newX + tabletitledPane.getWidth() <= mainPane.getWidth()) {
+                tabletitledPane.setLayoutX(newX);
+            }
+            if (newY >= 0 && newY + tabletitledPane.getHeight() <= mainPane.getHeight()) {
+                tabletitledPane.setLayoutY(newY);
+            }
+        });
+
+        // Optional: Provide feedback on mouse release
+        tabletitledPane.setOnMouseReleased(event -> {
+            System.out.println("TitledPane dropped at: " + tabletitledPane.getLayoutX() + ", " + tabletitledPane.getLayoutY());
+        });
+    }
 	
 }
 
