@@ -316,6 +316,7 @@ public class Menu_Items_FX extends Application {
 
 		
 		HBox contentHBox = new HBox();
+		contentHBox.setMaxWidth(size.getWidth());
 		
 		SplitPane mainSplitPane = new SplitPane();
 		mainSplitPane.setDividerPositions(0.21);
@@ -357,7 +358,7 @@ public class Menu_Items_FX extends Application {
 		vBoxleft.getChildren().add(vBoxleftScrollPane);
 		
         alltabbedEditors = new TabPane();
-        alltabbedEditors.setMinSize(size.getWidth()-320, size.getHeight()-135);
+        alltabbedEditors.setMinSize(size.getWidth()-300, size.getHeight()-135);
         
         vBoxright.getChildren().add(alltabbedEditors);  
         mainSplitPane.getItems().addAll(vBoxleft,vBoxright);
@@ -365,14 +366,15 @@ public class Menu_Items_FX extends Application {
         rootPane.getChildren().add(contentHBox);
         
         HBox statushbox = new HBox();
+        statushbox.setMinWidth(20);
         statushbox.getChildren().add(new ProgressBar(70));
         rootPane.getChildren().add(statushbox);
-        rootPane.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.GREEN,  CornerRadii.EMPTY,Insets.EMPTY ) ));
         
-		scene = new Scene(rootPane,size.getWidth(),size.getHeight()-70);
+		scene = new Scene(rootPane);
 		
 		primaryStage.setTitle("Menu Item Application \u0627 \u0628 \u0629 \u062A \u062B \u062C \u062D ");  
 		primaryStage.setScene(scene);
+		primaryStage.setMaximized(true);
 		primaryStage.show();
 		
 		

@@ -1,6 +1,7 @@
 package org.openjfx.fx;
 
 import com.openfx.erdiagram.ERDiagramApplication;
+import com.openfx.erdiagram.ERDiagramApplication1;
 
 public class Main {
 
@@ -8,7 +9,7 @@ public class Main {
 		
 		 //Sample_FX.main(args);
 
-		 //	Menu_Items_FX.main(args);	
+		 	Menu_Items_FX.main(args);	
 				
 			//	LayoutSampleCSS.main(args);
 				
@@ -19,15 +20,9 @@ public class Main {
 		// 	 TableViewSample.main(args);
 			//	TableValueSample2.main(args);
 		 	
-		 	// TableSample3.main(args);
+		 	// TableSample3.main(argtitledPane2VBox.getChildren().add(new Label("city"));s);
 		 	
-		ERDiagramApplication.main(args);
-/*
-		String tableName = "Vehicles";
-		for(int i=0;i<1000;i++) {
-			System.out.println("insert into "+ tableName +" values("+i+",'khan','Husnain','Edmonton','Alberta');");
-		}
-	*/
+	//	 ERDiagramApplication1.main(args);
 	}
 
 }

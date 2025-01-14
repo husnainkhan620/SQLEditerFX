@@ -6993,21 +6993,6 @@ public class MySqlUI {
 		   
 		   int totalNumberofSchemas =  informationSchemaSizesList.size(); 
 	 
-																					 
-										
-										 
-										   
-											
-										 
-
-																			  
-																	  
-												  
-																				   
-																					  
-																											  
-			  
-			
 		   
 		   Button peiChartRotateLEftButton = new Button("Previous Schema");
 		   peiChartRotateLEftButton.setOnAction(new EventHandler<ActionEvent>() {
