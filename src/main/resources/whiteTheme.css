@@ -1,0 +1,20 @@
+.root {
+  -heading-colour: green;
+  -prompt-colour: mediumblue;
+  -data-colour: slategrey;
+  -theme-colour: #c0c0c0;
+  -name-colour: lightseagreen;
+  -background-colour: lightyellow;
+  -toolbar-colour : GAINSBORO;  /* #DCDCDC */
+}
+
+#maintoolBar {
+    -fx-background-color:  -toolbar-colour;
+}
+
+#alltabbedEditors {
+	-fx-background-color: -toolbar-colour
+}
+
+
+
