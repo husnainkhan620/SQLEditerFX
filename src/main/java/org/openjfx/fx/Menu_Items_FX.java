@@ -137,6 +137,10 @@ public class Menu_Items_FX extends Application {
 	public ListView<String> selectedTablesNames = new ListView<String>();
 	public Tab dataSearchtabPane;
 	
+	public String whiteThemeCss = Menu_Items_FX.class.getResource("/whiteTheme.css").toExternalForm();
+	public String darkThemeCss = Menu_Items_FX.class.getResource("/darkTheme.css").toExternalForm();
+	
+	public String selectedTheme = whiteThemeCss;
 	
 	public MenuBar createMenuBar() {
 		
@@ -149,6 +153,7 @@ public class Menu_Items_FX extends Application {
 		size = Toolkit.getDefaultToolkit().getScreenSize();
 		
 		MenuBar menuBar = new MenuBar();
+		menuBar.setId("mainMenuBar");
 		Menu fileMenu = new Menu();
 		fileMenu.setText("File");
 		Menu editMenu = new Menu();
@@ -281,6 +286,7 @@ public class Menu_Items_FX extends Application {
 	public void start(Stage primaryStage) throws Exception {
 	
 		
+		
 		this.primaryStage = primaryStage;
 		size = Toolkit.getDefaultToolkit().getScreenSize();
 		System.out.println(size);
@@ -296,7 +302,8 @@ public class Menu_Items_FX extends Application {
 		rootPane.getChildren().add(createMenuBar());
 		
 		ToolBar toolBar = new ToolBar();
-		toolBar.setStyle("-fx-background-color: DAE6F3;");
+	//	toolBar.setStyle("-fx-background-color: DAE6F3;");
+		toolBar.setId("maintoolBar");
 		Button connectDB = new Button();
 		//connectDB.setText("DB");
 		connectDB.setGraphic(imagenewDBConnectionImageView);
@@ -312,10 +319,32 @@ public class Menu_Items_FX extends Application {
 		 
 		toolBarRunButton.setOnAction(new SqlQueryRunButtonSubmit(this));
 		toolBar.getItems().add(toolBarRunButton);
+		
+		Button toolTheme = new Button("Theme");
+		toolTheme.setOnAction( new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				// TODO Auto-generated method stub
+				if(selectedTheme.equalsIgnoreCase(whiteThemeCss)) {
+					selectedTheme = darkThemeCss;
+					scene.getStylesheets().add(darkThemeCss);
+				}	
+				else {
+					selectedTheme = whiteThemeCss;
+					scene.getStylesheets().add(whiteThemeCss);
+				}
+				
+			}
+		});
+		toolBar.getItems().add(toolTheme);
+		
+		
 		rootPane.getChildren().add(toolBar);
 
 		
 		HBox contentHBox = new HBox();
+		contentHBox.setMaxWidth(size.getWidth());
 		
 		SplitPane mainSplitPane = new SplitPane();
 		mainSplitPane.setDividerPositions(0.21);
@@ -357,7 +386,8 @@ public class Menu_Items_FX extends Application {
 		vBoxleft.getChildren().add(vBoxleftScrollPane);
 		
         alltabbedEditors = new TabPane();
-        alltabbedEditors.setMinSize(size.getWidth()-320, size.getHeight()-135);
+        alltabbedEditors.setId("alltabbedEditors");
+        alltabbedEditors.setMinSize(size.getWidth()-300, size.getHeight()-135);
         
         vBoxright.getChildren().add(alltabbedEditors);  
         mainSplitPane.getItems().addAll(vBoxleft,vBoxright);
@@ -365,14 +395,16 @@ public class Menu_Items_FX extends Application {
         rootPane.getChildren().add(contentHBox);
         
         HBox statushbox = new HBox();
+        statushbox.setMinWidth(20);
         statushbox.getChildren().add(new ProgressBar(70));
         rootPane.getChildren().add(statushbox);
-        rootPane.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.GREEN,  CornerRadii.EMPTY,Insets.EMPTY ) ));
         
-		scene = new Scene(rootPane,size.getWidth(),size.getHeight()-70);
+		scene = new Scene(rootPane);
+		scene.getStylesheets().add(selectedTheme);
 		
 		primaryStage.setTitle("Menu Item Application \u0627 \u0628 \u0629 \u062A \u062B \u062C \u062D ");  
 		primaryStage.setScene(scene);
+		primaryStage.setMaximized(true);
 		primaryStage.show();
 		
 		
