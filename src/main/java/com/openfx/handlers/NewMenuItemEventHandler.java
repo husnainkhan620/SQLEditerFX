@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import org.openjfx.fx.Menu_Items_FX;
-
+import com.openfx.handlers.SettingTabEventHandler;
 import com.openfx.ai.ConnectionsConstants;
 import com.openfx.connections.DatabricksConnection;
 import com.openfx.connections.DuckDBConnection;
@@ -71,6 +71,7 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	public Stage connectionStage;
 	public Menu_Items_FX menu_Items_FX;
 	
+	public Scene sceneDataBaseConnection;
 	public TabPane connectionDetailsTabs;
 	public Tab connectionDetailsTab;
 	public Text connectToDatabseText;
@@ -88,8 +89,7 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	
 	public ArrayList<Rectangle> avaialbleHighRectangleConnections = new ArrayList<Rectangle>();  
 	private HighLightRectangleHolder highLightRectangleHolder = new HighLightRectangleHolder(avaialbleHighRectangleConnections);
-	
-	
+			
 	double olddragX = 0.0;
 	double olddragY = 0.0;
 	double newdragX = 0.0;
@@ -111,11 +111,21 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	public MssqlUI mssqlUI;
 	public DuckDBUI duckDBUI;
 	public MariaDBUI mariaDBUI;
+	public SettingTabEventHandler settingTabEventHandler;
 		
 	public NewMenuItemEventHandler(Menu_Items_FX menu_Items_FX) {
 		this.menu_Items_FX = menu_Items_FX;
 		
-	}
+	} 
+	public NewMenuItemEventHandler(SettingTabEventHandler settingTabEventHandler) {
+		this.settingTabEventHandler = settingTabEventHandler;
+		
+	} 
+	
+	public String whiteThemeCss = Menu_Items_FX.class.getResource("/layoutstyles.css").toExternalForm();
+	public String darkThemeCss = Menu_Items_FX.class.getResource("/darkTheme.css").toExternalForm();
+	
+	public String selectedTheme = whiteThemeCss;
 	
 	@Override
 	public void handle(ActionEvent event) {
@@ -137,9 +147,9 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		menu_Items_FX.borderSelectDatabase = new BorderPane();
 		    
 		VBox vBoxTop = new VBox();
-		
 		BorderPane borderPaneProperties = new BorderPane(); 
-		borderPaneProperties.setStyle("-fx-background-color : white");  // Top most 
+		borderPaneProperties.setId("borderPaneProperties");
+		//borderPaneProperties.setStyle("-fx-background-color : white");  // Top most 
 
 		borderPaneProperties.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
@@ -173,9 +183,11 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		});
 		
 		
-		Label connectToLabel = new Label("Connecto to Database");
-		connectToLabel.setPadding(new Insets(0, 0, 2, 2));
+		Label connectToLabel = new Label("Connect to Database");
+		connectToLabel.setId("connectionlabel");
+		//connectToLabel.setPadding(new Insets(0, 0, 2, 2));
 		borderPaneProperties.setLeft(connectToLabel);
+	
 		
 		/*
 		HBox boxButtons = new HBox();
@@ -207,7 +219,6 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		
 		vBoxTop.getChildren().add(borderPaneProperties); // disabled the top bar above menu for now
 		vBoxTop.getChildren().add(hbox);
-		  
 		menu_Items_FX.borderSelectDatabase.setTop(vBoxTop);
 		menu_Items_FX.borderSelectDatabase.setLeft(addVBox());   
 		  
@@ -220,14 +231,22 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	    menu_Items_FX.borderSelectDatabase.setBottom(borderPaneBottom);
 	    menu_Items_FX.sceneDataBaseConnection = new Scene(menu_Items_FX.borderSelectDatabase,800,600);
 	    
+//	    menu_Items_FX.sceneDataBaseConnection.getStylesheets().add(whiteThemeCss);
+	   // menu_Items_FX.sceneDataBaseConnection.getStylesheets().add(darkThemeCss);
+
+	    menu_Items_FX.sceneDataBaseConnection.getStylesheets().clear(); // Clear existing stylesheets
+	   // menu_Items_FX.sceneDataBaseConnection.getStylesheets().add(getClass().getResource("/layoutstyles.css").toExternalForm());
+	   // menu_Items_FX.sceneDataBaseConnection.getStylesheets().add(selectedTheme); // Apply the selected theme
+	    menu_Items_FX.sceneDataBaseConnection.getStylesheets().add(menu_Items_FX.selectedTheme); // Apply the selected theme
 	    
-	    menu_Items_FX.sceneDataBaseConnection.getStylesheets().add(getClass().getResource("/layoutstyles.css").toExternalForm());
 	    
+//	     menu_Items_FX.sceneDataBaseConnection.getStylesheets().add(getClass().getResource("/layoutstyles.css").toExternalForm());
+//	     menu_Items_FX.sceneDataBaseConnection.getStylesheets().add(selectedTheme);
 	    connectionStage = new Stage();
 	    connectionStage.initModality(Modality.APPLICATION_MODAL);
 	    connectionStage.initOwner(menu_Items_FX.primaryStage.getScene().getWindow());
-	    
-	    connectionStage.setScene(menu_Items_FX.sceneDataBaseConnection);
+	   // menu_Items_FX.scene.getStylesheets().add(selectedTheme);
+	    connectionStage.setScene( menu_Items_FX.sceneDataBaseConnection);
 	    // Commenting the below for now
 	    //  connectionStage.initStyle(StageStyle.TRANSPARENT);  // remove the top head of the scene
 	    connectionStage.show();
@@ -366,8 +385,9 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	        hbox.getStyleClass().add("hbox");
 	        
 	        connectToDatabseText = new Text("Select your database to connect");
-	        connectToDatabseText.setFont(Font.font("Verdana",20));
-	        connectToDatabseText.setFill(Color.WHITE);
+	        connectToDatabseText.setId("connectToDatabseText");
+	        //connectToDatabseText.setFont(Font.font("Verdana",20));
+	        //connectToDatabseText.setFill(Color.WHITE);
 	        hbox.getChildren().addAll(connectToDatabseText);
 	        
 	        return hbox;
@@ -384,26 +404,31 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		    borderPane.getStyleClass().add("hbox");
 	        
 	        buttonTestConnection = new Button("Test Connection");
-	        buttonTestConnection.setPrefSize(100, 20);
+	       // buttonTestConnection.setPrefSize(100, 20);
 	        buttonTestConnection.setDisable(true);
+	        buttonTestConnection.setId("buttons");
 	        buttonTestConnection.setOnMousePressed(onbuttonTestConnectionMousePressed());
 	        
 	        buttonBack = new Button("< Back");
-	        buttonBack.setPrefSize(100, 20);
+	        buttonBack.setId("buttons");
+	       // buttonBack.setPrefSize(100, 20);
 	        buttonBack.setDisable(true);
 	        buttonNext = new Button(" Next >");
-	        buttonNext.setPrefSize(100, 20);
+	        buttonNext.setId("buttons");
+	       // buttonNext.setPrefSize(100, 20);
 	        buttonNext.setDisable(true);
 	        buttonFinish = new Button("Finish");
-	        buttonFinish.setPrefSize(100, 20);
+	        buttonFinish.setId("buttons");
+	        //buttonFinish.setPrefSize(100, 20);
 	        buttonFinish.setDisable(true);
 	        buttonCancel = new Button("Cancel");
-	        buttonCancel.setPrefSize(100, 20);
+	        buttonCancel.setId("buttons");
+	        //buttonCancel.setPrefSize(100, 20);
 	        
 	        HBox hboxConnectionButtons = new HBox();
-	        hboxConnectionButtons.setSpacing(5);
+	        hboxConnectionButtons.setId("hboxConnectionButtons");
+	       // hboxConnectionButtons.setSpacing(5);
 	        hboxConnectionButtons.getChildren().addAll(buttonBack,buttonNext,buttonFinish,buttonCancel); 
-	      
 	        borderPane.setLeft(buttonTestConnection);
 	        
 	        borderPane.setRight(hboxConnectionButtons);
@@ -531,9 +556,10 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 //	        vbox.setSpacing(8);              // Gap between nodes
 	// Use style classes to set properties previously set above        
 	        vbox.getStyleClass().addAll("pane", "vbox");
-
+	        	        
 	        Text title = new Text("Data");
-	        title.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+	        title.setId("titleData");
+	        //title.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 	        vbox.getChildren().add(title);
 	        
 	        Hyperlink options[] = new Hyperlink[] {
@@ -541,11 +567,12 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	            new Hyperlink("Marketing"),
 	            new Hyperlink("Distribution"),
 	            new Hyperlink("Costs")};
-
-	        for (int i=0; i<4; i++) {
+	        	
+	         for (int i=0; i<4; i++) {
 	            // Add offset to left side to indent from title
 	            VBox.setMargin(options[i], new Insets(0, 0, 0, 8));
 	            vbox.getChildren().add(options[i]);
+	            options[i].setId("hyperlink");
 	        }
 	        
 	        return vbox;
@@ -565,16 +592,16 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	        helpIcon.setArcWidth(3.5);
 	        
 	        Text helpText = new Text("?");
-	        helpText.setFont(Font.font("Verdana", FontWeight.BOLD, 18));
-	        helpText.setFill(Color.WHITE);
-	        helpText.setStroke(Color.web("#7080A0")); 
+	        helpText.setId("helpText");
+	        //helpText.setFont(Font.font("Verdana", FontWeight.BOLD, 18));
+	        //helpText.setFill(Color.WHITE);
+	        //helpText.setStroke(Color.web("#7080A0")); 
 
 	        stackpane.getChildren().addAll(helpIcon, helpText);
 	        stackpane.setAlignment(Pos.CENTER_RIGHT);
 	        // Add offset to right for question mark to compensate for RIGHT 
 	        // alignment of all nodes
 	        StackPane.setMargin(helpText, new Insets(0, 10, 0, 0));
-	        
 	        hb.getChildren().add(stackpane);
 	        HBox.setHgrow(stackpane, Priority.ALWAYS);
 	                
@@ -585,13 +612,14 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		  menu_Items_FX.currentConnectionSelected = "";
 
 		  menu_Items_FX.selectDatabaseConnectionsflow = new FlowPane();
-		  menu_Items_FX.selectDatabaseConnectionsflow.setPadding(new Insets(5, 0, 5, 0));
-		  menu_Items_FX.selectDatabaseConnectionsflow.setVgap(10);
-		  menu_Items_FX.selectDatabaseConnectionsflow.setHgap(20);
+		  menu_Items_FX.selectDatabaseConnectionsflow.setId("flowPane");
+		//  menu_Items_FX.selectDatabaseConnectionsflow.setPadding(new Insets(5, 0, 5, 0));
+		 // menu_Items_FX.selectDatabaseConnectionsflow.setVgap(10);
+		 // menu_Items_FX.selectDatabaseConnectionsflow.setHgap(20);
 	        //  flow.setStyle("-fx-background-color: DAE6F3;");
 	        //  Use style classes to set properties previously set above        
 		  menu_Items_FX.selectDatabaseConnectionsflow.getStyleClass().addAll("databasesflowPane");
-		  menu_Items_FX.selectDatabaseConnectionsflow.setPrefWrapLength(170); // preferred width allows for two columns
+		  //menu_Items_FX.selectDatabaseConnectionsflow.setPrefWrapLength(170); // preferred width allows for two columns
 
 		  // 
 		  StackPane stackPaneMySql = highLightRectangleHolder.getHighlightRectangleMySql(null);
@@ -603,6 +631,7 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		  StackPane stackPaneMssql = highLightRectangleHolder.getHighlightRectangleMSSQLServer(null);
 		  StackPane stackPaneDuckDB = highLightRectangleHolder.getHighlightRectangleDuckDB(null);
 		  StackPane stackPaneMariaDB = highLightRectangleHolder.getHighlightRectangleMariaDB(null);
+		  
 		  
 	      menu_Items_FX.selectDatabaseConnectionsflow.getChildren().add(stackPaneMySql);
     
@@ -662,36 +691,44 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		  stackPaneMariaDB.setOnMouseEntered(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneMariaDB.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));		 
 		  stackPaneMariaDB.setOnMouseClicked(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneMariaDB.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));  
 		  stackPaneMariaDB.setOnMouseExited(new  HighLightRectangleMouseEventHandler((Rectangle)stackPaneMariaDB.getChildren().get(0),avaialbleHighRectangleConnections,menu_Items_FX,this,null));
+ 
+		  menu_Items_FX.selectDatabaseConnectionsflow.getStyleClass().add("select-database-connections");
 
 		        
-	        BackgroundFill background_fill = new BackgroundFill(javafx.scene.paint.Color.WHITE,  CornerRadii.EMPTY,Insets.EMPTY ); 
-	        // create Background 
-	        Background background = new Background(background_fill); 
-	        menu_Items_FX.selectDatabaseConnectionsflow.setBackground(background);
+//	      BackgroundFill background_fill = new BackgroundFill(javafx.scene.paint.Color.WHITE,  CornerRadii.EMPTY,Insets.EMPTY ); 
+//	        // create Background 
+//	        Background background = new Background(background_fill); 
+//	        menu_Items_FX.selectDatabaseConnectionsflow.setBackground(background);
 	        return menu_Items_FX.selectDatabaseConnectionsflow;
 	    }
 	  
 	  private TabPane addConnectionDetails() {
 		  
 		  connectionDetailsTabs = new TabPane();
-		  connectionDetailsTabs.getStyleClass().addAll("databasesflowPane");  // box for the connection tabbed pane
+		 // connectionDetailsTabs.setId("connectionDetailsTabs");
+		  connectionDetailsTabs.getStyleClass().add("connectionDetailsTabs");
+		  connectionDetailsTabs.getStyleClass().addAll("databasesflowPane,connectionDetailsTabs");  // box for the connection tabbed pane
 		  connectionDetailsTab = new Tab("Connection");
+		  connectionDetailsTab.setId("connectionDetailsTab");
 		  connectionDetailsTab.setClosable(false);
 		  
 		  connectionDetailsTab.setContent(addConnectionCredentials()); // will set fields to connectionDetailsTab
 	  
 		  Tab driverPropertiesTab = new Tab("Driver Properties");
-		  driverPropertiesTab.setClosable(false);		  
+		  driverPropertiesTab.setClosable(false);	
+		  driverPropertiesTab.setId("driverPropertiesTab");
 		  
 		  Tab sshDetailsTab = new Tab("SSH");
 		  sshDetailsTab.setClosable(false);
+		  sshDetailsTab.setId("sshDetailsTab");
 		  
 		  Tab proxyDetailsTab = new Tab("Proxy");
 		  proxyDetailsTab.setClosable(false);
+		  proxyDetailsTab.setId("proxyDetailsTab");
 		  
 		  Tab sslDetailsTab = new Tab("SSL");
 		  sslDetailsTab.setClosable(false);
-		  
+		  sslDetailsTab.setId("sslDetailsTab");
 		  
 		  connectionDetailsTabs.getTabs().addAll(connectionDetailsTab,driverPropertiesTab,sshDetailsTab,proxyDetailsTab,sslDetailsTab);
 		  

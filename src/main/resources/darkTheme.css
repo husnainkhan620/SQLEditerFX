@@ -1,20 +1,1144 @@
 .root {
-  -heading-colour: green;
+  /*-heading-colour: green;
   -prompt-colour: mediumblue;
   -data-colour: slategrey;
   -theme-colour: #c0c0c0;
   -name-colour: lightseagreen;
-  -background-colour: lightyellow;
-  -toolbar-colour : BLACK;  
+  -background-colour: lightyellow;     #062052  DAE6F3*/
+  -toolbar-colour : #2B2B2B;  
+  -fx-text-fill: white;
+}
+
+#buttons{
+	 -fx-background-color: #2B2B2B; /* Default button background color */
+    -fx-text-fill: white; /* Button text color */
+    -fx-border-color: #44475a; /* Border color */
+     -fx-pref-width: 100px;
+    -fx-pref-height: 20px;
+}
+
+#buttons:hover{
+	 -fx-background-color: #083280; /* Background color on hover */    
+    -fx-border-color: #DAE6F3; /* Border color on hover */
+}
+
+
+.textfield {
+    -fx-background-color: #2B2B2B; /* Dark background */
+    -fx-text-fill: white; /* Text color */
+    -fx-border-color: #44475a; /* Border color */
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 4px;
+}
+
+.textfield:focused{
+	-fx-border-color: #FFFFFF; 
+}
+
+
+/* scrollPAne*/
+
+/* ScrollPane background */
+#ScrollPane {
+    -fx-background: linear-gradient(to bottom, #2B2B2B, #3B3B3B); /* Gradient background */
+    -fx-background-color: linear-gradient(to bottom, #2B2B2B, #3B3B3B);
+}
+
+/* Viewport inside the ScrollPane */
+#ScrollPane .viewport {
+    -fx-background: #2B2B2B; /* Solid dark gray background for the content area */
+}
+
+/* Scrollbar track */
+#ScrollPane .scroll-bar {
+    -fx-background-color: #3B3B3B; /* Dark gray scrollbar track */
+}
+
+/* Scrollbar thumb (the draggable handle) */
+#ScrollPane .scroll-bar .thumb {
+    -fx-background-color: #3B3B3B; /* White handle for contrast */
+    -fx-background-radius: 5px; /* Rounded thumb corners */
+}
+
+/* Hover effect for the scrollbar thumb */
+#ScrollPane .scroll-bar .thumb:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.8); /* Light transparent white on hover */
+}
+
+/* Focus (selected state) */
+#ScrollPane {
+    -fx-background: rgba(43, 43, 43, 0.8); /* Light transparent overlay when focused */
+}
+
+
+/*Split-Pane */
+/* Background color of the SplitPane */
+#SplitPane {
+    -fx-background-color: linear-gradient(to bottom, #2B2B2B, #3B3B3B); /* Gradient shades of dark gray */
+    -fx-border-color:#44475a;
+}
+
+/* Divider styling */
+#SplitPane .split-pane-divider {
+    -fx-background-color: #2B2B2B; /* Match the SplitPane base color */
+    -fx-padding: 3px; /* Adjust width of the divider */
+}
+
+/* Divider hover effect */
+#SplitPane .split-pane-divider:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.3); /* Light transparent color on hover */
+}
+
+/* SplitPane when focused (or selected) */
+#SplitPane:focused {
+    -fx-background-color: rgba(43, 43, 43, 0.8); /* Light transparent overlay when focused */
+}
+
+#SplitPane .split-pane-divider:focused {
+    -fx-background-color: rgba(255, 255, 255, 0.2); /* Slightly lighter transparent color */
 }
 
 
 #maintoolBar {
-    -fx-background-color: -toolbar-colour;
+     -fx-background-color: -toolbar-colour; 
+}
+
+.toolBar-item{
+	 -fx-background-color: -toolbar-colour;
+}
+
+#maintoolBar .button {
+    -fx-background-color: #2B2B2B; /* Default button background color */
+    -fx-text-fill: white; /* Button text color */
+    -fx-border-color: #44475a; /* Border color */
+   }
+
+/* Hover effect for buttons */
+#maintoolBar .button:hover {
+    -fx-background-color:#083280; /* Background color on hover */    
+    -fx-border-color: #DAE6F3; /* Border color on hover */
 }
 
 #alltabbedEditors {
-	-fx-background-color: -toolbar-colour
+	-fx-background: #2B2B2B; 
+	-fx-background-color: #2B2B2B;
+     -fx-border-color: #44475a;
+}
+
+#rootPane{
+	-fx-background-color: -toolbar-colour;
+}
+
+#mainMenuBar{
+	-fx-background-color: -toolbar-colour; 
+	-fx-border-color:#44475a; /* Set the separator line color */
+	}
+
+#mainMenuBar .menu {
+	-fx-background-color: #2B2B2B; /* Dark background for menu */
+	-fx-text-fill: #A9B7C6; /* Text color for menu items */
+}
+
+/* Hover effect for Menu items */
+#mainMenuBar .menu:hover {
+	-fx-background-color: #083280; /* Change background color on hover */
+	-fx-text-fill: #ffffff; /* Change text color on hover */
+}
+
+.menu-item {
+    -fx-background-color: -toolbar-colour;
+    }
+    
+.menu-item:hover {
+    -fx-background-color:#083280;
+    }
+
+ .menu .label {
+    -fx-text-fill: #FFFFFF; /* Ensure submenu labels are styled */
 }
 
 
+#vBoxleftTabPane {
+	-fx-background: #2B2B2B;
+	-fx-background-color: #2B2B2B;
+}
+
+#connectionExplorerTab{
+	-fx-background-color:#44475a;
+}
+#connectionExplorerTab .tab-label {
+    -fx-text-fill: #FFFFFF; /* White text */
+}
+
+#treeConnectionsView {
+    -fx-pref-width: 300px;
+    -fx-min-width: 100px;
+    }
+
+#vBoxleftScrollPane{
+	-fx-background:#2B2B2B;
+	-fx-background-color: #2B2B2B;
+}
+/*#mainSplitPane{
+	-fx-background-color: #44475a;
+}*/
+
+
+#vBoxright{
+	-fx-background-color:#2B2B2B;
+}
+ #vBoxAreaSqlEditer1GridPane{
+	-fx-background-color:#2B2B2B;
+	-fx-padding:10,5,10,5;
+	
+}
+
+#hboxQueryAreaButtons{
+	-fx-max-height:20px;
+	-fx-max-width:60px;
+	 -fx-padding: 0 15 0 15;
+}
+#allResultConsoleTabPane{
+	-fx-background: #2B2B2B; 
+	-fx-background-color: #2B2B2B;
+     -fx-border-color: #44475a;
+     -fx-min-height:100;
+     }
+ #sqlCellTextArea{
+	-fx-background: #2B2B2B; 
+	-fx-background-color: #2B2B2B;
+     -fx-border-color: #44475a;
+     }
+
+#allResultTabPane{
+	-fx-background-color:#000000;
+}
+#allResultTabPane:selected{
+	-fx-background-color:#44475a;
+}
+#allResultConsoleTabPane .tab-label{
+	-fx-text-fill: #FFFFFF; 
+}
+
+#allResultTabPane .tab-Label{
+	-fx-text-fill: #FFFFFF; /* Button text color */
+}
+
+/* #sqlEditerTextArea .content {
+    -fx-background-color: #000000;
+    -fx-text-fill: #FFFFFF; 
+}
+*/
+
+#maximizeButton{
+    -fx-image: url("/images/maximizedarktheme.png");
+    
+
+}
+#sqlEditerofTypeIdFromImage {
+  
+   -font-family: 'Courier New', Courier, monospace;
+  -fx-text-fill: white; /* Set text color to white */
+}
+#sqlEditerofTypeIdFromImage:focused{
+	-fx-border-color: #FFFFFF;
+	
+}
+
+#sqlEditerofTypeIdFromImage .content {
+  -fx-background-color: #000000;
+   -fx-border-width: 1;
+   -fx-border-color: #44475a;
+}
+#sqlEditerTab{
+	-fx-background-color: #000000;
+	}
+	
+#sqlEditerTab:selected{
+	-fx-background-color:#44475a;
+}
+	
+#sqlEditerTab .tab-label {
+    -fx-text-fill: #FFFFFF; /* Set text color to white */
+}
+
+.dynamicButtonStyle {
+     -fx-background-color: #44475a;
+    -fx-text-fill: #FFFFFF;
+     -fx-min-height: 15px;
+    -fx-max-width: 50px;
+}
+.addNewQueryEditerButton {
+    -fx-background-color: #44475a;
+    -fx-text-fill: #FFFFFF;
+}
+
+/* Optional: Highlight the selected tab */
+ .tab-pane .tab:selected {
+	
+    -fx-background-color: #44475a; 
+    -fx-text-fill: #FFFFFF; 
+} 
+
+ .menuSeparator{
+	-fx-border-color:#44475a; 
+}
+
+
+
+
+/* NewMenuEventHandler */
+
+#connectionlabel, #borderPaneProperties{
+	-fx-background-color:#2B2B2B;
+	 -fx-text-fill: white;
+	-fx-padding: 0, 0, 2, 2;
+}
+
+.label, .borderPaneProperties{
+ -fx-text-fill: #000000;
+ /*-fx-background-color: #080838;*/
+}
+
+#connectToDatabseText{
+	 -fx-font-family: "Verdana";
+    -fx-font-size: 20px;
+    -fx-text-fill: white;
+}
+#titleData {
+	 -fx-fill: #FFFFFF;
+	 -fx-font-family: "Arial";
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+#helpText{
+	 
+	-fx-font-family: "Verdana";
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+     -fx-fill: white;
+    -fx-stroke: #7080A0;
+    
+}
+
+#flowPane {
+    -fx-padding: 5 0 5 0;    /* Set padding (top, right, bottom, left) */
+    -fx-vgap: 10;            /* Vertical gap between items */
+    -fx-hgap: 20;            /* Horizontal gap between items */
+    -fx-pref-wrap-length: 170; /* Preferred wrap length for items */
+ 
+}
+
+#hyperlink:hover{
+	-fx-text-fill: white; 
+	
+}
+#hboxConnectionButtons{
+	-fx-spacing:5px;
+}
+
+.select-database-connections{
+	 -fx-background-color: #2B2B2B;
+}
+
+#stackPaneMySql{
+	 -fx-background-color: #2B2B2B;
+}
+.pane {
+    -fx-background-color: #2B2B2B;
+}
+
+.grid {
+    -fx-background-color:  #2B2B2B;
+    -fx-background-radius: 5.0;
+    -fx-background-insets: 0.0 5.0 0.0 5.0;
+    -fx-padding: 10;
+    -fx-hgap: 10;
+    -fx-vgap: 10;
+}
+
+.vbox {
+     -fx-border-color:#44475a;
+   /* -fx-border-color:#1E1E1E #141414 #0F0F0F;*/
+    -fx-border-width: 2px;
+    -fx-padding: 10;
+    -fx-spacing: 8;
+}
+
+.databasesflowPane {
+	 -fx-border-color:#44475a;
+	/*-fx-border-color:#1E1E1E #141414 #0F0F0F;*/
+    -fx-border-width: 2px;
+}
+
+.hbox {
+    -fx-background-color: #2B2B2B;
+    -fx-padding: 15;
+    -fx-border-colour:#44475a;
+    -fx-spacing: 10;
+}
+
+.hboxFirst {
+	-fx-background-color:  #2B2B2B/*  rgba(8, 8, 56, 0.9) */;
+    -fx-padding: 15;
+    -fx-spacing: 10;
+    -fx-border-colour:#44475a;
+}
+
+
+#hbox-custom {
+
+    -fx-padding: 8;
+    -fx-background-radius: 5.0; 
+}
+
+.flow-tile {
+    -fx-padding: 10.0 3.0 5.0 0.0;
+    -fx-hgap: 4;
+    -fx-vgap: 4;
+}
+
+#button-custom {
+/*    -fx-rotate: 45;*/
+    -fx-text-alignment: center;
+}
+
+
+
+
+ /* Database Connection Page */
+ 
+.connectionDetailsTabs{
+	  -fx-background-color: #2B2B2B; /* Dark background */
+	  -fx-background: #2B2B2B; /* Dark background */
+   }
+   
+   .connectionDetailsTabs .tab-label{
+	-fx-text-fill: #FFFFFF; 
+}
+   
+   #connectionDetailsTab,#driverPropertiesTab,#sshDetailsTab,#proxyDetailsTab,#sslDetailsTab{
+        -fx-background-color: #000000;
+        -fx-text-fill: #FFFFFF; 
+   }
+   
+   #connectionDetailsTab:selected,#driverPropertiesTab:selected,#sshDetailsTab:selected,#proxyDetailsTab:selected,#sslDetailsTab:selected{
+        -fx-background-color: #44475a;
+   }
+
+ #custom-gridpane {
+    -fx-padding: 20 10 20 10;
+    -fx-vgap: 5;
+    -fx-hgap: 5;
+}
+ 
+ 
+ 
+/* settings tab */
+
+
+#treeView {
+    -fx-background-color: #2B2B2B; /* Dark background */
+    -fx-text-fill: #FFFFFF;        /* White text */
+}
+
+/* TreeItems text color */
+.tree-cell {
+    -fx-text-fill: #FFFFFF; /* Default text color */
+     -fx-background-color: #2B2B2B;
+}
+
+
+.tree-cell > .tree-disclosure-node > .arrow {
+    -fx-background-color: #FFFFFF; /* Arrow color */
+}
+
+/* Selected item style */
+.tree-cell:selected {
+    -fx-background-color: #083280; /* Selected item background */
+    -fx-text-fill: #FFFFFF;        /* Selected item text */
+}
+
+
+/* #vbox{
+    -fx-border-color: #44475a; Border color
+    -fx-border-width: 1px; Border thickness
+    -fx-background-color: #2B2B2B; Background color for contrast
+
+} */
+#themeLabel{
+	-fx-text-fill: white;
+
+}
+#themeDropdown{
+	-fx-text-fill: white; 
+	 -fx-background-color: #2B2B2B;
+	 -fx-border-color:#44475a;
+	 -fx-border-width: 1px;
+}
+#themeDropdown .list-cell {
+    -fx-background-color: #2B2B2B;
+    -fx-text-fill: white; 
+     -fx-border-color:#44475a;
+
+}
+
+#themeDropdown .list-cell:selected {
+    -fx-background-color: #083280;
+    -fx-text-fill: white;
+}
+#themeDropdown .arrow-button {
+    -fx-background-color: #2B2B2B;
+   -fx-text-fill: white; 
+}
+
+#treeView{
+	-fx-background-color: #2B2B2B;
+	 -fx-text-fill: white;
+}
+#rightControl, #leftControl{
+	-fx-padding:20px;
+	-fx-spacing:10px;
+	-fx-border-width:1px;
+	-fx-border-color:#44475a;
+   -fx-background-color: #2B2B2B;
+	}
+
+#bottomhboxSettings{
+	-fx-spacing:15px;
+}
+
+
+
+
+/* SearchTool Event Handler */
+
+
+#dataSearchtabPane {
+    -fx-background-color: #000000; /* Dark background color */
+  
+}
+#dataSearchtabPane .tab-label{
+	  -fx-text-fill: white; /* White text color */
+}
+#dataSearchtabPane:selected{
+	-fx-background-color:#44475a;
+}
+
+#clearlabel {
+    -fx-font-family: "System";
+    -fx-font-weight: normal;
+    -fx-font-style: italic;
+    -fx-font-size: 12px;
+     -fx-text-fill:lightblue;
+}
+ 
+#connectDatabaseLabel{
+	 -fx-font-family: "Verdana";
+    -fx-font-size: 20px;
+    -fx-fill: white;
+ }
+    
+ .grid-pane-label {
+    -fx-padding: 5 0 0 5; 
+     
+} 
+
+#gridPaneValueToSearch{
+	-fx-padding: 10, 0, 10, 20;
+}
+
+
+
+
+/* SqlQueryRunButtonSubmit*/
+
+
+#hbox {
+    -fx-background-color:#2B2B2B;
+  /*  -fx-border-color: linear-gradient(to right, #44475a, #2b2e3b);*/
+     -fx-border-color: #44475a;
+    }
+
+/* Text styles */
+#hbox-text {
+    -fx-fill: white;
+    -fx-font-family: "Verdana";
+    -fx-font-size: 20px;
+}
+
+#text{
+	 -fx-font-family: "Verdana";
+    -fx-font-size: 20px;
+	-fx-fill: white;
+	-fx-text-alignment:center;
+}
+#topControlHBox{
+	-fx-padding:10,0,10,0;
+}
+#topControlHBoxforButton{
+	-fx-padding:10,10,10,0
+}
+
+#openConnectionsFlowPane {
+    -fx-padding: 10 0 10 10;
+}
+
+
+
+
+/* Database Details - After Connection */
+
+.Tabs{
+	-fx-background:#000000;
+	-fx-background-color:#000000;
+	
+}
+.tab .tab-label{
+	 -fx-text-fill: white;
+}
+
+.Tabs:selected{
+	-fx-background:#44475a;
+}
+
+#hboxForconnectionDetails{
+	-fx-spacing:10;
+	-fx-padding:10,12,10,12;
+	-fx-background-color:#000000;
+   /*-fx-border-color: #44475a;*/
+}
+#connectToDatabseText{
+	 -fx-fill: #FFFFFF;
+} 
+
+#connectionLabel{
+	-fx-background-color:#000000;
+	-fx-spacing:10;
+}
+
+#TabVBox{
+	-fx-border-width:1px;
+	-fx-border-color:#44475a;
+	-fx-spacing:10;
+	-fx-padding:2,2,2,2;
+}
+#TableDetailsVBox{
+	-fx-border-width:1px;
+	-fx-border-color:#44475a;
+	-fx-spacing:10;
+	-fx-padding:20,10,10,50;
+}
+
+#ViewDetailsVBox {
+	-fx-border-width:1px;
+	-fx-border-color:#44475a;
+    -fx-spacing: 10;
+    -fx-padding: 20 10 10 200;
+}
+
+/* Style the TableView */
+
+/* Table rows */
+/* Table rows */
+.table-view {
+  -fx-background-color: #2B2B2B;
+  -fx-border-color: #44475a;
+  -fx-border-width: 0.5px;
+}
+
+/* Table Header Styling */
+.table-view .column-header {
+  -fx-background-color: #2B2B2B;
+  -fx-border-color: #44475a;
+  -fx-text-fill: white;
+}
+
+.table-view .filler {
+  -fx-background-color: #2B2B2B;
+   -fx-border-color: #44475a;
+}
+/* Cell Styling */
+.table-view .cell {
+  -fx-background-color: #2B2B2B;
+  -fx-text-fill: white;
+  -fx-border-color: #44475a;
+  -fx-border-width: 0.3px; /* Thinner border */
+}
+
+
+/* Selected Cell Styling */
+.table-view .cell:selected {
+ /* -fx-background-color: #083280;*/
+  -fx-border-color: white;
+  -fx-border-width: 0.5px;
+  -fx-text-fill: white;
+}
+
+/* Selected Row Styling 
+.table-view:focused .row-cell:selected {
+  -fx-background-color: #083280;
+  -fx-text-fill: white;
+}
+*/
+.table-row-cell:focused .text-field,
+.table-cell:focused .text-field {
+    -fx-background-color: black;
+    -fx-text-fill: white;
+     -fx-border-color: #44475a; 
+     -fx-border-radius:4px;
+     -fx-border-width:3px;   
+}
+
+/* Horizontal AND Vertical  Scrollbar Styling */
+.table-view .scroll-bar:horizontal , .table-view .scroll-bar:vertical{
+  -fx-background: linear-gradient(to bottom, #2B2B2B, #3B3B3B); /* Gradient background */
+    -fx-background-color: linear-gradient(to bottom, #2B2B2B, #3B3B3B);
+
+}
+
+.table-view .scroll-bar:horizontal .thumb {
+ -fx-background-color: #2B2B2B; /* White handle for contrast */
+    -fx-background-radius: 5px; /* Rounded thumb corners */
+}
+
+.table-view .scroll-bar:horizontal .thumb:hover{
+	 -fx-background-color: rgba(255, 255, 255, 0.8);
+}
+
+
+.table-view .scroll-bar:vertical .thumb {
+  -fx-background-color: #2B2B2B; /* White handle for contrast */
+    -fx-background-radius: 5px;
+}
+
+.table-view .scroll-bar:vertical .thumb:hover{
+	 -fx-background-color: rgba(255, 255, 255, 0.8);
+}
+
+
+.check-box .box {
+    -fx-border-color: #44475a; /* Border around the checkmark */
+    -fx-border-radius: 3px;
+    -fx-background-color: 2B2B2B; /* Background color for the box */
+}
+
+
+
+#vboxPerformanceRep{
+	 -fx-padding: 5 5 5 5;
+    -fx-spacing: 5;
+}
+
+#hboxPerformanceButtonsLeftRight {
+	 -fx-padding: 10 10 10 10;
+    -fx-spacing: 10;
+}
+
+#vboxUserAcc {
+	-fx-padding: 5 5 5 5;
+	-fx-spacing: 5;
+	}
+#hBoxUserAcc{
+ 	-fx-padding: 5 5 5 5;
+	-fx-spacing: 20;
+}
+ 
+ #hboxDescriptionValue{
+ -fx-padding: 10,10,10,30;
+ }
+ 
+#description-box {
+    -fx-spacing: 10;
+    -fx-padding: 20 10 20 30;
+}
+
+#hboxVariableNameValue{
+	 -fx-spacing: 100;
+    -fx-padding: 10 10 10 30;
+}
+#label {
+    -fx-font-family: "System";
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
+#variableName-hbox {
+    -fx-spacing: 10;
+    -fx-pref-width: 300;
+}
+#variableValue-hbox{
+	 -fx-spacing: 10;
+    -fx-pref-width: 200;
+}
+
+#btnSaveVariablehBox {
+    -fx-pref-width: 150;
+    -fx-alignment: bottom-right;
+}
+.accountDetailsTabs {
+	/* -fx-border-color:#44475a;
+	-fx-border-color:#1E1E1E #141414 #0F0F0F;
+    -fx-border-width: 2px;*/
+}
+
+#statusSystemVariablesTabpane {
+	 -fx-tab-min-width: 250;
+    -fx-tab-min-height: 20;
+}
+#statussystemVariablesTabPane{
+	 -fx-tab-min-width: 150;
+    -fx-tab-min-height: 20;
+}
+#StatusVariablesGridPane {
+    -fx-vgap: 10;
+    -fx-hgap: 10;
+}
+
+#variablesSecondHalfDisplayVBox{
+	-fx-padding:0,40,10,0;
+}
+
+#searchDatabasesGridPane{
+	-fx-padding:5 0 0 10;
+}
+#gridPaneDatabasesLists{
+	-fx-padding:5 0 0 15;
+	-fx-hgap: 10;
+}
+#Tabpane{
+    -fx-tab-min-width: 180;
+    -fx-tab-min-height: 30;
+}
+
+#TablePropertiesTabbedPane{
+	 -fx-tab-min-height: 200;
+    -fx-tab-max-height: 200;
+    -fx-tab-min-width: 42;
+    -fx-tab-max-width: 42;
+}
+
+#ViewPropertiesTabbedPane{
+	 -fx-tab-min-height: 200;
+    -fx-tab-max-height: 200;
+    -fx-tab-min-width: 50;
+    -fx-tab-max-width: 50;
+}
+#IndexesPropertiesTabbedPane{
+ -fx-tab-min-height: 200;
+    -fx-tab-max-height: 200;
+    -fx-tab-min-width: 50;
+
+}
+/* #TableDataTabVBox{
+	-fx-padding:2,2,2,2;
+	-fx-spacing:10;
+} */
+#DatapartitionsButtonsHBox{
+	-fx-padding:10,10,10,10;
+	-fx-spacing:10;
+}
+
+#labelNameValueLabel{
+	-fx-font-family: "System Regular";
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
+#accountLockedHBox{
+	-fx-padding:15 0 0 100;
+	-fx-spacing:20;
+}
+
+#accountDetailsGridPane {
+    -fx-padding: 0 10 20 10;   /* Top, Right, Bottom, Left */
+    -fx-vgap: 10px;            /* Vertical gap between rows */
+    -fx-hgap: 10px;            /* Horizontal gap between columns */
+}
+#addAccountLoginCredentialsLabels{
+	 -fx-pref-width: 300px;
+}
+ 
+#accountButtonsHBox{
+	-fx-padding:15 15 15 100;
+	-fx-spacing:30;
+}
+
+#accountLimitsButtonshbox{
+	-fx-padding:20 10 10 500;
+	-fx-spacing:30;
+}
+
+#accountPrivilegesVBox{
+	-fx-padding:10 10 10 10;
+	-fx-spacing:10;
+}
+
+#globalPreviligeshbox{
+		-fx-spacing:50;
+}
+
+#schemaPrivilegesVbox{
+	-fx-padding:5 10 00 20;
+	-fx-spacing:5;
+}
+
+#schemaPrivilegesGridPane {
+    -fx-padding: 5 10 5 10;  
+    -fx-vgap: 10px;           
+    -fx-hgap: 10px;           
+}
+
+#addSchemaEntryHbox{
+	-fx-padding: 0 0 0 500;  
+}
+
+#existingSchemaPriviligesVBox{
+	-fx-max-height: 150px;     
+    -fx-padding: 0 10 0 10;
+}
+
+#userAccessSchemaDescriptionHbox{
+	-fx-padding:5 5 5 5;
+	-fx-spacing:50;
+}
+/* #selectSchemaDescription{
+	-fx-text-fill: blueviolet;
+} */
+
+#userAccessSchemaPriviligeshBox{
+	-fx-spacing:10;
+}
+
+#SetofSchemaPriviliges{
+	-fx-spacing:5;
+}
+
+#SegmentWithButtonsVbox{
+	-fx-padding:130 10 10 20;
+}
+
+#clientConnectionsVBox, #serverStatusVBox{
+	-fx-spacing:10;
+}
+
+#clientConnectionsHBox{
+		-fx-padding:0 10 0 10;
+		-fx-spacing:30;
+}
+
+#processListTableViewVbox{
+		-fx-padding:5 5 5 5;
+		   -fx-max-height: 350px
+}
+
+#clientConnectionsButtonsHBox{
+	-fx-padding:10 10 10 10;
+		-fx-spacing:500;
+}
+
+#clientConnectionsHideButtonsHBox{
+		-fx-padding:0 10 0 10;
+		-fx-spacing:50;
+}
+
+#serverRunningDescriptionHbox,#serverFeaturesDescriptionHbox{
+	-fx-padding:0 0 0 300;
+}
+#serverRunningDescriptionLabel{
+	-fx-text-fill: GREEN;
+	-fx-font-family: "System Regular";
+	-fx-font-weight: bold;
+	-fx-font-size: 18px;
+}
+
+#instanceDetailsHBox{
+	-fx-padding:0 10 0 10;
+		-fx-spacing:200;
+}
+
+#instanceDetailsGridPane,#serverDirectoriesGridPane,#serverFeaturesLeftHalfGridPane,#serverFeaturesRigthtHalfGridPane{
+ -fx-vgap: 10px;           
+    -fx-hgap: 10px; 
+}
+
+#connectionDecriptionLabel{
+	-fx-text-fill: BLUEVIOLET;
+	-fx-font-family: "System Regular";
+	-fx-font-weight: bold;
+	-fx-font-size: 16px;
+}
+
+#serverFeaturesDescriptionLabel{
+	-fx-text-fill: BLUEVIOLET;
+	-fx-font-family: "System Regular";
+	-fx-font-weight: bold;
+	-fx-font-size: 18px;
+}
+#serverFeaturesHBox{
+		-fx-padding:0 10 0 100;
+		-fx-spacing:200;
+}
+
+#allButtonsHBox{
+	-fx-padding:10 10 0 100;
+	-fx-spacing:300;
+}
+
+#ButtonsHbox{
+	/*-fx-padding:0 50 0 0;  */
+	-fx-spacing:20;
+}
+
+#databaseTabPane{
+  -fx-tab-min-width: 200;
+}
+
+#databaseDetailsTabPane{
+	-fx-tab-min-width: 100;
+
+}
+
+#databasePropertiesVBox{
+	-fx-padding:10 0 0 80;
+		-fx-spacing:5;
+}
+
+#databasePropertiesGridPane{
+    -fx-padding:10 0 0 0;
+    -fx-vgap: 10;
+    -fx-hgap: 50;
+}
+
+#Label1 {
+    -fx-font-family: "System Regular";
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+#eventsButtonsHbox{
+	-fx-spacing:20;
+}
+/* DDLTAB */
+.text-area {
+    -fx-control-inner-background: black;
+    -fx-text-fill: white;
+}
+
+
+
+
+/*Progress Bar */
+
+#statushbox {
+  -fx-background: #2B2B2B;
+  -fx-min-width: 20px;
+
+}
+
+#progressbar {
+  -fx-accent: #083280; /* Main bar color */
+  -fx-border-color: #44475a;
+  -fx-border-width: 2px;
+  -fx-border-radius:1.5px;
+  -fx-background-color: #2B2B2B;
+}
+
+#progressbar .track {
+  -fx-background-color: #2B2B2B; /* Remove default white track */
+}
+
+#progressbar .bar {
+  -fx-background-color: #083280; /* Color of the progress bar */
+}
+
+
+.choice-box {
+    -fx-background-color: #2B2B2B;
+     -fx-border-color: #44475a;
+    -fx-border-width: 1px;
+   
+    -fx-background-radius: 5px;
+}
+
+.choice-box:hover {
+    -fx-background-color: #083280;
+}
+
+.choice-box .list-cell {
+    -fx-text-fill: #FFFFFF;
+}
+
+.choice-box .arrow {
+    -fx-background-color: #d0d0d0;
+}
+.grid-pane {
+    -fx-background-color: transparent; /* Base GridPane background */
+}
+
+.column-0, .column-1, .column-2 {
+    -fx-background-color: black;
+    -fx-border-color: transparent;
+    -fx-border-width: 2px;
+}
+
+.column-0:selected, .column-1:selected, .column-2:selected {
+    -fx-border-color:  #44475a;
+}
+
+/* Styling ListView if used */
+.list-view {
+    -fx-control-inner-background: black;
+    -fx-border-color:  #44475a;
+    -fx-text-fill: white;
+}
+.list-view .list-cell {
+    -fx-text-fill: white;
+    -fx-background-color: transparent;
+}
+
+.list-view .list-cell:selected {
+    -fx-background-color: #083280; /* Selected background color */
+    -fx-text-fill: white; /* Text color for selected item */
+}
+
+
+
+/* Charts */
+
+#chart .chart-pie-label {
+    -fx-fill: white;
+}
+
+#pieBarGraphHBox{
+	-fx-padding:0 0 0 0;
+		-fx-spacing:5;
+}
+
+#pieBarGraphHBox{
+	-fx-spacing:10;
+}
+#dashBoardPieBarButtonHBox{
+	-fx-padding:10 0 0 10;
+}
+#ChartshBoxButtons, #hBoxButtons{
+		-fx-padding:10 10 0 0;
+		-fx-spacing:20;
+}
+#pieChartRotationButtonHBox{
+	-fx-padding:10 10 0 200;
+		-fx-spacing:20;
+}
+#dashBoardTabMainvBox{
+	-fx-padding:10 0 20 10;
+}
+
+#databasePropertiesSchemaChartHbox, #pieOrBarChartVBox{
+	-fx-spacing:5;
+}
+#moreChartshbox{
+	-fx-padding:0 0 0 400;
+}

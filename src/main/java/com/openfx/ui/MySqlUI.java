@@ -160,14 +160,16 @@ public class MySqlUI {
 		 VBox connectionDetailsVbox = new VBox();
 		  
 		  GridPane connectionUrlCredentialsGridPane = new GridPane();
-		  connectionUrlCredentialsGridPane.setPadding(new Insets(20,10,20,10));
-		  connectionUrlCredentialsGridPane.setVgap(5);
-		  connectionUrlCredentialsGridPane.setHgap(5);
+		  connectionUrlCredentialsGridPane.setId("custom-gridpane");
+//		  connectionUrlCredentialsGridPane.setPadding(new Insets(20,10,20,10));
+//		  connectionUrlCredentialsGridPane.setVgap(5);
+//		  connectionUrlCredentialsGridPane.setHgap(5);
 		  Label jdbcUrlgeneralLabel = new Label("General"); 
 		  GridPane.setConstraints(jdbcUrlgeneralLabel, 0, 0);   // column 0 row 0
 		  Label jdbcConnectionNameLabel= new Label("Name");
 		  GridPane.setConstraints(jdbcConnectionNameLabel, 0, 1);
 		  newMenuItemEventHandler.jdbcConnectionName = new TextField("local");
+		  newMenuItemEventHandler.jdbcConnectionName.getStyleClass().add("textfield");
 		  newMenuItemEventHandler.jdbcConnectionName.setPrefHeight(15);
 		  newMenuItemEventHandler.jdbcConnectionName.setPrefWidth(400);
 		 // jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
@@ -175,6 +177,7 @@ public class MySqlUI {
 		  Label jdbcPortUrl = new Label("Port:");
 		  GridPane.setConstraints(jdbcPortUrl, 2, 1);
 		  newMenuItemEventHandler.jdbcConnectionPort = new TextField("3306");
+		  newMenuItemEventHandler.jdbcConnectionPort.getStyleClass().add("textfield");
 		  newMenuItemEventHandler.jdbcConnectionPort.setPrefHeight(15);
 		  newMenuItemEventHandler.jdbcConnectionPort.setPrefWidth(40);
 		  GridPane.setConstraints(newMenuItemEventHandler.jdbcConnectionPort, 3, 1);
@@ -182,6 +185,7 @@ public class MySqlUI {
 		  Label jdbcUrlLabel = new Label("JDBC URL");
 		  GridPane.setConstraints(jdbcUrlLabel, 0, 2);
 		  newMenuItemEventHandler.jdbcUrlTextField = new TextField("jdbc:mysql://127.0.0.1");
+		  newMenuItemEventHandler.jdbcUrlTextField.getStyleClass().add("textfield");
 		  newMenuItemEventHandler.jdbcUrlTextField.setPrefHeight(15);
 		  newMenuItemEventHandler.jdbcUrlTextField.setPrefWidth(400);
 		  newMenuItemEventHandler.jdbcUrlTextField.setOnKeyTyped(newMenuItemEventHandler.onjdbcUrlTextFieldKeyPressed() );
@@ -190,6 +194,7 @@ public class MySqlUI {
 		  Label jdbcUrlDatabaseNameLabel = new Label("Database ");
 		  GridPane.setConstraints(jdbcUrlDatabaseNameLabel, 0, 3);
 		  newMenuItemEventHandler.jdbcUrlDatabaseNameField = new TextField();
+		  newMenuItemEventHandler.jdbcUrlDatabaseNameField.getStyleClass().add("textfield");
 		  newMenuItemEventHandler.jdbcUrlDatabaseNameField.setPrefHeight(15);
 		  newMenuItemEventHandler.jdbcUrlDatabaseNameField.setPrefWidth(200);  
 		  newMenuItemEventHandler.jdbcUrlDatabaseNameField.setOnKeyTyped(newMenuItemEventHandler.onjdbcUrlTextFieldKeyPressed() );
@@ -202,14 +207,16 @@ public class MySqlUI {
 		  
 		  
 		  GridPane connectionUsernamePasswordCredentialsGridPane = new GridPane();
-		  connectionUsernamePasswordCredentialsGridPane.setPadding(new Insets(20,10,20,10));
-		  connectionUsernamePasswordCredentialsGridPane.setVgap(5);
-		  connectionUsernamePasswordCredentialsGridPane.setHgap(5);
+		  connectionUsernamePasswordCredentialsGridPane.setId("custom-gridpane");
+//		  connectionUsernamePasswordCredentialsGridPane.setPadding(new Insets(20,10,20,10));
+//		  connectionUsernamePasswordCredentialsGridPane.setVgap(5);
+//		  connectionUsernamePasswordCredentialsGridPane.setHgap(5);
 		  Label jdbcUrlAuthenticationLabel = new Label("Authentication");
 		  GridPane.setConstraints(jdbcUrlAuthenticationLabel, 0, 0);   // column 0 row 0
 		  Label jdbcAuthenticationUsername = new Label("Username :");
 		  GridPane.setConstraints(jdbcAuthenticationUsername, 0, 1);   // column 0 row 0
 		  newMenuItemEventHandler.jdbcAuthenticationUsernameTextField = new TextField("root");
+		  newMenuItemEventHandler.jdbcAuthenticationUsernameTextField.getStyleClass().add("textfield");
 		  newMenuItemEventHandler.jdbcAuthenticationUsernameTextField.setPrefHeight(15);
 		  newMenuItemEventHandler.jdbcAuthenticationUsernameTextField.setPrefWidth(200);
 		  newMenuItemEventHandler.jdbcAuthenticationUsernameTextField.setOnKeyTyped(newMenuItemEventHandler.onjdbcAuthenticationUsernameTextFieldPressed());
@@ -218,6 +225,7 @@ public class MySqlUI {
 		  Label jdbcAuthenticationPassword = new Label("Password");
 		  GridPane.setConstraints(jdbcAuthenticationPassword, 0, 2);   // column 0 row 0
 		  newMenuItemEventHandler.jdbcAuthenticationPasswordField = new PasswordField();
+		  newMenuItemEventHandler.jdbcAuthenticationPasswordField.getStyleClass().add("textfield");
 		  newMenuItemEventHandler.jdbcAuthenticationPasswordField.setPrefHeight(15);
 		  newMenuItemEventHandler.jdbcAuthenticationPasswordField.setPrefWidth(200);
 		  newMenuItemEventHandler.jdbcAuthenticationPasswordField.setOnKeyTyped(newMenuItemEventHandler.onjdbcAuthenticationPasswordFieldPressed());
@@ -1823,6 +1831,7 @@ public class MySqlUI {
 									    	
 									    	secondHalfDisplayVBox = new VBox();
 											Tab mainDisplayTab = new Tab();
+											mainDisplayTab.getStyleClass().add("Tabs");
 											mainDisplayTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
 											mainDisplayTab.setOnClosed(new EventHandler<Event>() {
 												@Override
@@ -1916,7 +1925,8 @@ public class MySqlUI {
 							  public void run() { 
 							    try  {	
 							    	
-									Tab sessionManagerTab = new Tab("Dashboard" +"-"+ connectionPlaceHolder.getConnectionName());									
+									Tab sessionManagerTab = new Tab("Dashboard" +"-"+ connectionPlaceHolder.getConnectionName());	
+									sessionManagerTab.getStyleClass().add("Tabs");
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
 										@Override
 										public void handle(Event event) {
@@ -1971,7 +1981,8 @@ public class MySqlUI {
 							    	System.out.println("Connection Name :"+ connectionName);
 							    	
 									Tab sessionManagerTab = new Tab("Performance Reports" +"-"+connectionPlaceHolder.getConnectionName());										
-		 
+									sessionManagerTab.getStyleClass().add("Tabs");
+									
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
 										@Override
 										public void handle(Event event) {
@@ -1988,6 +1999,7 @@ public class MySqlUI {
 									
 									BorderPane performanceReportsBorderPane = new BorderPane();
 									VBox vboxLeft = new VBox();
+									vboxLeft.setId("ScrollPane");
 									vboxLeft.setPadding(new Insets(5,5,5,5));
 									vboxLeft.setSpacing(5);
 									Label performanceReportsLabel = new Label("Reports");
@@ -1995,9 +2007,9 @@ public class MySqlUI {
 									vboxLeft.getChildren().add(performanceReportsLabel);
 									vboxLeft.getChildren().add(performanceView);
 									
-									VBox vBoxCenterTop = new VBox();
-									vBoxCenterTop.setPadding(new Insets(5,5,5,5));
-									vBoxCenterTop.setSpacing(5);
+									VBox vBoxCenterTop = new VBox();									vBoxCenterTop.setId("vboxPerformanceRep");
+//									vBoxCenterTop.setPadding(new Insets(5,5,5,5));
+//									vBoxCenterTop.setSpacing(5);
 									particularPerformanceReportLabel =  new Label("Nothing Selected");
 									//Label particularPerformanceReportDescription =  new Label("Shows total memory allowed");
 									//detailForAccountLabel.setTextFill(Color.BLUEVIOLET);
@@ -2010,15 +2022,19 @@ public class MySqlUI {
 									hboxPerformanceButtons.setSpacing(400);
 									
 									HBox hboxPerformanceButtonsLeft = new HBox();
-									hboxPerformanceButtonsLeft.setSpacing(10);
-									hboxPerformanceButtonsLeft.setPadding(new Insets(10,10,10,10));
-									
-									
+									hboxPerformanceButtonsLeft.setId("hboxPerformanceButtonsLeftRight");
+//									hboxPerformanceButtonsLeft.setSpacing(10);
+//									hboxPerformanceButtonsLeft.setPadding(new Insets(10,10,10,10));
+									exportPerformanceButton.setId("buttons");
+									performanceCopySelected.setId("buttons");
+									performanceCopyQuery.setId("buttons");
 									hboxPerformanceButtonsLeft.getChildren().addAll(exportPerformanceButton,performanceCopySelected,performanceCopyQuery);
 									
 									HBox hboxPerformanceButtonsRight = new HBox();
+									hboxPerformanceButtonsRight.setId("hboxPerformanceButtonsLeftRight");
 									hboxPerformanceButtonsRight.setPadding(new Insets(10,10,10,10));
 									
+									refreshPerformanceButton.setId("buttons");
 									hboxPerformanceButtonsRight.getChildren().add(refreshPerformanceButton);
 									
 									hboxPerformanceButtons.getChildren().addAll(hboxPerformanceButtonsLeft,hboxPerformanceButtonsRight);
@@ -2093,7 +2109,8 @@ public class MySqlUI {
 							    	String connectionName = connectionPlaceHolder.getConnectionName();
 							    	
 							    	
-									Tab sessionManagerTab = new Tab("Server Status" +"-"+connectionPlaceHolder.getConnectionName());																	
+									Tab sessionManagerTab = new Tab("Server Status" +"-"+connectionPlaceHolder.getConnectionName());
+									sessionManagerTab.getStyleClass().add("Tabs");
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
 										@Override
 										public void handle(Event event) {
@@ -2159,6 +2176,7 @@ public class MySqlUI {
 							    			+ "COALESCE(attr.ATTR_VALUE,'None') as Program FROM performance_schema.threads th  LEFT OUTER JOIN performance_schema.session_connect_attrs attr ON th.processlist_id = attr.processlist_id AND (attr.attr_name IS NULL OR attr.attr_name = 'program_name') WHERE th.TYPE <> 'BACKGROUND' ");  // 
 							    	
 									Tab sessionManagerTab = new Tab("Client Connections" + "-" +connectionPlaceHolder.getConnectionName());	
+									sessionManagerTab.getStyleClass().add("Tabs");
 									sessionManagerTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
 										@Override
@@ -2219,6 +2237,7 @@ public class MySqlUI {
 							    	System.out.println("Connection Name :"+ connectionName);
 							    	
 									Tab sessionManagerTab = new Tab("Users and Privileges" +"-"+ connectionPlaceHolder.getConnectionName());	
+									sessionManagerTab.getStyleClass().add("Tabs");
 									sessionManagerTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));																			 
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
 										@Override
@@ -2231,6 +2250,8 @@ public class MySqlUI {
 									
 									
 									TableView resultAsTableView =  showResultSetInTheTableView(rsUsers);
+									resultAsTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
 									// Can move this to invidual invocations as each call of this will ha`ve custom usage based on selection 
 									resultAsTableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
 												
@@ -2390,16 +2411,19 @@ public class MySqlUI {
 
 									BorderPane userAccountsBorderPane = new BorderPane();
 									VBox vboxLeft = new VBox();
-									vboxLeft.setPadding(new Insets(5,5,5,5));
-									vboxLeft.setSpacing(5);
+									vboxLeft.setId("vboxUserAcc");
+//									vboxLeft.setPadding(new Insets(5,5,5,5));
+//									vboxLeft.setSpacing(5);
 									Label userAccountsLabel = new Label("User Accounts");
 									//userAccountsLabel.setTextFill(Color.BLUEVIOLET);
 									vboxLeft.getChildren().add(userAccountsLabel);
 									vboxLeft.getChildren().add(resultAsTableView);
 									
 									HBox hBox = new HBox();
-									hBox.setPadding(new Insets(5,5,5,5));
+									hBox.setId("hBoxUserAcc");
+									//hBox.setPadding(new Insets(5,5,5,5));
 									Button addAccountButton = new Button("Add Account");
+									addAccountButton.setId("buttons");
 									addAccountButton.setMinWidth(80);
 								    addAccountButton.setOnAction(new EventHandler<ActionEvent>() {
 							            @Override
@@ -2415,18 +2439,21 @@ public class MySqlUI {
 							            }
 							        });
 									Button deletetButton = new Button("Delete");
+									deletetButton.setId("buttons");
 									deletetButton.setMinWidth(80);
 									Button refreshButton = new Button("Refresh");
+									refreshButton.setId("buttons");
 									refreshButton.setMinWidth(80);
 									hBox.getChildren().add(addAccountButton);
 									hBox.getChildren().add(deletetButton);
 									hBox.getChildren().add(refreshButton);
-									hBox.setSpacing(20);
+									//hBox.setSpacing(20);
 									vboxLeft.getChildren().add(hBox);
 								
 									VBox vBoxCenterTop = new VBox();
-									vBoxCenterTop.setPadding(new Insets(5,5,5,5));
-									vBoxCenterTop.setSpacing(5);
+									vBoxCenterTop.setId("vboxUserAcc");
+//									vBoxCenterTop.setPadding(new Insets(5,5,5,5));
+//									vBoxCenterTop.setSpacing(5);
 									Label detailForAccountLabel =  new Label();
 									//detailForAccountLabel.setTextFill(Color.BLUEVIOLET);
 									resultAsTableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
@@ -2446,17 +2473,21 @@ public class MySqlUI {
 									});
 									vBoxCenterTop.getChildren().add(detailForAccountLabel);
 									TabPane accountDetailsTabs = new TabPane();
-									accountDetailsTabs.getStyleClass().addAll("databasesflowPane");  // box for the connection tabbed pane
+									accountDetailsTabs.getStyleClass().addAll("accountDetailsTabs");  // box for the connection tabbed pane
 									Tab loginTab = new Tab("Login");
+									loginTab.getStyleClass().add("Tabs");
 									loginTab.setClosable(false);  
 									loginTab.setContent(addAccountLoginCredentials()); // pass the user details here as parameterand set them
 									Tab accountLimitsTab = new Tab("Account Limits");
+									accountLimitsTab.getStyleClass().add("Tabs");
 									accountLimitsTab.setClosable(false);	
 									accountLimitsTab.setContent(addAccountLimits());
 									Tab accountPrivilegesTab = new Tab("Account Privileges");
+									accountPrivilegesTab.getStyleClass().add("Tabs");
 									accountPrivilegesTab.setClosable(false);
 									accountPrivilegesTab.setContent(addAccountPrivileges());
 									Tab schemaPrivilegesTab = new Tab("Schema Privileges");
+									schemaPrivilegesTab.getStyleClass().add("Tabs");
 									schemaPrivilegesTab.setClosable(false);
 									schemaPrivilegesTab.setContent(addSchemaPrivileges(resultAsTableView,schemaPreviligestableView));
 									
@@ -2515,7 +2546,8 @@ public class MySqlUI {
 								//	mainPopUpborderPane.setBottom(bottomHbox);
 									
 							    	
-									Tab sessionManagerTab = new Tab("Status and System Variables " + connectionPlaceHolder.getConnectionName());									
+									Tab sessionManagerTab = new Tab("Status and System Variables " + connectionPlaceHolder.getConnectionName());	
+									sessionManagerTab.getStyleClass().add("Tabs");
 									sessionManagerTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));																			 
 									sessionManagerTab.setOnClosed(new EventHandler<Event>() {
 										@Override
@@ -2527,6 +2559,7 @@ public class MySqlUI {
 									});
 									
 									SplitPane editerTabSplitPane = new SplitPane();
+									editerTabSplitPane.setId("#SplitPane");
 							        editerTabSplitPane.setOrientation(Orientation.VERTICAL);
 							    	editerTabSplitPane.setDividerPositions(0.70);  // split pane divider moving a bit lower
 							    	
@@ -2781,48 +2814,59 @@ public class MySqlUI {
 					System.out.println("Name: "+newValue.get("Variable_name"));
 					
 					HBox hboxDescriptionValue = new HBox();
-					hboxDescriptionValue.setPadding(new Insets(10,10,10,30));
+					hboxDescriptionValue.setId("hboxDescriptionValue");
+					//hboxDescriptionValue.setPadding(new Insets(10,10,10,30));
 					
 					HBox hboxDescriptionhBox= new HBox();
-					hboxDescriptionhBox.setSpacing(10);
-					hboxDescriptionhBox.setPadding(new Insets(20,10,20,30));
+					hboxDescriptionhBox.setId("description-box");
+//					hboxDescriptionhBox.setSpacing(10);
+//					hboxDescriptionhBox.setPadding(new Insets(20,10,20,30));
 					Label hboxDescriptionLabel = new Label("Description: ");
-					hboxDescriptionLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));					
+					hboxDescriptionLabel.setId("label");
+					//hboxDescriptionLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));					
 					Label hboxDescriptionValueLabel = new Label(newValue.get("Description"));
 					hboxDescriptionhBox.getChildren().addAll(hboxDescriptionLabel,hboxDescriptionValueLabel);
 					
 					
 					Label statusVariableDescriptionLabel = new Label("Description: "+ newValue.get("Description"));
-					statusVariableDescriptionLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+					statusVariableDescriptionLabel.setId("label");
+					//statusVariableDescriptionLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 					hboxDescriptionValue.getChildren().add(statusVariableDescriptionLabel);	
 											
 					HBox hboxVariableNameValue = new HBox();
-					hboxVariableNameValue.setPadding(new Insets(10,10,10,30));
-					hboxVariableNameValue.setSpacing(100);
+					hboxVariableNameValue.setId("hboxVariableNameValue");
+//					hboxVariableNameValue.setPadding(new Insets(10,10,10,30));
+//					hboxVariableNameValue.setSpacing(100);
 					
 					HBox variableNamehBox= new HBox();
-					variableNamehBox.setSpacing(10);
-					variableNamehBox.setPrefWidth(300);
+					variableNamehBox.setId("variableName-hbox");
+//					variableNamehBox.setSpacing(10);
+//					variableNamehBox.setPrefWidth(300);
 					Label variableNameLabel = new Label("Name: ");
-					variableNameLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+					variableNameLabel.setId("label");
+					//variableNameLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 					Label variableNameValueLabel = new Label(newValue.get("Variable_name"));
 					variableNamehBox.getChildren().addAll(variableNameLabel,variableNameValueLabel);
 					
 					HBox hboxVariableValue = new HBox();
-					hboxVariableValue.setSpacing(10);
-					hboxVariableValue.setPrefWidth(200);
+					hboxVariableValue.setId("variableValue-hbox");
+//					hboxVariableValue.setSpacing(10);
+//					hboxVariableValue.setPrefWidth(200);
 					Label statusVariableLabel = new Label("Value:  ");
 					TextField statusVariableValue = new TextField(newValue.get("Value"));
-					statusVariableLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+					statusVariableLabel.setId("label");
+					statusVariableValue.getStyleClass().add("textfield");
+					//statusVariableLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 					hboxVariableValue.getChildren().addAll(statusVariableLabel,statusVariableValue);																		
 							
-					HBox btnSaveVariablehBox = new HBox();	
-					btnSaveVariablehBox.setPrefWidth(150);
-					btnSaveVariablehBox.setAlignment(Pos.BOTTOM_RIGHT);
+					HBox btnSaveVariablehBox = new HBox();
+					btnSaveVariablehBox.setId("btnSaveVariablehBox");
+//					btnSaveVariablehBox.setPrefWidth(150);
+//					btnSaveVariablehBox.setAlignment(Pos.BOTTOM_RIGHT);
 					//btnBox.setPadding(new Insets(10,100,10,0));
 					
 					Button saveVariablebtn = new Button();					
-					
+					saveVariablebtn.setId("buttons");					
 					if("Y".equals( MySQLConstants.valueOf(newValue.get("Variable_name")).getIsEditable())) {
 						saveVariablebtn.setText("Save");
 						saveVariablebtn.setDisable(false);
@@ -2832,15 +2876,17 @@ public class MySqlUI {
 					}
 					
 					GridPane gridPane = new GridPane();
+					gridPane.setId("StatusVariablesGridPane");
 					gridPane.add(hboxDescriptionhBox,0,0,2,3);
 					gridPane.add(hboxVariableNameValue,0,4);
-					gridPane.setVgap(10);    // Vertical gap between rows
-			        gridPane.setHgap(10);
+//					gridPane.setVgap(10);    // Vertical gap between rows
+//			        gridPane.setHgap(10);
 			        
 					btnSaveVariablehBox.getChildren().add(saveVariablebtn);										
 					hboxVariableNameValue.getChildren().addAll(variableNamehBox,hboxVariableValue,btnSaveVariablehBox);	
 
-					variablesSecondHalfDisplayVBox.setPadding(new Insets(0, 40, 10, 0));
+					variablesSecondHalfDisplayVBox.setId("variablesSecondHalfDisplayVBox");
+					//variablesSecondHalfDisplayVBox.setPadding(new Insets(0, 40, 10, 0));
 					variablesSecondHalfDisplayVBox.getChildren().add(gridPane);
 				}
 				if(inputParam.equalsIgnoreCase("BINARY LOGS") || inputParam.equalsIgnoreCase("Server Logs")) {
@@ -2959,6 +3005,7 @@ public class MySqlUI {
 	private TableView showResultSetInTheTableViewDoubleClick(ResultSet rs,String sqlComponentForwhich,String databaseName)  throws SQLException{
 		
 		TableView tableView = new TableView();
+		tableView.getStyleClass().add("table-view");
 		tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);  //to ensure columns do not resize proportionally
         
 		if(rs.next()) {
@@ -3050,42 +3097,53 @@ public class MySqlUI {
 	private Tab particularTableDoubleClickMethod(String tableName,String databaseName) {
 		
 		Tab particularTableMainTab = new Tab(tableName);
+		particularTableMainTab.getStyleClass().add("Tabs");
 		particularTableMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));		
   
 		VBox particularTableMainTabVBox = new VBox();
-		particularTableMainTabVBox.setSpacing(10);
+		//particularTableMainTabVBox.setSpacing(10);
+		particularTableMainTabVBox.setId("connectionLabel");
 		particularTableMainTabVBox.getChildren().add(addTopHBoxForInfo("Table "+tableName+" for Connection "+currentConnectionName));
 		
 		TabPane particularTableTabPane = new TabPane();
-		particularTableTabPane.setTabMinWidth(180);
-		particularTableTabPane.setTabMinHeight(30);
+		particularTableTabPane.setId("Tabpane");
+//		particularTableTabPane.setTabMinWidth(180);
+//		particularTableTabPane.setTabMinHeight(30);
 		Tab particularTablePropertiesTab = new Tab("Properties");
+		particularTablePropertiesTab.getStyleClass().add("Tabs");
 		particularTablePropertiesTab.setClosable(false);
 		Tab particularTableDataTab = new Tab("Data");
+		particularTableDataTab.getStyleClass().add("Tabs");
 		particularTableDataTab.setClosable(false);
 		Tab particularTableERDiagramTab = new Tab("ER Diagram");
+		particularTableERDiagramTab.getStyleClass().add("Tabs");
 		particularTableERDiagramTab.setClosable(false);
 		
 		Tab particularTableGraphVisualsTab = new Tab("Graph Visuals");
+		particularTableGraphVisualsTab.getStyleClass().add("Tabs");
 		particularTableGraphVisualsTab.setClosable(false);
 		
 		
 		Tab particularTableAiPromptTab = new Tab("AI Prompt");
+		particularTableAiPromptTab.getStyleClass().add("Tabs");
 		particularTableAiPromptTab.setClosable(false);
 		particularTableMainTabVBox.getChildren().addAll(particularTableTabPane)	;
 		
 		// Properties
 		TabPane particularTablePropertiesTabbedPane = new TabPane();
+		particularTablePropertiesTabbedPane.getStyleClass().add("Tabs");
+		particularTablePropertiesTabbedPane.setId("TablePropertiesTabbedPane");
 		particularTablePropertiesTabbedPane.setSide(Side.LEFT);
 		particularTablePropertiesTabbedPane.setRotateGraphic(true);
-		particularTablePropertiesTabbedPane.setTabMinHeight(200); // Determines tab width. I know, its odd.
-		particularTablePropertiesTabbedPane.setTabMaxHeight(200);
-		particularTablePropertiesTabbedPane.setTabMinWidth(42);
-		particularTablePropertiesTabbedPane.setTabMaxWidth(42);
+//		particularTablePropertiesTabbedPane.setTabMinHeight(200); // Determines tab width. I know, its odd.
+//		particularTablePropertiesTabbedPane.setTabMaxHeight(200);
+//		particularTablePropertiesTabbedPane.setTabMinWidth(42);
+//		particularTablePropertiesTabbedPane.setTabMaxWidth(42);
 		
 	
 		// Details
 		Tab particularTabledetailsTab = new Tab();
+		particularTabledetailsTab.getStyleClass().add("Tabs");
 		particularTabledetailsTab.setClosable(false);
 		Label l = new Label("Details");
 		l.setRotate(90);
@@ -3096,6 +3154,7 @@ public class MySqlUI {
 
 		// Columns
 		Tab particularTablecolumnsTab = new Tab();
+		particularTablecolumnsTab.getStyleClass().add("Tabs");
 		particularTablecolumnsTab.setClosable(false);
 		l = new Label("Columns");
 		l.setRotate(90);
@@ -3104,6 +3163,7 @@ public class MySqlUI {
 		
 	
 		Tab particularTableconstraintsTab = new Tab();
+		particularTableconstraintsTab.getStyleClass().add("Tabs");
 		particularTableconstraintsTab.setClosable(false);
 		l = new Label("Constraints");
 		l.setRotate(90);
@@ -3112,6 +3172,7 @@ public class MySqlUI {
 		
 
 		Tab particularTableforeignKeysTab = new Tab();
+		particularTableforeignKeysTab.getStyleClass().add("Tabs");
 		particularTableforeignKeysTab.setClosable(false);
 		l = new Label("Foreign Keys");
 		l.setRotate(90);
@@ -3120,6 +3181,7 @@ public class MySqlUI {
 		
 
 		Tab particularTablereferencesTab = new Tab();
+		particularTablereferencesTab.getStyleClass().add("Tabs");
 		particularTablereferencesTab.setClosable(false);
 		l = new Label("References");
 		l.setRotate(90);
@@ -3127,6 +3189,7 @@ public class MySqlUI {
 		particularTablereferencesTab.setGraphic(stp);
 		
 		Tab particularTabletriggersTab = new Tab();
+		particularTabletriggersTab.getStyleClass().add("Tabs");
 		particularTabletriggersTab.setClosable(false);
 		l = new Label("Triggers");
 		l.setRotate(90);
@@ -3135,6 +3198,7 @@ public class MySqlUI {
 		
 		
 		Tab particularTableindexesTab = new Tab();
+		particularTableindexesTab.getStyleClass().add("Tabs");
 		particularTableindexesTab.setClosable(false);
 		l = new Label("Indexes");
 		l.setRotate(90);
@@ -3142,6 +3206,7 @@ public class MySqlUI {
 		particularTableindexesTab.setGraphic(stp);
 		
 		Tab particularTablepartitionsTab = new Tab();
+		particularTablepartitionsTab.getStyleClass().add("Tabs");
 		particularTablepartitionsTab.setClosable(false);
 		l = new Label("Partitions");
 		l.setRotate(90);
@@ -3149,6 +3214,7 @@ public class MySqlUI {
 		particularTablepartitionsTab.setGraphic(stp);
 
 		Tab particularTableDDLTab = new Tab();
+		particularTableDDLTab.getStyleClass().add("Tabs"); 
 		particularTableDDLTab.setClosable(false);
 		l = new Label("Source/DDL");
 		l.setRotate(90);
@@ -3207,12 +3273,15 @@ public class MySqlUI {
 						System.out.println(("SELECT * FROM " + databaseName + "." + tableName));
 												
 						VBox particularTableDataTabVBox = new VBox();
-						particularTableDataTabVBox.setSpacing(10);
-						particularTableDataTabVBox.setPadding(new Insets(2,2,2,2));
+						//particularTableDataTabVBox.setId("TableDataTabVBox");
+						particularTableDataTabVBox.setId("TabVBox");
+//						particularTableDataTabVBox.setSpacing(10);
+//						particularTableDataTabVBox.setPadding(new Insets(2,2,2,2));
 						TableView particularTableDatapartitionsView = showResultSetInTheTableView(rsTableData); 
 						HBox particularTableDatapartitionsButtonsHBox = new HBox();
-						particularTableDatapartitionsButtonsHBox.setPadding(new Insets(10,10,10,10));
-						particularTableDatapartitionsButtonsHBox.getChildren().add(new Button("Create"));
+						particularTableDatapartitionsButtonsHBox.setId("DatapartitionsButtonsHBox");
+						//particularTableDatapartitionsButtonsHBox.setPadding(new Insets(10,10,10,10));
+						particularTableDatapartitionsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
 						particularTableDataTabVBox.getChildren().addAll(particularTableDatapartitionsView,particularTableDatapartitionsButtonsHBox);
 						particularTableDataTab.setContent(particularTableDataTabVBox);
 						//particularTableDataTab.setContent(new TableView());
@@ -3237,6 +3306,7 @@ public class MySqlUI {
 	protected SplitPane getGraphVisualsForParticulatTable(String tableName,String databaseName) {
 		
 		SplitPane graphVisualsForParticularTableMainSplitPane = new SplitPane();
+		graphVisualsForParticularTableMainSplitPane.setId("SplitPane");
 		//graphVisualsForParticularTableMainSplitPane.setMinWidth(300);
 		//graphVisualsForParticularTableMainSplitPane.setMaxWidth(350);
 		graphVisualsForParticularTableMainSplitPane.setOrientation(Orientation.HORIZONTAL);
@@ -3244,6 +3314,7 @@ public class MySqlUI {
 		
 	    
 	    SplitPane graphVisualsForParticularTableMainSplitPaneLeftHalfPane = new SplitPane();
+	    graphVisualsForParticularTableMainSplitPaneLeftHalfPane.setId("SplitPane");
 	    graphVisualsForParticularTableMainSplitPaneLeftHalfPane.setMinWidth(250);
 	    graphVisualsForParticularTableMainSplitPaneLeftHalfPane.setMaxWidth(350);
 	    graphVisualsForParticularTableMainSplitPaneLeftHalfPane.setOrientation(Orientation.VERTICAL);
@@ -3304,6 +3375,7 @@ public class MySqlUI {
 		System.out.println("Table Zise zz:"+tableSize);
 		
 	    PieChart tableDetailsPieChart = new PieChart();
+	    tableDetailsPieChart.setId("chart");
 		tableDetailsPieChart.setTitle("Table usage : "+ tableSize +" MB / "+totalDiskUsage+" MB");
 		PieChart.Data slice ;
 		tableDetailsPieChart.setMinWidth(300);
@@ -3326,9 +3398,11 @@ public class MySqlUI {
 			ResultSet rsTable = stmt.executeQuery("Show Create table "+databaseName+"."+tableName);
 			
 			VBox particularTableDDLTabVBox = new VBox();
-			particularTableDDLTabVBox.setSpacing(10);
-			particularTableDDLTabVBox.setPadding(new Insets(2,2,2,2));
+			particularTableDDLTabVBox.setId("TabVBox");
+			//particularTableDDLTabVBox.setSpacing(10);
+			//particularTableDDLTabVBox.setPadding(new Insets(2,2,2,2));
 			TextArea particularTableDDLTextArea = new TextArea("/***/");
+			particularTableDDLTextArea.getStyleClass().add("text-area"); 
 			if(rsTable.next()) {
 				particularTableDDLTextArea = new TextArea(rsTable.getString(2));
 			}
@@ -3354,12 +3428,14 @@ public class MySqlUI {
 			ResultSet rsTable = stmt.executeQuery("select "+ selectedColumns +" from information_schema.partitions where table_schema = '"+ databaseName +"' and table_name = '"+ tableName+"' ");
 			 
 			VBox particularTablepartitionsTabVBox = new VBox();
-			particularTablepartitionsTabVBox.setSpacing(10);
-			particularTablepartitionsTabVBox.setPadding(new Insets(2,2,2,2));
+			particularTablepartitionsTabVBox.setId("TabVBox");
+//			particularTablepartitionsTabVBox.setSpacing(10);
+//			particularTablepartitionsTabVBox.setPadding(new Insets(2,2,2,2));
 			TableView particularTablepartitionsView = showResultSetInTheTableView(rsTable); 
 			HBox particularTablepartitionsButtonsHBox = new HBox();
-			particularTablepartitionsButtonsHBox.setPadding(new Insets(10,10,10,10));
-			particularTablepartitionsButtonsHBox.getChildren().add(new Button("Create"));
+			particularTablepartitionsButtonsHBox.setId("DatapartitionsButtonsHBox");
+			//particularTablepartitionsButtonsHBox.setPadding(new Insets(10,10,10,10));
+			particularTablepartitionsButtonsHBox.getChildren().add(new Button("Create") {{ setId("buttons"); }});
 			particularTablepartitionsTabVBox.getChildren().addAll(particularTablepartitionsView,particularTablepartitionsButtonsHBox);
 			particularTablepartitionsTab.setContent(particularTablepartitionsTabVBox);
 		}catch(SQLException e) {
@@ -3378,12 +3454,14 @@ public class MySqlUI {
 			ResultSet rsTable = stmt.executeQuery("select "+ selectedColumns +" from information_schema.statistics where table_schema = '"+ databaseName +"' and table_name = '"+ tableName+"' ");
 			
 			VBox particularTableindexesTabVBox = new VBox();
-			particularTableindexesTabVBox.setSpacing(10);
-			particularTableindexesTabVBox.setPadding(new Insets(2,2,2,2));
+			particularTableindexesTabVBox.setId("TabVBox");
+//			particularTableindexesTabVBox.setSpacing(10);
+//			particularTableindexesTabVBox.setPadding(new Insets(2,2,2,2));
 			TableView particularTableindexesView = showResultSetInTheTableView(rsTable); 
 			HBox particularTableindexesButtonsHBox = new HBox();
-			particularTableindexesButtonsHBox.setPadding(new Insets(10,10,10,10));
-			particularTableindexesButtonsHBox.getChildren().add(new Button("Create"));
+			particularTableindexesButtonsHBox.setId("DatapartitionsButtonsHBox");
+			//particularTableindexesButtonsHBox.setPadding(new Insets(10,10,10,10));
+			particularTableindexesButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
 			particularTableindexesTabVBox.getChildren().addAll(particularTableindexesView,particularTableindexesButtonsHBox);
 			particularTableindexesTab.setContent(particularTableindexesTabVBox);
 		}catch(SQLException e) {
@@ -3401,12 +3479,14 @@ public class MySqlUI {
 				ResultSet rsTable = stmt.executeQuery("select "+ selectedColumns +" from information_schema.triggers where trigger_Schema = '"+ databaseName +"' and event_object_table = '"+ tableName+"'");
 			
 				VBox particularTabletriggersTabVBox = new VBox();
-				particularTabletriggersTabVBox.setSpacing(10);
-				particularTabletriggersTabVBox.setPadding(new Insets(2,2,2,2));
+				particularTabletriggersTabVBox.setId("TabVBox");
+//				particularTabletriggersTabVBox.setSpacing(10);
+//				particularTabletriggersTabVBox.setPadding(new Insets(2,2,2,2));
 				TableView particularTabletriggersView = showResultSetInTheTableView(rsTable);
 				HBox particularTabletriggersButtonsHBox = new HBox();
-				particularTabletriggersButtonsHBox.setPadding(new Insets(10,10,10,10));
-				particularTabletriggersButtonsHBox.getChildren().add(new Button("Create"));
+				particularTabletriggersButtonsHBox.setId("DatapartitionsButtonsHBox");
+				//particularTabletriggersButtonsHBox.setPadding(new Insets(10,10,10,10));
+				particularTabletriggersButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
 				particularTabletriggersTabVBox.getChildren().addAll(particularTabletriggersView,particularTabletriggersButtonsHBox);
 				particularTabletriggersTab.setContent(particularTabletriggersTabVBox);
 			}catch(SQLException e) {
@@ -3425,12 +3505,14 @@ public class MySqlUI {
 			ResultSet rsTable = stmt.executeQuery("select "+ selectedColumns +" from information_schema.referential_constraints where  referenced_table_name = '"+ tableName+"'");
 		
 			VBox particularTablereferencesTabVBox = new VBox();
-			particularTablereferencesTabVBox.setSpacing(10);
-			particularTablereferencesTabVBox.setPadding(new Insets(2,2,2,2));
+			particularTablereferencesTabVBox.setId("TabVBox");
+//			particularTablereferencesTabVBox.setSpacing(10);
+//			particularTablereferencesTabVBox.setPadding(new Insets(2,2,2,2));
 			TableView particularTablereferencesView = showResultSetInTheTableView(rsTable); 
 			HBox particularTablereferencesButtonsHBox = new HBox();
-			particularTablereferencesButtonsHBox.setPadding(new Insets(10,10,10,10));
-			particularTablereferencesButtonsHBox.getChildren().add(new Button("Create"));
+			particularTablereferencesButtonsHBox.setId("DatapartitionsButtonsHBox");
+			//particularTablereferencesButtonsHBox.setPadding(new Insets(10,10,10,10));
+			particularTablereferencesButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
 			particularTablereferencesTabVBox.getChildren().addAll(particularTablereferencesView,particularTablereferencesButtonsHBox);
 			particularTablereferencesTab.setContent(particularTablereferencesTabVBox);
 		
@@ -3450,12 +3532,14 @@ public class MySqlUI {
 			ResultSet rsTable = stmt.executeQuery("select "+ selectedColumns +" from information_schema.key_column_usage where table_schema = '"+ databaseName +"' and table_name='"+tableName+"' and referenced_column_name is not null ");
 		
 			VBox particularTableforeignKeysTabVBox = new VBox();
-			particularTableforeignKeysTabVBox.setSpacing(10);
-			particularTableforeignKeysTabVBox.setPadding(new Insets(2,2,2,2));
+			particularTableforeignKeysTabVBox.setId("TabVBox");
+//			particularTableforeignKeysTabVBox.setSpacing(10);
+//			particularTableforeignKeysTabVBox.setPadding(new Insets(2,2,2,2));
 			TableView particularTableforeignKeysView = showResultSetInTheTableView(rsTable);
 			HBox particularTableforeignKeysButtonsHBox = new HBox();
-			particularTableforeignKeysButtonsHBox.setPadding(new Insets(10,10,10,10));
-			particularTableforeignKeysButtonsHBox.getChildren().add(new Button("Create"));
+			particularTableforeignKeysButtonsHBox.setId("DatapartitionsButtonsHBox");
+			//particularTableforeignKeysButtonsHBox.setPadding(new Insets(10,10,10,10));
+			particularTableforeignKeysButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
 			particularTableforeignKeysTabVBox.getChildren().addAll(particularTableforeignKeysView,particularTableforeignKeysButtonsHBox);
 			particularTableforeignKeysTab.setContent(particularTableforeignKeysTabVBox);
 		}catch(SQLException e) {
@@ -3473,12 +3557,14 @@ public class MySqlUI {
 			ResultSet rsTable = stmt.executeQuery("select "+ selectedColumns +" from information_schema.key_column_usage where table_schema = '"+ databaseName +"' and table_name='"+tableName+"'");
 			
 			VBox particularTableconstraintsTabVBox = new VBox();
-			particularTableconstraintsTabVBox.setSpacing(10);
-			particularTableconstraintsTabVBox.setPadding(new Insets(2,2,2,2));
+			particularTableconstraintsTabVBox.setId("TabVBox");
+//			particularTableconstraintsTabVBox.setSpacing(10);
+//			particularTableconstraintsTabVBox.setPadding(new Insets(2,2,2,2));
 			TableView particularTableconstraintsView = showResultSetInTheTableView(rsTable); 
 			HBox particularTableconstraintsButtonsHBox = new HBox();
-			particularTableconstraintsButtonsHBox.setPadding(new Insets(10,10,10,10));
-			particularTableconstraintsButtonsHBox.getChildren().add(new Button("Create"));
+			particularTableconstraintsButtonsHBox.setId("DatapartitionsButtonsHBox");
+			//particularTableconstraintsButtonsHBox.setPadding(new Insets(10,10,10,10));
+			particularTableconstraintsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
 			particularTableconstraintsTabVBox.getChildren().addAll(particularTableconstraintsView,particularTableconstraintsButtonsHBox);
 			particularTableconstraintsTab.setContent(particularTableconstraintsTabVBox);
 			
@@ -3502,15 +3588,17 @@ public class MySqlUI {
 			ResultSet rsTable = stmt.executeQuery("select "+ selectedColumns +" from information_schema.columns where table_schema = '"+ databaseName +"' and table_name='"+tableName+"'");
 						
 			VBox particularTablecolumnsTabVBox = new VBox();
-			particularTablecolumnsTabVBox.setSpacing(10);
+			particularTablecolumnsTabVBox.setId("TabVBox");
+			//particularTablecolumnsTabVBox.setSpacing(10);
 			particularTablecolumnsTabVBox.setMinHeight(menu_Items_FX.size.getHeight()-300);
-			particularTablecolumnsTabVBox.setPadding(new Insets(2,2,2,2));
+			//particularTablecolumnsTabVBox.setPadding(new Insets(2,2,2,2));
 
 			TableView particularTableColumnsView = showResultSetInTheTableView(rsTable);								
 				
 			HBox particularTableColumnsButtonsHBox = new HBox();
-			particularTableColumnsButtonsHBox.setPadding(new Insets(10,10,10,10));
-			particularTableColumnsButtonsHBox.getChildren().add(new Button("Create"));
+			particularTableColumnsButtonsHBox.setId("DatapartitionsButtonsHBox");
+			//particularTableColumnsButtonsHBox.setPadding(new Insets(10,10,10,10));
+			particularTableColumnsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
 			particularTablecolumnsTabVBox.getChildren().addAll(particularTableColumnsView,particularTableColumnsButtonsHBox);
 			particularTablecolumnsTab.setContent(particularTablecolumnsTabVBox);
 			
@@ -3534,9 +3622,10 @@ public class MySqlUI {
 			while(rsTable.next()) {
 			
 				VBox particularTableDetailsVBox = new VBox();
-				particularTableDetailsVBox.setSpacing(10);
-				particularTableDetailsVBox.setPadding(new Insets(2,2,2,2));
-				particularTableDetailsVBox.setPadding(new Insets(20,10,10,50));
+				particularTableDetailsVBox.setId("TableDetailsVBox");
+				//particularTableDetailsVBox.setSpacing(10);
+				//particularTableDetailsVBox.setPadding(new Insets(2,2,2,2));
+				//particularTableDetailsVBox.setPadding(new Insets(20,10,10,50));
 				
 				GridPane tableDetailGridPane = new GridPane();
 				tableDetailGridPane.setVgap(8);
@@ -3560,7 +3649,8 @@ public class MySqlUI {
 					Label labelName = new Label(lableName[i]);
 					GridPane.setConstraints(labelName, 0, i);   // column 0 row 0
 					Label labelNameValueLabel= new Label(rsTable.getString(labelNameValue[i]));
-					labelNameValueLabel.setFont(Font.font("System Regular", FontWeight.BOLD, 12));
+					labelNameValueLabel.setId("labelNameValueLabel");
+					//labelNameValueLabel.setFont(Font.font("System Regular", FontWeight.BOLD, 12));
 					GridPane.setConstraints(labelNameValueLabel, 1, i);
 					
 					tableDetailGridPane.getChildren().addAll(labelName,labelNameValueLabel);
@@ -3575,7 +3665,8 @@ public class MySqlUI {
 				Label tableSizeLabelName = new Label("Table Size :");
 				GridPane.setConstraints(tableSizeLabelName, 0, lableName.length);   // column 0 row 0
 				Label tableSizeLabelNameValue= new Label(tableSize+" MB / "+totalDiskUsage+" MB");
-				tableSizeLabelNameValue.setFont(Font.font("System Regular", FontWeight.BOLD, 12));
+				tableSizeLabelNameValue.setId("labelNameValueLabel");
+				//tableSizeLabelNameValue.setFont(Font.font("System Regular", FontWeight.BOLD, 12));
 				GridPane.setConstraints(tableSizeLabelNameValue, 1, lableName.length);
 				tableDetailGridPane.getChildren().addAll(tableSizeLabelName,tableSizeLabelNameValue);
 				
@@ -3583,6 +3674,7 @@ public class MySqlUI {
 				tablesDetailAndGraphHBox.setSpacing(10);
 				
 				PieChart tableDetailsPieChart = new PieChart();
+				tableDetailsPieChart.setId("chart");
 				tableDetailsPieChart.setTitle("Table Size of "+get2digitDoublePrecisionValue( tableSize) +" MB in Schema Size of "+totalDiskUsage+" MB");
 				PieChart.Data slice ;
 				tableDetailsPieChart.setMinWidth(300);
@@ -3616,9 +3708,10 @@ public class MySqlUI {
 			while(rsTable.next()) {
 			
 				VBox particularViewDetailsVBox = new VBox();
-				particularViewDetailsVBox.setSpacing(10);
-				particularViewDetailsVBox.setPadding(new Insets(2,2,2,2));
-				particularViewDetailsVBox.setPadding(new Insets(20,10,10,200));
+				particularViewDetailsVBox.setId("ViewDetailsVBox");
+//				particularViewDetailsVBox.setSpacing(10);
+//				particularViewDetailsVBox.setPadding(new Insets(2,2,2,2));
+//				particularViewDetailsVBox.setPadding(new Insets(20,10,10,200));
 				
 				GridPane viewDetailGridPane = new GridPane();
 				viewDetailGridPane.setVgap(8);
@@ -3633,7 +3726,8 @@ public class MySqlUI {
 					Label labelName = new Label(lableName[i]);
 					GridPane.setConstraints(labelName, 0, i);   // column 0 row 0
 					Label labelNameValueLabel= new Label(rsTable.getString(labelNameValue[i]));
-					labelNameValueLabel.setFont(Font.font("System Regular", FontWeight.BOLD, 12));
+					labelNameValueLabel.setId("labelNameValueLabel");
+					//labelNameValueLabel.setFont(Font.font("System Regular", FontWeight.BOLD, 12));
 					GridPane.setConstraints(labelNameValueLabel, 1, i);
 					
 					viewDetailGridPane.getChildren().addAll(labelName,labelNameValueLabel);
@@ -3661,6 +3755,7 @@ public class MySqlUI {
 			ResultSet rsTable = stmt.executeQuery("select "+ selectedColumns +" from information_schema.columns where table_schema = '"+ databaseName +"' and table_name='"+tableName+"'");
 					
 			VBox particularViewcolumnsTabVBox = (VBox)particularViewcolumnsTab.getContent();
+			//particularViewcolumnsTabVBox.setId("ViewDetailsVBox");
 			TableView particularViewColumnsView  = (TableView)particularViewcolumnsTabVBox.getChildren().get(0);
 			particularViewColumnsView = showResultSetInTheTableView(rsTable,particularViewColumnsView);
 			
@@ -3684,35 +3779,46 @@ public class MySqlUI {
 	private Tab particularViewDoubleClickMethod(String viewName,String databaseName) {
 		
 		Tab particularViewMainTab = new Tab(viewName);
-																											  
+		particularViewMainTab.getStyleClass().add("Tabs");	
+		particularViewMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
 		
 		VBox particularViewMainTabVBox = new VBox();
-		particularViewMainTabVBox.setSpacing(10);
+		//particularViewMainTabVBox.setSpacing(10);
+		particularViewMainTabVBox.setId("connectionLabel");
 		//clientConnectionsVBox.setPadding(new Insets(0,0,0,0));
 		particularViewMainTabVBox.getChildren().add(addTopHBoxForInfo("View "+viewName+" for Connection "+currentConnectionName));
 		
 		
 		TabPane particularViewTabPane = new TabPane();
-		particularViewTabPane.setTabMinWidth(180);
-		particularViewTabPane.setTabMinHeight(30);
+		particularViewTabPane.setId("Tabpane");
+//		particularViewTabPane.setTabMinWidth(180);
+//		particularViewTabPane.setTabMinHeight(30);
 		Tab particularTablePropertiesTab = new Tab("Properties");
+		particularTablePropertiesTab.getStyleClass().add("Tabs");
 		Tab particularTableDataTab = new Tab("Data");
+		particularTableDataTab.getStyleClass().add("Tabs");
 		Tab particularTableERDiagramTab = new Tab("ER Diagram");
+		particularTableERDiagramTab.getStyleClass().add("Tabs");
 		Tab particularTableGraphVisualsTab = new Tab("Graph Visuals");
+		particularTableGraphVisualsTab.getStyleClass().add("Tabs");
 		Tab particularTableAiPromptTab = new Tab("AI Prompt");
+		particularTableAiPromptTab.getStyleClass().add("Tabs");
 		particularViewMainTabVBox.getChildren().addAll(particularViewTabPane)	;
 		
 		// Properties
 		TabPane particularViewPropertiesTabbedPane = new TabPane();
+		particularViewPropertiesTabbedPane.getStyleClass().add("Tabs");
+		particularViewPropertiesTabbedPane.setId("ViewPropertiesTabbedPane");
 		particularViewPropertiesTabbedPane.setSide(Side.LEFT);
 		particularViewPropertiesTabbedPane.setRotateGraphic(true);
-		particularViewPropertiesTabbedPane.setTabMinHeight(200); // Determines tab width. I know, its odd.
-		particularViewPropertiesTabbedPane.setTabMaxHeight(200);
-		particularViewPropertiesTabbedPane.setTabMinWidth(50);
-		particularViewPropertiesTabbedPane.setTabMaxWidth(50);
+//		particularViewPropertiesTabbedPane.setTabMinHeight(200); // Determines tab width. I know, its odd.
+//		particularViewPropertiesTabbedPane.setTabMaxHeight(200);
+//		particularViewPropertiesTabbedPane.setTabMinWidth(50);
+//		particularViewPropertiesTabbedPane.setTabMaxWidth(50);
 		
 		//Details
 		Tab particularViewdetailsTab = new Tab();
+		particularViewdetailsTab.getStyleClass().add("Tabs");
 		particularViewdetailsTab.setClosable(false);
 		Label l = new Label("Details");
 		l.setRotate(90);
@@ -3723,24 +3829,29 @@ public class MySqlUI {
 		
 		// Columns
 		Tab particularViewcolumnsTab = new Tab();
+		particularViewcolumnsTab.getStyleClass().add("Tabs");
 		particularViewcolumnsTab.setClosable(false);
 		l = new Label("Columns");
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularViewcolumnsTab.setGraphic(stp);
+		
 		VBox particularViewcolumnsTabVBox = new VBox();
-		particularViewcolumnsTabVBox.setSpacing(10);
+		particularViewcolumnsTabVBox.setId("TabVBox");
+		//particularViewcolumnsTabVBox.setSpacing(10);
 		particularViewcolumnsTabVBox.setMinHeight(menu_Items_FX.size.getWidth()-300);
-		particularViewcolumnsTabVBox.setPadding(new Insets(2,2,2,2));
+		//particularViewcolumnsTabVBox.setPadding(new Insets(2,2,2,2));
 		TableView particularViewColumnsView = new TableView();								
 		HBox particularViewColumnsButtonsHBox = new HBox();
-		particularViewColumnsButtonsHBox.setPadding(new Insets(10,10,10,10));
-		particularViewColumnsButtonsHBox.getChildren().addAll(new Button("Create"),new Button("Delete"));
+		particularViewColumnsButtonsHBox.setId("DatapartitionsButtonsHBox");
+		//particularViewColumnsButtonsHBox.setPadding(new Insets(10,10,10,10));
+		particularViewColumnsButtonsHBox.getChildren().addAll(new Button("Create") {{ setId("buttons");}},new Button("Delete") {{ setId("buttons"); }});
 		particularViewcolumnsTabVBox.getChildren().addAll(particularViewColumnsView,particularViewColumnsButtonsHBox);
 		particularViewcolumnsTab.setContent(particularViewcolumnsTabVBox);
 		
 		// Source/DDL
 		Tab particularViewDDLTab = new Tab();
+		particularViewDDLTab.getStyleClass().add("Tabs");
 		particularViewDDLTab.setClosable(false);
 		l = new Label("Source/DDL");
 		l.setRotate(90);
@@ -3779,12 +3890,14 @@ public class MySqlUI {
 						System.out.println("SELECT * FROM " + databaseName + "." + viewName);
 												
 						VBox particularViewDataTabVBox = new VBox();
-						particularViewDataTabVBox.setSpacing(10);
-						particularViewDataTabVBox.setPadding(new Insets(2,2,2,2));
+						particularViewDataTabVBox.setId("TabVBox");
+						//particularViewDataTabVBox.setSpacing(10);
+						//particularViewDataTabVBox.setPadding(new Insets(2,2,2,2));
 						TableView particularViewDatapartitionsView = showResultSetInTheTableView(rsTableData); 
 						HBox particularViewDatapartitionsButtonsHBox = new HBox();
-						particularViewDatapartitionsButtonsHBox.setPadding(new Insets(10,10,10,10));
-						particularViewDatapartitionsButtonsHBox.getChildren().add(new Button("Create"));
+						particularViewDatapartitionsButtonsHBox.setId("DatapartitionsButtonsHBox");
+						//particularViewDatapartitionsButtonsHBox.setPadding(new Insets(10,10,10,10));
+						particularViewDatapartitionsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
 						particularViewDataTabVBox.getChildren().addAll(particularViewDatapartitionsView,particularViewDatapartitionsButtonsHBox);
 						particularTableDataTab.setContent(particularViewDataTabVBox);
 						//particularTableDataTab.setContent(new TableView());
@@ -3820,6 +3933,7 @@ public class MySqlUI {
 			}
 			
 			VBox particularIndexcolumnsTabVBox = (VBox)particularIndexesColumnsTab.getContent();
+			//particularIndexcolumnsTabVBox.setId("TabVBox");
 			TableView particularIndexesColumnsView  = (TableView)particularIndexcolumnsTabVBox.getChildren().get(0);
 			particularIndexesColumnsView = showResultSetInTheTableView(rsTable,particularIndexesColumnsView);
 			
@@ -3851,9 +3965,10 @@ public class MySqlUI {
 			while(rsTable.next()) {
 			
 				VBox particularIndexDetailsVBox = new VBox();
-				particularIndexDetailsVBox.setSpacing(10);
-				particularIndexDetailsVBox.setPadding(new Insets(2,2,2,2));
-				particularIndexDetailsVBox.setPadding(new Insets(20,10,10,200));
+				particularIndexDetailsVBox.setId("ViewDetailsVBox");
+//				particularIndexDetailsVBox.setSpacing(10);
+//				particularIndexDetailsVBox.setPadding(new Insets(2,2,2,2));
+//				particularIndexDetailsVBox.setPadding(new Insets(20,10,10,200));
 				
 				GridPane indexDetailGridPane = new GridPane();
 				indexDetailGridPane.setVgap(8);
@@ -3863,7 +3978,8 @@ public class MySqlUI {
 					Label labelName = new Label(lableName[i]);
 					GridPane.setConstraints(labelName, 0, i);   // column 0 row 0
 					Label labelNameValueLabel= new Label(rsTable.getString(labelNameValue[i]));
-					labelNameValueLabel.setFont(Font.font("System Regular", FontWeight.BOLD, 12));
+					labelNameValueLabel.setId("labelNameValueLabel");
+					//labelNameValueLabel.setFont(Font.font("System Regular", FontWeight.BOLD, 12));
 					GridPane.setConstraints(labelNameValueLabel, 1, i);
 					
 					indexDetailGridPane.getChildren().addAll(labelName,labelNameValueLabel);
@@ -3881,29 +3997,36 @@ public class MySqlUI {
 	private Tab particularIndexesDoubleClickMethod(String indexesName,String databaseName)	
 	{
 	    Tab particularIndexesMainTab = new Tab(indexesName);
-		  particularIndexesMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
+	    particularIndexesMainTab.getStyleClass().add("Tabs");
+		particularIndexesMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
 		VBox particularIndexesMainTabVBox = new VBox();
-		particularIndexesMainTabVBox.setSpacing(10);
+		//particularIndexesMainTabVBox.setSpacing(10);
+		particularIndexesMainTabVBox.setId("connectionLabel");
 		//clientConnectionsVBox.setPadding(new Insets(0,0,0,0));
 		particularIndexesMainTabVBox.getChildren().add(addTopHBoxForInfo("Indexes "+indexesName+" for Connection "+currentConnectionName));
 		
 		
 		TabPane particularIndexesTabPane = new TabPane();
-		particularIndexesTabPane.setTabMinWidth(180);
-		particularIndexesTabPane.setTabMinHeight(30);
+		particularIndexesTabPane.setId("Tabpane");
+//		particularIndexesTabPane.setTabMinWidth(180);
+//		particularIndexesTabPane.setTabMinHeight(30);
 		Tab particularTablePropertiesTab = new Tab("Properties");
+		particularTablePropertiesTab.getStyleClass().add("Tabs");
 		particularTablePropertiesTab.setClosable(false);
 		particularIndexesMainTabVBox.getChildren().addAll(particularIndexesTabPane)	;
 		
 		// Properties
 		TabPane particularIndexesPropertiesTabbedPane = new TabPane();
+		particularIndexesPropertiesTabbedPane.getStyleClass().add("Tabs");
+		particularIndexesPropertiesTabbedPane.setId("IndexesPropertiesTabbedPane");
 		particularIndexesPropertiesTabbedPane.setSide(Side.LEFT);
 		particularIndexesPropertiesTabbedPane.setRotateGraphic(true);
-		particularIndexesPropertiesTabbedPane.setTabMinHeight(200); // Determines tab width. I know, its odd.
-		particularIndexesPropertiesTabbedPane.setTabMaxHeight(200);
-		particularIndexesPropertiesTabbedPane.setTabMinWidth(50);
+//		particularIndexesPropertiesTabbedPane.setTabMinHeight(200); // Determines tab width. I know, its odd.
+//		particularIndexesPropertiesTabbedPane.setTabMaxHeight(200);
+//		particularIndexesPropertiesTabbedPane.setTabMinWidth(50);
 		
 		Tab particularIndexesdetailsTab = new Tab();
+		particularIndexesdetailsTab.getStyleClass().add("Tabs");
 		particularIndexesdetailsTab.setClosable(false);
 		Label l = new Label("Details");
 		l.setRotate(90);
@@ -3913,19 +4036,23 @@ public class MySqlUI {
 		particularIndexesdetailsTab = getParticularIndexDetailsTab(indexesName,databaseName,particularIndexesdetailsTab);
 		
 		Tab particularIndexescolumnsTab = new Tab();
+		particularIndexescolumnsTab.getStyleClass().add("Tabs");
 		particularIndexescolumnsTab.setClosable(false);
 		l = new Label("Index Columns");
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularIndexescolumnsTab.setGraphic(stp);
+		
 		VBox particularIndexescolumnsTabVBox = new VBox();
-		particularIndexescolumnsTabVBox.setSpacing(10);
-		particularIndexescolumnsTabVBox.setPadding(new Insets(2,2,2,2));
-		particularIndexescolumnsTabVBox.setMinHeight(menu_Items_FX.size.getWidth()-300);
+		particularIndexescolumnsTabVBox.setId("TabVBox");
+		//particularIndexescolumnsTabVBox.setSpacing(10);
+		//particularIndexescolumnsTabVBox.setPadding(new Insets(2,2,2,2));
+		particularIndexescolumnsTabVBox.setMinHeight(menu_Items_FX.size.getWidth()-300);		
 		TableView particularIndexesColumnsView = new TableView(); 
 		HBox particularIndexesColumnsButtonsHBox = new HBox();
-		particularIndexesColumnsButtonsHBox.setPadding(new Insets(10,10,10,10));
-		particularIndexesColumnsButtonsHBox.getChildren().add(new Button("Create"));
+		particularIndexesColumnsButtonsHBox.setId("DatapartitionsButtonsHBox");
+		//particularIndexesColumnsButtonsHBox.setPadding(new Insets(10,10,10,10));
+		particularIndexesColumnsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
 		particularIndexescolumnsTabVBox.getChildren().addAll(particularIndexesColumnsView,particularIndexesColumnsButtonsHBox);
 		particularIndexescolumnsTab.setContent(particularIndexescolumnsTabVBox);
 	
@@ -3969,9 +4096,10 @@ public class MySqlUI {
 			while(rsTable.next()) {
 			
 				VBox particularProcedureDetailsVBox = new VBox();
-				particularProcedureDetailsVBox.setSpacing(10);
-				particularProcedureDetailsVBox.setPadding(new Insets(2,2,2,2));
-				particularProcedureDetailsVBox.setPadding(new Insets(20,10,10,200));
+				particularProcedureDetailsVBox.setId("ViewDetailsVBox");
+//				particularProcedureDetailsVBox.setSpacing(10);
+//				particularProcedureDetailsVBox.setPadding(new Insets(2,2,2,2));
+//				particularProcedureDetailsVBox.setPadding(new Insets(20,10,10,200));
 				
 				GridPane procedureDetailGridPane = new GridPane();
 				procedureDetailGridPane.setVgap(8);
@@ -3981,7 +4109,8 @@ public class MySqlUI {
 					Label labelName = new Label(lableName[i]);
 					GridPane.setConstraints(labelName, 0, i);   // column 0 row 0
 					Label labelNameValueLabel= new Label(rsTable.getString(labelNameValue[i]));
-					labelNameValueLabel.setFont(Font.font("System Regular", FontWeight.BOLD, 12));
+					labelNameValueLabel.setId("labelNameValueLabel");
+					//labelNameValueLabel.setFont(Font.font("System Regular", FontWeight.BOLD, 12));
 					GridPane.setConstraints(labelNameValueLabel, 1, i);
 					
 					procedureDetailGridPane.getChildren().addAll(labelName,labelNameValueLabel);
@@ -4011,6 +4140,7 @@ public class MySqlUI {
 				}
 				
 				VBox particularProcedurescolumnsTabVBox = (VBox)particularProcedurescolumnsTab.getContent();
+				//particularProcedurescolumnsTabVBox.setId("TabVBox");
 				TableView particularProcedureColumnsView  = (TableView)particularProcedurescolumnsTabVBox.getChildren().get(0);
 				particularProcedureColumnsView = showResultSetInTheTableView(rsTable,particularProcedureColumnsView);
 				
@@ -4028,8 +4158,9 @@ public class MySqlUI {
 			ResultSet rsTable = stmt.executeQuery("Show Create Procedure "+databaseName+"."+proceduresName);
 			
 			VBox particularProcedureDDLTabVBox = new VBox();
-			particularProcedureDDLTabVBox.setSpacing(10);
-			particularProcedureDDLTabVBox.setPadding(new Insets(2,2,2,2));
+			particularProcedureDDLTabVBox.setId("TabVBox");
+			//particularProcedureDDLTabVBox.setSpacing(10);
+			//particularProcedureDDLTabVBox.setPadding(new Insets(2,2,2,2));
 			TextArea particularProcedureDDLTextArea = new TextArea("/***/");
 			if(rsTable.next()) {
 				particularProcedureDDLTextArea = new TextArea(rsTable.getString(3));
@@ -4049,30 +4180,37 @@ public class MySqlUI {
 	
 	public Tab particularProcedureDoubleClickMethod(String proceduresName,String databaseName) {
 	    Tab particularProceduresMainTab = new Tab(proceduresName);
+	    particularProceduresMainTab.getStyleClass().add("Tabs");
 		particularProceduresMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
 	 
 		VBox particularProceduresMainTabVBox = new VBox();
-		particularProceduresMainTabVBox.setSpacing(10);
+		//particularProceduresMainTabVBox.setSpacing(10);
+		particularProceduresMainTabVBox.setId("connectionLabel");
 		//clientConnectionsVBox.setPadding(new Insets(0,0,0,0));
 		particularProceduresMainTabVBox.getChildren().add(addTopHBoxForInfo("Procedures "+proceduresName+" for Connection "+currentConnectionName));
 		
 		
 		TabPane particularProceduresTabPane = new TabPane();
-		particularProceduresTabPane.setTabMinWidth(180);
-		particularProceduresTabPane.setTabMinHeight(30);
+		particularProceduresTabPane.setId("Tabpane");
+//		particularProceduresTabPane.setTabMinWidth(180);
+//		particularProceduresTabPane.setTabMinHeight(30);
 		Tab particularTablePropertiesTab = new Tab("Properties");
+		particularTablePropertiesTab.getStyleClass().add("Tabs");
 		particularTablePropertiesTab.setClosable(false);
 		particularProceduresMainTabVBox.getChildren().addAll(particularProceduresTabPane)	;
 		
 		// Properties
 		TabPane particularProceduresPropertiesTabbedPane = new TabPane();
+		particularProceduresPropertiesTabbedPane.getStyleClass().add("Tabs");
+		particularProceduresPropertiesTabbedPane.setId("IndexesPropertiesTabbedPane");
 		particularProceduresPropertiesTabbedPane.setSide(Side.LEFT);
 		particularProceduresPropertiesTabbedPane.setRotateGraphic(true);
-		particularProceduresPropertiesTabbedPane.setTabMinHeight(200); // Determines tab width. I know, its odd.
-		particularProceduresPropertiesTabbedPane.setTabMaxHeight(200);
-		particularProceduresPropertiesTabbedPane.setTabMinWidth(50);
+//		particularProceduresPropertiesTabbedPane.setTabMinHeight(200); // Determines tab width. I know, its odd.
+//		particularProceduresPropertiesTabbedPane.setTabMaxHeight(200);
+//		particularProceduresPropertiesTabbedPane.setTabMinWidth(50);
 		
 		Tab particularProceduresdetailsTab = new Tab();
+		particularProceduresdetailsTab.getStyleClass().add("Tabs");
 		particularProceduresdetailsTab.setClosable(false);
 		Label l = new Label("Details");
 		l.setRotate(90);
@@ -4082,31 +4220,36 @@ public class MySqlUI {
 		particularProceduresdetailsTab = getParticularProcedureDetailsTab(proceduresName,databaseName , particularProceduresdetailsTab);
 		
 		Tab particularProcedurescolumnsTab = new Tab();
+		particularProcedurescolumnsTab.getStyleClass().add("Tabs");
 		particularProcedurescolumnsTab.setClosable(false);
 		l = new Label("Procedure Parameters");
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularProcedurescolumnsTab.setGraphic(stp);
 		VBox particularProcedurescolumnsTabVBox = new VBox();
-		particularProcedurescolumnsTabVBox.setSpacing(10);
-		particularProcedurescolumnsTabVBox.setPadding(new Insets(2,2,2,2));
+		particularProcedurescolumnsTabVBox.setId("TabVBox");
+//		particularProcedurescolumnsTabVBox.setSpacing(10);
+//		particularProcedurescolumnsTabVBox.setPadding(new Insets(2,2,2,2));
 		particularProcedurescolumnsTabVBox.setMinHeight(menu_Items_FX.size.getWidth()-300);
 		TableView particularProceduresColumnsView = new TableView(); 
 		HBox particularProceduresColumnsButtonsHBox = new HBox();
-		particularProceduresColumnsButtonsHBox.setPadding(new Insets(10,10,10,10));
-		particularProceduresColumnsButtonsHBox.getChildren().add(new Button("Create"));
+		particularProceduresColumnsButtonsHBox.setId("DatapartitionsButtonsHBox");
+		//particularProceduresColumnsButtonsHBox.setPadding(new Insets(10,10,10,10));
+		particularProceduresColumnsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
 		particularProcedurescolumnsTabVBox.getChildren().addAll(particularProceduresColumnsView,particularProceduresColumnsButtonsHBox);
 		particularProcedurescolumnsTab.setContent(particularProcedurescolumnsTabVBox);
 		
 		Tab particularProceduresDDLTab = new Tab();
+		particularProceduresDDLTab.getStyleClass().add("Tabs");
 		particularProceduresDDLTab.setClosable(false);
 		l = new Label("Source/DDL");
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularProceduresDDLTab.setGraphic(stp);
 		VBox particularProceduresDDLTabVBox = new VBox();
-		particularProceduresDDLTabVBox.setSpacing(10);
-		particularProceduresDDLTabVBox.setPadding(new Insets(2,2,2,2));
+		particularProceduresDDLTabVBox.setId("TabVBox");
+//		particularProceduresDDLTabVBox.setSpacing(10);
+//		particularProceduresDDLTabVBox.setPadding(new Insets(2,2,2,2));
 	
 		particularProceduresTabPane.getTabs().addAll(particularTablePropertiesTab);
 		
@@ -4149,9 +4292,11 @@ public class MySqlUI {
 			while(rsTable.next()) {
 			
 				VBox particularFunctionDetailsVBox = new VBox();
-				particularFunctionDetailsVBox.setSpacing(10);
-				particularFunctionDetailsVBox.setPadding(new Insets(2,2,2,2));
-				particularFunctionDetailsVBox.setPadding(new Insets(20,10,10,200));
+				//particularFunctionDetailsVBox.setId("TabVBox");
+				particularFunctionDetailsVBox.setId("ViewDetailsVBox");
+//				particularFunctionDetailsVBox.setSpacing(10);
+//				particularFunctionDetailsVBox.setPadding(new Insets(2,2,2,2));
+//				particularFunctionDetailsVBox.setPadding(new Insets(20,10,10,200));
 				
 				GridPane functionDetailGridPane = new GridPane();
 				functionDetailGridPane.setVgap(8);
@@ -4161,7 +4306,8 @@ public class MySqlUI {
 					Label labelName = new Label(lableName[i]);
 					GridPane.setConstraints(labelName, 0, i);   // column 0 row 0
 					Label labelNameValueLabel= new Label(rsTable.getString(labelNameValue[i]));
-					labelNameValueLabel.setFont(Font.font("System Regular", FontWeight.BOLD, 12));
+					labelNameValueLabel.setId("labelNameValueLabel");
+					//labelNameValueLabel.setFont(Font.font("System Regular", FontWeight.BOLD, 12));
 					GridPane.setConstraints(labelNameValueLabel, 1, i);
 					
 					functionDetailGridPane.getChildren().addAll(labelName,labelNameValueLabel);
@@ -4190,6 +4336,7 @@ public class MySqlUI {
 				}
 				
 				VBox particularFunctionscolumnsTabVBox = (VBox)particularFunctionscolumnsTab.getContent();
+				//particularFunctionscolumnsTabVBox.setId("TabVBox");
 				TableView particularFunctionColumnsView  = (TableView)particularFunctionscolumnsTabVBox.getChildren().get(0);
 				particularFunctionColumnsView = showResultSetInTheTableView(rsTable,particularFunctionColumnsView);
 				
@@ -4207,8 +4354,9 @@ public class MySqlUI {
 			ResultSet rsTable = stmt.executeQuery("Show Create Function "+databaseName+"."+functionsName);
 			
 			VBox particularFunctionDDLTabVBox = new VBox();
-			particularFunctionDDLTabVBox.setSpacing(10);
-			particularFunctionDDLTabVBox.setPadding(new Insets(2,2,2,2));
+			particularFunctionDDLTabVBox.setId("TabVBox");
+//			particularFunctionDDLTabVBox.setSpacing(10);
+//			particularFunctionDDLTabVBox.setPadding(new Insets(2,2,2,2));
 			TextArea particularFunctionDDLTextArea = new TextArea("/***/");
 			if(rsTable.next()) {
 				particularFunctionDDLTextArea = new TextArea(rsTable.getString(3));
@@ -4229,30 +4377,37 @@ public class MySqlUI {
 	public Tab particularFunctionsDoubleClickMethod(String functionsName,String databaseName) {
 	    
 		Tab particularFunctionsMainTab = new Tab(functionsName);
+		particularFunctionsMainTab.getStyleClass().add("Tabs");
 		particularFunctionsMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));																										   
 		
 		VBox particularFunctionsMainTabVBox = new VBox();
-		particularFunctionsMainTabVBox.setSpacing(10);
+		//particularFunctionsMainTabVBox.setSpacing(10);
+		particularFunctionsMainTabVBox.setId("connectionLabel");
 		//clientConnectionsVBox.setPadding(new Insets(0,0,0,0));
 		particularFunctionsMainTabVBox.getChildren().add(addTopHBoxForInfo("Functions "+functionsName+" for Connection "+currentConnectionName));
 		
 		
 		TabPane particularFunctionsTabPane = new TabPane();
-		particularFunctionsTabPane.setTabMinWidth(180);
-		particularFunctionsTabPane.setTabMinHeight(30);
+		particularFunctionsTabPane.setId("Tabpane");
+//		particularFunctionsTabPane.setTabMinWidth(180);
+//		particularFunctionsTabPane.setTabMinHeight(30);
 		Tab particularTablePropertiesTab = new Tab("Properties");
+		particularTablePropertiesTab.getStyleClass().add("Tabs");
 		particularTablePropertiesTab.setClosable(false);
 		particularFunctionsMainTabVBox.getChildren().addAll(particularFunctionsTabPane)	;
 		
 		// Properties
 		TabPane particularFunctionsPropertiesTabbedPane = new TabPane();
+		particularFunctionsPropertiesTabbedPane.getStyleClass().add("Tabs");
+		particularFunctionsPropertiesTabbedPane.setId("IndexesPropertiesTabbedPane");
 		particularFunctionsPropertiesTabbedPane.setSide(Side.LEFT);
 		particularFunctionsPropertiesTabbedPane.setRotateGraphic(true);
-		particularFunctionsPropertiesTabbedPane.setTabMinHeight(200); // Determines tab width. I know, its odd.
-		particularFunctionsPropertiesTabbedPane.setTabMaxHeight(200);
-		particularFunctionsPropertiesTabbedPane.setTabMinWidth(50);
+//		particularFunctionsPropertiesTabbedPane.setTabMinHeight(200); // Determines tab width. I know, its odd.
+//		particularFunctionsPropertiesTabbedPane.setTabMaxHeight(200);
+//		particularFunctionsPropertiesTabbedPane.setTabMinWidth(50);
 		
 		Tab particularFunctionsdetailsTab = new Tab();
+		particularFunctionsdetailsTab.getStyleClass().add("Tabs");
 		particularFunctionsdetailsTab.setClosable(false);
 		Label l = new Label("Details");
 		l.setRotate(90);
@@ -4262,31 +4417,36 @@ public class MySqlUI {
 		particularFunctionsdetailsTab = getParticularFunctionDetailsTab(functionsName,databaseName , particularFunctionsdetailsTab);
 		
 		Tab particularFunctionscolumnsTab = new Tab();
+		particularFunctionscolumnsTab.getStyleClass().add("Tabs");
 		particularFunctionscolumnsTab.setClosable(false);
 		l = new Label("Function Parameters");
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularFunctionscolumnsTab.setGraphic(stp);
 		VBox particularFunctionscolumnsTabVBox = new VBox();
-		particularFunctionscolumnsTabVBox.setSpacing(10);
-		particularFunctionscolumnsTabVBox.setPadding(new Insets(2,2,2,2));
+		particularFunctionscolumnsTabVBox.setId("TabVBox");
+//		particularFunctionscolumnsTabVBox.setSpacing(10);
+//		particularFunctionscolumnsTabVBox.setPadding(new Insets(2,2,2,2));
 		particularFunctionscolumnsTabVBox.setMinHeight(menu_Items_FX.size.getWidth()-300);
 		TableView particularFunctionsColumnsView = new TableView(); 
 		HBox particularFunctionsColumnsButtonsHBox = new HBox();
-		particularFunctionsColumnsButtonsHBox.setPadding(new Insets(10,10,10,10));
-		particularFunctionsColumnsButtonsHBox.getChildren().add(new Button("Create"));
+		particularFunctionsColumnsButtonsHBox.setId("DatapartitionsButtonsHBox");
+		//particularFunctionsColumnsButtonsHBox.setPadding(new Insets(10,10,10,10));
+		particularFunctionsColumnsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
 		particularFunctionscolumnsTabVBox.getChildren().addAll(particularFunctionsColumnsView,particularFunctionsColumnsButtonsHBox);
 		particularFunctionscolumnsTab.setContent(particularFunctionscolumnsTabVBox);
 	
 		Tab particularFunctionsDDLTab = new Tab();
+		particularFunctionsDDLTab.getStyleClass().add("Tabs");
 		particularFunctionsDDLTab.setClosable(false);
 		l = new Label("Source/DDL");
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularFunctionsDDLTab.setGraphic(stp);
 		VBox particularFunctionsDDLTabVBox = new VBox();
-		particularFunctionsDDLTabVBox.setSpacing(10);
-		particularFunctionsDDLTabVBox.setPadding(new Insets(2,2,2,2));
+		particularFunctionsDDLTabVBox.setId("TabVBox");
+//		particularFunctionsDDLTabVBox.setSpacing(10);
+//		particularFunctionsDDLTabVBox.setPadding(new Insets(2,2,2,2));
 		
 		TextArea particularFunctionsDDLTextArea = new TextArea("Souce DDL will come here \n Souce DDL will come here");
 		particularFunctionsDDLTextArea.setEditable(false);		
@@ -4339,9 +4499,11 @@ public class MySqlUI {
 			while(rsTable.next()) {
 			
 				VBox particularTriggerDetailsVBox = new VBox();
-				particularTriggerDetailsVBox.setSpacing(10);
-				particularTriggerDetailsVBox.setPadding(new Insets(2,2,2,2));
-				particularTriggerDetailsVBox.setPadding(new Insets(20,10,10,200));
+				//particularTriggerDetailsVBox.setId("TabVBox");
+				particularTriggerDetailsVBox.setId("ViewDetailsVBox");
+//				particularTriggerDetailsVBox.setSpacing(10);
+//				particularTriggerDetailsVBox.setPadding(new Insets(2,2,2,2));
+//				particularTriggerDetailsVBox.setPadding(new Insets(20,10,10,200));
 				
 				GridPane triggerDetailGridPane = new GridPane();
 				triggerDetailGridPane.setVgap(8);
@@ -4351,7 +4513,8 @@ public class MySqlUI {
 					Label labelName = new Label(lableName[i]);
 					GridPane.setConstraints(labelName, 0, i);   // column 0 row 0
 					Label labelNameValueLabel= new Label(rsTable.getString(labelNameValue[i]));
-					labelNameValueLabel.setFont(Font.font("System Regular", FontWeight.BOLD, 12));
+					labelNameValueLabel.setId("labelNameValueLabel");
+					//labelNameValueLabel.setFont(Font.font("System Regular", FontWeight.BOLD, 12));
 					GridPane.setConstraints(labelNameValueLabel, 1, i);
 					
 					triggerDetailGridPane.getChildren().addAll(labelName,labelNameValueLabel);
@@ -4371,8 +4534,9 @@ public class MySqlUI {
 			ResultSet rsTable = stmt.executeQuery("Show Create Trigger "+databaseName+"."+triggersName);
 			
 			VBox particularTriggerDDLTabVBox = new VBox();
-			particularTriggerDDLTabVBox.setSpacing(10);
-			particularTriggerDDLTabVBox.setPadding(new Insets(2,2,2,2));
+			particularTriggerDDLTabVBox.setId("TabVBox");
+//			particularTriggerDDLTabVBox.setSpacing(10);
+//			particularTriggerDDLTabVBox.setPadding(new Insets(2,2,2,2));
 			TextArea particularTriggerDDLTextArea = new TextArea("/***/");
 			if(rsTable.next()) {
 				particularTriggerDDLTextArea = new TextArea(rsTable.getString(3));
@@ -4391,30 +4555,37 @@ public class MySqlUI {
 	
 	public Tab particularTriggersDoubleClickMethod(String triggersName,String databaseName) {
 	    Tab particularTriggersMainTab = new Tab(triggersName);
+	    particularTriggersMainTab.getStyleClass().add("Tabs");
 		particularTriggersMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));																											 
 		
 		VBox particularTriggersMainTabVBox = new VBox();
-		particularTriggersMainTabVBox.setSpacing(10);
+		//particularTriggersMainTabVBox.setSpacing(10);
+		particularTriggersMainTabVBox.setId("connectionLabel");
 		//clientConnectionsVBox.setPadding(new Insets(0,0,0,0));
 		particularTriggersMainTabVBox.getChildren().add(addTopHBoxForInfo("Triggers "+triggersName+" for Connection "+currentConnectionName));
 		
 		
 		TabPane particularTriggersTabPane = new TabPane();
-		particularTriggersTabPane.setTabMinWidth(180);
-		particularTriggersTabPane.setTabMinHeight(30);
+		particularTriggersTabPane.setId("Tabpane");
+//		particularTriggersTabPane.setTabMinWidth(180);
+//		particularTriggersTabPane.setTabMinHeight(30);
 		Tab particularTablePropertiesTab = new Tab("Properties");
+		particularTablePropertiesTab.getStyleClass().add("Tabs");
 		particularTablePropertiesTab.setClosable(false);
 		particularTriggersMainTabVBox.getChildren().addAll(particularTriggersTabPane);
 		
 		// Properties
 		TabPane particularTriggersPropertiesTabbedPane = new TabPane();
+		particularTriggersPropertiesTabbedPane.getStyleClass().add("Tabs");
+		particularTriggersPropertiesTabbedPane.setId("IndexesPropertiesTabbedPane");
 		particularTriggersPropertiesTabbedPane.setSide(Side.LEFT);
 		particularTriggersPropertiesTabbedPane.setRotateGraphic(true);
-		particularTriggersPropertiesTabbedPane.setTabMinHeight(200); // Determines tab width. I know, its odd.
-		particularTriggersPropertiesTabbedPane.setTabMaxHeight(200);
-		particularTriggersPropertiesTabbedPane.setTabMinWidth(50);
+//		particularTriggersPropertiesTabbedPane.setTabMinHeight(200); // Determines tab width. I know, its odd.
+//		particularTriggersPropertiesTabbedPane.setTabMaxHeight(200);
+//		particularTriggersPropertiesTabbedPane.setTabMinWidth(50);
 		
 		Tab particularTriggersdetailsTab = new Tab();
+		particularTriggersdetailsTab.getStyleClass().add("Tabs");
 		particularTriggersdetailsTab.setClosable(false);
 		Label l = new Label("Details");
 		l.setRotate(90);
@@ -4431,14 +4602,16 @@ public class MySqlUI {
 		
 		// use the column action_Statement from the above query and add the DDL/Source for the trigger selected		
 		Tab particularTriggersDDLTab = new Tab();
+		particularTriggersDDLTab.getStyleClass().add("Tabs");
 		particularTriggersDDLTab.setClosable(false);
 		l = new Label("Source/DDL");
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularTriggersDDLTab.setGraphic(stp);
 		VBox particularTriggersDDLTabVBox = new VBox();
-		particularTriggersDDLTabVBox.setSpacing(10);
-		particularTriggersDDLTabVBox.setPadding(new Insets(2,2,2,2));
+		particularTriggersDDLTabVBox.setId("TabVBox");
+//		particularTriggersDDLTabVBox.setSpacing(10);
+//		particularTriggersDDLTabVBox.setPadding(new Insets(2,2,2,2));
 		TextArea particularTriggersDDLTextArea = new TextArea("Souce DDL will come here \n Souce DDL will come here");
 		//particularTriggersDDLTextArea.setMinHeight(menu_Items_FX.size.getHeight()-280);
 		particularTriggersDDLTextArea.setEditable(false);
@@ -4482,8 +4655,9 @@ public class MySqlUI {
 	        
 	        while (rsTable.next()) {
 	            VBox particularEventDetailsVBox = new VBox();
-	            particularEventDetailsVBox .setSpacing(10);
-	            particularEventDetailsVBox .setPadding(new Insets(20, 10, 10, 200));
+	            particularEventDetailsVBox.setId("TabVBox");
+//	            particularEventDetailsVBox .setSpacing(10);
+//	            particularEventDetailsVBox .setPadding(new Insets(20, 10, 10, 200));
 
 	            GridPane eventDetailGridPane = new GridPane();
 	            eventDetailGridPane.setVgap(8);
@@ -4494,7 +4668,8 @@ public class MySqlUI {
 	                GridPane.setConstraints(label, 0, i);
 
 	                Label labelNameValueLabel = new Label(rsTable.getString(labelNameValue[i]));
-	                labelNameValueLabel.setFont(Font.font("System Regular", FontWeight.BOLD, 12));
+	                labelNameValueLabel.setId("labelNameValueLabel");
+	                //labelNameValueLabel.setFont(Font.font("System Regular", FontWeight.BOLD, 12));
 	                GridPane.setConstraints(labelNameValueLabel, 1, i);
 
 	                eventDetailGridPane.getChildren().addAll(label, labelNameValueLabel);
@@ -4515,8 +4690,9 @@ public class MySqlUI {
 			ResultSet rsTable = stmt.executeQuery("Show Create Event "+databaseName+"."+eventsName);
 			
 			VBox particularEventDDLTabVBox = new VBox();
-			particularEventDDLTabVBox.setSpacing(10);
-			particularEventDDLTabVBox.setPadding(new Insets(2,2,2,2));
+			particularEventDDLTabVBox.setId("TabVBox");
+//			particularEventDDLTabVBox.setSpacing(10);
+//			particularEventDDLTabVBox.setPadding(new Insets(2,2,2,2));
 			TextArea particularEventDDLTextArea = new TextArea("/***/");
 			if(rsTable.next()) {
 				particularEventDDLTextArea = new TextArea(rsTable.getString(3));
@@ -4535,32 +4711,39 @@ public class MySqlUI {
 	
 	public Tab particularEventssDoubleClickMethod(String eventsName, String databaseName) {
 		Tab particularEventsMainTab = new Tab(eventsName);
+		particularEventsMainTab.getStyleClass().add("Tabs");
 		particularEventsMainTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));																										
 		
 		VBox particularEventsMainTabVBox = new VBox();
-		particularEventsMainTabVBox.setSpacing(10);
+		//particularEventsMainTabVBox.setSpacing(10);
+		particularEventsMainTabVBox.setId("connectionLabel");
 		//clientConnectionsVBox.setPadding(new Insets(0,0,0,0));
 		particularEventsMainTabVBox.getChildren().add(addTopHBoxForInfo("Events "+eventsName+" for Connection "+currentConnectionName));
-		
+																																																																																																																																																																																								
 		
 		TabPane particularEventsTabPane = new TabPane();
-		particularEventsTabPane.setTabMinWidth(180);
-		particularEventsTabPane.setTabMinHeight(30);
+		particularEventsTabPane.setId("Tabpane");
+//		particularEventsTabPane.setTabMinWidth(180);
+//		particularEventsTabPane.setTabMinHeight(30);
 		Tab particularTablePropertiesTab = new Tab("Properties");
+		particularTablePropertiesTab.getStyleClass().add("Tabs");
 		particularTablePropertiesTab.setClosable(false);	
 		particularEventsMainTabVBox.getChildren().addAll(particularEventsTabPane)	;
 		
 		// Properties
 		TabPane particularEventsPropertiesTabbedPane = new TabPane();
+		particularEventsPropertiesTabbedPane.getStyleClass().add("Tabs");
+		particularEventsPropertiesTabbedPane.setId("IndexesPropertiesTabbedPane");
 		particularEventsPropertiesTabbedPane.setSide(Side.LEFT);
 		particularEventsPropertiesTabbedPane.setRotateGraphic(true);
-		particularEventsPropertiesTabbedPane.setTabMinHeight(200); // Determines tab width. I know, its odd.
-		particularEventsPropertiesTabbedPane.setTabMaxHeight(200);
-		particularEventsPropertiesTabbedPane.setTabMinWidth(50);
+//		particularEventsPropertiesTabbedPane.setTabMinHeight(200); // Determines tab width. I know, its odd.
+//		particularEventsPropertiesTabbedPane.setTabMaxHeight(200);
+//		particularEventsPropertiesTabbedPane.setTabMinWidth(50);
 		
 		// use the information_Schema.events table to get the following details and display them in details
 		// select event_name,event_Schema,event_type,event_body,interval_value,interval_field,starts,ends, definer from information_Schema.events where event_Schema=datbaseNam
 		Tab particularEventsdetailsTab = new Tab();
+		particularEventsdetailsTab.getStyleClass().add("Tabs");
 		particularEventsdetailsTab.setClosable(false);
 		Label l = new Label("Details");
 		l.setRotate(90);
@@ -4577,14 +4760,16 @@ public class MySqlUI {
 	
 		// event_defination from the information_Schema.events will have this information.
 		Tab particularEventsDDLTab = new Tab();
+		particularEventsDDLTab.getStyleClass().add("Tabs");
 		particularEventsDDLTab.setClosable(false);
 		l = new Label("Source/DDL");
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularEventsDDLTab.setGraphic(stp);
 		VBox particularEventsDDLTabVBox = new VBox();
-		particularEventsDDLTabVBox.setSpacing(10);
-		particularEventsDDLTabVBox.setPadding(new Insets(2,2,2,2));
+		particularEventsDDLTabVBox.setId("TabVBox");
+//		particularEventsDDLTabVBox.setSpacing(10);
+//		particularEventsDDLTabVBox.setPadding(new Insets(2,2,2,2));
 		TextArea particularEventsDDLTextArea = new TextArea("");
 		particularEventsDDLTextArea.setMinHeight(menu_Items_FX.size.getHeight()-280);
 		particularEventsDDLTextArea.setEditable(false);		
@@ -4635,16 +4820,19 @@ public class MySqlUI {
 	  
 	  private TabPane addCenterTabbedPaneForVariables() {
 			 
-		 statusSystemVariablesTabpane = new TabPane();  
-		  statusSystemVariablesTabpane.setTabMinWidth(250);
-		  statusSystemVariablesTabpane.setTabMinHeight(20);
+		  statusSystemVariablesTabpane = new TabPane(); 
+		  statusSystemVariablesTabpane.setId("statusSystemVariablesTabpane");
+//		  statusSystemVariablesTabpane.setTabMinWidth(250);
+//		  statusSystemVariablesTabpane.setTabMinHeight(20);
 		
 		  statusVariablesTab = new Tab("Status Variables");
+		  statusVariablesTab.getStyleClass().add("Tabs");
 		  statusVariablesTab.setClosable(false);
 		  statusVariablesTab.setContent(getStatusVariables());
 	  
 		 
 		  systemVariablesTab = new Tab("System Variables");
+		  systemVariablesTab.getStyleClass().add("Tabs");
 		  systemVariablesTab.setClosable(false);		  
 		  systemVariablesTab.setContent(getSystemVariables()); 
 		  
@@ -4675,12 +4863,14 @@ public class MySqlUI {
 
 			 
 	        HBox hbox = new HBox();
-	        hbox.setPadding(new Insets(10, 12, 10, 12));
-	        hbox.setSpacing(10);   // Gap between nodes
-	        hbox.setStyle("-fx-background-color: #2f4f4f;");        
+	        hbox.setId("hboxForconnectionDetails");
+//	        hbox.setPadding(new Insets(10, 12, 10, 12));
+//	        hbox.setSpacing(10);   // Gap between nodes
+//	        hbox.setStyle("-fx-background-color: #2f4f4f;");        
 	        Text connectToDatabseText = new Text("Users and Privileges");
-	        connectToDatabseText.setFont(Font.font("Verdana",20));
-	        connectToDatabseText.setFill(Color.WHITE);
+	        connectToDatabseText.setId("connectDatabaseLabel");
+//	        connectToDatabseText.setFont(Font.font("Verdana",20));
+//	        connectToDatabseText.setFill(Color.WHITE);
 	        hbox.getChildren().addAll(connectToDatabseText);
 	        
 	        return hbox;
@@ -4690,12 +4880,14 @@ public class MySqlUI {
 
 			 
 	        HBox hbox = new HBox();
-	        hbox.setPadding(new Insets(10, 12, 10, 12));
-	        hbox.setSpacing(10);   // Gap between nodes
-	        hbox.setStyle("-fx-background-color: #2f4f4f;");        
+	        hbox.setId("hboxForconnectionDetails");
+//	        hbox.setPadding(new Insets(10, 12, 10, 12));
+//	        hbox.setSpacing(10);   // Gap between nodes
+	        //hbox.setStyle("-fx-background-color: #2f4f4f;");        
 	        Text connectToDatabseText = new Text("Server Variables");
-	        connectToDatabseText.setFont(Font.font("Verdana",20));
-	        connectToDatabseText.setFill(Color.WHITE);
+	        connectToDatabseText.setId("connectDatabaseLabel");
+//	        connectToDatabseText.setFont(Font.font("Verdana",20));
+//	        connectToDatabseText.setFill(Color.WHITE);
 	        hbox.getChildren().addAll(connectToDatabseText);
 	        
 	        return hbox;
@@ -4703,13 +4895,15 @@ public class MySqlUI {
 	  
 	  private HBox addTopHBoxForInfo(String infoType) {
 	     
-		  HBox hbox = new HBox();
-	        hbox.setPadding(new Insets(10, 12, 10, 12));
-	        hbox.setSpacing(10);   // Gap between nodes
-	        hbox.setStyle("-fx-background-color: #2f4f4f;");        
+		    HBox hbox = new HBox();
+		    hbox.setId("hboxForconnectionDetails");
+//	        hbox.setPadding(new Insets(10, 12, 10, 12));
+//	        hbox.setSpacing(10);   // Gap between nodes
+	        //hbox.setStyle("-fx-background-color: #2f4f4f;");        
 	        Text connectToDatabseText = new Text(infoType);
-	        connectToDatabseText.setFont(Font.font("Verdana",20));
-	        connectToDatabseText.setFill(Color.WHITE);
+	        connectToDatabseText.setId("connectToDatabseText");
+	       // connectToDatabseText.setFont(Font.font("Verdana",20));
+	       // connectToDatabseText.setFill(Color.WHITE);
 	        hbox.getChildren().addAll(connectToDatabseText);
 	        
 	        return hbox;
@@ -4750,16 +4944,19 @@ public class MySqlUI {
 		  VBox connectionDetailsVbox = new VBox();
 		  
 		  statusVariablesTabPane = new TabPane();
-		  statusVariablesTabPane.setTabMinWidth(150);
-		  statusVariablesTabPane.setTabMinHeight(20);
+		  statusVariablesTabPane.setId("statussystemVariablesTabPane");
+//		  statusVariablesTabPane.setTabMinWidth(150);
+//		  statusVariablesTabPane.setTabMinHeight(20);
 		  
 		  globalStatusVariablesTab = new Tab("Global Status Variables");
+		  globalStatusVariablesTab.getStyleClass().add("Tabs");
 		  globalStatusVariablesTab.setClosable(false);
 		  globalStatusVariablesTab.setContent(getVariablesData("GlobalStatus"));  // This needs to be done coz we need to see data initially
 		  
 		  // *****************//
 
 		  sessionStatusVariablesTab = new Tab("Session Status Variables");
+		  sessionStatusVariablesTab.getStyleClass().add("Tabs");
 		  sessionStatusVariablesTab.setClosable(false);
 		  sessionStatusVariablesTab.setContent(getVariablesData("SessionStatus"));
 		  
@@ -4792,14 +4989,17 @@ public class MySqlUI {
 		  VBox connectionDetailsVbox = new VBox();
 		  
 		  systemVariablesTabPane = new TabPane();
-		  systemVariablesTabPane.setTabMinWidth(150);
-		  systemVariablesTabPane.setTabMinHeight(20);
+		  systemVariablesTabPane.setId("statussystemVariablesTabPane");
+//		  systemVariablesTabPane.setTabMinWidth(150);
+//		  systemVariablesTabPane.setTabMinHeight(20);
 		  
 		  globalSystemVariablesTab = new Tab("Global System Variables");
+		  globalSystemVariablesTab.getStyleClass().add("Tabs");
 		  globalSystemVariablesTab.setClosable(false);
 		  globalSystemVariablesTab.setContent(getVariablesData("GlobalSystem"));
 
 		  sessionSystemVariablesTab = new Tab("Session System Variables");
+		  sessionSystemVariablesTab.getStyleClass().add("Tabs");
 		  sessionSystemVariablesTab.setClosable(false);
 		  sessionSystemVariablesTab.setContent(getVariablesData("SessionSystem"));
 		    
@@ -4833,10 +5033,13 @@ public class MySqlUI {
 	    VBox vBoxMain = new VBox();
 		
 		GridPane searchDatabasesGridPane= new GridPane();
-		searchDatabasesGridPane.setPadding(new Insets(5,0,0,10));
+		searchDatabasesGridPane.setId("searchDatabasesGridPane");
+		//searchDatabasesGridPane.setPadding(new Insets(5,0,0,10));
 		Label searchDatabasesLabel = new Label("Find");
 		TextField searchDatabasesTextField = new TextField();
+		searchDatabasesTextField.getStyleClass().add("textfield");
 		refreshButton = new Button("Refresh");
+		refreshButton.setId("buttons");
 		Label placeholderLabel = new Label("");
 		searchDatabasesGridPane.getChildren().addAll(searchDatabasesLabel,searchDatabasesTextField,refreshButton,placeholderLabel);
 		GridPane.setConstraints(searchDatabasesLabel, 0, 0); // Column 0 row 0
@@ -4868,8 +5071,9 @@ public class MySqlUI {
 		//   2nd level
 		
 		GridPane gridPaneDatabasesLists = new GridPane();
-		gridPaneDatabasesLists.setHgap(10);
-		gridPaneDatabasesLists.setPadding(new Insets(5,0,0,15));
+		gridPaneDatabasesLists.setId("gridPaneDatabasesLists");
+//		gridPaneDatabasesLists.setHgap(10);
+//		gridPaneDatabasesLists.setPadding(new Insets(5,0,0,15));
 		
 		TableView resultAsTableView = new TableView();  
 		if(variableType.equalsIgnoreCase("GlobalStatus")) {
@@ -4940,28 +5144,33 @@ public class MySqlUI {
 		
 		  VBox accountDetailsVbox = new VBox();
 		  HBox accountLockedHBox = new HBox();
-		  accountLockedHBox.setPadding(new Insets(15,0,0,100));
-		  accountLockedHBox.setSpacing(20);
+		  accountLockedHBox.setId("accountLockedHBox");
+//		  accountLockedHBox.setPadding(new Insets(15,0,0,100));
+//		  accountLockedHBox.setSpacing(20);
 		  
 		  Label accountLockedLabel = new Label("Account Locked :");
 		  accountLockedStatus = new Label("Y/N"); // Look up the status	
 		  accountlockUnLock = new Button("Lock/Unlock");
+		  accountlockUnLock.setId("buttons");
 		  accountLockedHBox.getChildren().addAll(accountLockedLabel,accountLockedStatus,accountlockUnLock);
 		  accountDetailsVbox.getChildren().add(accountLockedHBox);
 		  
 		  GridPane accountDetailsGridPane = new GridPane();
-		  accountDetailsGridPane.setPadding(new Insets(0,10,20,10));
-		  accountDetailsGridPane.setVgap(10);
-		  accountDetailsGridPane.setHgap(10);
+		  accountDetailsGridPane.setId("accountDetailsGridPane");
+//		  accountDetailsGridPane.setPadding(new Insets(0,10,20,10));
+//		  accountDetailsGridPane.setVgap(10);
+//		  accountDetailsGridPane.setHgap(10);
 		  Label loginNameLabel = new Label("Login Name :"); 
 		  GridPane.setConstraints(loginNameLabel, 0, 1);   // column 0 row 0
 		  loginNameTextFeild = new TextField();
+		  loginNameTextFeild.getStyleClass().add("textfield");
 		  loginNameTextFeild.setPrefHeight(15);
 		  loginNameTextFeild.setPrefWidth(200);
 		 // jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
 		  GridPane.setConstraints(loginNameTextFeild, 1, 1);
 		  Label loginNameDescriptionLable = new Label("You may create multiple accounts with the same name to connect from different hosts. place holer place holder");
-		  loginNameDescriptionLable.setPrefWidth(300);
+		  loginNameDescriptionLable.setId("addAccountLoginCredentialsLabels");
+		 // loginNameDescriptionLable.setPrefWidth(300);
 		  loginNameDescriptionLable.setWrapText(true);
 		  GridPane.setConstraints(loginNameDescriptionLable, 2, 1);
 		  accountDetailsGridPane.getChildren().addAll(loginNameLabel,loginNameTextFeild,loginNameDescriptionLable);
@@ -4969,11 +5178,13 @@ public class MySqlUI {
 		  Label authenticationTypeLabel = new Label("Authentication Type :");
 		  GridPane.setConstraints(authenticationTypeLabel, 0, 2);
 		  authenticationTypeTextField= new TextField();
+		  authenticationTypeTextField.getStyleClass().add("textfield");
 		  authenticationTypeTextField.setPrefHeight(15);
 		  authenticationTypeTextField.setPrefWidth(200);
 		  GridPane.setConstraints(authenticationTypeTextField, 1, 2);
 		  Label authenticationTypeLabelDescription = new Label("For the standard password and/or host based authication,select 'standard'  place holer place holder  place holer place holder");
-		  authenticationTypeLabelDescription.setPrefWidth(300);
+		  authenticationTypeLabelDescription.setId("addAccountLoginCredentialsLabels");
+		  //authenticationTypeLabelDescription.setPrefWidth(300);
 		  authenticationTypeLabelDescription.setWrapText(true);
 		  GridPane.setConstraints(authenticationTypeLabelDescription, 2, 2);
 		  accountDetailsGridPane.getChildren().addAll(authenticationTypeLabel,authenticationTypeTextField,authenticationTypeLabelDescription);
@@ -4981,11 +5192,13 @@ public class MySqlUI {
 		  Label authenticationStringLabel = new Label("Authentication String :");
 		  GridPane.setConstraints(authenticationStringLabel, 0, 3);
 		  authenticationStringTextField= new TextField();
+		  authenticationStringTextField.getStyleClass().add("textfield");
 		  authenticationStringTextField.setPrefHeight(15);
 		  authenticationStringTextField.setPrefWidth(200);
 		  GridPane.setConstraints(authenticationStringTextField, 1, 3);
 		  Label authenticationStringLabelDescription = new Label("Authentication plugin specific parameters");
-		  authenticationStringLabelDescription.setPrefWidth(300);
+		  authenticationStringLabelDescription.setId("addAccountLoginCredentialsLabels");
+		  //authenticationStringLabelDescription.setPrefWidth(300);
 		  authenticationStringLabelDescription.setWrapText(true);
 		  GridPane.setConstraints(authenticationStringLabelDescription, 2, 3);
 		  accountDetailsGridPane.getChildren().addAll(authenticationStringLabel,authenticationStringTextField,authenticationStringLabelDescription);
@@ -4994,11 +5207,13 @@ public class MySqlUI {
 		  Label hostmatchingLabel = new Label("Hosts Matching :");
 		  GridPane.setConstraints(hostmatchingLabel, 0, 4);
 		  hostsMatchingTextField = new TextField();
+		  hostsMatchingTextField.getStyleClass().add("textfield");
 		  hostsMatchingTextField.setPrefHeight(15);
 		  hostsMatchingTextField.setPrefWidth(100);  
 		  GridPane.setConstraints(hostsMatchingTextField, 1, 4);
 		  Label hostmatchingDescriptionLable = new Label("% and _ wildcards may be used , % accesses from anywhere");
-		  hostmatchingDescriptionLable.setPrefWidth(300);
+		  hostmatchingDescriptionLable.setId("addAccountLoginCredentialsLabels");
+		 // hostmatchingDescriptionLable.setPrefWidth(300);
 		  hostmatchingDescriptionLable.setWrapText(true);
 		  GridPane.setConstraints(hostmatchingDescriptionLable, 2, 4);
 		  accountDetailsGridPane.getChildren().addAll(hostmatchingLabel,hostsMatchingTextField,hostmatchingDescriptionLable);
@@ -5017,12 +5232,14 @@ public class MySqlUI {
 		  Label passwordLabel = new Label("Password :");
 		  GridPane.setConstraints(passwordLabel, 0, 6);
 		  passwordTextField = new TextField();
+		  passwordTextField.getStyleClass().add("textfield");
 		  passwordTextField.setDisable(true);
 		  passwordTextField.setPrefHeight(15);
 		  passwordTextField.setPrefWidth(100);  
 		  GridPane.setConstraints(passwordTextField, 1, 6);
 		  Label passwordDescriptionLabel = new Label("Enter the password to reset it. Follow the passord requiements");
-		  passwordDescriptionLabel.setPrefWidth(300);
+		  passwordDescriptionLabel.setId("addAccountLoginCredentialsLabels");
+		  //passwordDescriptionLabel.setPrefWidth(300);
 		  passwordDescriptionLabel.setWrapText(true);
 		  GridPane.setConstraints(passwordDescriptionLabel, 2, 6);
 		  accountDetailsGridPane.getChildren().addAll(passwordLabel,passwordTextField,passwordDescriptionLabel);
@@ -5030,12 +5247,14 @@ public class MySqlUI {
 		  Label confirmPasswordLabel = new Label("Confirm Password :");
 		  GridPane.setConstraints(confirmPasswordLabel, 0, 7);
 		  confirmPasswordTextField = new TextField();
+		  confirmPasswordTextField.getStyleClass().add("textfield");
 		  confirmPasswordTextField.setDisable(true);
 		  confirmPasswordTextField.setPrefHeight(15);
 		  confirmPasswordTextField.setPrefWidth(100);  
 		  GridPane.setConstraints(confirmPasswordTextField, 1, 7);
 		  Label confirmPasswordDescriptionLabel = new Label("Enter the password again to confirm");
-		  confirmPasswordDescriptionLabel.setPrefWidth(300);
+		  confirmPasswordDescriptionLabel.setId("addAccountLoginCredentialsLabels");
+		  // confirmPasswordDescriptionLabel.setPrefWidth(300);
 		  confirmPasswordDescriptionLabel.setWrapText(true);
 		  GridPane.setConstraints(confirmPasswordDescriptionLabel, 2, 7);
 		  accountDetailsGridPane.getChildren().addAll(confirmPasswordLabel,confirmPasswordTextField,confirmPasswordDescriptionLabel);
@@ -5043,13 +5262,18 @@ public class MySqlUI {
 		  accountDetailsVbox.getChildren().add(accountDetailsGridPane);
 		  
 		  HBox accountButtonsHBox = new HBox();
-		  accountButtonsHBox.setPadding(new Insets(15,15,15,100));
-		  accountButtonsHBox.setSpacing(30);
+		  accountButtonsHBox.setId("accountButtonsHBox");
+//		  accountButtonsHBox.setPadding(new Insets(15,15,15,100));
+//		  accountButtonsHBox.setSpacing(30);
 		  Button updatePasswordButton = new Button("Update Password");
+		  updatePasswordButton.setId("buttons");
 		  Button expirePasswordButton = new Button("Expire Password");
+		  expirePasswordButton.setId("buttons");
 		  Button revertAccountChangesButton = new Button("Revert");
+		  revertAccountChangesButton.setId("buttons");
 		  Button saveAccountChangesButton = new Button("Save");
-
+		  saveAccountChangesButton.setId("buttons");
+		  
 		  accountButtonsHBox.getChildren().addAll(updatePasswordButton,expirePasswordButton,revertAccountChangesButton,saveAccountChangesButton);
 		  
 		  accountDetailsVbox.getChildren().add(accountButtonsHBox);
@@ -5069,19 +5293,22 @@ public class MySqlUI {
 		VBox accountLimitsVBox = new VBox();
 		
 		GridPane accountDetailsGridPane = new GridPane();
-		accountDetailsGridPane.setPadding(new Insets(0,10,20,10));
-		accountDetailsGridPane.setVgap(10);
-		accountDetailsGridPane.setHgap(10);
+		accountDetailsGridPane.setId("accountDetailsGridPane");	
+//		accountDetailsGridPane.setPadding(new Insets(0,10,20,10));
+//		accountDetailsGridPane.setVgap(10);
+//		accountDetailsGridPane.setHgap(10);
 		
 		Label maxQueriesLabel = new Label("Max Queries"); 
 		GridPane.setConstraints(maxQueriesLabel, 0, 1);   // column 0 row 0
 		maxQueriesTextFeild = new TextField();
+		maxQueriesTextFeild.getStyleClass().add("textfield");
 		maxQueriesTextFeild.setPrefHeight(15);
 		maxQueriesTextFeild.setPrefWidth(200);
 		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
 		GridPane.setConstraints(maxQueriesTextFeild, 1, 1);
 		Label maxQueriesDescription = new Label("The number of queries the account can execute within one hour");
-		maxQueriesDescription.setPrefWidth(300);
+		maxQueriesDescription.setId("addAccountLoginCredentialsLabels");
+		//maxQueriesDescription.setPrefWidth(300);
 		maxQueriesDescription.setWrapText(true);
 		GridPane.setConstraints(maxQueriesDescription, 2, 1);
 		accountDetailsGridPane.getChildren().addAll(maxQueriesLabel,maxQueriesTextFeild,maxQueriesDescription);
@@ -5089,12 +5316,14 @@ public class MySqlUI {
 		Label maxUpdatesLabel = new Label("Max Updates"); 
 		GridPane.setConstraints(maxUpdatesLabel, 0, 2);   // column 0 row 0
 		maxUpdatesTextFeild = new TextField();
+		maxUpdatesTextFeild.getStyleClass().add("textfield");
 		maxUpdatesTextFeild.setPrefHeight(15);
 		maxUpdatesTextFeild.setPrefWidth(200);
 		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
 		GridPane.setConstraints(maxUpdatesTextFeild, 1, 2);
 		Label maxUpdatesDescription = new Label("The number of updates the account can execute within one hour");
-		maxUpdatesDescription.setPrefWidth(300);
+		maxUpdatesDescription.setId("addAccountLoginCredentialsLabels");
+		//maxUpdatesDescription.setPrefWidth(300);
 		maxUpdatesDescription.setWrapText(true);
 		GridPane.setConstraints(maxUpdatesDescription, 2, 2);
 		accountDetailsGridPane.getChildren().addAll(maxUpdatesLabel,maxUpdatesTextFeild,maxUpdatesDescription);
@@ -5103,12 +5332,14 @@ public class MySqlUI {
 		Label maxConnectionsLabel = new Label("Max Connections"); 
 		GridPane.setConstraints(maxConnectionsLabel, 0, 3);   // column 0 row 0
 		maxConnectionsTextFeild = new TextField();
+		maxConnectionsTextFeild.getStyleClass().add("textfield");
 		maxConnectionsTextFeild.setPrefHeight(15);
 		maxConnectionsTextFeild.setPrefWidth(200);
 		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
 		GridPane.setConstraints(maxConnectionsTextFeild, 1, 3);
 		Label maxConnectionsDescription = new Label("The number of updates the account can execute within one hour");
-		maxConnectionsDescription.setPrefWidth(300);
+		maxConnectionsDescription.setId("addAccountLoginCredentialsLabels");
+		//maxConnectionsDescription.setPrefWidth(300);
 		maxConnectionsDescription.setWrapText(true);
 		GridPane.setConstraints(maxConnectionsDescription, 2, 3);
 		accountDetailsGridPane.getChildren().addAll(maxConnectionsLabel,maxConnectionsTextFeild,maxConnectionsDescription);
@@ -5116,12 +5347,14 @@ public class MySqlUI {
 		Label concurrentConnectionsLabel = new Label("Concurrent Connections"); 
 		GridPane.setConstraints(concurrentConnectionsLabel, 0, 4);   // column 0 row 0
 		concurrentConnectionsTextFeild = new TextField();
+		concurrentConnectionsTextFeild.getStyleClass().add("textfield");
 		concurrentConnectionsTextFeild.setPrefHeight(15);
 		concurrentConnectionsTextFeild.setPrefWidth(200);
 		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
 		GridPane.setConstraints(concurrentConnectionsTextFeild, 1, 4);
 		Label concurrentConnectionsDescription = new Label("The number of updates the account can execute within one hour");
-		concurrentConnectionsDescription.setPrefWidth(300);
+		concurrentConnectionsDescription.setId("addAccountLoginCredentialsLabels");
+		//concurrentConnectionsDescription.setPrefWidth(300);
 		concurrentConnectionsDescription.setWrapText(true);
 		GridPane.setConstraints(maxConnectionsDescription, 2, 4);
 		accountDetailsGridPane.getChildren().addAll(concurrentConnectionsLabel,concurrentConnectionsTextFeild,concurrentConnectionsDescription);
@@ -5129,10 +5362,13 @@ public class MySqlUI {
 		accountLimitsVBox.getChildren().add(accountDetailsGridPane);
 		
 		HBox accountLimitsButtonshbox = new HBox();
-		accountLimitsButtonshbox.setSpacing(30);
-		accountLimitsButtonshbox.setPadding(new Insets(20,10,10,500));
+		accountLimitsButtonshbox.setId("accountLimitsButtonshbox");
+//		accountLimitsButtonshbox.setSpacing(30);
+//		accountLimitsButtonshbox.setPadding(new Insets(20,10,10,500));
 		Button revertAccountLimitsButton = new Button("Revert");
+		revertAccountLimitsButton.setId("buttons");
 		Button saveAccountLimitsButton = new Button("Save");
+		saveAccountLimitsButton.setId("buttons");
 		accountLimitsButtonshbox.getChildren().addAll(revertAccountLimitsButton,saveAccountLimitsButton);
 		  
 		accountLimitsVBox.getChildren().add(accountLimitsButtonshbox);
@@ -5198,8 +5434,9 @@ public class MySqlUI {
 	public VBox addAccountPrivileges() {
 		
 		VBox accountPrivilegesVBox = new VBox();
-		accountPrivilegesVBox.setSpacing(10);
-		accountPrivilegesVBox.setPadding(new Insets(10,10,10,10));
+		accountPrivilegesVBox.setId("accountPrivilegesVBox");
+//		accountPrivilegesVBox.setSpacing(10);
+//		accountPrivilegesVBox.setPadding(new Insets(10,10,10,10));
 		
 		Label globalPrivilegesLable = new Label("Global Privileges");
 		CheckBox selectAllCheckBox = new CheckBox("Select All");
@@ -5208,11 +5445,13 @@ public class MySqlUI {
 
 		
 		HBox globalPreviligeshbox = new HBox();
-		globalPreviligeshbox.setSpacing(50);
+		globalPreviligeshbox.setId("globalPreviligeshbox");	
+		//globalPreviligeshbox.setSpacing(50);
 		
 		VBox firstSetofPrivileges = new VBox();
-		firstSetofPrivileges.setSpacing(10);
-		firstSetofPrivileges.setPadding(new Insets(10,10,10,10));
+		firstSetofPrivileges.setId("accountPrivilegesVBox");
+//		firstSetofPrivileges.setSpacing(10);
+//		firstSetofPrivileges.setPadding(new Insets(10,10,10,10));
 		alterPrivilegeCheckBox = new CheckBox("ALTER");
 		alterRoutinePrivilegeCheckBox = new CheckBox("ALTER ROUTINE");
 		createPrivilegeCheckBox = new CheckBox("CREATE");
@@ -5227,8 +5466,9 @@ public class MySqlUI {
 				,createTableSpacePrivilegeCheckBox,createTemporaryTablesPrivilegeCheckBox,createUserPrivilegeCheckBox,createViewPrivilegeCheckBox,deletePrivilegeCheckBox);
 		
 		VBox secondSetofPrivileges = new VBox();
-		secondSetofPrivileges.setSpacing(10);
-		secondSetofPrivileges.setPadding(new Insets(10,10,10,10));
+		secondSetofPrivileges.setId("accountPrivilegesVBox");
+//		secondSetofPrivileges.setSpacing(10);
+//		secondSetofPrivileges.setPadding(new Insets(10,10,10,10));
 	
 		dropPrivilegeCheckBox =  new CheckBox("DROP");
 		dropRolePrivilegeCheckBox =  new CheckBox("DROP ROLE");
@@ -5244,8 +5484,9 @@ public class MySqlUI {
 				,grantOptionPrivilegeCheckBox,indexPrivilegeCheckBox,insertPrivilegeCheckBox,lockTablesPrivilegeCheckBox,processPrivilegeCheckBox);
 		
 		VBox thirdSetofPrivileges = new VBox();
-		thirdSetofPrivileges.setSpacing(10);
-		thirdSetofPrivileges.setPadding(new Insets(10,10,10,10));
+		thirdSetofPrivileges.setId("accountPrivilegesVBox");
+//		thirdSetofPrivileges.setSpacing(10);
+//		thirdSetofPrivileges.setPadding(new Insets(10,10,10,10));
 
 		referencesPrivilegeCheckBox  =  new CheckBox("REFERENCES");
 		reloadPrivilegeCheckBox  =  new CheckBox("RELOAD");
@@ -5279,8 +5520,9 @@ public class MySqlUI {
 		
 		
 		VBox schemaPrivilegesVbox = new VBox();
-		schemaPrivilegesVbox.setSpacing(5);
-		schemaPrivilegesVbox.setPadding(new Insets(5,10,00,20));
+		schemaPrivilegesVbox.setId("schemaPrivilegesVbox");
+//		schemaPrivilegesVbox.setSpacing(5);
+//		schemaPrivilegesVbox.setPadding(new Insets(5,10,00,20));
 		
 		Label selectSchemaDescription = new Label();
 		//selectSchemaDescription.setFont(new Font(12));
@@ -5304,9 +5546,10 @@ public class MySqlUI {
 		final ToggleGroup group = new ToggleGroup();
 		
 		GridPane schemaPrivilegesGridPane = new GridPane();
-		schemaPrivilegesGridPane.setPadding(new Insets(5,10,5,10));
-		schemaPrivilegesGridPane.setVgap(10);
-		schemaPrivilegesGridPane.setHgap(10);
+		schemaPrivilegesGridPane.setId("schemaPrivilegesGridPane");	
+//		schemaPrivilegesGridPane.setPadding(new Insets(5,10,5,10));
+//		schemaPrivilegesGridPane.setVgap(10);
+//		schemaPrivilegesGridPane.setHgap(10);
 		
 		RadioButton allSchemaRadioButton = new RadioButton("All Schema(%)");
 		allSchemaRadioButton.setToggleGroup(group);
@@ -5318,7 +5561,8 @@ public class MySqlUI {
 		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
 		GridPane.setConstraints(allSchemasSelectedLabel, 1, 0);
 		Label allsSchemaSelectedDescriptionLabel = new Label("This rule will apply to any schema name");
-		allsSchemaSelectedDescriptionLabel.setPrefWidth(300);
+		allsSchemaSelectedDescriptionLabel.setId("addAccountLoginCredentialsLabels");
+		//allsSchemaSelectedDescriptionLabel.setPrefWidth(300);
 		allsSchemaSelectedDescriptionLabel.setWrapText(true);
 		GridPane.setConstraints(allsSchemaSelectedDescriptionLabel, 2, 0);
 		schemaPrivilegesGridPane.getChildren().addAll(allSchemaRadioButton,allSchemasSelectedLabel,allsSchemaSelectedDescriptionLabel);
@@ -5327,12 +5571,14 @@ public class MySqlUI {
 		schemaMatchingPatternRadioButton.setToggleGroup(group);
 		GridPane.setConstraints(schemaMatchingPatternRadioButton, 0, 1);   // column 0 row 0
 		TextField schemaMatchingPatternTextField = new TextField();
+		schemaMatchingPatternTextField.getStyleClass().add("textfield");
 		schemaMatchingPatternTextField.setPrefHeight(15);
 		schemaMatchingPatternTextField.setPrefWidth(150);
 		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
 		GridPane.setConstraints(schemaMatchingPatternTextField, 1, 1);
 		Label schemaMatchingPatternDescriptionLabel = new Label("You may use % and _ as wildcards in a pattern.");
-		schemaMatchingPatternDescriptionLabel.setPrefWidth(300);
+		schemaMatchingPatternDescriptionLabel.setId("addAccountLoginCredentialsLabels");
+		//schemaMatchingPatternDescriptionLabel.setPrefWidth(300);
 		schemaMatchingPatternDescriptionLabel.setWrapText(true);
 		GridPane.setConstraints(schemaMatchingPatternDescriptionLabel, 2, 1);
 		schemaPrivilegesGridPane.getChildren().addAll(schemaMatchingPatternRadioButton,schemaMatchingPatternTextField,schemaMatchingPatternDescriptionLabel);
@@ -5342,6 +5588,7 @@ public class MySqlUI {
 		selectedSchemasRadioButton.setToggleGroup(group); 
 		GridPane.setConstraints(selectedSchemasRadioButton, 0, 2);   // column 0 row 0
 		ComboBox<String> selectedSchemascomboBox = new ComboBox();
+		selectedSchemascomboBox.setId("themeDropdown");
 		selectedSchemascomboBox.getItems().addAll("mysql","sys","sakila","information_schema","world","others"); // @TODO
 		selectedSchemascomboBox.setPrefHeight(15);
 		selectedSchemascomboBox.setPrefWidth(200);
@@ -5350,21 +5597,25 @@ public class MySqlUI {
 		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
 		GridPane.setConstraints(selectedSchemascomboBox, 1, 2);
 		Label selectedSchemaDescription = new Label("Select a specific schema for the rule to apply to:");
-		selectedSchemaDescription.setPrefWidth(300);
+		selectedSchemaDescription.setId("addAccountLoginCredentialsLabels");
+		//selectedSchemaDescription.setPrefWidth(300);
 		selectedSchemaDescription.setWrapText(true);
 		GridPane.setConstraints(selectedSchemaDescription, 2, 2);
 		schemaPrivilegesGridPane.getChildren().addAll(selectedSchemasRadioButton,selectedSchemascomboBox,selectedSchemaDescription);
 		schemaPrivilegesVbox.getChildren().add(schemaPrivilegesGridPane);
 		
 		HBox addSchemaEntryHbox = new HBox();
-		addSchemaEntryHbox.setPadding(new Insets(0,0,0,500));	
+		addSchemaEntryHbox.setId("addSchemaEntryHbox");
+		//addSchemaEntryHbox.setPadding(new Insets(0,0,0,500));	
 		Button addSchemaPrivilegesEntryButton = new Button("Add Schema Entry");
+		addSchemaPrivilegesEntryButton.setId("buttons");
 		addSchemaEntryHbox.getChildren().add(addSchemaPrivilegesEntryButton);
 		schemaPrivilegesVbox.getChildren().add(addSchemaEntryHbox);
 
 		VBox existingSchemaPriviligesVBox = new VBox();
-		existingSchemaPriviligesVBox.setMaxHeight(150);
-		existingSchemaPriviligesVBox.setPadding(new Insets(0,10,0,10));
+		existingSchemaPriviligesVBox.setId("existingSchemaPriviligesVBox");
+//		existingSchemaPriviligesVBox.setMaxHeight(150);
+//		existingSchemaPriviligesVBox.setPadding(new Insets(0,10,0,10));
 		
 		schemaPreviligestableView = new TableView();
 		schemaPreviligestableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);  // to remove the last empty column otherwise added
@@ -5430,8 +5681,9 @@ public class MySqlUI {
         existingSchemaPriviligesVBox.getChildren().add(schemaPreviligestableView);
         
         HBox userAccessSchemaDescriptionHbox= new HBox();
-        userAccessSchemaDescriptionHbox.setPadding(new Insets(5,5,5,5));
-        userAccessSchemaDescriptionHbox.setSpacing(50);
+        userAccessSchemaDescriptionHbox.setId("userAccessSchemaDescriptionHbox");
+//        userAccessSchemaDescriptionHbox.setPadding(new Insets(5,5,5,5));
+//        userAccessSchemaDescriptionHbox.setSpacing(50);
         userAccessSchemaDescriptionLabel = new Label();
         resultAsTableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<HashMap<String,String>>() {
 
@@ -5455,15 +5707,18 @@ public class MySqlUI {
         //userAccessSchemaDescriptionLabel.setText("The use "+ newValue.get("User")+"@"+newValue.get("Host")+" will have the following access rights to the schema"+newValue.get("Schema"));
         selectSchemaDescription.setTextFill(Color.BLUEVIOLET);
      	Button deleteSchemaPrivilegesEntryButton = new Button("Delete Schema Entry");
+     	deleteSchemaPrivilegesEntryButton.setId("buttons");
      	deleteSchemaPrivilegesEntryButton.setDisable(true);  // enable it when one of the schema entry is selected
         userAccessSchemaDescriptionHbox.getChildren().addAll(userAccessSchemaDescriptionLabel,deleteSchemaPrivilegesEntryButton);
         
        
         HBox userAccessSchemaPriviligeshBox = new HBox();
-        userAccessSchemaPriviligeshBox.setSpacing(10);		
+        userAccessSchemaPriviligeshBox.setId("userAccessSchemaPriviligeshBox");
+      //  userAccessSchemaPriviligeshBox.setSpacing(10);		
         
         VBox firstSetofSchemaPriviliges = new VBox();
-        firstSetofSchemaPriviliges.setSpacing(5);
+        firstSetofSchemaPriviliges.setId("SetofSchemaPriviliges");
+        //firstSetofSchemaPriviliges.setSpacing(5);
     	selectSchemaPrivilegeCheckBox  =  new CheckBox("SELECT");
 		updateSchemaPrivilegeCheckBox  =  new CheckBox("UPDATE");
 		insertSchemaPrivilegeCheckBox =  new CheckBox("INSERT");
@@ -5473,7 +5728,8 @@ public class MySqlUI {
 		firstSetofSchemaPriviliges.getChildren().addAll(selectSchemaPrivilegeCheckBox,updateSchemaPrivilegeCheckBox,insertSchemaPrivilegeCheckBox,executeSchemaPrivilegeCheckBox,showViewSchemaPrivilegeCheckBox,deleteSchemaPrivilegeCheckBox);
         
 		VBox secondSetofSchemaPriviliges = new VBox();
-		secondSetofSchemaPriviliges.setSpacing(5);
+		secondSetofSchemaPriviliges.setId("SetofSchemaPriviliges");
+		//secondSetofSchemaPriviliges.setSpacing(5);
 		createSchemaPrivilegeCheckBox = new CheckBox("CREATE");
 		alterSchemaPrivilegeCheckBox = new CheckBox("ALTER");
 		referencesSchemaPrivilegeCheckBox  =  new CheckBox("REFERENCES");
@@ -5483,7 +5739,8 @@ public class MySqlUI {
 		secondSetofSchemaPriviliges.getChildren().addAll(createSchemaPrivilegeCheckBox,alterSchemaPrivilegeCheckBox,referencesSchemaPrivilegeCheckBox,indexSchemaPrivilegeCheckBox,createViewSchemaPrivilegeCheckBox,createRoutineSchemaPrivilegeCheckBox);
 		
 		VBox thirdSetofSchemaPriviliges = new VBox();
-		thirdSetofSchemaPriviliges.setSpacing(5);
+		thirdSetofSchemaPriviliges.setId("SetofSchemaPriviliges");
+		//thirdSetofSchemaPriviliges.setSpacing(5);
 		alterRoutineSchemaPrivilegeCheckBox = new CheckBox("ALTER ROUTINE");
 		eventSchemaPrivilegeCheckBox =  new CheckBox("EVENT");
 		dropSchemaPrivilegeCheckBox =  new CheckBox("DROP");
@@ -5495,14 +5752,18 @@ public class MySqlUI {
 				createTemporaryTablesSchemaPrivilegeCheckBox,lockTablesSchemaPrivilegeCheckBox);
 		
 		VBox fourthSegmentWithButtonsVbox = new VBox();
-		fourthSegmentWithButtonsVbox.setPadding(new Insets(130,10,10,20));
+		fourthSegmentWithButtonsVbox.setId("SegmentWithButtonsVbox");
+		//fourthSegmentWithButtonsVbox.setPadding(new Insets(130,10,10,20));
 		Button reverPriviligestButton = new Button("Revert Privileges");
+		reverPriviligestButton.setId("buttons");
 		reverPriviligestButton.setDisable(true); // enable them when one of the schema entry is selected
 		fourthSegmentWithButtonsVbox.getChildren().add(reverPriviligestButton);
 		
 		VBox fifthSegmentWithButtonsVbox = new VBox();
-		fifthSegmentWithButtonsVbox.setPadding(new Insets(130,10,10,20));
+		fifthSegmentWithButtonsVbox.setId("SegmentWithButtonsVbox");
+		//fifthSegmentWithButtonsVbox.setPadding(new Insets(130,10,10,20));
 		Button savePrivilegesButton = new Button("Save Privileges");
+		savePrivilegesButton.setId("buttons");
 		savePrivilegesButton.setDisable(true); // enable them when one of the schema entry is selected
 		fifthSegmentWithButtonsVbox.getChildren().add(savePrivilegesButton);
 		
@@ -5516,31 +5777,39 @@ public class MySqlUI {
 	private VBox addclientConnectionThreadDetails(HashMap<String,String> allVariables,TableView tableView) {
 			
 		VBox clientConnectionsVBox = new VBox();
-		clientConnectionsVBox.setSpacing(10);
+		clientConnectionsVBox.setId("clientConnectionsVBox");
+		//clientConnectionsVBox.setSpacing(10);
 		//clientConnectionsVBox.setPadding(new Insets(0,0,0,0));
 		clientConnectionsVBox.getChildren().add(addTopHBoxForInfo("Client Connections"));
 		
 		HBox clientConnectionsThreadsDescriptionFirstHBox = new HBox();
-		clientConnectionsThreadsDescriptionFirstHBox.setSpacing(30);
-		clientConnectionsThreadsDescriptionFirstHBox.setPadding(new Insets(0,10,0,10));
+		clientConnectionsThreadsDescriptionFirstHBox.setId("clientConnectionsHBox");
+//		clientConnectionsThreadsDescriptionFirstHBox.setSpacing(30);
+//		clientConnectionsThreadsDescriptionFirstHBox.setPadding(new Insets(0,10,0,10));
 		
 		Label threadsConnectedLabel = new Label("Threads Connected : "+allVariables.get("Threads_connected"));
-		threadsConnectedLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		threadsConnectedLabel.setId("labelNameValueLabel");
+		//threadsConnectedLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		Label threadsRunningLabel = new Label("Threads Running : "+allVariables.get("Threads_running"));
-		threadsRunningLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		threadsRunningLabel.setId("labelNameValueLabel");
+		//threadsRunningLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		Label threadsCreatedLabel = new Label("Threads Created : "+allVariables.get("Threads_created"));
-		threadsCreatedLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		threadsCreatedLabel.setId("labelNameValueLabel");
+		//threadsCreatedLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		Label threadsCachedLabel = new Label("Threads Cached : "+allVariables.get("Threads_cached"));
-		threadsCachedLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		threadsCachedLabel.setId("labelNameValueLabel");
+		//threadsCachedLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		Label threadsrejectedLabel = new Label("Rejected : "+allVariables.get("Mysqlx_connections_rejected"));
-		threadsrejectedLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		threadsrejectedLabel.setId("labelNameValueLabel");
+		//threadsrejectedLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 
 		clientConnectionsThreadsDescriptionFirstHBox.getChildren().addAll(threadsConnectedLabel,threadsRunningLabel,
 				threadsCreatedLabel,threadsrejectedLabel);
 
 		HBox clientConnectionsThreadsDescriptionSecondHBox = new HBox();
-		clientConnectionsThreadsDescriptionSecondHBox.setSpacing(30);
-		clientConnectionsThreadsDescriptionSecondHBox.setPadding(new Insets(0,10,0,10));
+		clientConnectionsThreadsDescriptionSecondHBox.setId("clientConnectionsVBox");
+//		clientConnectionsThreadsDescriptionSecondHBox.setSpacing(30);
+//		clientConnectionsThreadsDescriptionSecondHBox.setPadding(new Insets(0,10,0,10));
 		
 		Integer connection_errors_accept = Integer.parseInt(allVariables.get("Connection_errors_accept"));
 		Integer connection_errors_internal = Integer.parseInt(allVariables.get("Connection_errors_internal"));
@@ -5550,18 +5819,24 @@ public class MySqlUI {
 		Integer totalErrors = connection_errors_accept+connection_errors_internal+connection_errors_max_connections+connection_errors_select+connection_errors_tcpwrap;
 
 		Label totalConnectionsLabel = new Label("Total Connections : "+allVariables.get("connections"));
-		totalConnectionsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		totalConnectionsLabel.setId("labelNameValueLabel");
+		//totalConnectionsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		Label connectionsLimitLabel = new Label("Connections Limit : "+allVariables.get("max_connections"));
-		connectionsLimitLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		connectionsLimitLabel.setId("labelNameValueLabel");
+		//connectionsLimitLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		Label abortedClientsLabel = new Label("Aborted Clients : "+allVariables.get("Aborted_clients"));
-		abortedClientsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		abortedClientsLabel.setId("labelNameValueLabel");
+		//abortedClientsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		Label abortedConnectionsLabel = new Label("Aborted Connections  : "+allVariables.get("Aborted_connects"));
-		abortedConnectionsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		abortedConnectionsLabel.setId("labelNameValueLabel");
+		//abortedConnectionsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		
 		HBox totalErrorsTooltopHBox = new HBox();
-		totalErrorsTooltopHBox.setSpacing(10);
+		totalErrorsTooltopHBox.setId("clientConnectionsVBox");
+		//totalErrorsTooltopHBox.setSpacing(10);
 		Label totalErrorsLabel = new Label("Errors : "+totalErrors);
-		totalErrorsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		totalErrorsLabel.setId("labelNameValueLabel");
+		//totalErrorsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
         ImageView  informationicon = new ImageView(new Image(getClass().getResourceAsStream("/images/information_icon.png")));
         informationicon.setFitHeight(10);
         informationicon.setFitWidth(10);
@@ -5576,37 +5851,48 @@ public class MySqlUI {
         clientConnectionsThreadsDescriptionSecondHBox.getChildren().addAll(totalConnectionsLabel,connectionsLimitLabel,abortedClientsLabel,abortedConnectionsLabel,totalErrorsTooltopHBox);
 		
         VBox processListTableViewVbox = new VBox();
+        processListTableViewVbox.setId("processListTableViewVbox");
         processListTableViewVbox.getChildren().add(tableView);
-        processListTableViewVbox.setMaxHeight(350);
-        processListTableViewVbox.setPadding(new Insets(5,5,5,5));
+        //processListTableViewVbox.setMaxHeight(350);
+        //processListTableViewVbox.setPadding(new Insets(5,5,5,5));
         
         
         HBox clientConnectionsButtonsHBox = new HBox();
-        clientConnectionsButtonsHBox.setSpacing(500);
-        clientConnectionsButtonsHBox.setPadding(new Insets(10,10,10,10));
+        clientConnectionsButtonsHBox.setId("clientConnectionsButtonsHBox");
+//        clientConnectionsButtonsHBox.setSpacing(500);
+//        clientConnectionsButtonsHBox.setPadding(new Insets(10,10,10,10));
         
         HBox clientConnectionRefreshButtonshbox = new HBox();
-        clientConnectionRefreshButtonshbox.setSpacing(10);
+        clientConnectionRefreshButtonshbox.setId("clientConnectionsVBox");
+        //clientConnectionRefreshButtonshbox.setSpacing(10);
         Label clientConnectionRefreshLabel = new Label("Refresh Rate :");
         ComboBox refreshRateComboBox = new ComboBox();
+        refreshRateComboBox.setId("themeDropdown");
         refreshRateComboBox.getItems().addAll("Don't Refresh","0.5 Seconds","1 Seconds","2 Seconds","3 Seconds");
         refreshRateComboBox.setValue("Don't Refresh");
         clientConnectionRefreshButtonshbox.getChildren().addAll(clientConnectionRefreshLabel,refreshRateComboBox);
         
         HBox clientConnectionKillButtonshbox = new HBox();
-        clientConnectionKillButtonshbox.setSpacing(10);
+        clientConnectionKillButtonshbox.setId("clientConnectionsVBox");
+        //clientConnectionKillButtonshbox.setSpacing(10);
         Button killQuerysButton = new Button("Kill Query(s)");
+        killQuerysButton.setId("buttons");
         Button killConnectionsButton = new Button("Kill Connection(s)");
+        killConnectionsButton.setId("buttons");
         Button refreshButton = new Button("Refresh");
+        refreshButton.setId("buttons");
         clientConnectionKillButtonshbox.getChildren().addAll(killQuerysButton,killConnectionsButton,refreshButton);
         
         clientConnectionsButtonsHBox.getChildren().addAll(clientConnectionRefreshButtonshbox,clientConnectionKillButtonshbox);
         
         HBox clientConnectionsHideButtonsHBox = new HBox();
-        clientConnectionsHideButtonsHBox.setSpacing(50);
-        clientConnectionsHideButtonsHBox.setPadding(new Insets(0,10,0,10));
+        clientConnectionsHideButtonsHBox.setId("clientConnectionsHideButtonsHBox");
+//        clientConnectionsHideButtonsHBox.setSpacing(50);
+//        clientConnectionsHideButtonsHBox.setPadding(new Insets(0,10,0,10));
         CheckBox hideSleepingConnectionsCheckBox = new CheckBox("Hide Sleeping Connections");
+        hideSleepingConnectionsCheckBox.getStyleClass().add("check-box");
         CheckBox hideBackgroundThreadsCheckBox = new CheckBox("Hide Background Threads");
+        hideBackgroundThreadsCheckBox.getStyleClass().add("check-box");
         hideBackgroundThreadsCheckBox.setSelected(true);
         clientConnectionsHideButtonsHBox.getChildren().addAll(hideSleepingConnectionsCheckBox,hideBackgroundThreadsCheckBox);
         
@@ -5635,103 +5921,124 @@ public class MySqlUI {
 	private VBox addServerStatus(HashMap<String,String> allVariables,HashMap<String,String> allStatus,HashMap<String,String> allPlugins) {
     	
 		VBox serverStatusVBox = new VBox();
-		serverStatusVBox.setSpacing(10);
+		serverStatusVBox.setId("serverStatusVBox");
+		//serverStatusVBox.setSpacing(10);
 		serverStatusVBox.getChildren().add(addTopHBoxForInfo("Server Status"));
 		
 		HBox serverRunningDescriptionHbox = new HBox();
-		serverRunningDescriptionHbox.setPadding(new Insets(0,0,0,300));
+		serverRunningDescriptionHbox.setId("serverRunningDescriptionHbox");
+		//serverRunningDescriptionHbox.setPadding(new Insets(0,0,0,300));
 		Label serverRunningDescriptionLabel = new Label("Server Status : Running");
-		serverRunningDescriptionLabel.setTextFill(Color.GREEN);
-		serverRunningDescriptionLabel.setFont(Font.font("System Regular",FontWeight.BOLD,18));
+		serverRunningDescriptionLabel.setId("serverRunningDescriptionLabel");
+//		serverRunningDescriptionLabel.setTextFill(Color.GREEN);
+//		serverRunningDescriptionLabel.setFont(Font.font("System Regular",FontWeight.BOLD,18));
 		serverRunningDescriptionHbox.getChildren().add(serverRunningDescriptionLabel);
 		
 		HBox instanceDetailsHBox = new HBox();
-		instanceDetailsHBox.setSpacing(200);
-		instanceDetailsHBox.setPadding(new Insets(0,10,0,10));
+		instanceDetailsHBox.setId("instanceDetailsHBox");
+//		instanceDetailsHBox.setSpacing(200);
+//		instanceDetailsHBox.setPadding(new Insets(0,10,0,10));
 		
 		GridPane instanceDetailsGridPane = new GridPane();
 		//instanceDetailsServerDirectoriesGridPane.setPadding(new Insets(20,10,20,10));
-		instanceDetailsGridPane.setVgap(10);
-		instanceDetailsGridPane.setHgap(10);
+		instanceDetailsGridPane.setId("instanceDetailsGridPane");
+//		instanceDetailsGridPane.setVgap(10);
+//		instanceDetailsGridPane.setHgap(10);
 		Label connectionDecriptionLabel = new Label(connectionPlaceHolder.getConnectionName() + " " + "Instance Details");
-		connectionDecriptionLabel.setTextFill(Color.BLUEVIOLET);
-		connectionDecriptionLabel.setFont(Font.font("System Regular",FontWeight.BOLD,16));
+		connectionDecriptionLabel.setId("connectionDecriptionLabel");
+//		connectionDecriptionLabel.setTextFill(Color.BLUEVIOLET);
+//		connectionDecriptionLabel.setFont(Font.font("System Regular",FontWeight.BOLD,16));
 		GridPane.setConstraints(connectionDecriptionLabel, 0, 0);   // column 0 row 0
 		Label hostDecriptionLabel = new Label("Host : " );
 		GridPane.setConstraints(hostDecriptionLabel, 0, 1);
 		Label hostValueLabel = new Label(allVariables.get("hostname"));
-		hostValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		hostValueLabel.setId("labelNameValueLabel");
+		//hostValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(hostValueLabel, 1, 1);
 		Label socketDecriptionLabel = new Label("Socket :");
 		GridPane.setConstraints(socketDecriptionLabel, 0, 2);
 		Label socketValueLabel = new Label(allVariables.get("socket"));
-		socketValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		socketValueLabel.setId("labelNameValueLabel");
+		//socketValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(socketValueLabel, 1, 2);
 		Label portDecriptionLabel = new Label("Port :");
 		GridPane.setConstraints(portDecriptionLabel, 0, 3);
 		Label portValueLabel = new Label(allVariables.get("port"));
-		portValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		portValueLabel.setId("labelNameValueLabel");
+		//portValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(portValueLabel, 1, 3);
 		Label versionDecriptionLabel = new Label("Version :");
 		GridPane.setConstraints(versionDecriptionLabel, 0, 4);
 		Label versionValueLabel = new Label(allVariables.get("version"));
-		versionValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		versionValueLabel.setId("labelNameValueLabel");
+		//versionValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(versionValueLabel, 1, 4);
 		Label compiledForDescriptionLabel = new Label("Compiled For :");
 		GridPane.setConstraints(compiledForDescriptionLabel, 0, 5);
 		Label compiledForValueLabel = new Label(allVariables.get("version_compile_os") +"("+ allVariables.get("version_compile_machine") + ")");
-		compiledForValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		compiledForValueLabel.setId("labelNameValueLabel");
+		//compiledForValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(compiledForValueLabel, 1, 5);
 		Label runningSinceDescriptionLabel = new Label("Running Since :");
 		GridPane.setConstraints(runningSinceDescriptionLabel, 0, 6);
 		Label runningSinceValueLabel = new Label(allStatus.get("Uptime"));
-		runningSinceValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		runningSinceValueLabel.setId("labelNameValueLabel");
+		//runningSinceValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(runningSinceValueLabel, 1, 6);
 			
 		instanceDetailsGridPane.getChildren().addAll(connectionDecriptionLabel,hostDecriptionLabel,hostValueLabel,socketDecriptionLabel,socketValueLabel,
 		portDecriptionLabel,portValueLabel,versionDecriptionLabel,versionValueLabel,compiledForDescriptionLabel,compiledForValueLabel,runningSinceDescriptionLabel,runningSinceValueLabel);
 		
 		GridPane serverDirectoriesGridPane = new GridPane();
-		serverDirectoriesGridPane.setVgap(10);
-		serverDirectoriesGridPane.setHgap(10);
+		serverDirectoriesGridPane.setId("serverDirectoriesGridPane");
+//		serverDirectoriesGridPane.setVgap(10);
+//		serverDirectoriesGridPane.setHgap(10);
 		Label serverDirectoriesLabel = new Label("Server Direcories");
-		serverDirectoriesLabel.setTextFill(Color.BLUEVIOLET);
-		serverDirectoriesLabel.setFont(Font.font("System Regular",FontWeight.BOLD,16));
+		serverDirectoriesLabel.setId("connectionDecriptionLabel");
+//		serverDirectoriesLabel.setTextFill(Color.BLUEVIOLET);
+//		serverDirectoriesLabel.setFont(Font.font("System Regular",FontWeight.BOLD,16));
 		GridPane.setConstraints(serverDirectoriesLabel, 0, 0);   // column 0 row 0
 		Label baseDirecoryDescriptionLabel = new Label("Base Directory :" );
 		GridPane.setConstraints(baseDirecoryDescriptionLabel, 0, 1); 
 		Label baseDirecoryValueLabel = new Label(allVariables.get("basedir"));
-		baseDirecoryValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		baseDirecoryValueLabel.setId("labelNameValueLabel");
+		//baseDirecoryValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(baseDirecoryValueLabel, 1, 1); 
 		Label dataDirecoryDescriptionLabel = new Label("Data Directory :" );
 		GridPane.setConstraints(dataDirecoryDescriptionLabel, 0, 2); 
 		Label dataDirecoryValueLabel = new Label(allVariables.get("datadir"));
-		dataDirecoryValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		dataDirecoryValueLabel.setId("labelNameValueLabel");
+		//dataDirecoryValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(dataDirecoryValueLabel, 1, 2); 
 		Label pluginDirecoryDescriptionLabel = new Label("Plugin Directory :" );
 		GridPane.setConstraints(pluginDirecoryDescriptionLabel, 0, 3); 
 		Label pluginDirecoryValueLabel = new Label(allVariables.get("plugin_dir"));
-		pluginDirecoryValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		pluginDirecoryValueLabel.setId("labelNameValueLabel");
+		//pluginDirecoryValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(pluginDirecoryValueLabel, 1, 3); 
 		Label tempDirecoryDescriptionLabel = new Label("Temp Directory :" );
 		GridPane.setConstraints(tempDirecoryDescriptionLabel, 0, 4); 
 		Label tempDirecoryValueLabel = new Label(allVariables.get("tmpdir"));
-		tempDirecoryValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		tempDirecoryValueLabel.setId("labelNameValueLabel");
+		//tempDirecoryValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(tempDirecoryValueLabel, 1, 4); 
 		Label errorLogDirecoryDescriptionLabel = new Label("Error Log :" );
 		GridPane.setConstraints(errorLogDirecoryDescriptionLabel, 0, 5); 
 		Label errorLogDirecoryValueLabel = new Label(allVariables.get("log_error"));
-		errorLogDirecoryValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		errorLogDirecoryValueLabel.setId("labelNameValueLabel");
+		//errorLogDirecoryValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(errorLogDirecoryValueLabel, 1, 5); 
 		Label generalLogDirecoryDescriptionLabel = new Label("General Log :" );
 		GridPane.setConstraints(generalLogDirecoryDescriptionLabel, 0, 6); 
 		Label generalLogDirecoryValueLabel = new Label(allVariables.get("general_log_file"));
-		generalLogDirecoryValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		generalLogDirecoryValueLabel.setId("labelNameValueLabel");
+		//generalLogDirecoryValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(generalLogDirecoryValueLabel, 1, 6); 
 		Label slowQueryLogDirecoryDescriptionLabel = new Label("Slow Query Log :" );
 		GridPane.setConstraints(slowQueryLogDirecoryDescriptionLabel, 0, 7); 
 		Label slowQueryLogDirecoryValueLabel = new Label(allVariables.get("slow_query_log_file"));
-		slowQueryLogDirecoryValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		slowQueryLogDirecoryValueLabel.setId("labelNameValueLabel");
+		//slowQueryLogDirecoryValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(slowQueryLogDirecoryValueLabel, 1, 7);
 		
 		serverDirectoriesGridPane.getChildren().addAll(serverDirectoriesLabel,baseDirecoryDescriptionLabel,baseDirecoryValueLabel,dataDirecoryDescriptionLabel,dataDirecoryValueLabel,
@@ -5741,89 +6048,106 @@ public class MySqlUI {
 		instanceDetailsHBox.getChildren().addAll(instanceDetailsGridPane,serverDirectoriesGridPane);
 		
 		HBox serverFeaturesDescriptionHbox = new HBox();
-		serverFeaturesDescriptionHbox.setPadding(new Insets(0,0,0,300));
+		serverFeaturesDescriptionHbox.setId("serverFeaturesDescriptionHbox");
+		//serverFeaturesDescriptionHbox.setPadding(new Insets(0,0,0,300));
 		Label serverFeaturesDescriptionLabel = new Label("Available Server Features");
-		serverFeaturesDescriptionLabel.setTextFill(Color.BLUEVIOLET);
-		serverFeaturesDescriptionLabel.setFont(Font.font("System Regular",FontWeight.BOLD,18));
+		serverFeaturesDescriptionLabel.setId("serverFeaturesDescriptionLabel");
+//		serverFeaturesDescriptionLabel.setTextFill(Color.BLUEVIOLET);
+//		serverFeaturesDescriptionLabel.setFont(Font.font("System Regular",FontWeight.BOLD,18));
 		serverFeaturesDescriptionHbox.getChildren().add(serverFeaturesDescriptionLabel);
 		
 		HBox serverFeaturesHBox = new HBox();
-		serverFeaturesHBox.setSpacing(200);
-		serverFeaturesHBox.setPadding(new Insets(0,10,00,100));
+		serverFeaturesHBox.setId("serverFeaturesHBox");
+//		serverFeaturesHBox.setSpacing(200);
+//		serverFeaturesHBox.setPadding(new Insets(0,10,00,100));
     	
     	
 		GridPane serverFeaturesLeftHalfGridPane = new GridPane();
-		serverFeaturesLeftHalfGridPane.setVgap(10);
-		serverFeaturesLeftHalfGridPane.setHgap(10);
+		serverFeaturesLeftHalfGridPane.setId("serverFeaturesLeftHalfGridPane");
+//		serverFeaturesLeftHalfGridPane.setVgap(10);
+//		serverFeaturesLeftHalfGridPane.setHgap(10);
 		
 		Label performanceSchemaDescriptionLabel = new Label("Performance Schema :" );
 		GridPane.setConstraints(performanceSchemaDescriptionLabel, 0, 1); 
 		Label performanceScheamLabel = new Label(String.valueOf(allPlugins.containsKey("PERFORMANCE_SCHEMA")));
-		performanceScheamLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		performanceScheamLabel.setId("labelNameValueLabel");
+		//performanceScheamLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(performanceScheamLabel, 1, 1);
 		Label threadPoolDescriptionLabel = new Label("Thread Pool :" );
 		GridPane.setConstraints(threadPoolDescriptionLabel, 0, 2); 
 		Label threadPoolValueLabel = new Label(String.valueOf(allVariables.containsKey("thread_pool_size")));
-		threadPoolValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		threadPoolValueLabel.setId("labelNameValueLabel");
+		//threadPoolValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(threadPoolValueLabel, 1, 2); 
 		Label memcachedPluginlabel = new Label("Memcached Plugin : " );
 		GridPane.setConstraints(memcachedPluginlabel, 0, 3); 
 		Label memcachedPluginValuelabel = new Label(String.valueOf(allPlugins.containsKey("daemon_memcached")));
-		memcachedPluginValuelabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		memcachedPluginValuelabel.setId("labelNameValueLabel");
+		//memcachedPluginValuelabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(memcachedPluginValuelabel, 1, 3);
 		Label smsynReplicationPluginlabel = new Label("Semisync Replication Plugin : " );
 		GridPane.setConstraints(smsynReplicationPluginlabel, 0, 4); 
 		Label smsynReplicationPluginValuelabel = new Label(String.valueOf(allPlugins.containsKey("rpl_semi_sync_source")));
-		smsynReplicationPluginValuelabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		smsynReplicationPluginValuelabel.setId("labelNameValueLabel");
+		//smsynReplicationPluginValuelabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(smsynReplicationPluginValuelabel, 1, 4); 
 		Label sslAvailabilitylabel = new Label("SSL Availability  : " );
 		GridPane.setConstraints(sslAvailabilitylabel, 0, 5); 
 		Label sslAvailabilityValuelabel = new Label(String.valueOf(allVariables.containsKey("ssl_ca")));
-		sslAvailabilityValuelabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		sslAvailabilityValuelabel.setId("labelNameValueLabel");
+		//sslAvailabilityValuelabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(sslAvailabilityValuelabel, 1, 5);
 		Label federatedlabel = new Label("FEDERATED : " );
 		GridPane.setConstraints(federatedlabel, 0, 6); 
 		Label federatedValuelabel = new Label(String.valueOf(allPlugins.containsKey("FEDERATED")));
 		GridPane.setConstraints(federatedValuelabel, 1, 6);
-		federatedValuelabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		federatedValuelabel.setId("labelNameValueLabel");
+		//federatedValuelabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 
 		serverFeaturesLeftHalfGridPane.getChildren().addAll(performanceSchemaDescriptionLabel,performanceScheamLabel,threadPoolDescriptionLabel,threadPoolValueLabel,
 				memcachedPluginlabel,memcachedPluginValuelabel,smsynReplicationPluginlabel,smsynReplicationPluginValuelabel,sslAvailabilitylabel,sslAvailabilityValuelabel,
 				federatedlabel,federatedValuelabel);
 		
 		GridPane serverFeaturesRigthtHalfGridPane = new GridPane();
-		serverFeaturesRigthtHalfGridPane.setVgap(10);
-		serverFeaturesRigthtHalfGridPane.setHgap(10);
+		serverFeaturesRigthtHalfGridPane.setId("serverFeaturesRigthtHalfGridPane");
+//		serverFeaturesRigthtHalfGridPane.setVgap(10);
+//		serverFeaturesRigthtHalfGridPane.setHgap(10);
 		
 		Label windowAuthenticationDescriptionLabel = new Label("Window Authentication :" );
 		GridPane.setConstraints(windowAuthenticationDescriptionLabel, 0, 1); 
 		Label windowAuthenticationValueLabel = new Label(String.valueOf(allPlugins.containsKey("authentication_windows")));
-		windowAuthenticationValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		windowAuthenticationValueLabel.setId("labelNameValueLabel");
+		//windowAuthenticationValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(windowAuthenticationValueLabel, 1, 1);
 		Label passwordValidationDescriptionLabel = new Label("Password Validation : ");
 		GridPane.setConstraints(passwordValidationDescriptionLabel, 0, 2); 
 		Label passwordValidationValueLabel = new Label(String.valueOf(allVariables.containsKey("validate_password.policy")));
-		passwordValidationValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		passwordValidationValueLabel.setId("labelNameValueLabel");
+		//passwordValidationValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(passwordValidationValueLabel, 1, 2); 
 		Label auditLogDescriptionLabel = new Label("Audit Log : ");
 		GridPane.setConstraints(auditLogDescriptionLabel, 0, 3); 
 		Label auditLogValueLabel = new Label(String.valueOf(allVariables.containsKey("audit_log_file")));
-		auditLogValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		auditLogValueLabel.setId("labelNameValueLabel");
+		//auditLogValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(auditLogValueLabel, 1, 3); 
 		Label firewallDescriptionLabel = new Label("Firewall : ");
 		GridPane.setConstraints(firewallDescriptionLabel, 0, 4); 
 		Label firewallValueLabel = new Label(String.valueOf(allVariables.containsKey("mysql_firewall_mode")));
-		firewallValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		firewallValueLabel.setId("labelNameValueLabel");
+		//firewallValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(firewallValueLabel, 1, 4); 
 		Label firewallTraceDescriptionLabel = new Label("Firewall  Trace: ");
 		GridPane.setConstraints(firewallTraceDescriptionLabel, 0, 5); 
 		Label firewallTraceValueLabel = new Label(String.valueOf(allVariables.containsKey("mysql_firewall_mode")));
-		firewallTraceValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		firewallTraceValueLabel.setId("labelNameValueLabel");
+		//firewallTraceValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(firewallTraceValueLabel, 1, 5); 
 		Label csvDescriptionLabel = new Label("CSV : ");
 		GridPane.setConstraints(csvDescriptionLabel, 0, 6); 
 		Label csvValueLabel = new Label(String.valueOf(allPlugins.containsKey("CSV")));
-		csvValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
+		csvValueLabel.setId("labelNameValueLabel");
+		//csvValueLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 		GridPane.setConstraints(csvValueLabel, 1, 6);     
 		
 		serverFeaturesRigthtHalfGridPane.getChildren().addAll(windowAuthenticationDescriptionLabel,windowAuthenticationValueLabel,passwordValidationDescriptionLabel,passwordValidationValueLabel,
@@ -5840,7 +6164,7 @@ public class MySqlUI {
 		
 		
 		
-		TreeItem<String> rootReportsTreeItem =  new TreeItem<String>("Reports");
+		TreeItem<String> rootReportsTreeItem =  new TreeItem<String>("Reports");		
 		TreeView<String> performanceView = new TreeView<String>();
 		performanceView.setCellFactory((TreeView<String> p) -> new MySQLTreecellImpl());
 		performanceView.setRoot(rootReportsTreeItem);
@@ -5999,6 +6323,7 @@ public class MySqlUI {
 		  try( ResultSet rs = currentConnection.createStatement().executeQuery("select table_name,engine,auto_increment,table_rows,data_length,index_length,create_time,update_time,create_options from information_schema.tables where table_comment != 'view' and table_schema='"+loadedDatabaseName.getValue()+"'"))
 		  { 			 
 			  SplitPane tableDetailsSplitPane = new SplitPane();
+			  //tableDetailsSplitPane.setId("SplitPane");
 			  tableDetailsSplitPane.setOrientation(Orientation.VERTICAL);
 			  tableDetailsSplitPane.setDividerPositions(0.75); 
 			  TableView tablesView = showResultSetInTheTableViewDoubleClick(rs,"Tables",loadedDatabaseName.getValue());
@@ -6021,19 +6346,26 @@ public class MySqlUI {
 			  });
 			  
 			  HBox allButtonsHBox = new HBox();
-			  allButtonsHBox.setSpacing(100);
-			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
+			  allButtonsHBox.setId("allButtonsHBox");
+//			  allButtonsHBox.setSpacing(100);
+//			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
 			  
 			  HBox tableButtonsHbox = new HBox();
-			  tableButtonsHbox.setSpacing(20);
-			  tableButtonsHbox.setPadding(new Insets(0,50,0,0));
+			  tableButtonsHbox.setId("ButtonsHbox");
+//			  tableButtonsHbox.setSpacing(20);
+//			  tableButtonsHbox.setPadding(new Insets(0,50,0,0));
 			  
 			  Button viewTableButton = new Button("View Table");
+			  viewTableButton.setId("buttons");
 			  Button createTableButton = new Button("Create Table");
+			  createTableButton.setId("buttons");
 			  Button editTableButton = new Button("Edit Table");
+			  editTableButton.setId("buttons");
 			  Button deleteTableButton = new Button("Delete Table");
-			  
+			  deleteTableButton.setId("buttons");
 			  Button refreshTableButton = new Button("Refresh");
+			  refreshTableButton.setId("buttons");
+			  
 			  createTableButton.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
@@ -6084,20 +6416,27 @@ public class MySqlUI {
 			  });
 			  
 			  HBox allButtonsHBox = new HBox();
-			  allButtonsHBox.setSpacing(100);
-			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
+			  allButtonsHBox.setId("allButtonsHBox");
+//			  allButtonsHBox.setSpacing(100);
+//			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
 			  
 			  
 			  HBox viewButtonsHbox = new HBox();
-			  viewButtonsHbox.setSpacing(20);
-			  viewButtonsHbox.setPadding(new Insets(0,50,0,0));
+			  viewButtonsHbox.setId("ButtonsHbox");
+//			  viewButtonsHbox.setSpacing(20);
+//			  viewButtonsHbox.setPadding(new Insets(0,50,0,0));
 			  
 			  Button viewViewButton = new Button("View View");
+			  viewViewButton.setId("buttons");
 			  Button createViewButton = new Button("Create View");
+			  createViewButton.setId("buttons");
 			  Button editViewButton = new Button("Edit View");
+			  editViewButton.setId("buttons");
 			  Button deleteViewButton = new Button("Delete View");
-			  
+			  deleteViewButton.setId("buttons");
 			  Button refreshViewButton = new Button("Refresh");
+			  refreshViewButton.setId("buttons");
+			  
 			  createViewButton.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
@@ -6146,18 +6485,24 @@ public class MySqlUI {
 			  });
 			  
 			  HBox allButtonsHBox = new HBox();
-			  allButtonsHBox.setSpacing(300);
-			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
+			  allButtonsHBox.setId("allButtonsHBox");
+//			  allButtonsHBox.setSpacing(300);
+//			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
 			  
 			  HBox indexButtonsHbox = new HBox();
-			  indexButtonsHbox.setSpacing(20);
+			  indexButtonsHbox.setId("ButtonsHbox");
+			 // indexButtonsHbox.setSpacing(20);
 			  
 			  Button viewIndexButton = new Button("View Index");
+			  viewIndexButton.setId("buttons");
 			  Button createIndexButton = new Button("Create Index");
+			  createIndexButton.setId("buttons");
 			  Button editIndexButton = new Button("Edit Index");
-			  Button deleteIndexButton = new Button("Delete Imdex");
-			  
+			  editIndexButton.setId("buttons");
+			  Button deleteIndexButton = new Button("Delete Index");
+			  deleteIndexButton.setId("buttons");
 			  Button refreshIndexButton = new Button("Refresh");
+			  refreshIndexButton.setId("buttons");
 			  createIndexButton.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
@@ -6206,18 +6551,24 @@ public class MySqlUI {
 			  });
 			  
 			  HBox allButtonsHBox = new HBox();
-			  allButtonsHBox.setSpacing(300);
-			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
+			  allButtonsHBox.setId("allButtonsHBox");
+//			  allButtonsHBox.setSpacing(300);
+//			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
 			  
 			  HBox proceduresButtonsHbox = new HBox();
-			  proceduresButtonsHbox.setSpacing(20);
+			  proceduresButtonsHbox.setId("ButtonsHbox");
+			//  proceduresButtonsHbox.setSpacing(20);
 			  
 			  Button viewProcedureButton = new Button("View Procedure");
+			  viewProcedureButton.setId("buttons");
 			  Button createProcedureButton = new Button("Create Procedure");
+			  createProcedureButton.setId("buttons");
 			  Button editProcedureButton = new Button("Edit Procedure");
+			  editProcedureButton.setId("buttons");
 			  Button deleteProcedureButton = new Button("Delete Procedure");
-			  
+			  deleteProcedureButton.setId("buttons");
 			  Button refreshProcedureButton = new Button("Refresh");
+			  refreshProcedureButton.setId("buttons");
 			  createProcedureButton.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
@@ -6266,18 +6617,24 @@ public class MySqlUI {
 			  });
 			  
 			  HBox allButtonsHBox = new HBox();
-			  allButtonsHBox.setSpacing(300);
-			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
+			  allButtonsHBox.setId("allButtonsHBox");
+//			  allButtonsHBox.setSpacing(300);
+//			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
 			  
 			  HBox functionsButtonsHbox = new HBox();
-			  functionsButtonsHbox.setSpacing(20);
+			  functionsButtonsHbox.setId("ButtonsHbox");
+			 // functionsButtonsHbox.setSpacing(20);
 			  
 			  Button viewFunctionButton = new Button("View Function");
+			  viewFunctionButton.setId("buttons");
 			  Button createFunctionButton = new Button("Create Function");
+			  createFunctionButton.setId("buttons");
 			  Button editFunctionButton = new Button("Edit Function");
+			  editFunctionButton.setId("buttons");
 			  Button deleteFunctionButton = new Button("Delete Function");
-			  
+			  deleteFunctionButton.setId("buttons");
 			  Button refreshProcedureButton = new Button("Refresh");
+			  refreshProcedureButton.setId("buttons");
 			  createFunctionButton.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
@@ -6326,18 +6683,24 @@ public class MySqlUI {
 			  });
 			  
 			  HBox allButtonsHBox = new HBox();
-			  allButtonsHBox.setSpacing(300);
-			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
+			  allButtonsHBox.setId("allButtonsHBox");
+//			  allButtonsHBox.setSpacing(300);
+//			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
 			  
 			  HBox triggersButtonsHbox = new HBox();
-			  triggersButtonsHbox.setSpacing(20);
+			  triggersButtonsHbox.setId("ButtonsHbox");
+			 // triggersButtonsHbox.setSpacing(20);
 			  
 			  Button viewTriggersButton = new Button("View Trigger");
+			  viewTriggersButton.setId("buttons");
 			  Button createTriggersButton = new Button("Create Trigger");
+			  createTriggersButton.setId("buttons");
 			  Button editTriggersButton = new Button("Edit Trigger");
+			  editTriggersButton.setId("buttons");
 			  Button deleteTriggersButton = new Button("Delete Trigger");
-			  
+			  deleteTriggersButton.setId("buttons");
 			  Button refreshTriggersButton = new Button("Refresh");
+			  refreshTriggersButton.setId("buttons");
 			  createTriggersButton.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
@@ -6360,35 +6723,49 @@ public class MySqlUI {
 	private Tab databaseDoubleClickMethod(TreeItem<String> loadedDatabaseName,String componentToFocus) {
 		
 		Tab mainDatabaseTab = new Tab();
+		mainDatabaseTab.getStyleClass().add("Tabs");
 		mainDatabaseTab.setText( loadedDatabaseName.getValue());
 		mainDatabaseTab.setGraphic(ImageItemsHolder.getMySqlImage(connectionPlaceHolder.getConnectionName()));
 
 		
 		TabPane databaseTabPane = new TabPane();
-		databaseTabPane.setTabMinWidth(200);	
+		databaseTabPane.setId("databaseTabPane");
+		databaseTabPane.getStyleClass().add("Tabs");
+		//databaseTabPane.setTabMinWidth(200);	
 		
 		Tab databaseDetails = new Tab("Details");
+		databaseDetails.getStyleClass().add("Tabs");
 		databaseDetails.setClosable(false);
 		
 		Tab databaseDetailsPropertiesTab = new Tab("Properties");
+		databaseDetailsPropertiesTab.getStyleClass().add("Tabs");
 		databaseDetailsPropertiesTab.setClosable(false);
 		Tab databaseDetailsTablesTab = new Tab("Tables");
+		databaseDetailsTablesTab.getStyleClass().add("Tabs");
 		databaseDetailsTablesTab.setClosable(false);
 		Tab databaseDetailsViewsTab = new Tab("Views");
+		databaseDetailsViewsTab.getStyleClass().add("Tabs");
 		databaseDetailsViewsTab.setClosable(false);
 		Tab databaseDetailsIndexesTab = new Tab("Indexes");
-		databaseDetailsViewsTab.setClosable(false);
+		databaseDetailsIndexesTab.getStyleClass().add("Tabs");
+		databaseDetailsIndexesTab.setClosable(false);
 		Tab databaseDetailsProceduresTab = new Tab("Procedures");
+		databaseDetailsProceduresTab.getStyleClass().add("Tabs");
 		databaseDetailsProceduresTab.setClosable(false);
 		Tab databaseDetailsFunctionsTab = new Tab("Functions");
+		databaseDetailsFunctionsTab.getStyleClass().add("Tabs");
 		databaseDetailsFunctionsTab.setClosable(false);
 		Tab databaseDetailsTriggersTab = new Tab("Triggers");
+		databaseDetailsTriggersTab.getStyleClass().add("Tabs");
 		databaseDetailsTriggersTab.setClosable(false);
 		Tab databaseDetailsEventsTab = new Tab("Events");
+		databaseDetailsEventsTab.getStyleClass().add("Tabs");
 		databaseDetailsEventsTab.setClosable(false);
 		
 		TabPane databaseDetailsTabPane = new TabPane();
-		databaseDetailsTabPane.setTabMinWidth(100);
+		databaseDetailsTabPane.setId("databaseDetailsTabPane");
+		databaseDetailsTabPane.getStyleClass().add("Tabs");
+		//databaseDetailsTabPane.setTabMinWidth(100);
 		databaseDetailsTabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
 				@Override
 				public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
@@ -6460,11 +6837,14 @@ public class MySqlUI {
 	   databaseDetails.setContent(databaseDetailsTabPane);
 		
 	   Tab databaseERDiagram = new Tab("ER Diagram");
+	   databaseERDiagram.getStyleClass().add("Tabs");
 	   databaseERDiagram.setClosable(false);
 	   Tab databaseGrahicsStats = new Tab("Graphics Stats");
+	   databaseGrahicsStats.getStyleClass().add("Tabs");
 	   databaseGrahicsStats.setClosable(false);
 	   
 	   Tab databaseAIPrompt = new Tab("AI Prompt");
+	   databaseAIPrompt.getStyleClass().add("Tabs");
 	   databaseAIPrompt.setClosable(false);				
 	   
 	   databaseTabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
@@ -6497,14 +6877,22 @@ public class MySqlUI {
 	protected Tab getDashBoardStats(TreeItem<String> loadedDatabaseName,Tab databaseGrahicsStats,String showGraphType) {
 		   
 		   TabPane dashBoardMainTabPane = new TabPane();
+		   dashBoardMainTabPane.getStyleClass().add("Tabs");
 		
 		   topSchemasBySizesTab = new Tab("Top Scehams by Sizes");
+		   topSchemasBySizesTab.getStyleClass().add("Tabs");
 	       memoryUsageTab = new Tab("Memory Usage");
+	       memoryUsageTab.getStyleClass().add("Tabs");
 	       fileTableHotSpotsTab = new Tab("Files/Tables Hot Spots");
+	       fileTableHotSpotsTab.getStyleClass().add("Tabs");
 		   highCostSqlStatementsTab = new Tab("High Cost SQL Statements");
+		   highCostSqlStatementsTab.getStyleClass().add("Tabs");
 		   databaseScehamStatisticsTab = new Tab("Databse Schema Statistics");
+		   databaseScehamStatisticsTab.getStyleClass().add("Tabs");
 		   userResourceUtilizationTab = new Tab("User Resource Utilization");
+		   userResourceUtilizationTab.getStyleClass().add("Tabs");
 	       hostResourceUtilizationTab = new Tab("Host Resource Utilization");
+	       hostResourceUtilizationTab.getStyleClass().add("Tabs");
 			 
 	       dashBoardMainTabPane.getTabs().addAll(topSchemasBySizesTab,memoryUsageTab,fileTableHotSpotsTab,highCostSqlStatementsTab,databaseScehamStatisticsTab,userResourceUtilizationTab,
 	    		   hostResourceUtilizationTab);
@@ -6661,6 +7049,7 @@ public class MySqlUI {
 		   ArrayList<TotalMemoryByUser> totalMemoryByUserList = getTotalMemoryByUser("total_allocated");
 		   // Schema Size relative to other 
 		   PieChart pieChartMemorySizes = new PieChart();
+		   pieChartMemorySizes.setId("chart");
 		   pieChartMemorySizes.setTitle("TOP MEMORY BY USER IN MB");
 		   PieChart.Data slice ;
 		   pieChartMemorySizes.setPrefSize(menu_Items_FX.size.getSize().getWidth()-450,menu_Items_FX.size.getSize().getHeight()-200);
@@ -6690,6 +7079,7 @@ public class MySqlUI {
 		   getMemoryUsageUserBarChart(totalMemoryByUserList, barChartMemorySizes,currentUserIndex);
 		   
 		   ScrollPane barChartScrollPane = new ScrollPane();
+		   barChartScrollPane.setId("ScrollPane");
 		   barChartScrollPane.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
 		   barChartScrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
 		   barChartScrollPane.setPrefHeight( menu_Items_FX.size.getSize().getHeight()-200);
@@ -6728,6 +7118,7 @@ public class MySqlUI {
 			   });
 		   
 		   Button peiChartRotateLEftButton = new Button("Previous Schema");
+		   peiChartRotateLEftButton.setId("buttons");
 		   peiChartRotateLEftButton.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
@@ -6736,6 +7127,7 @@ public class MySqlUI {
 				}
 		   });  
 		   Button peiChartRotateRightButton = new Button("Next Schema");
+		   peiChartRotateRightButton.setId("buttons");
 			   peiChartRotateRightButton.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
@@ -6745,22 +7137,27 @@ public class MySqlUI {
 		  });
 			   
 		   HBox pieBarGraphHBox = new HBox(); 
-		   pieBarGraphHBox.setPadding(new Insets(0,0,0,0));
-		   pieBarGraphHBox.setSpacing(5); 
+		   pieBarGraphHBox.setId("pieBarGraphHBox");
+//		   pieBarGraphHBox.setPadding(new Insets(0,0,0,0));
+//		   pieBarGraphHBox.setSpacing(5); 
 		   pieBarGraphHBox.getChildren().addAll(pieChartMemorySizes,graphDisplaySelectVBox);
 		 
 		   HBox dashBoardPieBarButtonHBox = new HBox();
-		   dashBoardPieBarButtonHBox.setPadding(new Insets(10,0,0,10));
+		   dashBoardPieBarButtonHBox.setId("dashBoardPieBarButtonHBox");
+		   //dashBoardPieBarButtonHBox.setPadding(new Insets(10,0,0,10));
 		   dashBoardPieBarButton = new Button("Show As Bar Graph");
+		   dashBoardPieBarButton.setId("buttons");
 		   dashBoardPieBarButtonHBox.getChildren().addAll(dashBoardPieBarButton);
 		   
 		   HBox hBoxButtons = new HBox();
-		   hBoxButtons.setSpacing(20);
-		   hBoxButtons.setPadding(new Insets(10,10,0,0));
+		   hBoxButtons.setId("ChartshBoxButtons");
+//		   hBoxButtons.setSpacing(20);
+//		   hBoxButtons.setPadding(new Insets(10,10,0,0));
 		   
 		   HBox pieChartRotationButtonHBox = new HBox();
-		   pieChartRotationButtonHBox.setSpacing(20);
-		   pieChartRotationButtonHBox.setPadding(new Insets(10,10,0,200));
+		   pieChartRotationButtonHBox.setId("pieChartRotationButtonHBox");
+//		   pieChartRotationButtonHBox.setSpacing(20);
+//		   pieChartRotationButtonHBox.setPadding(new Insets(10,10,0,200));
 		   pieChartRotationButtonHBox.getChildren().addAll(peiChartRotateLEftButton,peiChartRotateRightButton);
 		   
 		   hBoxButtons.getChildren().addAll(dashBoardPieBarButtonHBox,pieChartRotationButtonHBox);
@@ -6798,17 +7195,20 @@ public class MySqlUI {
 		}
 	
 	   VBox dashBoardTabMainvBox = new VBox();
-	   dashBoardTabMainvBox.setPadding(new Insets(10,0,20,10)); 
+	   dashBoardTabMainvBox.setId("dashBoardTabMainvBox");
+	   //dashBoardTabMainvBox.setPadding(new Insets(10,0,20,10)); 
 
 	   VBox graphDisplaySelectVBox = new VBox();
 	   Label toalMemoryByLabel = new Label("Total Memory By");
 	   totalMemoryByChoiceBox = new ChoiceBox();
+	   totalMemoryByChoiceBox.getStyleClass().add("choice-box");
 	   totalMemoryByChoiceBox.getItems().add("User");
 	   totalMemoryByChoiceBox.getItems().add("Host");
 	   totalMemoryByChoiceBox.getSelectionModel().select(1);
 	   
 	   Label memoryDistributionByLabel = new Label("Memory Distribution By");
 	   memoryDistributionHostByChoiceBox = new ChoiceBox();
+	   memoryDistributionHostByChoiceBox.getStyleClass().add("choice-box");
 	   for(int i=0;i<columnNamesForGraph.size();i++) {
 		   memoryDistributionHostByChoiceBox.getItems().add(columnNamesForGraph.get(i));   
 	   }
@@ -6818,6 +7218,7 @@ public class MySqlUI {
 	   ArrayList<TotalMemoryByHost> totalMemoryByHostList = getTotalMemoryByHost("total_allocated");
 	   // Schema Size relative to other 
 	   PieChart pieChartMemorySizes = new PieChart();
+	   pieChartMemorySizes.setId("chart");
 	   pieChartMemorySizes.setTitle("TOP MEMORY BY HOST IN MB");
 	   PieChart.Data slice ;
 	   pieChartMemorySizes.setPrefSize(menu_Items_FX.size.getSize().getWidth()-450,menu_Items_FX.size.getSize().getHeight()-200);
@@ -6847,6 +7248,7 @@ public class MySqlUI {
 	   getMemoryUsageHostBarChart(totalMemoryByHostList, barChartMemorySizes,currentHostIndex);
 	   
 	   ScrollPane barChartScrollPane = new ScrollPane();
+	   barChartScrollPane.setId("ScrollPane");
 	   barChartScrollPane.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
 	   barChartScrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
 	   barChartScrollPane.setPrefHeight( menu_Items_FX.size.getSize().getHeight()-200);
@@ -6887,6 +7289,7 @@ public class MySqlUI {
 		   });
 	   
 	   Button peiChartRotateLEftButton = new Button("Previous Schema");
+	   peiChartRotateLEftButton.setId("buttons");
 	   peiChartRotateLEftButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -6895,6 +7298,7 @@ public class MySqlUI {
 			}
 	   });  
 	   Button peiChartRotateRightButton = new Button("Next Schema");
+	   peiChartRotateRightButton.setId("buttons");
 		   peiChartRotateRightButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -6904,22 +7308,27 @@ public class MySqlUI {
 	  });
 		   
 	   HBox pieBarGraphHBox = new HBox(); 
-	   pieBarGraphHBox.setPadding(new Insets(0,0,0,0));
-	   pieBarGraphHBox.setSpacing(5); 
+	   pieBarGraphHBox.setId("pieBarGraphHBox");
+//	   pieBarGraphHBox.setPadding(new Insets(0,0,0,0));
+//	   pieBarGraphHBox.setSpacing(5); 
 	   pieBarGraphHBox.getChildren().addAll(pieChartMemorySizes,graphDisplaySelectVBox);
 	 
 	   HBox dashBoardPieBarButtonHBox = new HBox();
-	   dashBoardPieBarButtonHBox.setPadding(new Insets(10,0,0,10));
+	   dashBoardPieBarButtonHBox.setId("dashBoardPieBarButtonHBox");
+	  // dashBoardPieBarButtonHBox.setPadding(new Insets(10,0,0,10));
 	   dashBoardPieBarButton = new Button("Show As Bar Graph");
+	   dashBoardPieBarButton.setId("buttons");
 	   dashBoardPieBarButtonHBox.getChildren().addAll(dashBoardPieBarButton);
 	   
 	   HBox hBoxButtons = new HBox();
-	   hBoxButtons.setSpacing(20);
-	   hBoxButtons.setPadding(new Insets(10,10,0,0));
+	  hBoxButtons.setId("ChartshBoxButtons");
+//	   hBoxButtons.setSpacing(20);
+//	   hBoxButtons.setPadding(new Insets(10,10,0,0));
 	   
 	   HBox pieChartRotationButtonHBox = new HBox();
-	   pieChartRotationButtonHBox.setSpacing(20);
-	   pieChartRotationButtonHBox.setPadding(new Insets(10,10,0,200));
+	  pieChartRotationButtonHBox.setId("pieChartRotationButtonHBox");
+//	   pieChartRotationButtonHBox.setSpacing(20);
+//	   pieChartRotationButtonHBox.setPadding(new Insets(10,10,0,200));
 	   pieChartRotationButtonHBox.getChildren().addAll(peiChartRotateLEftButton,peiChartRotateRightButton);
 	   
 	   hBoxButtons.getChildren().addAll(dashBoardPieBarButtonHBox,pieChartRotationButtonHBox);
@@ -6951,12 +7360,14 @@ public class MySqlUI {
 	
 	private VBox getTopSchemasBySizeVBox(TreeItem<String> loadedDatabaseName) {
 		VBox dashBoardTabMainvBox = new VBox();
-		   dashBoardTabMainvBox.setPadding(new Insets(10,0,20,10)); 
+		dashBoardTabMainvBox.setId("dashBoardTabMainvBox");
+		//dashBoardTabMainvBox.setPadding(new Insets(10,0,20,10)); 
 		   
 		   ArrayList<InformationSchemaSizes> informationSchemaSizesList = getAllSchemaSizesinDatabase();
 		
 		   // Schema Size relative to other 
 		   PieChart pieChartSchemaSizes = new PieChart();
+		   pieChartSchemaSizes.setId("chart");
 		   pieChartSchemaSizes.setTitle("TOP SCHEMAS BY SIZES IN MB");
 		   PieChart.Data slice ;
 		   pieChartSchemaSizes.setPrefSize(menu_Items_FX.size.getSize().getWidth()-450,menu_Items_FX.size.getSize().getHeight()-200);
@@ -6986,6 +7397,7 @@ public class MySqlUI {
 		   getDashBoardBarChart(informationSchemaSizesList, barChartSchemaSizes,currentSchemaIndex);
 		   
 		   ScrollPane barChartScrollPane = new ScrollPane();
+		   barChartScrollPane.setId("ScrollPane");
 		   barChartScrollPane.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
 		   barChartScrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
 		   barChartScrollPane.setPrefHeight( menu_Items_FX.size.getSize().getHeight()-200);
@@ -6995,6 +7407,7 @@ public class MySqlUI {
 	 
 		   
 		   Button peiChartRotateLEftButton = new Button("Previous Schema");
+		   peiChartRotateLEftButton.setId("buttons");
 		   peiChartRotateLEftButton.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
@@ -7003,6 +7416,7 @@ public class MySqlUI {
 				}
 			   });  
 		   Button peiChartRotateRightButton = new Button("Next Schema");
+		   peiChartRotateRightButton.setId("buttons");
 			   peiChartRotateRightButton.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
@@ -7011,22 +7425,27 @@ public class MySqlUI {
 				}
 		  });
 			   
-		   HBox pieBarGraphHBox = new HBox(); 
-		   pieBarGraphHBox.setSpacing(10); 
+		   HBox pieBarGraphHBox = new HBox();
+		   pieBarGraphHBox.setId("pieBarGraphHBox");
+		   //pieBarGraphHBox.setSpacing(10); 
 		   pieBarGraphHBox.getChildren().addAll(pieChartSchemaSizes);
 		 
 		   HBox dashBoardPieBarButtonHBox = new HBox();
-		   dashBoardPieBarButtonHBox.setPadding(new Insets(10,0,0,10));
+		   dashBoardPieBarButtonHBox.setId("dashBoardPieBarButtonHBox");
+		   //dashBoardPieBarButtonHBox.setPadding(new Insets(10,0,0,10));
 		   dashBoardPieBarButton = new Button("Show As Bar Graph");
+		   dashBoardPieBarButton.setId("buttons");
 		   dashBoardPieBarButtonHBox.getChildren().addAll(dashBoardPieBarButton);
 		   
 		   HBox hBoxButtons = new HBox();
-		   hBoxButtons.setSpacing(20);
-		   hBoxButtons.setPadding(new Insets(10,10,0,0));
+		   hBoxButtons.setId("hBoxButtons");
+//		   hBoxButtons.setSpacing(20);
+//		   hBoxButtons.setPadding(new Insets(10,10,0,0));
 		   
 		   HBox pieChartRotationButtonHBox = new HBox();
-		   pieChartRotationButtonHBox.setSpacing(20);
-		   pieChartRotationButtonHBox.setPadding(new Insets(10,10,0,200));
+		   pieChartRotationButtonHBox.setId("pieChartRotationButtonHBox");
+//		   pieChartRotationButtonHBox.setSpacing(20);
+//		   pieChartRotationButtonHBox.setPadding(new Insets(10,10,0,200));
 		   pieChartRotationButtonHBox.getChildren().addAll(peiChartRotateLEftButton,peiChartRotateRightButton);
 		   
 		   hBoxButtons.getChildren().addAll(dashBoardPieBarButtonHBox,pieChartRotationButtonHBox);
@@ -7216,29 +7635,35 @@ public class MySqlUI {
 	protected void getdatabasePropertiesDisplayTab(TreeItem<String> loadedDatabaseName,	Tab databaseDetailsPropertiesTab) {
 		
 		VBox databasePropertiesVBox = new VBox();
-		databasePropertiesVBox.setSpacing(5);
-		databasePropertiesVBox.setPadding(new Insets(10,0,0,80));
+		databasePropertiesVBox.setId("databasePropertiesVBox");
+//		databasePropertiesVBox.setSpacing(5);
+//		databasePropertiesVBox.setPadding(new Insets(10,0,0,80));
 		
 		GridPane databasePropertiesGridPane = new GridPane();
-		databasePropertiesGridPane.setPadding(new Insets(10,0,0,0));
-		databasePropertiesGridPane.setVgap(10);
-		databasePropertiesGridPane.setHgap(50);
+		databasePropertiesGridPane.setId("databasePropertiesGridPane");
+//		databasePropertiesGridPane.setPadding(new Insets(10,0,0,0));
+//		databasePropertiesGridPane.setVgap(10);
+//		databasePropertiesGridPane.setHgap(50);
 		
 		
 		Label defaultCharSetLabel = new Label("Default Character Set : "+"" );
-		defaultCharSetLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		defaultCharSetLabel.setId("Label1");
+		//defaultCharSetLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
 		GridPane.setConstraints(defaultCharSetLabel, 0, 0);   // column 0 row 0
 		
 		Label defaultCollationLabel = new Label("Default Collation Set : "+"" );
-		defaultCollationLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		defaultCollationLabel.setId("Label1");
+		//defaultCollationLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
 		GridPane.setConstraints(defaultCollationLabel, 1, 0);   // column 0 row 0
 		
 		Label defaultSqlPathLabel = new Label("Sql Path : "+"" );
-		defaultSqlPathLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		defaultSqlPathLabel.setId("Label1");
+		//defaultSqlPathLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
 		GridPane.setConstraints(defaultSqlPathLabel, 2, 0);   // column 0 row 0
 		
 		Label defaultEncrytptionLabel = new Label("Default Encryption : "+"" );
-		defaultEncrytptionLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		defaultEncrytptionLabel.setId("Label1");
+		//defaultEncrytptionLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
 		GridPane.setConstraints(defaultEncrytptionLabel, 3, 0);   // column 0 row 0
 
 		
@@ -7248,7 +7673,8 @@ public class MySqlUI {
 		ArrayList<InformationSchemaTable> tableDetailsInformationSchemaList = getSchemaTablesFromInformationSchema(loadedDatabaseName.getValue());
 		
 		Label totalDiskUsageLabel = new Label("Disk Usage : "+getSchemaDiskUsage(tableDetailsInformationSchemaList)+" MB");
-		totalDiskUsageLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		totalDiskUsageLabel.setId("Label1");
+		//totalDiskUsageLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
 		GridPane.setConstraints(totalDiskUsageLabel, 0, 1);   // column 0 row 0
 
 		String totalTables = String.valueOf( tableDetailsInformationSchemaList.size());
@@ -7264,31 +7690,38 @@ public class MySqlUI {
 		
 		
 		Label totalTabelsLabel = new Label(schemaPropertiesNames[0]+" : "+totalTables);
-		totalTabelsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		totalTabelsLabel.setId("Label1");
+		//totalTabelsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
 		GridPane.setConstraints(totalTabelsLabel, 1, 1);   // column 0 row 0
 	
 		Label totalViewsLabel = new Label(schemaPropertiesNames[1]+" : "+totalViews);
-		totalViewsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		totalViewsLabel.setId("Label1");
+		//totalViewsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
 		GridPane.setConstraints(totalViewsLabel, 2, 1);   // column 0 row 0
 	
 		Label totalIndexesLabel = new Label(schemaPropertiesNames[2]+" : "+totalIndexes);
-		totalIndexesLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		totalIndexesLabel.setId("Label1");
+		//totalIndexesLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
 		GridPane.setConstraints(totalIndexesLabel, 3, 1);   // column 0 row 0
 		
 		Label totalProceduresLabel = new Label(schemaPropertiesNames[3]+" Procedures : "+totalProcedures);
-		totalProceduresLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		totalProceduresLabel.setId("Label1");
+		//totalProceduresLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
 		GridPane.setConstraints(totalProceduresLabel, 0, 2);   // column 0 row 0
 		
 		Label totalFunctionsLabel = new Label(schemaPropertiesNames[4]+" : "+totalFunctions);
-		totalFunctionsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		totalFunctionsLabel.setId("Label1");
+		//totalFunctionsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
 		GridPane.setConstraints(totalFunctionsLabel, 1, 2);   // column 0 row 0
 		
 		Label totalTriggersLabel = new Label(schemaPropertiesNames[5]+" : "+totalTriggers);
-		totalTriggersLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		totalTriggersLabel.setId("Label1");
+		//totalTriggersLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
 		GridPane.setConstraints(totalTriggersLabel, 2, 2);   // column 0 row 0
 		
 		Label totalEventsLabel = new Label(schemaPropertiesNames[6]+" : "+totalEvents);
-		totalEventsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
+		totalEventsLabel.setId("Label1");
+		//totalEventsLabel.setFont(Font.font("System Regular",FontWeight.BOLD,14));
 		GridPane.setConstraints(totalEventsLabel, 3, 2);   // column 0 row 0
 
 		
@@ -7296,12 +7729,15 @@ public class MySqlUI {
 				,totalFunctionsLabel,totalTriggersLabel,totalEventsLabel);
 		
 		HBox databasePropertiesSchemaChartHbox = new HBox();
-		databasePropertiesSchemaChartHbox.setSpacing(5);
+		databasePropertiesSchemaChartHbox.setId("databasePropertiesSchemaChartHbox");
+		//databasePropertiesSchemaChartHbox.setSpacing(5);
 
 		VBox pieOrBarChartVBox = new VBox();
-		pieOrBarChartVBox.setSpacing(5);
+		pieOrBarChartVBox.setId("pieOrBarChartVBox");
+		//pieOrBarChartVBox.setSpacing(5);
 		
 		PieChart pieChartSchemaSizes = new PieChart();
+		pieChartSchemaSizes.setId("chart");
 		pieChartSchemaSizes.setTitle("Database size relative to other databases");
 		PieChart.Data slice ;
 		pieChartSchemaSizes.setMinWidth(400);
@@ -7417,8 +7853,10 @@ public class MySqlUI {
 	     }
 	     
 	    HBox moreChartshbox = new HBox();
-	    moreChartshbox.setPadding( new Insets(0,0,0,400));
+	    moreChartshbox.setId("moreChartshbox");
+	   // moreChartshbox.setPadding( new Insets(0,0,0,400));
 	    Button moreChartsButton = new Button("More Charts");
+	    moreChartsButton.setId("buttons");
 	    moreChartsButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -7428,6 +7866,7 @@ public class MySqlUI {
 	    moreChartshbox.getChildren().add(moreChartsButton);
 	    
 	    Button  showBarGraphButton =  new Button("Bar Graph");
+	    showBarGraphButton.setId("buttons");
 	    pieOrBarChartVBox.getChildren().addAll(pieChartSchemaSizes,showBarGraphButton);
 	    
 	    showBarGraphButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -7650,18 +8089,24 @@ public class MySqlUI {
 			  });
 			  
 			  HBox allButtonsHBox = new HBox();
-			  allButtonsHBox.setSpacing(300);
-			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
+			  allButtonsHBox.setId("allButtonsHBox");
+//			  allButtonsHBox.setSpacing(300);
+//			  allButtonsHBox.setPadding(new Insets(10,10,0,100));
 			  
 			  HBox eventsButtonsHbox = new HBox();
-			  eventsButtonsHbox.setSpacing(20);
+			  eventsButtonsHbox.setId("eventsButtonsHbox");
+			 // eventsButtonsHbox.setSpacing(20);
 			  
 			  Button viewEventButton = new Button("View Event");
+			  viewEventButton.setId("buttons");
 			  Button createEventButton = new Button("Create Event");
+			  createEventButton.setId("buttons");
 			  Button editEventButton = new Button("Edit Event");
+			  editEventButton.setId("buttons");
 			  Button deleteEventButton = new Button("Delete Event");
-			  
+			  deleteEventButton.setId("buttons");
 			  Button refreshEventsButton = new Button("Refresh");
+			  refreshEventsButton.setId("buttons");
 			  createEventButton.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {

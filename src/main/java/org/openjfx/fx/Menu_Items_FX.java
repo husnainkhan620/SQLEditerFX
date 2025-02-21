@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.openfx.handlers.SettingTabEventHandler;
 import com.openfx.handlers.NewMenuItemEventHandler;
 import com.openfx.handlers.SearchToolEventHandler;
 import com.openfx.handlers.SqlQueryRunButtonSubmit;
@@ -79,6 +80,7 @@ import javafx.stage.WindowEvent;
 public class Menu_Items_FX extends Application {
 
 	public NewMenuItemEventHandler newMenuItemEventHandler;
+	public SettingTabEventHandler settingTabEventHandler;
 	public SqlQueryRunButtonSubmit sqlQueryRunButtonSubmit;
 	public Stage primaryStage;
 	
@@ -89,8 +91,10 @@ public class Menu_Items_FX extends Application {
 	int sqlEditerCount=1;
 	
 	public Scene sceneDataBaseConnection;
+	public Scene sceneForSettings;
 	public BorderPane borderSelectDatabase ;
 	public FlowPane selectDatabaseConnectionsflow;
+	public FlowPane openConnectionsFlowPane;
 	
 	public boolean connectionDoubleClicked = false;
 	
@@ -175,11 +179,13 @@ public class Menu_Items_FX extends Application {
 		MenuItem saveFileMenuItem = new MenuItem     ("Save   									Ctrl+S");
 		MenuItem saveAsFileMenuItem = new MenuItem   ("Save As							   	 Ctrl+Alt+S");
 		MenuItem renameFileMenuItem = new MenuItem   ("Rename									Ctrl+R");
+		MenuItem settingFileMenuItem = new MenuItem   ("Settings						          ");
 		fileMenu.getItems().add(newMenuItem);
 		fileMenu.getItems().add(openMenuItem);
 		fileMenu.getItems().add(saveFileMenuItem);
 		fileMenu.getItems().add(saveAsFileMenuItem);
 		fileMenu.getItems().add(renameFileMenuItem);
+		fileMenu.getItems().add(settingFileMenuItem);
 		MenuItem closeFileMenuItem = new MenuItem    ("Close								       Ctrl+W");
 		MenuItem closeAllFileMenuItem = new MenuItem ("Close All 							      Ctrl+Shft+W");
 		SeparatorMenuItem fileSep1 = new SeparatorMenuItem();
@@ -208,6 +214,7 @@ public class Menu_Items_FX extends Application {
 		saveFileMenuItem.setOnAction(saveFileMenuItemAction());
 		saveAsFileMenuItem.setOnAction(saveAsFileMenuItemAction());
 		renameFileMenuItem.setOnAction(renameFileEventHandler());
+		settingFileMenuItem.setOnAction(new SettingTabEventHandler(this));
 		
 		//Database Menu subitems
 		MenuItem newDatabseConnectionItem = new MenuItem("New Database Connection                  CTR+X");
@@ -240,6 +247,24 @@ public class Menu_Items_FX extends Application {
 		return menuBar;
 		
 	}
+    
+	
+//	private EventHandler<ActionEvent> settingFileMenuItem() {
+//	    return new EventHandler<ActionEvent>() {
+//	        @Override
+//	        public void handle(ActionEvent event) {
+//	            // Create a new instance of SettingTabEventHandler
+//	            SettingTabEventHandler settingTab = new SettingTabEventHandler();
+//
+//	            // Create a new Stage for the settings window
+//	            Stage settingsStage = new Stage();
+//
+//	            // Call the handle method of SettingTabEventHandler
+//	            settingTab.settingsStage = settingsStage; // Pass the stage to the handler
+//	            settingTab.handle(event); // Call the handler to display the settings UI
+//	        }
+//	    };
+//	}
 
 	private EventHandler<ActionEvent> newFileMenuItemAction() {
 		return new EventHandler<ActionEvent>() {
@@ -319,25 +344,19 @@ public class Menu_Items_FX extends Application {
 		 
 		toolBarRunButton.setOnAction(new SqlQueryRunButtonSubmit(this));
 		toolBar.getItems().add(toolBarRunButton);
-		
-		Button toolTheme = new Button("Theme");
-		toolTheme.setOnAction( new EventHandler<ActionEvent>() {
-			
-			@Override
-			public void handle(ActionEvent event) {
-				// TODO Auto-generated method stub
-				if(selectedTheme.equalsIgnoreCase(whiteThemeCss)) {
-					selectedTheme = darkThemeCss;
-					scene.getStylesheets().add(darkThemeCss);
-				}	
-				else {
-					selectedTheme = whiteThemeCss;
-					scene.getStylesheets().add(whiteThemeCss);
-				}
-				
-			}
-		});
-		toolBar.getItems().add(toolTheme);
+//		
+//		Button toolTheme = new Button("Theme");
+//		toolTheme.setOnAction( new EventHandler<ActionEvent>() {
+//			
+//			@Override
+//			public void handle(ActionEvent event) {
+//				// TODO Auto-generated method stub
+//				scene.getStylesheets().add(darkThemeCss);
+//				sceneDataBaseConnection.getStylesheets().add(darkThemeCss);
+//				
+//			}
+//		});
+//		toolBar.getItems().add(toolTheme);
 		
 		
 		rootPane.getChildren().add(toolBar);
@@ -345,33 +364,36 @@ public class Menu_Items_FX extends Application {
 		
 		HBox contentHBox = new HBox();
 		contentHBox.setMaxWidth(size.getWidth());
-		
+						
 		SplitPane mainSplitPane = new SplitPane();
 		mainSplitPane.setDividerPositions(0.21);
+		mainSplitPane.setId("SplitPane");
 		VBox vBoxleft  = new VBox();
 		ScrollPane vBoxleftScrollPane = new ScrollPane();
 		vBoxleftScrollPane.setFitToHeight(true);
 		vBoxleftScrollPane.setFitToWidth(true);
 		vBoxleftScrollPane.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
 		vBoxleftScrollPane.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+		vBoxleftScrollPane.setId("ScrollPane"); 
 		
 	    VBox vBoxright = new VBox();
-	
+	    vBoxright.setId("vBoxright");
 	    TabPane vBoxleftTabPane = new TabPane();
+	    vBoxleftTabPane.setId("vBoxleftTabPane");
 	    Tab connectionExplorerTab = new Tab("Connection Explorer");
-	  
+	    connectionExplorerTab.setId("connectionExplorerTab");
 	    
 	    Tab projectExplorerTab = new Tab("Project Explorer");
 	   
 		rootConnectionItem = new TreeItem<String>("Connections");
 		treeConnectionsView = new TreeView<String>();
+		treeConnectionsView.setId("treeConnectionsView");
 		treeConnectionsView.setRoot(rootConnectionItem);
 		treeConnectionsView.setShowRoot(false);
 		//treeView.setMinSize(300, size.getHeight()-120);
-		treeConnectionsView.setPrefWidth(300);
-		treeConnectionsView.setMinWidth(100);
-		treeConnectionsView.setMinHeight(size.getHeight()-160);
-	
+//		treeConnectionsView.setPrefWidth(300);
+//		treeConnectionsView.setMinWidth(100);
+		treeConnectionsView.setMinHeight(size.getHeight()-160);	
 		treeConnectionsView.setContextMenu(null);
 		
 		this.treeConnectionsView.getSelectionModel().selectedItemProperty().addListener(treeViewChangeListener());
@@ -379,7 +401,6 @@ public class Menu_Items_FX extends Application {
 		connectionExplorerTab.setContent(this.treeConnectionsView);
 		
 		vBoxleftScrollPane.setContent(vBoxleftTabPane);
-		
 		
 		vBoxleftTabPane.getTabs().add(connectionExplorerTab); 
 	//	vBoxleftTabPane.getTabs().add(projectExplorerTab);  enable from settings on new project
@@ -393,10 +414,12 @@ public class Menu_Items_FX extends Application {
         mainSplitPane.getItems().addAll(vBoxleft,vBoxright);
         contentHBox.getChildren().add(mainSplitPane);
         rootPane.getChildren().add(contentHBox);
+        rootPane.setId("rootPane");
         
         HBox statushbox = new HBox();
-        statushbox.setMinWidth(20);
-        statushbox.getChildren().add(new ProgressBar(70));
+        //statushbox.setMinWidth(20);
+        statushbox.setId("statushbox");
+        statushbox.getChildren().add(new ProgressBar(70){{ setId("progressbar"); }});
         rootPane.getChildren().add(statushbox);
         
 		scene = new Scene(rootPane);
@@ -406,8 +429,7 @@ public class Menu_Items_FX extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.setMaximized(true);
 		primaryStage.show();
-		
-		
+				
 		primaryStage.setOnCloseRequest( new EventHandler<WindowEvent>() {
 
 			@Override
@@ -499,36 +521,40 @@ public class Menu_Items_FX extends Application {
 			sqlEditerofTypeIdFromImage = ((ImageView)connectionTreeItem.getGraphic()).getId();
 		}
 		System.out.println("******Creating SQL editer of Database Type******"+sqlEditerofTypeIdFromImage);
-		
 		// Add a SplitPAne to the Tab and with TextArea and Result console(text area on error or Teble View on Success)
         editerTabSplitPane = new SplitPane();
         editerTabSplitPane.setOrientation(Orientation.VERTICAL);
-        
+                      
         // SQL Editer as a GridPane under a scrollPane
-        sqlEditerscrollPane = new ScrollPane();
-        
+        sqlEditerscrollPane = new ScrollPane();    
+        sqlEditerscrollPane.setId("ScrollPane");
         vBoxAreaSqlEditer1GridPane = new GridPane();
-        vBoxAreaSqlEditer1GridPane.setPadding(new Insets(10,5,10,5));
+       // vBoxAreaSqlEditer1GridPane.setPadding(new Insets(10,5,10,5));
         vBoxAreaSqlEditer1GridPane.setVgap(5);
-        
+        vBoxAreaSqlEditer1GridPane.setId("vBoxAreaSqlEditer1GridPane");
         // Box 1
         // A StackPane to hold textArea for querying and buttons on top right corner
         stackPaneAreaButtons = new StackPane();
         stackPaneAreaButtons.setPrefSize(size.getWidth()-100,100);
-        
+                
         // a HBox to hold buttons/labels for the text area
         hboxQueryAreaButtons = new HBox(7);
-        hboxQueryAreaButtons.setMaxHeight(20);
-        hboxQueryAreaButtons.setMaxWidth(60);
+        hboxQueryAreaButtons.setId("hboxQueryAreaButtons");
+//        hboxQueryAreaButtons.setMaxHeight(20);
+//        hboxQueryAreaButtons.setMaxWidth(60);
         
         Label maximizeQueryAreaButton = new Label();
-        ImageView  maximizeImage = new ImageView(new Image(getClass().getResourceAsStream("/images/maximize-button.png")));
+       // ImageView  maximizeImage = new ImageView(new Image(getClass().getResourceAsStream("/images/maximize-button.png")));
+        ImageView  maximizeImage = new ImageView();
         maximizeImage.setFitHeight(10);
         maximizeImage.setFitWidth(10);
+        maximizeImage.setId("maximizeButton");
         maximizeQueryAreaButton.setGraphic(maximizeImage);
         Label closureQueryAreaButton = new Label("X");
+        closureQueryAreaButton.setId("queryButtons");
         
         Label dragQueryAreaButtonRight = new Label("_|");
+        dragQueryAreaButtonRight.setId("queryButtons");
         dragQueryAreaButtonRight.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
@@ -542,6 +568,7 @@ public class Menu_Items_FX extends Application {
 			}
 		});
         Label dragQueryAreaButtonLeft = new Label("|_");
+        dragQueryAreaButtonLeft.setId("queryButtons");
         dragQueryAreaButtonLeft.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) { 
@@ -558,8 +585,8 @@ public class Menu_Items_FX extends Application {
         dragQueryAreaButtonRight.setOnMouseDragged(resizeSQLEditerStackPane(rowCount));  // point to the StackPane that needs to be resized whih has the textArea Editer
         dragQueryAreaButtonLeft.setOnMouseDragEntered(onMouseDragEnteredSqlTextArea(rowCount));
         dragQueryAreaButtonLeft.setOnMouseDragged(resizeSQLEditerStackPane(rowCount));  // point to the StackPane that needs to be resized whih has the textArea Editer
-        hboxQueryAreaButtons.setSpacing(10);
-        hboxQueryAreaButtons.setPadding(new Insets(0,15,0,15));
+         hboxQueryAreaButtons.setSpacing(10);
+       // hboxQueryAreaButtons.setPadding(new Insets(0,15,0,15));
         hboxQueryAreaButtons.getChildren().addAll(maximizeQueryAreaButton,closureQueryAreaButton);
         StackPane.setAlignment(hboxQueryAreaButtons,Pos.TOP_RIGHT);
         StackPane.setAlignment(dragQueryAreaButtonRight,Pos.BOTTOM_RIGHT);
@@ -568,7 +595,7 @@ public class Menu_Items_FX extends Application {
         // Sql Query Text Editer
         sqlCellTextArea = SQLCellTextArea.newBuilder()
         		.build();
-		sqlCellTextArea.setId(sqlEditerofTypeIdFromImage); // this can also hold the database connection name to which it belongs
+		sqlCellTextArea.setId("sqlEditerofTypeIdFromImage"); // this can also hold the database connection name to which it belongs
 		sqlCellTextArea.setOnKeyPressed(sqlEditerTextAreaInputHandler(sqlCellTextArea));
 		sqlCellTextArea.focusedProperty().addListener(SqlCellFocusChangeListener(sqlCellTextArea));
 		stackPaneAreaButtons.getChildren().addAll(sqlCellTextArea,hboxQueryAreaButtons,dragQueryAreaButtonRight,dragQueryAreaButtonLeft);
@@ -582,14 +609,17 @@ public class Menu_Items_FX extends Application {
 	    stackPaneAreaButtons.setPrefSize(size.getWidth()-100,100);
 	    // a HBox to hold buttons/labels for the text area
         hboxQueryAreaButtons = new HBox(7);
-        hboxQueryAreaButtons.setMaxHeight(20);
-        hboxQueryAreaButtons.setMaxWidth(60);
+        hboxQueryAreaButtons.setId("hboxQueryAreaButtons");
+//        hboxQueryAreaButtons.setMaxHeight(20);
+//        hboxQueryAreaButtons.setMaxWidth(60);
         
         maximizeQueryAreaButton = new Label();
-        maximizeImage = new ImageView(new Image(getClass().getResourceAsStream("/images/maximize-button.png")));
+       // maximizeImage = new ImageView(new Image(getClass().getResourceAsStream("/images/maximize-button.png")));
+        maximizeImage = new ImageView();
         maximizeImage.setFitHeight(10);
         maximizeImage.setFitWidth(10);
         maximizeQueryAreaButton.setGraphic(maximizeImage);
+        maximizeImage.setId("maximizeButton");
         closureQueryAreaButton = new Label("X");
         
         dragQueryAreaButtonRight = new Label("_|");
@@ -624,7 +654,7 @@ public class Menu_Items_FX extends Application {
         dragQueryAreaButtonLeft.setOnMouseDragged(resizeSQLEditerStackPane(rowCount));
         
         hboxQueryAreaButtons.setSpacing(10);
-        hboxQueryAreaButtons.setPadding(new Insets(0,15,0,15));
+       // hboxQueryAreaButtons.setPadding(new Insets(0,15,0,15));
         hboxQueryAreaButtons.getChildren().addAll(maximizeQueryAreaButton,closureQueryAreaButton);
         StackPane.setAlignment(hboxQueryAreaButtons,Pos.TOP_RIGHT);
         StackPane.setAlignment(dragQueryAreaButtonRight,Pos.BOTTOM_RIGHT);
@@ -632,7 +662,7 @@ public class Menu_Items_FX extends Application {
         
         sqlCellTextArea = SQLCellTextArea.newBuilder()
         		.build();
-		sqlCellTextArea.setId(sqlEditerofTypeIdFromImage); // this can also hold the database connection name to which it belongs
+		sqlCellTextArea.setId("sqlEditerofTypeIdFromImage"); // this can also hold the database connection name to which it belongs
 		sqlCellTextArea.setOnKeyPressed(sqlEditerTextAreaInputHandler(sqlCellTextArea));
 		sqlCellTextArea.focusedProperty().addListener(SqlCellFocusChangeListener(sqlCellTextArea));
 		stackPaneAreaButtons.getChildren().addAll(sqlCellTextArea,hboxQueryAreaButtons,dragQueryAreaButtonRight,dragQueryAreaButtonLeft);
@@ -642,11 +672,12 @@ public class Menu_Items_FX extends Application {
 
 		plus_button_borderPane = new BorderPane();
 		addNewQueryEditerButton = new Button("+");
-	 	addNewQueryEditerButton.setId("Button Id "+buttonCount++);
+	 	addNewQueryEditerButton.setId("ButtonId "+ buttonCount++);
+	 	addNewQueryEditerButton.getStyleClass().add("dynamicButtonStyle");
 	 	addNewQueryEditerButton.setOnAction(addNewQueryEditerButtonAction(size, vBoxAreaSqlEditer1GridPane,rowCount, buttonCount,sqlEditerofTypeIdFromImage));
 		addNewQueryEditerButton.setFont(new Font(10));
-		addNewQueryEditerButton.setMinHeight(15);
-		addNewQueryEditerButton.setMaxWidth(50);
+//		addNewQueryEditerButton.setMinHeight(15);
+//		addNewQueryEditerButton.setMaxWidth(50);
 		plus_button_borderPane.setCenter(addNewQueryEditerButton);
 		vBoxAreaSqlEditer1GridPane.getChildren().add(plus_button_borderPane);
 		GridPane.setConstraints(plus_button_borderPane, 0, rowCount);   // column 0 row 0	
@@ -659,13 +690,15 @@ public class Menu_Items_FX extends Application {
 		// The TabbedPane holding the results
 		
 		sqlEditerResultTabPane = new TabPane();
+		sqlEditerResultTabPane.setId("allResultConsoleTabPane");
         sqlEditerResultTabPane.setPrefWidth(size.getWidth()-320);  
-        sqlEditerResultTabPane.setMinHeight(100);  // This will not let the results tab go down further with atleat 100px left
+        //sqlEditerResultTabPane.setMinHeight(100);  // This will not let the results tab go down further with atleat 100px left
         
         sqlEditerResultTab = new Tab("Result "+sqlEditerCount);
-     
+        sqlEditerResultTab.setId("allResultTabPane");
         
         sqlEditerConsoleTab = new Tab("Console "+sqlEditerCount);
+        sqlEditerConsoleTab.setId("allResultTabPane");
         
         sqlEditerResultTabPane.getTabs().add(sqlEditerResultTab);
         sqlEditerResultTabPane.getTabs().add(sqlEditerConsoleTab);
@@ -673,6 +706,7 @@ public class Menu_Items_FX extends Application {
         editerTabSplitPane.setDividerPositions(0.47);  // split pane divider moving a bit lower
         editerTabSplitPane.getItems().add(sqlEditerscrollPane); // Top half of query editer
         editerTabSplitPane.getItems().add(sqlEditerResultTabPane); // bottom half of query editer
+        editerTabSplitPane.setId("SplitPane");
         // Save the File 
         editerTabSplitPane.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
@@ -704,6 +738,7 @@ public class Menu_Items_FX extends Application {
         // ImageView  connectionTypeImageView = new ImageView(new Image(getClass().getResourceAsStream("/graphics/-----+"Logo.png")));
      
         sqlEditerTab.setContent(editerTabSplitPane);  
+        sqlEditerTab.setId("sqlEditerTab");
         alltabbedEditors.getTabs().add(sqlEditerTab);  // multiple Editer Tab holder/pane
         
         // Bring focus to this newly created Tab
@@ -737,6 +772,7 @@ public class Menu_Items_FX extends Application {
 				System.out.println("Current position of Area"+stackPaneAreaButtonsCurrent.getPrefHeight());
 				TextArea todragTextArea = (TextArea)stackPaneAreaButtonsCurrent.getChildren().get(0);
 				todragTextArea.requestFocus();
+				todragTextArea.setId("todragTextArea");
 			}
 		};
 	}
@@ -803,14 +839,18 @@ public class Menu_Items_FX extends Application {
 	    stackPaneAreaButtons.setPrefSize(size.getWidth()-100,100);
 	    // a HBox to hold buttons/labels for the text area
         hboxQueryAreaButtons = new HBox(7);
-        hboxQueryAreaButtons.setMaxHeight(20);
-        hboxQueryAreaButtons.setMaxWidth(60);
+        hboxQueryAreaButtons.setId("hboxQueryAreaButtons");
+//        hboxQueryAreaButtons.setMaxHeight(20);
+//        hboxQueryAreaButtons.setMaxWidth(60);
         
-        Label maximizeQueryAreaButton = new Label();
-        ImageView maximizeImage = new ImageView(new Image(getClass().getResourceAsStream("/images/maximize-button.png")));
+        
+         Label maximizeQueryAreaButton = new Label();
+        //ImageView maximizeImage = new ImageView(new Image(getClass().getResourceAsStream("/images/maximize-button.png")));
+        ImageView maximizeImage = new ImageView();
         maximizeImage.setFitHeight(10);
         maximizeImage.setFitWidth(10);
         maximizeQueryAreaButton.setGraphic(maximizeImage);
+        maximizeImage.setId("maximizeButton");
         Label closureQueryAreaButton = new Label("X");
         Label dragQueryAreaButtonRight = new Label("_|");
         dragQueryAreaButtonRight.setOnMouseEntered(new EventHandler<MouseEvent>() {
@@ -832,7 +872,7 @@ public class Menu_Items_FX extends Application {
         dragQueryAreaButtonLeft.setOnMouseDragged(resizeSQLEditerStackPane(rowCount));  
         
         hboxQueryAreaButtons.setSpacing(10);
-        hboxQueryAreaButtons.setPadding(new Insets(0,15,0,15));
+       // hboxQueryAreaButtons.setPadding(new Insets(0,15,0,15));
         hboxQueryAreaButtons.getChildren().addAll(maximizeQueryAreaButton,closureQueryAreaButton);
         StackPane.setAlignment(hboxQueryAreaButtons,Pos.TOP_RIGHT);
         StackPane.setAlignment(dragQueryAreaButtonRight,Pos.BOTTOM_RIGHT);
@@ -840,7 +880,7 @@ public class Menu_Items_FX extends Application {
         
         sqlCellTextArea = SQLCellTextArea.newBuilder()
         		.build();
-    	sqlCellTextArea.setId(sqlEditerofTypeIdFromImage);
+    	sqlCellTextArea.setId("sqlEditerofTypeIdFromImage");
     	sqlCellTextArea.focusedProperty().addListener(SqlCellFocusChangeListener(sqlCellTextArea));
 		sqlCellTextArea.setOnKeyPressed(sqlEditerTextAreaInputHandler(sqlCellTextArea));
 		
@@ -862,11 +902,14 @@ public class Menu_Items_FX extends Application {
 		
 		plus_button_borderPane = new BorderPane();
 		addNewQueryEditerButton = new Button("+");
-		addNewQueryEditerButton.setId("Button Id "+buttonCount++);
+		addNewQueryEditerButton.setId("ButtonId"+buttonCount++);
+		addNewQueryEditerButton.applyCss(); // Force refresh
+	 	addNewQueryEditerButton.getStyleClass().add("dynamicButtonStyle");
+		
 	 	addNewQueryEditerButton.setOnAction(addNewQueryEditerButtonAction(size, vBoxAreaSqlEditer1GridPane,rowCount, buttonCount,sqlEditerofTypeIdFromImage));
 		addNewQueryEditerButton.setFont(new Font(10));
-		addNewQueryEditerButton.setMinHeight(15);
-		addNewQueryEditerButton.setMaxWidth(50);
+//		addNewQueryEditerButton.setMinHeight(15);
+//		addNewQueryEditerButton.setMaxWidth(50);
 		plus_button_borderPane.setCenter(addNewQueryEditerButton);
 		vBoxAreaSqlEditer1GridPane.getChildren().add(plus_button_borderPane);
 		GridPane.setConstraints(plus_button_borderPane, 0, buttonCount++);  
@@ -906,7 +949,7 @@ public class Menu_Items_FX extends Application {
 				// Write to the newly opened file its contents	
 				SplitPane tabSplitPane	= (SplitPane)  alltabbedEditors.getSelectionModel().getSelectedItem().getContent();
 				System.out.println( tabSplitPane.getItems().get(0).toString()) ; // Top half of the tab where sql editer is present
-				  
+				
 				ScrollPane sqlEditerscrollPane = (ScrollPane) tabSplitPane.getItems().get(0);
 				   
 				GridPane tabEditergridPane =  (GridPane) sqlEditerscrollPane.getContent(); // will have stack panes which individually have textArea

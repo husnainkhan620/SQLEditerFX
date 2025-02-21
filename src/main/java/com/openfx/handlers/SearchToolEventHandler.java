@@ -59,9 +59,11 @@ public class SearchToolEventHandler implements EventHandler<ActionEvent> {
 		GridPane searchDatabasesGridPane= new GridPane();
 		Label searchDatabasesLabel = new Label("Find");
 		TextField searchDatabasesTextField = new TextField();
+		searchDatabasesTextField.getStyleClass().add("textfield");
 		Label searchDatabasesClearAllLable = new Label("Clear All");
-		searchDatabasesClearAllLable.setFont(Font.font("System",FontWeight.NORMAL,FontPosture.ITALIC,12));
-		searchDatabasesClearAllLable.setTextFill(Color.BLUE);
+		searchDatabasesClearAllLable.setId("clearlabel");
+//		searchDatabasesClearAllLable.setFont(Font.font("System",FontWeight.NORMAL,FontPosture.ITALIC,12));
+//		searchDatabasesClearAllLable.setTextFill(Color.BLUE);
 		searchDatabasesGridPane.getChildren().addAll(searchDatabasesLabel,searchDatabasesTextField,searchDatabasesClearAllLable);
 		GridPane.setConstraints(searchDatabasesLabel, 0, 0); // Column 0 row 0
 		GridPane.setHalignment(searchDatabasesLabel,HPos.CENTER);
@@ -72,10 +74,12 @@ public class SearchToolEventHandler implements EventHandler<ActionEvent> {
 		GridPane.setHalignment(searchDatabasesClearAllLable,HPos.RIGHT);
 		GridPane.setValignment(searchDatabasesClearAllLable,VPos.BOTTOM);
 		searchDatabasesGridPane.getColumnConstraints().add(new ColumnConstraints(60));
-		
+				
 		GridPane gridPaneTextLabel = new GridPane();
-		gridPaneTextLabel.setPadding(new Insets(5,0,0,5));
-		gridPaneTextLabel.setHgap(10);
+		gridPaneTextLabel.getStyleClass().add("grid-pane-label");
+	    //gridPaneTextLabel.setPadding(new Insets(5,0,0,5));
+	    //gridPaneTextLabel.setPadding(Insets.EMPTY);
+	    gridPaneTextLabel.setHgap(10);
 		gridPaneTextLabel.getChildren().add(searchDatabasesGridPane);
 		GridPane.setConstraints(searchDatabasesGridPane, 0, 0); // Column 0 row 0
 		gridPaneTextLabel.getColumnConstraints().add(new ColumnConstraints(280));
@@ -85,9 +89,11 @@ public class SearchToolEventHandler implements EventHandler<ActionEvent> {
 		GridPane searchTablesGridPane= new GridPane();
 		Label searchTablesLabel = new Label("Find");
 		TextField searchTablesTextField = new TextField();
+		searchTablesTextField.getStyleClass().add("textfield");
 		Label searchTablesClearAllLable = new Label("Clear All");
-		searchTablesClearAllLable.setFont(Font.font("System",FontWeight.NORMAL,FontPosture.ITALIC,12));
-		searchTablesClearAllLable.setTextFill(Color.BLUE);
+		searchTablesClearAllLable.setId("clearlabel");
+		//searchTablesClearAllLable.setFont(Font.font("System",FontWeight.NORMAL,FontPosture.ITALIC,12));
+		//searchTablesClearAllLable.setTextFill(Color.BLUE);
 		searchTablesGridPane.getChildren().addAll(searchTablesLabel,searchTablesTextField,searchTablesClearAllLable);
 		GridPane.setConstraints(searchTablesLabel, 0, 0); // Column 0 row 0
 		GridPane.setHalignment(searchTablesLabel,HPos.CENTER);
@@ -108,9 +114,11 @@ public class SearchToolEventHandler implements EventHandler<ActionEvent> {
 		GridPane toSearchTablesTextGridPane= new GridPane();
 		Label toSearchTablesLabel = new Label("Find");
 		TextField toSearchTablesTextField = new TextField();
+		toSearchTablesTextField.getStyleClass().add("textfield");
 		Label toSearchTablesClearAllLable = new Label("Clear All");
-		toSearchTablesClearAllLable.setFont(Font.font("System",FontWeight.NORMAL,FontPosture.ITALIC,12));
-		toSearchTablesClearAllLable.setTextFill(Color.BLUE);
+		toSearchTablesClearAllLable.setId("clearlabel");
+//		toSearchTablesClearAllLable.setFont(Font.font("System",FontWeight.NORMAL,FontPosture.ITALIC,12));
+//		toSearchTablesClearAllLable.setTextFill(Color.BLUE);
 		toSearchTablesTextGridPane.getChildren().addAll(toSearchTablesLabel,toSearchTablesTextField,toSearchTablesClearAllLable);
 		GridPane.setConstraints(toSearchTablesLabel, 0, 0); // Column 0 row 0
 		GridPane.setHalignment(toSearchTablesLabel,HPos.CENTER);
@@ -129,10 +137,13 @@ public class SearchToolEventHandler implements EventHandler<ActionEvent> {
 		vBoxMain.getChildren().add(gridPaneTextLabel);
 		
 		//****************//
-		//   2nd level
+		//   2nd levels
 		
 		GridPane gridPaneDatabasesLists = new GridPane();
+		gridPaneTextLabel.getStyleClass().add("grid-pane-label");
+	//	gridPaneDatabasesLists.getStyleClass().add("grid-pane");
 		gridPaneDatabasesLists.setHgap(10);
+		gridPaneTextLabel.setPadding(Insets.EMPTY);
 		gridPaneDatabasesLists.setPadding(new Insets(5,0,0,5));
 		//ListView<String> listView = new ListView<String>();
 	
@@ -145,6 +156,7 @@ public class SearchToolEventHandler implements EventHandler<ActionEvent> {
 		
 		gridPaneDatabasesLists.getChildren().add(menu_Items_FX.loadedTablesNames);
 		GridPane.setConstraints(menu_Items_FX.loadedTablesNames, 1,0);
+		
 		gridPaneDatabasesLists.getColumnConstraints().add(new ColumnConstraints(380));
 		
 		//listView = new ListView<String>();
@@ -159,9 +171,11 @@ public class SearchToolEventHandler implements EventHandler<ActionEvent> {
 		//*******************//
 		
 		GridPane gridPaneValueToSearch = new GridPane();
-		gridPaneValueToSearch.setPadding(new Insets(10, 0, 10, 20));
+		gridPaneValueToSearch.setId("gridPaneValueToSearch");
+		//gridPaneValueToSearch.setPadding(new Insets(10, 0, 10, 20));
 		
 		Button searchHelpButton = new Button("Help");
+		searchHelpButton.setId("buttons");
 		gridPaneValueToSearch.getChildren().add(searchHelpButton);
 		GridPane.setConstraints(searchHelpButton, 0,0);
 		gridPaneValueToSearch.getColumnConstraints().add(new ColumnConstraints(100));
@@ -171,12 +185,14 @@ public class SearchToolEventHandler implements EventHandler<ActionEvent> {
 		gridPaneValueToSearch.getColumnConstraints().add(new ColumnConstraints(300));
 		
 		Label dataValueToSearchLabel = new Label("Enter the data value to search : ");
+		dataValueToSearchLabel.setId("dataValueToSearchLabel");
 		GridPane.setHalignment(dataValueToSearchLabel,HPos.RIGHT);
 		gridPaneValueToSearch.getChildren().add(dataValueToSearchLabel);
 		GridPane.setConstraints(dataValueToSearchLabel, 2,0);
 		gridPaneValueToSearch.getColumnConstraints().add(new ColumnConstraints(300));
 		
 		TextField dataValueToSearchTextField = new TextField();
+		dataValueToSearchTextField.getStyleClass().add("textfield");
 		gridPaneValueToSearch.getChildren().add(dataValueToSearchTextField);
 		GridPane.setConstraints(dataValueToSearchTextField, 3,0);
 		gridPaneValueToSearch.getColumnConstraints().add(new ColumnConstraints(200));
@@ -186,7 +202,8 @@ public class SearchToolEventHandler implements EventHandler<ActionEvent> {
 		gridPaneValueToSearch.getColumnConstraints().add(new ColumnConstraints(10));
 		
 		Button searchDataButton = new Button("Search");
-		searchDataButton.setMaxWidth(100);
+		searchDataButton.setId("buttons");
+		//searchDataButton.setMaxWidth(100);
 		gridPaneValueToSearch.getChildren().add(searchDataButton);
 		GridPane.setConstraints(searchDataButton, 5,0);
 		gridPaneValueToSearch.getColumnConstraints().add(new ColumnConstraints(150));
@@ -194,10 +211,12 @@ public class SearchToolEventHandler implements EventHandler<ActionEvent> {
 		vBoxMain.getChildren().add(gridPaneValueToSearch);
 		
 		searchTabSplitPane.setDividerPositions(0.73);  // split pane divider moving a bit lower
+		searchTabSplitPane.setId("SplitPane");
 		searchTabSplitPane.getItems().addAll(vBoxMain); // Top half of 
 		searchTabSplitPane.getItems().add(new HBox()); // bottom half of query editer
 		
 		menu_Items_FX.dataSearchtabPane = new Tab("Search Data");
+		menu_Items_FX.dataSearchtabPane.setId("dataSearchtabPane");
 		menu_Items_FX.dataSearchtabPane.setContent(searchTabSplitPane);
 		
 		menu_Items_FX.dataSearchtabPane.setOnClosed(new EventHandler<Event>() {

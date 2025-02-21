@@ -107,8 +107,8 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 				mainPopUpborderPane.setBottom(bottomHbox);
 				
 				Scene scene = new Scene(mainPopUpborderPane,550,500);  
-				scene.getStylesheets().add(getClass().getResource("/layoutstyles.css").toExternalForm());  
-				
+				//scene.getStylesheets().add(getClass().getResource("/layoutstyles.css").toExternalForm());  
+				scene.getStylesheets().add(menu_Items_FX.selectedTheme);
 				connectionStage.initModality(Modality.APPLICATION_MODAL);
 				connectionStage.initOwner(menu_Items_FX.primaryStage.getScene().getWindow());
 				connectionStage.setTitle("No DataBase Connection ");   
@@ -339,6 +339,7 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 
 		 
 	        HBox hbox = new HBox();
+	        hbox.setId("hbox");
 //	        hbox.setPadding(new Insets(15, 12, 15, 12));
 //	        hbox.setSpacing(10);   // Gap between nodes
 //	        hbox.setStyle("-fx-background-color: #336699;");
@@ -346,8 +347,9 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 	        hbox.getStyleClass().add("hbox");
 	        
 	        Text connectToDatabseText = new Text("Connect to a Database");
-	        connectToDatabseText.setFont(Font.font("Verdana",20));
-	        connectToDatabseText.setFill(Color.WHITE);
+	        connectToDatabseText.setId("connectDatabaseLabel");
+//	        connectToDatabseText.setFont(Font.font("Verdana",20));
+//	        connectToDatabseText.setFill(Color.WHITE);
 	        hbox.getChildren().addAll(connectToDatabseText);
 	        
 	        return hbox;
@@ -626,22 +628,26 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 	private SplitPane addCenterSplitPane() {
 		 
 		 SplitPane splitPaneCenter = new SplitPane();
-		
+		 splitPaneCenter.setId("SplitPane");
 		 VBox topControlVBox = new VBox();
-		 
+		// topControlVBox.setId("vBox");
 		 BorderPane borderPaneTop = new BorderPane();
 		 
 		 HBox topControlHBox = new HBox();
-		 topControlHBox.setPadding(new Insets(10,0,10,0));   // top  right bottom left
+		 topControlHBox.setId("topControlHBox");
+		// topControlHBox.setPadding(new Insets(10,0,10,0));   // top  right bottom left
 	     Text connectToDatabseText = new Text("Existing Connections");
-	     connectToDatabseText.setFont(Font.font("Verdana",20));
-	     connectToDatabseText.setFill(Color.BLACK);
-	     connectToDatabseText.setTextAlignment(TextAlignment.CENTER);
+	     connectToDatabseText.setId("text");
+	     //connectToDatabseText.setFont(Font.font("Verdana",20));
+	    // connectToDatabseText.setFill(Color.BLACK);
+	     //connectToDatabseText.setTextAlignment(TextAlignment.CENTER);
 	     topControlHBox.getChildren().addAll(connectToDatabseText);
 	     
 	     HBox topControlHBoxforButton = new HBox();
-	     topControlHBoxforButton.setPadding(new Insets(10,10,10,0));   // top  right bottom left
+	     topControlHBoxforButton.setId("topControlHBoxforButton");	   
+	     //topControlHBoxforButton.setPadding(new Insets(10,10,10,0));   // top  right bottom left
 	     connectExistingConnection = new Button("Connect");
+	     connectExistingConnection.setId("buttons");
 	     connectExistingConnection.setDisable(true);
 	     connectExistingConnection.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -664,11 +670,13 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 	     borderPaneTop.setRight(topControlHBoxforButton);
 	     
 	     ScrollPane scrollPaneTop = new ScrollPane();
+	     scrollPaneTop.setId("ScrollPane");
 	     scrollPaneTop.setFitToWidth(true);
 	     scrollPaneTop.setFitToHeight(true);
 	     
 	     FlowPane openConnectionsFlowPane = new FlowPane();
-	     openConnectionsFlowPane.setPadding(new Insets(10, 0, 10, 10));
+	     openConnectionsFlowPane.setId("openConnectionsFlowPane");
+	     //openConnectionsFlowPane.setPadding(new Insets(10, 0, 10, 10));
 	     openConnectionsFlowPane.setVgap(10);
 	     openConnectionsFlowPane.setHgap(20);
 	     
@@ -749,12 +757,12 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 	    	 }
 	     }
 		
-		
+	     openConnectionsFlowPane.getStyleClass().add("select-database-connections");
 	     
-	     BackgroundFill background_fill = new BackgroundFill(javafx.scene.paint.Color.WHITE,  CornerRadii.EMPTY,Insets.EMPTY ); 
+	    // BackgroundFill background_fill = new BackgroundFill(javafx.scene.paint.Color.WHITE,  CornerRadii.EMPTY,Insets.EMPTY ); 
 	     // create Background 
-	     Background background = new Background(background_fill); 
-	     openConnectionsFlowPane.setBackground(background);
+	    // Background background = new Background(background_fill); 
+	    // openConnectionsFlowPane.setBackground(background);
 	  
 	     scrollPaneTop.setContent(openConnectionsFlowPane);
 	     
@@ -762,10 +770,12 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 	     topControlVBox.getChildren().add(scrollPaneTop);
 	     
 	     HBox bottomControl = new HBox();
+	    // bottomControl.setId("hbox");
 	     bottomControl.setPadding(new Insets(10,0,0,0));   // top  right bottom left
 	     Text newConnection = new Text("New Database");
-	     newConnection.setFont(Font.font("Verdana",20));
-	     newConnection.setFill(Color.BLACK);
+	      newConnection.setId("text");
+	    // newConnection.setFont(Font.font("Verdana",20));
+	    // newConnection.setFill(Color.BLACK);
 	     bottomControl.getChildren().addAll(newConnection);
 
 	        
