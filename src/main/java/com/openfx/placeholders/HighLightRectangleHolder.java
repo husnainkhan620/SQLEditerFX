@@ -2,6 +2,7 @@ package com.openfx.placeholders;
 
 import java.util.ArrayList;
 
+import org.openjfx.fx.Menu_Items_FX;
 import org.openjfx.graphics.DataBricksRectangle;
 import org.openjfx.graphics.DuckDBRectangle;
 import org.openjfx.graphics.MSSQLServerRectangle;
@@ -34,21 +35,24 @@ public class HighLightRectangleHolder {
 		this.avaialbleHighRectangleConnections = avaialbleHighRectangleConnections;
 		
 	}
-
+	
+	
 	public StackPane getHighlightRectangleMySql(String connectionName) {
 		MySqlRectangle highlightRectangleMySql = new MySqlRectangle(100.0,150.0);
 		this.avaialbleHighRectangleConnections.add(highlightRectangleMySql);
 		
 	    StackPane stackPaneMySql = new StackPane();
+	    stackPaneMySql.setId("stackPaneMySql");
 	     highlightRectangleMySql.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
 		            new Stop[]{
 		            new Stop(0,Color.WHITE),
 		            new Stop(0.5, Color.WHITE),
 		            new Stop(1,Color.WHITE),}));
-	     highlightRectangleMySql.setStroke(Color.WHITE);
+	        highlightRectangleMySql.setStroke(Color.WHITE);
 	        highlightRectangleMySql.setArcHeight(3.5);
 	        highlightRectangleMySql.setArcWidth(3.5);
-
+             
+	    
 	        Label mySqlLabel = new Label();
 	        if(connectionName == null) 
 	        	mySqlLabel.setText("My SQL");
