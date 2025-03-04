@@ -99,8 +99,8 @@ public class MySqlUI {
 	private ConnectionPlaceHolder connectionPlaceHolder;
 	private Connection currentConnection ;
 	private String currentConnectionName;
-	private ImageView imagemySqlnode;
 	private Statement stmt ;
+	private ImageView imagemySqlnode;
 	public Button refreshButton;
 	public TabPane statusSystemVariablesTabpane;
     public Tab statusVariablesTab;
@@ -149,6 +149,11 @@ public class MySqlUI {
 			 "x$host_summary","x$host_summary_by_file_io","x$host_summary_by_file_io_type","x$host_summary_by_stages","x$host_summary_by_statement_latency","x$host_summary_by_statement_type",
 			 "version","x$session","x$latest_file_io","sys_config","session_ssl_status","metrics","processlist","ps_check_lost_instrumentation"};
 	
+	 
+	 public TreeItem<String> mySqlTreeItemDatabases;
+	 public TreeItem<String> mySqlTreeItemAdminister;
+	 public TreeItem<String> mySqlTreeItemSystemInfo;
+	 public TreeItem<String> mySqlTreeItemAdministration;
 	 
 	public MySqlUI(Menu_Items_FX menu_Items_FX,NewMenuItemEventHandler newMenuItemEventHandler) {
 		this.menu_Items_FX = menu_Items_FX;
@@ -253,7 +258,7 @@ public class MySqlUI {
 		TreeItem<String> mySqlTreeItem = new TreeItem<String>(connectionPlaceHolder.getConnectionName(),imagemySqlnode);
 		
 		//Databases
-		TreeItem<String> mySqlTreeItemDatabases = new TreeItem<String>("Databases");
+		mySqlTreeItemDatabases = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Databases"));
 		
 		TreeItem<String> loadingTreeItem = new TreeItem<String>("Loading..");
 		mySqlTreeItemDatabases.getChildren().add(loadingTreeItem);
@@ -1402,9 +1407,9 @@ public class MySqlUI {
 		}); */
 								
 		//Administrator
-		TreeItem<String> mySqlTreeItemAdminister = new TreeItem<String>("Administer");
+		mySqlTreeItemAdminister = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Administer"));
 		
-		TreeItem<String> mySqlTreeItemAdministration = new TreeItem<String>("Administration");
+		mySqlTreeItemAdministration = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Administration"));
 		mySqlTreeItemAdminister.getChildren().add(mySqlTreeItemAdministration);
 		TreeItem<String> mySqlTreeItemAdministerServerStatus = new TreeItem<String>("Server Status");
 		mySqlTreeItemAdministration.getChildren().add(mySqlTreeItemAdministerServerStatus);
@@ -1439,7 +1444,7 @@ public class MySqlUI {
 		 });
 		
 		// System Info
-		TreeItem<String> mySqlTreeItemSystemInfo = new TreeItem<String>("System Info");
+		mySqlTreeItemSystemInfo = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("SystemInfo"));
 		TreeItem<String> mySqlTreeItemSystemInfoBinaryLogs = new TreeItem<String>("BINARY LOGS");  // This will show Binary Log EVENTS
 		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoBinaryLogs);
 		TreeItem<String> mySqlTreeItemSystemInfoCharacterSet = new TreeItem<String>("CHARACTER SET");
@@ -1544,13 +1549,13 @@ public class MySqlUI {
 				-------------
 				*/
 				 
-				 if(parentIndex >= 2 && getTreeItem().getParent().getValue().equals("Databases") && getTreeItem().getParent().getParent().getValue().equals(currentConnectionName)) {
+				 if(parentIndex >= 2 && getTreeItem().getParent().getValue().equals(menu_Items_FX.resourceBundle.getString("Databases")) && getTreeItem().getParent().getParent().getValue().equals(currentConnectionName)) {
 					 
 					 System.out.println("Schema name clicked!!!!");
 					 
 	 
 				 }
-				 if(parentIndex >= 3 && getTreeItem().getParent().getParent().getValue().equals("Databases") && getTreeItem().getParent().getParent().getParent().getValue().equals(currentConnectionName)) {
+				 if(parentIndex >= 3 && getTreeItem().getParent().getParent().getValue().equals(menu_Items_FX.resourceBundle.getString("Databases")) && getTreeItem().getParent().getParent().getParent().getValue().equals(currentConnectionName)) {
 					 
 					 System.out.println("Schema components name clicked!!!!");
 	 
@@ -1563,8 +1568,8 @@ public class MySqlUI {
 				 }
 				 
 				 if(event.getClickCount() == 2 && ( 
-						 	(parentIndex >= 2 && getTreeItem().getParent().getValue().equals("Databases") && getTreeItem().getParent().getParent(). getValue().equals(currentConnectionName))  
-						 || (parentIndex >= 3 && getTreeItem().getParent().getParent().getValue().equals("Databases") && getTreeItem().getParent().getParent().getParent().getValue().equals(currentConnectionName)) 
+						 	(parentIndex >= 2 && getTreeItem().getParent().getValue().equals(menu_Items_FX.resourceBundle.getString("Databases")) && getTreeItem().getParent().getParent(). getValue().equals(currentConnectionName))  
+						 || (parentIndex >= 3 && getTreeItem().getParent().getParent().getValue().equals(menu_Items_FX.resourceBundle.getString("Databases")) && getTreeItem().getParent().getParent().getParent().getValue().equals(currentConnectionName)) 
 						 || ( (parentIndex >= 4 && getTreeItem().getParent().getValue().equals("Tables") || parentIndex >= 4 && getTreeItem().getParent().getValue().equals("Views") 
 						      || parentIndex >= 4 && getTreeItem().getParent().getValue().equals("Indexes") || parentIndex >= 4 && getTreeItem().getParent().getValue().equals("Procedures")
 						      || parentIndex >= 4 && getTreeItem().getParent().getValue().equals("Functions") || parentIndex >= 4 && getTreeItem().getParent().getValue().equals("Triggers")
@@ -1624,7 +1629,7 @@ public class MySqlUI {
 					 }
 					 
 					 // particular database is clicked
-					 if(getTreeItem().getParent().getValue().equalsIgnoreCase("Databases")) {
+					 if(getTreeItem().getParent().getValue().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Databases"))) {
 							
 					    if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
 					    	  if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
@@ -1785,12 +1790,12 @@ public class MySqlUI {
 					 }
 					 
 				 }
-				 if(event.getClickCount() == 2 && getTreeItem().getParent().getValue().equals("System Info") ) {
+				 if(event.getClickCount() == 2 && getTreeItem().getParent().getValue().equals(menu_Items_FX.resourceBundle.getString("SystemInfo")) ) {
 					 
 					 System.out.println("System info componets like clciked!!!");
 				 }
 					 
-				 if(event.getClickCount() == 2  &&  (getTreeItem().getParent().getValue().equals("System Info") || getTreeItem().getValue().equals("Server Logs") )  ) {
+				 if(event.getClickCount() == 2  &&  (getTreeItem().getParent().getValue().equals(menu_Items_FX.resourceBundle.getString("SystemInfo")) || getTreeItem().getValue().equals("Server Logs") )  ) {
 					 
 					 if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
 						 if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {																			   
@@ -1854,7 +1859,7 @@ public class MySqlUI {
 												((SplitPane) genericNode).getItems().addAll(topHalfResultTableView,secondHalfDisplayVBox); // Top half of query editer							      
 										    
 											}
-											else if(getTreeItem().getValue().equals("EVENTS") && getTreeItem().getParent().getValue().equalsIgnoreCase("System Info")) {
+											else if(getTreeItem().getValue().equals("EVENTS") && getTreeItem().getParent().getValue().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("SystemInfo"))) {
 												System.out.println("Show events");
 												ResultSet rsDatabases = stmt.executeQuery("SHOW DATABASES");
 										    	while(rsDatabases.next()){
@@ -1902,7 +1907,7 @@ public class MySqlUI {
 					 displayPerformanceTableView(performanceReportsTypes, performanceReportQueries,getTreeItem().getValue());
 					 
 				 }
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Dashboard") && getTreeItem().getParent().getValue().equals("Performance") && getTreeItem().getParent().getParent().getValue().equals("Administer") ) { 
+				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Dashboard") && getTreeItem().getParent().getValue().equals("Performance") && getTreeItem().getParent().getParent().getValue().equals(menu_Items_FX.resourceBundle.getString("Administer")) ) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
 		  
 					  if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
@@ -1952,7 +1957,7 @@ public class MySqlUI {
 		  
 				 } 				 
 				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Performance Reports") && getTreeItem().getParent().getValue().equalsIgnoreCase("Performance")
-						 && getTreeItem().getParent().getParent().getValue().equalsIgnoreCase("Administer") ) { 
+						 && getTreeItem().getParent().getParent().getValue().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Administer")) ) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
 		  
 					  if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
@@ -2062,7 +2067,7 @@ public class MySqlUI {
 							});		
 				 }
 		  
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Server Status") && getTreeItem().getParent().getValue().equals("Administration")) { 
+				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Server Status") && getTreeItem().getParent().getValue().equals(menu_Items_FX.resourceBundle.getString("Administration"))) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
 					  if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
 				    	  if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
@@ -2136,7 +2141,7 @@ public class MySqlUI {
 							  }
 							});
 				 }
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Client Connections") && getTreeItem().getParent().getValue().equals("Administration")) { 
+				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Client Connections") && getTreeItem().getParent().getValue().equals(menu_Items_FX.resourceBundle.getString("Administration"))) { 
 				      System.out.println("Double clicked on this item"+ getTreeItem().getValue());
 					  if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
 							 if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
@@ -2207,7 +2212,7 @@ public class MySqlUI {
 						
 							});		
 				 }
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Users and Privileges") && getTreeItem().getParent().getValue().equals("Administration")) { 
+				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Users and Privileges") && getTreeItem().getParent().getValue().equals(menu_Items_FX.resourceBundle.getString("Administration"))) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());											   
 					  if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
 							 if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {

@@ -1,7 +1,12 @@
 package com.openfx.handlers;
 
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 import org.openjfx.fx.Menu_Items_FX;
+
+import com.openfx.locale.AllLocalLabels;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -13,6 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextArea;
@@ -76,17 +82,16 @@ public NewMenuItemEventHandler newMenuItemEventHandler;
 		leftControl.setId("leftControl");
 		TreeItem rootItem = new TreeItem("Settings");
 		
-		TreeItem webItem = new TreeItem("Appearance");
-		webItem.getChildren().add(new TreeItem("Theme"));
-		webItem.getChildren().add(new TreeItem("Layout"));
-		rootItem.getChildren().add(webItem);
-
-		//        TreeItem javaItem = new TreeItem("Java Tutorials");
-		//        javaItem.getChildren().add(new TreeItem("Java Language"));
-		//        javaItem.getChildren().add(new TreeItem("Java Collections"));
-		//        javaItem.getChildren().add(new TreeItem("Java Concurrency"));
-		//        rootItem.getChildren().add(javaItem);
-
+		TreeItem appreanceItem = new TreeItem("Appearance");
+		appreanceItem.getChildren().add(new TreeItem("Theme"));
+		appreanceItem.getChildren().add(new TreeItem("Layout"));
+		rootItem.getChildren().add(appreanceItem);
+		
+		TreeItem languageItem = new TreeItem("Languages");
+		languageItem.getChildren().add(new TreeItem("English"));
+		languageItem.getChildren().add(new TreeItem("Arabic"));
+		rootItem.getChildren().add(languageItem);
+		
 		TreeView treeView = new TreeView();
 		treeView.setRoot(rootItem);
 	   	treeView.setShowRoot(false);
@@ -99,8 +104,8 @@ public NewMenuItemEventHandler newMenuItemEventHandler;
     	//leftControl.setStyle("-fx-padding: 10; ");
     	//leftControl.setId("leftControl");
 		// Right control with data display
-		VBox rightControl = new VBox();
-		rightControl.setId("rightControl");
+		VBox rightControlVBox = new VBox();
+		rightControlVBox.setId("rightControl");
 		HBox hbox = new HBox();
 		Label themeLabel = new Label("Theme :  ");
 		themeLabel.setId("themeLabel");
@@ -121,52 +126,28 @@ public NewMenuItemEventHandler newMenuItemEventHandler;
 		Button applyButton = new Button("Apply");
 		applyButton.setId("buttons");
 		
-	
-//		applyButton.setOnAction(new EventHandler<ActionEvent>() {
-//		    @Override
-//		    public void handle(ActionEvent event) {
-
-		    	//menu_Items_FX.sceneForSettings.getStylesheets().clear();
-//		    	menu_Items_FX.selectedTheme = menu_Items_FX.darkThemeCss;
-//		    	menu_Items_FX.sceneForSettings.getStylesheets().add(darkThemeCss);
-//		    	menu_Items_FX.scene.getStylesheets().add(darkThemeCss);
-//		    	menu_Items_FX.sceneDataBaseConnection.getStylesheets().add(darkThemeCss);
-//		    	scene.getStylesheets().add(menu_Items_FX.selectedTheme);
-                
-//		    	String selectedValue = themeDropdown.getValue();
-//		    	 if (selectedValue != null) {
-//		    	        // Select theme file
-//		    	        selectedTheme = selectedValue.equals("Light") ? whiteThemeCss : darkThemeCss;
-//		    	        menu_Items_FX.selectedTheme = selectedTheme;
-//
-//		    	        // Clear and apply theme to all relevant scenes
-//		    	        menu_Items_FX.scene.getStylesheets().clear();
-//		    	        menu_Items_FX.scene.getStylesheets().add(selectedTheme);
-//
-//		    	        menu_Items_FX.sceneDataBaseConnection.getStylesheets().clear();
-//		    	        menu_Items_FX.sceneDataBaseConnection.getStylesheets().add(selectedTheme);
-//
-//		    	        menu_Items_FX.sceneForSettings.getStylesheets().clear();
-//		    	        menu_Items_FX.sceneForSettings.getStylesheets().add(selectedTheme);
-//
-//		    	        settingsStage.getScene().getStylesheets().clear();
-//		    	        settingsStage.getScene().getStylesheets().add(selectedTheme);
-//		    	        
-//		    		// Close the settings stage
-//		    		settingsStage.close();
-//		    	}
-//		    } 
-//		});
-		    	
+		HBox languageHBox = new HBox();
+		Label LanguageLabel = new Label("Language :  ");
+		LanguageLabel.setId("themeLabel");
+		
+		// ComboBox (Dropdown)
+		ComboBox<String> languageDropdown = new ComboBox<>();
+		languageDropdown.setId("themeDropdown");
+		languageDropdown.getItems().addAll("English", "Arabic","French");
+		languageDropdown.setPromptText("Select Language");
+		languageHBox.getChildren().addAll(LanguageLabel, languageDropdown);
+			
 		applyButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 
-				String selectedValue = themeDropdown.getValue();
+				String themeSelectedValue = themeDropdown.getValue();
+				
+				String languageSelectedValue = languageDropdown.getValue();
 
-				if (selectedValue != null) {
+				if (themeSelectedValue != null) {
 					// Select theme file
-					selectedTheme = selectedValue.equals("Light") ? whiteThemeCss : darkThemeCss;
+					selectedTheme = themeSelectedValue.equals("Light") ? whiteThemeCss : darkThemeCss;
 					menu_Items_FX.selectedTheme = selectedTheme;
 
 					// Apply theme to all open scenes dynamically
@@ -176,6 +157,26 @@ public NewMenuItemEventHandler newMenuItemEventHandler;
 
 					// Ensure the settings window itself is updated
 					applyTheme(settingsStage.getScene(), selectedTheme);
+                    settingsStage.close();
+				}
+				if (languageSelectedValue != null) {
+					String selectedLocale = "en";
+					// Select theme file
+					 if(languageSelectedValue.equals("English"))
+					 {
+						 selectedLocale = "en";
+					 }
+					 else if(languageSelectedValue.equals("Arabic"))
+					 {
+						 selectedLocale = "ar";
+					 }
+					 else if(languageSelectedValue.equals("French"))
+					 {
+						 selectedLocale = "fr";
+					 }
+
+					// Creates only when needed , can use static instead but will get loaded with usage uncertain 
+					new AllLocalLabels().setLocaleLables(menu_Items_FX,selectedLocale);					
                     settingsStage.close();
 				}
 			}  
@@ -213,11 +214,11 @@ public NewMenuItemEventHandler newMenuItemEventHandler;
 		bottomhbox.setAlignment(Pos.BASELINE_RIGHT);
 		//bottomhbox.setSpacing(15);
 		
-		rightControl.getChildren().addAll(hbox,bottomhbox);
+		rightControlVBox.getChildren().addAll(hbox,languageHBox,languageDropdown,bottomhbox);
 		//rightControl.setStyle("-fx-padding: 10;");
 
 		// Add components to SplitPane
-		splitPane.getItems().addAll(leftControl, rightControl);
+		splitPane.getItems().addAll(leftControl, rightControlVBox);
 		splitPane.setDividerPositions(0.1); // Set initial divider position
 
 		// Scene setup with SplitPane as the root node

@@ -30,7 +30,11 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
@@ -142,6 +146,29 @@ public class ERDiagramApplication extends Application{
 
 		mainPane.getChildren().add(tabletitledPane4);
 
+		Rectangle rectangle = new Rectangle(100,100);
+		rectangle.setLayoutX(100);
+		rectangle.setLayoutY(100);
+		enableDragAndDrop(rectangle, mainPane);
+		mainPane.getChildren().add(rectangle);
+		
+
+		Circle circle = new Circle(100,Color.GAINSBORO);
+		circle.setLayoutX(100);
+		circle.setLayoutY(100);
+		enableDragAndDrop(circle,mainPane);
+		mainPane.getChildren().add(circle);
+		
+		Ellipse ellipse = new Ellipse();
+		ellipse.setLayoutX(400);
+		ellipse.setLayoutY(400);
+		ellipse.setRadiusX(50);
+		ellipse.setRadiusY(25);
+		
+		enableDragAndDrop(ellipse,mainPane);
+		mainPane.getChildren().add(ellipse);
+		
+		
 		Group line = LineNode.createGroupLine(tabletitledPane,tabletitled1Pane,mainPane);
 		Group line1 = LineNode.createGroupLine(tabletitledPane3,tabletitledPane4,mainPane);
 
@@ -211,7 +238,7 @@ public class ERDiagramApplication extends Application{
 		// This will set the backgroud color the Zoom Pane
 		mainPane.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.WHITE,  CornerRadii.EMPTY,Insets.EMPTY ) ));
 
-		ZoomableScrollPane zoomableScrollPane = new ZoomableScrollPane(mainPane);
+		ZoomableScrollPane zoomableScrollPane = new ZoomableScrollPane(mainPane,false,null);
 
 		Scene scene = new Scene(zoomableScrollPane, 600, 600/* Color.rgb(35, 39, 50) */);  
 		scene.getStylesheets().add(ERDiagramApplication.class.getResource("/testLayout.css").toExternalForm());
@@ -220,6 +247,7 @@ public class ERDiagramApplication extends Application{
 
 		primaryStage.show();
 
+		
 	}
 
 
@@ -259,6 +287,99 @@ public class ERDiagramApplication extends Application{
 		});
 	}
 
+	private void enableDragAndDrop(Rectangle rectangle, Pane mainPane) {
+		final double[] offset = new double[2];
+
+		// When the mouse is pressed, record the offset between the mouse position and the TitledPane position
+		rectangle.setOnMousePressed(event -> {
+			offset[0] = event.getSceneX() - rectangle.getLayoutX();
+			offset[1] = event.getSceneY() - rectangle.getLayoutY();
+		});
+
+
+		rectangle.setOnTouchPressed(null);
+		// When dragging, update the TitledPane position
+		rectangle.setOnMouseDragged(event -> {
+			double newX = event.getSceneX() - offset[0];
+			double newY = event.getSceneY() - offset[1];
+
+			// Restrict movement within the bounds of the mainPane
+			if (newX >= 0 && newX + rectangle.getWidth() <= mainPane.getWidth()) {
+				rectangle.setLayoutX(newX);
+			}
+			if (newY >= 0 && newY + rectangle.getHeight() <= mainPane.getHeight()) {
+				rectangle.setLayoutY(newY);
+			}
+		});
+
+		// Optional: Provide feedback on mouse release
+		rectangle.setOnMouseReleased(event -> {
+			System.out.println("TitledPane dropped at: " + rectangle.getLayoutX() + ", " + rectangle.getLayoutY());
+		});
+	}
+	
+	private void enableDragAndDrop(Ellipse rectangle, Pane mainPane) {
+		final double[] offset = new double[2];
+
+		// When the mouse is pressed, record the offset between the mouse position and the TitledPane position
+		rectangle.setOnMousePressed(event -> {
+			offset[0] = event.getSceneX() - rectangle.getLayoutX();
+			offset[1] = event.getSceneY() - rectangle.getLayoutY();
+		});
+
+
+		rectangle.setOnTouchPressed(null);
+		// When dragging, update the TitledPane position
+		rectangle.setOnMouseDragged(event -> {
+			double newX = event.getSceneX() - offset[0];
+			double newY = event.getSceneY() - offset[1];
+
+			// Restrict movement within the bounds of the mainPane
+			if (newX >= 0 && newX - rectangle.getRadiusX() <= mainPane.getWidth()) {
+				rectangle.setLayoutX(newX);
+			}
+			if (newY >= 0 && newY - rectangle.getRadiusY() <= mainPane.getHeight()) {
+				rectangle.setLayoutY(newY);
+			}
+		});
+
+		// Optional: Provide feedback on mouse release
+		rectangle.setOnMouseReleased(event -> {
+			System.out.println("TitledPane dropped at: " + rectangle.getLayoutX() + ", " + rectangle.getLayoutY());
+		});
+	}
+	
+	private void enableDragAndDrop(Circle circle, Pane mainPane) {
+		final double[] offset = new double[2];
+
+		// When the mouse is pressed, record the offset between the mouse position and the TitledPane position
+		circle.setOnMousePressed(event -> {
+			offset[0] = event.getSceneX() - circle.getLayoutX();
+			offset[1] = event.getSceneY() - circle.getLayoutY();
+		});
+
+
+		circle.setOnTouchPressed(null);
+		// When dragging, update the TitledPane position
+		circle.setOnMouseDragged(event -> {
+			double newX = event.getSceneX() - offset[0];
+			double newY = event.getSceneY() - offset[1];
+
+			// Restrict movement within the bounds of the mainPane
+			if (newX >= 0 && newX + circle.getRadius()*2 <= mainPane.getWidth()) {
+				circle.setLayoutX(newX);
+			}
+			if (newY >= 0 && newY + circle.getRadius()*2 <= mainPane.getHeight()) {
+				circle.setLayoutY(newY);
+			}
+		});
+
+		// Optional: Provide feedback on mouse release
+		circle.setOnMouseReleased(event -> {
+			System.out.println("TitledPane dropped at: " + circle.getLayoutX() + ", " + circle.getLayoutY());
+		});
+	}
+	
 	private void enableDragAndDrop(Line simpleLine, Pane mainPane) {
 		final double[] offset = new double[2];
 
@@ -591,8 +712,9 @@ class ZoomableScrollPane extends ScrollPane {
 	Node content;
 	double scaleValue = 1.0;
 	double delta = 0.1;
+	Rectangle focusRectangle ;
 
-	public ZoomableScrollPane(Node content) {
+	public ZoomableScrollPane(Node content,boolean isPreview,ZoomableScrollPane mainZoomableScrollPane) {
 		this.content = content;
 		Group contentGroup = new Group();
 		zoomGroup = new Group();
@@ -602,7 +724,64 @@ class ZoomableScrollPane extends ScrollPane {
 		scaleTransform = new Scale(scaleValue, scaleValue, 0, 0);
 		zoomGroup.getTransforms().add(scaleTransform);
 
-		zoomGroup.setOnScroll(new ZoomHandler());
+		if(isPreview) {
+			focusRectangle = getDraggableRectangle(mainZoomableScrollPane);
+			contentGroup.getChildren().add(focusRectangle);
+			zoomTo(0.1);
+		}else {
+			zoomGroup.setOnScroll(new ZoomHandler());
+		}
+	}
+
+	public Rectangle getDraggableRectangle(ZoomableScrollPane mainZoomableScrollPane) {
+		
+		 Rectangle rectangle = new Rectangle(50,50);
+		 //rectangle.setStroke(Color.BLACK);
+		 //rectangle.setFill(Color.TRANSPARENT);
+		 rectangle.setFill(new LinearGradient(0,0,0,1, true, CycleMethod.NO_CYCLE,
+		            new Stop[]{
+		            new Stop(0,Color.TRANSPARENT),
+		            new Stop(0.5, Color.LIGHTBLUE),
+		            new Stop(1,Color.TRANSPARENT),}));
+				rectangle.setStroke(Color.BLACK);
+				rectangle.setStrokeWidth(2);
+				rectangle.setArcHeight(2);
+				rectangle.setArcWidth(2);
+		
+		final double[] offset = new double[2];
+		
+		 // When the mouse is pressed, record the offset between the mouse position and the TitledPane position
+		rectangle.setOnMousePressed(event -> {
+            offset[0] = event.getSceneX() - rectangle.getLayoutX();
+            offset[1] = event.getSceneY() - rectangle.getLayoutY();
+        });
+        
+		rectangle.setOnMouseDragged(event -> { 
+
+			double newX = event.getSceneX() - offset[0];
+			double newY = event.getSceneY() - offset[1];
+
+            // Restrict movement within the bounds of the mainPane
+            if (newX >= 0 && ( newX + rectangle.getWidth()) <=  ((Pane) content).getMinWidth()/10 )  {
+            	rectangle.setLayoutX(newX);
+            }
+            if (newY >= 0 && ( newY + rectangle.getHeight()) <= ((Pane) content).getMinHeight()/10 ) {
+            	rectangle.setLayoutY(newY);
+            }
+            
+           System.out.println("Rectangle New X "+newX);
+           System.out.println("Rectangle New Y "+newY);
+            
+           // change the vValue hValue of the mainframe and its scrollPAne here     
+            mainZoomableScrollPane.setHvalue( (newX/200) );
+            mainZoomableScrollPane.setVvalue( (newY/200) );
+		});		
+		
+		return rectangle;
+	}
+		
+	public Rectangle getFocusRectangle() {
+		return focusRectangle;
 	}
 
 	public double getScaleValue() {
@@ -615,6 +794,8 @@ class ZoomableScrollPane extends ScrollPane {
 
 	public void zoomTo(double scaleValue) {
 
+		System.out.println("Scale Value is --> "+scaleValue);
+		
 		this.scaleValue = scaleValue;
 
 		scaleTransform.setX(scaleValue);

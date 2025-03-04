@@ -12,3 +12,60 @@
 {
     -fx-fill: WHITE;
 }
+
+#mytextarea {
+	/*
+	-fx-background-color: rgba(0, 60, 136, 0.5);
+    -fx-border-color:  GAINSBORO;
+    -fx-border-style: none;
+    -fx-font-family: 'Lucida Grande',Verdana,Geneva,Lucida,Arial,Helvetica,sans-serif;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    */
+    
+ /*    -fx-border-color: rgba(0, 60, 136, 0.5); */
+    -fx-background-color: GAINSBORO;
+    -fx-resize: none;
+    -fx-outline: none;
+   
+}
+
+#mytextarea .content {
+  /*  -fx-background-color: CADETBLUE; */
+      -fx-background-color: GAINSBORO; 
+}
+
+
+#mytextarea .scroll-pane
+{
+        -fx-hbar-policy : never; 
+        -fx-vbar-policy : never;
+}
+
+#keyAttributeTextArea {
+	
+    -fx-background-color: GAINSBORO;
+    -fx-resize: none;
+    -fx-outline: none;
+   
+}
+
+#keyAttributeTextArea .content { 
+	  -fx-background-color: GAINSBORO; 
+}
+#keyAttributeTextArea .content .text { 
+	-fx-underline: true; 
+	-fx-dotted-underline: true;
+}
+#keyAttributeTextArea .scroll-pane
+{
+        -fx-hbar-policy : never; 
+        -fx-vbar-policy : never;
+}
+
+#myPane {
+	/* -fx-background-color: rgba(0, 60, 136, 0.5);  */
+	 -fx-background-color: GAINSBORO;  
+}
+
+

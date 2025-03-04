@@ -384,7 +384,8 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	// Use style class to set properties previously set above (with some changes)      
 	        hbox.getStyleClass().add("hbox");
 	        
-	        connectToDatabseText = new Text("Select your database to connect");
+	        
+	        connectToDatabseText = new Text(menu_Items_FX.resourceBundle.getString("ConnectToDatabseText"));
 	        connectToDatabseText.setId("connectToDatabseText");
 	        //connectToDatabseText.setFont(Font.font("Verdana",20));
 	        //connectToDatabseText.setFill(Color.WHITE);
@@ -604,6 +605,10 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	        StackPane.setMargin(helpText, new Insets(0, 10, 0, 0));
 	        hb.getChildren().add(stackpane);
 	        HBox.setHgrow(stackpane, Priority.ALWAYS);
+	        
+	        stackpane.setOnMouseDragged(event ->{
+	        	stackpane.setLayoutX(stackpane.getLayoutX()+20);
+	        });
 	                
 	    }
 
@@ -913,7 +918,10 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 
 		ImageView imageDatbaseTablenode = ImageItemsHolder.getTableImage();
 		
-		TreeItem<String> mySQLTreeItem = new MySqlUI(menu_Items_FX,this).getmySqlTreeItem(connectionPlaceHolder,imageMySQLnode,imageDatbaseTablenode,databaseName);
+		MySqlUI mySqlUI = new MySqlUI(menu_Items_FX,this); 
+		menu_Items_FX.mySqlUIList.add(mySqlUI);
+		
+		TreeItem<String> mySQLTreeItem = mySqlUI.getmySqlTreeItem(connectionPlaceHolder,imageMySQLnode,imageDatbaseTablenode,databaseName);
 		menu_Items_FX.rootConnectionItem.getChildren().add(mySQLTreeItem);
 	}
 

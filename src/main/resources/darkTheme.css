@@ -158,7 +158,7 @@
  .menu .label {
     -fx-text-fill: #FFFFFF; /* Ensure submenu labels are styled */
 }
-
+  
 
 #vBoxleftTabPane {
 	-fx-background: #2B2B2B;

@@ -10,18 +10,23 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.ResourceBundle;
 
-import com.openfx.handlers.SettingTabEventHandler;
 import com.openfx.handlers.NewMenuItemEventHandler;
 import com.openfx.handlers.SearchToolEventHandler;
+import com.openfx.handlers.SettingTabEventHandler;
 import com.openfx.handlers.SqlQueryRunButtonSubmit;
 import com.openfx.placeholders.ConnectionFileRelationHolder;
 import com.openfx.placeholders.ConnectionPlaceHolder;
 import com.openfx.placeholders.ImageItemsHolder;
 import com.openfx.placeholders.SQLCellTextArea;
+import com.openfx.ui.MySqlUI;
 import com.sun.javafx.application.LauncherImpl;
 
 import javafx.application.Application;
@@ -30,7 +35,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -62,10 +66,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -101,6 +102,7 @@ public class Menu_Items_FX extends Application {
 	public String currentConnectionSelected;
 	public HashMap<ConnectionPlaceHolder,Connection> currentOpenConnectionsMap = new HashMap<ConnectionPlaceHolder, Connection>();
 	public HashMap<ConnectionPlaceHolder,Connection> mySqlConnectionsMap = new HashMap<ConnectionPlaceHolder, Connection>();
+	public List<MySqlUI> mySqlUIList = new ArrayList<MySqlUI>();
 	public HashMap<ConnectionPlaceHolder,Connection> postgreeSqlConnectionsMap = new HashMap<ConnectionPlaceHolder, Connection>();
 	public HashMap<ConnectionPlaceHolder,Connection> sqliteConnectionsMap = new HashMap<ConnectionPlaceHolder, Connection>();
 	public HashMap<ConnectionPlaceHolder,Connection> saphanarMap = new HashMap<ConnectionPlaceHolder, Connection>();
@@ -143,8 +145,20 @@ public class Menu_Items_FX extends Application {
 	
 	public String whiteThemeCss = Menu_Items_FX.class.getResource("/whiteTheme.css").toExternalForm();
 	public String darkThemeCss = Menu_Items_FX.class.getResource("/darkTheme.css").toExternalForm();
-	
 	public String selectedTheme = whiteThemeCss;
+	
+	public Locale locale ;
+	public ResourceBundle resourceBundle;
+	public Menu fileMenu;
+	public Menu editMenu;
+	public Menu databaseMenu ;
+	public Menu toolsMenu;
+	public Menu viewMenu;
+	public Menu helpMenu;
+	public Menu windowMenu;
+	public Button toolBarSearch;
+	
+	public Tab connectionExplorerTab;
 	
 	public MenuBar createMenuBar() {
 		
@@ -158,20 +172,20 @@ public class Menu_Items_FX extends Application {
 		
 		MenuBar menuBar = new MenuBar();
 		menuBar.setId("mainMenuBar");
-		Menu fileMenu = new Menu();
-		fileMenu.setText("File");
-		Menu editMenu = new Menu();
-		editMenu.setText("Edit");
-		Menu databaseMenu = new Menu();
-		databaseMenu.setText("Database");
-		Menu toolsMenu = new Menu();  // SQL Editer in eclipse/DBeaver
-		toolsMenu.setText("Tools");
-		Menu viewMenu = new Menu();  // Window in eclipse/DBeaver
-		viewMenu.setText("View");  
-		Menu helpMenu = new Menu();  // SQL Editer in eclipse/DBeaver
-		helpMenu.setText("Help"); 
-		Menu windowMenu = new Menu();  // SQL Editer in eclipse/DBeaver
-		windowMenu.setText("Window"); 
+		this.fileMenu = new Menu();
+		fileMenu.setText(this.resourceBundle.getString("File"));
+		editMenu = new Menu();
+		editMenu.setText(this.resourceBundle.getString("Edit"));
+		databaseMenu = new Menu();
+		databaseMenu.setText(this.resourceBundle.getString("Database"));
+		toolsMenu = new Menu();  // SQL Editer in eclipse/DBeaver
+		toolsMenu.setText(this.resourceBundle.getString("Tools"));
+		viewMenu = new Menu();  // Window in eclipse/DBeaver
+		viewMenu.setText(this.resourceBundle.getString("View"));  
+		helpMenu = new Menu();  // SQL Editer in eclipse/DBeaver
+		helpMenu.setText(this.resourceBundle.getString("Help")); 
+		windowMenu = new Menu();  // SQL Editer in eclipse/DBeaver
+		windowMenu.setText(this.resourceBundle.getString("Window")); 
 		
 		// File Menu subitems
 		MenuItem newMenuItem = new MenuItem          ("New										Ctrl+N");
@@ -248,24 +262,6 @@ public class Menu_Items_FX extends Application {
 		
 	}
     
-	
-//	private EventHandler<ActionEvent> settingFileMenuItem() {
-//	    return new EventHandler<ActionEvent>() {
-//	        @Override
-//	        public void handle(ActionEvent event) {
-//	            // Create a new instance of SettingTabEventHandler
-//	            SettingTabEventHandler settingTab = new SettingTabEventHandler();
-//
-//	            // Create a new Stage for the settings window
-//	            Stage settingsStage = new Stage();
-//
-//	            // Call the handle method of SettingTabEventHandler
-//	            settingTab.settingsStage = settingsStage; // Pass the stage to the handler
-//	            settingTab.handle(event); // Call the handler to display the settings UI
-//	        }
-//	    };
-//	}
-
 	private EventHandler<ActionEvent> newFileMenuItemAction() {
 		return new EventHandler<ActionEvent>() {
 			@Override
@@ -310,7 +306,10 @@ public class Menu_Items_FX extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 	
+		this.locale = new Locale.Builder().setLanguage("ar").build();
+		this.resourceBundle = ResourceBundle.getBundle("languages.LabelResource", locale);
 		
+		System.out.println("this.resourceBundle"+this.resourceBundle.getString("File"));
 		
 		this.primaryStage = primaryStage;
 		size = Toolkit.getDefaultToolkit().getScreenSize();
@@ -336,28 +335,14 @@ public class Menu_Items_FX extends Application {
 		//toolBarButton1.setGraphic(new ImageView(imageOk));
 		toolBar.getItems().add(connectDB);
 		toolBar.getItems().add(new Separator());
-		Button toolBarSearch = new Button("Search");
+		toolBarSearch = new Button(this.resourceBundle.getString("Search"));
 		toolBarSearch.setOnAction(new SearchToolEventHandler(this));
 		toolBar.getItems().add(toolBarSearch);
 		toolBar.getItems().add(new Separator());
-		toolBarRunButton = new Button("Run");
+		toolBarRunButton = new Button(this.resourceBundle.getString("Run"));
 		 
 		toolBarRunButton.setOnAction(new SqlQueryRunButtonSubmit(this));
-		toolBar.getItems().add(toolBarRunButton);
-//		
-//		Button toolTheme = new Button("Theme");
-//		toolTheme.setOnAction( new EventHandler<ActionEvent>() {
-//			
-//			@Override
-//			public void handle(ActionEvent event) {
-//				// TODO Auto-generated method stub
-//				scene.getStylesheets().add(darkThemeCss);
-//				sceneDataBaseConnection.getStylesheets().add(darkThemeCss);
-//				
-//			}
-//		});
-//		toolBar.getItems().add(toolTheme);
-		
+		toolBar.getItems().add(toolBarRunButton);		
 		
 		rootPane.getChildren().add(toolBar);
 
@@ -380,7 +365,7 @@ public class Menu_Items_FX extends Application {
 	    vBoxright.setId("vBoxright");
 	    TabPane vBoxleftTabPane = new TabPane();
 	    vBoxleftTabPane.setId("vBoxleftTabPane");
-	    Tab connectionExplorerTab = new Tab("Connection Explorer");
+	    connectionExplorerTab = new Tab( this.resourceBundle.getString("Connection_Explorer"));
 	    connectionExplorerTab.setId("connectionExplorerTab");
 	    
 	    Tab projectExplorerTab = new Tab("Project Explorer");
@@ -425,7 +410,9 @@ public class Menu_Items_FX extends Application {
 		scene = new Scene(rootPane);
 		scene.getStylesheets().add(selectedTheme);
 		
-		primaryStage.setTitle("Menu Item Application \u0627 \u0628 \u0629 \u062A \u062B \u062C \u062D ");  
+		
+		primaryStage.setTitle(this.resourceBundle.getString("applicationName"));  
+		
 		primaryStage.setScene(scene);
 		primaryStage.setMaximized(true);
 		primaryStage.show();
