@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Map.Entry;
 
 import org.openjfx.fx.Menu_Items_FX;
@@ -67,7 +68,11 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 	
 	private Menu_Items_FX menu_Items_FX;
 	public Button connectExistingConnection;
-	private Stage connectionStage;
+	public Stage connectionStage;
+	public Text newConnection;
+	public Text connectToDatabseText;
+
+	public ResourceBundle resourceBundle;
 	
 	public SqlQueryRunButtonSubmit(Menu_Items_FX menu_Items_FX) {
 		
@@ -111,7 +116,7 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 				scene.getStylesheets().add(menu_Items_FX.selectedTheme);
 				connectionStage.initModality(Modality.APPLICATION_MODAL);
 				connectionStage.initOwner(menu_Items_FX.primaryStage.getScene().getWindow());
-				connectionStage.setTitle("No DataBase Connection ");   
+				connectionStage.setTitle(menu_Items_FX.resourceBundle.getString("NoDataBaseConnection"));   
 				connectionStage.setScene(scene);
 				    
 				connectionStage.show();
@@ -346,7 +351,7 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 	// Use style class to set properties previously set above (with some changes)      
 	        hbox.getStyleClass().add("hbox");
 	        
-	        Text connectToDatabseText = new Text("Connect to a Database");
+	        connectToDatabseText = new Text(menu_Items_FX.resourceBundle.getString("ConnectToADatabase"));
 	        connectToDatabseText.setId("connectDatabaseLabel");
 //	        connectToDatabseText.setFont(Font.font("Verdana",20));
 //	        connectToDatabseText.setFill(Color.WHITE);
@@ -636,7 +641,7 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 		 HBox topControlHBox = new HBox();
 		 topControlHBox.setId("topControlHBox");
 		// topControlHBox.setPadding(new Insets(10,0,10,0));   // top  right bottom left
-	     Text connectToDatabseText = new Text("Existing Connections");
+	     connectToDatabseText = new Text(menu_Items_FX.resourceBundle.getString("ExistingConnections"));
 	     connectToDatabseText.setId("text");
 	     //connectToDatabseText.setFont(Font.font("Verdana",20));
 	    // connectToDatabseText.setFill(Color.BLACK);
@@ -646,7 +651,7 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 	     HBox topControlHBoxforButton = new HBox();
 	     topControlHBoxforButton.setId("topControlHBoxforButton");	   
 	     //topControlHBoxforButton.setPadding(new Insets(10,10,10,0));   // top  right bottom left
-	     connectExistingConnection = new Button("Connect");
+	     connectExistingConnection = new Button(menu_Items_FX.resourceBundle.getString("Connect"));
 	     connectExistingConnection.setId("buttons");
 	     connectExistingConnection.setDisable(true);
 	     connectExistingConnection.setOnAction(new EventHandler<ActionEvent>() {
@@ -772,7 +777,7 @@ public class SqlQueryRunButtonSubmit  implements EventHandler<ActionEvent>{
 	     HBox bottomControl = new HBox();
 	    // bottomControl.setId("hbox");
 	     bottomControl.setPadding(new Insets(10,0,0,0));   // top  right bottom left
-	     Text newConnection = new Text("New Database");
+	     newConnection = new Text(menu_Items_FX.resourceBundle.getString("NewDatabase"));
 	      newConnection.setId("text");
 	    // newConnection.setFont(Font.font("Verdana",20));
 	    // newConnection.setFill(Color.BLACK);

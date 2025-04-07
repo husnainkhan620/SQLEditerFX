@@ -83,6 +83,8 @@ public class Menu_Items_FX extends Application {
 	public NewMenuItemEventHandler newMenuItemEventHandler;
 	public SettingTabEventHandler settingTabEventHandler;
 	public SqlQueryRunButtonSubmit sqlQueryRunButtonSubmit;
+	public SearchToolEventHandler searchToolEventHandler;
+	public MySqlUI mysqlui;
 	public Stage primaryStage;
 	
 	public Scene scene;
@@ -103,6 +105,7 @@ public class Menu_Items_FX extends Application {
 	public HashMap<ConnectionPlaceHolder,Connection> currentOpenConnectionsMap = new HashMap<ConnectionPlaceHolder, Connection>();
 	public HashMap<ConnectionPlaceHolder,Connection> mySqlConnectionsMap = new HashMap<ConnectionPlaceHolder, Connection>();
 	public List<MySqlUI> mySqlUIList = new ArrayList<MySqlUI>();
+	public List<SettingTabEventHandler> settingTabEventHandlerList = new ArrayList<SettingTabEventHandler>();
 	public HashMap<ConnectionPlaceHolder,Connection> postgreeSqlConnectionsMap = new HashMap<ConnectionPlaceHolder, Connection>();
 	public HashMap<ConnectionPlaceHolder,Connection> sqliteConnectionsMap = new HashMap<ConnectionPlaceHolder, Connection>();
 	public HashMap<ConnectionPlaceHolder,Connection> saphanarMap = new HashMap<ConnectionPlaceHolder, Connection>();
@@ -157,6 +160,22 @@ public class Menu_Items_FX extends Application {
 	public Menu helpMenu;
 	public Menu windowMenu;
 	public Button toolBarSearch;
+	public MenuItem newMenuItem;
+	public MenuItem openMenuItem;
+	public MenuItem saveFileMenuItem;
+	public MenuItem saveAsFileMenuItem;
+	public MenuItem renameFileMenuItem;
+	public MenuItem settingFileMenuItem;
+	public MenuItem closeFileMenuItem;
+	public MenuItem closeAllFileMenuItem;
+	public MenuItem recentFilesFileMenuItem; 
+	public MenuItem exitAppFileMenuItem;
+	public MenuItem printFileMenuItem;
+	public MenuItem newDatabseConnectionItem;
+	public MenuItem connectToDatabaseConnectionItem;
+	public MenuItem disconnectFromDatabaseConnectionItem;
+	public MenuItem exitDatabaseConnectionItem;
+	
 	
 	public Tab connectionExplorerTab;
 	
@@ -188,20 +207,21 @@ public class Menu_Items_FX extends Application {
 		windowMenu.setText(this.resourceBundle.getString("Window")); 
 		
 		// File Menu subitems
-		MenuItem newMenuItem = new MenuItem          ("New										Ctrl+N");
-		MenuItem openMenuItem = new MenuItem         ("Open									Ctrl+O");
-		MenuItem saveFileMenuItem = new MenuItem     ("Save   									Ctrl+S");
-		MenuItem saveAsFileMenuItem = new MenuItem   ("Save As							   	 Ctrl+Alt+S");
-		MenuItem renameFileMenuItem = new MenuItem   ("Rename									Ctrl+R");
-		MenuItem settingFileMenuItem = new MenuItem   ("Settings						          ");
+		//MenuItem newMenuItem = new MenuItem          ("New										Ctrl+N");
+		newMenuItem = new MenuItem                   (this.resourceBundle.getString("New"));
+		openMenuItem = new MenuItem         (this.resourceBundle.getString("Open"));
+		saveFileMenuItem = new MenuItem    (this.resourceBundle.getString("Save"));
+		saveAsFileMenuItem = new MenuItem   (this.resourceBundle.getString("SaveAs"));
+		renameFileMenuItem = new MenuItem   (this.resourceBundle.getString("Rename"));
+		settingFileMenuItem = new MenuItem   (this.resourceBundle.getString("Settings"));
 		fileMenu.getItems().add(newMenuItem);
 		fileMenu.getItems().add(openMenuItem);
 		fileMenu.getItems().add(saveFileMenuItem);
 		fileMenu.getItems().add(saveAsFileMenuItem);
 		fileMenu.getItems().add(renameFileMenuItem);
 		fileMenu.getItems().add(settingFileMenuItem);
-		MenuItem closeFileMenuItem = new MenuItem    ("Close								       Ctrl+W");
-		MenuItem closeAllFileMenuItem = new MenuItem ("Close All 							      Ctrl+Shft+W");
+		closeFileMenuItem = new MenuItem    (this.resourceBundle.getString("Close"));
+		closeAllFileMenuItem = new MenuItem (this.resourceBundle.getString("CloseAll"));
 		SeparatorMenuItem fileSep1 = new SeparatorMenuItem();
 		fileMenu.getItems().add(fileSep1);
 		fileMenu.getItems().add(closeFileMenuItem);
@@ -209,17 +229,17 @@ public class Menu_Items_FX extends Application {
 		closeFileMenuItem.setOnAction(closeFileMenuItemEventHandler());
 		closeAllFileMenuItem.setOnAction(closeAllFileMenuItemEventHandler());
 		
-		MenuItem printFileMenuItem = new MenuItem    ("Print										Ctrl+P");
+		printFileMenuItem = new MenuItem    (this.resourceBundle.getString("Print"));
 		SeparatorMenuItem fileSep2 = new SeparatorMenuItem();
 		fileMenu.getItems().add(fileSep2);
 		fileMenu.getItems().add(printFileMenuItem);
-		MenuItem recentFilesFileMenuItem = new MenuItem ("Recent 							      ");
+		recentFilesFileMenuItem = new MenuItem (this.resourceBundle.getString("Recent"));
 		SeparatorMenuItem fileSep3 = new SeparatorMenuItem();
 		fileMenu.getItems().add(fileSep3);
 		fileMenu.getItems().add(recentFilesFileMenuItem);
 		SeparatorMenuItem fileSep4 = new SeparatorMenuItem();
 		fileMenu.getItems().add(fileSep4);
-		MenuItem exitAppFileMenuItem = new MenuItem ("Exit										Alt+F4");
+		exitAppFileMenuItem = new MenuItem (this.resourceBundle.getString("Exit"));
 		fileMenu.getItems().add(exitAppFileMenuItem);
 
 		
@@ -231,11 +251,10 @@ public class Menu_Items_FX extends Application {
 		settingFileMenuItem.setOnAction(new SettingTabEventHandler(this));
 		
 		//Database Menu subitems
-		MenuItem newDatabseConnectionItem = new MenuItem("New Database Connection                  CTR+X");
-		
-		MenuItem connectToDatabaseConnectionItem = new MenuItem("Connect to a Database");
-		MenuItem disconnectFromDatabaseConnectionItem = new MenuItem("Disconnect from a Database");
-		MenuItem exitDatabaseConnectionItem = new MenuItem("Exit");
+		newDatabseConnectionItem = new MenuItem(this.resourceBundle.getString("NewDatabaseConnection"));		
+		connectToDatabaseConnectionItem = new MenuItem(this.resourceBundle.getString("ConnectToADatabase"));
+		disconnectFromDatabaseConnectionItem = new MenuItem(this.resourceBundle.getString("DisconnectFromADatabase"));
+		exitDatabaseConnectionItem = new MenuItem(this.resourceBundle.getString("ExitDatabase"));
 		databaseMenu.getItems().add(newDatabseConnectionItem);
 		databaseMenu.getItems().add(connectToDatabaseConnectionItem);
 		databaseMenu.getItems().add(disconnectFromDatabaseConnectionItem);
@@ -495,6 +514,7 @@ public class Menu_Items_FX extends Application {
 
 	double oldYposition = 0;
 	double newYposition = 0;
+	
 	private void createSQLEditer(TreeItem<String> connectionTreeItem,File selectedFile) {
 		
 		System.out.println("creating new Editer");
@@ -681,10 +701,10 @@ public class Menu_Items_FX extends Application {
         sqlEditerResultTabPane.setPrefWidth(size.getWidth()-320);  
         //sqlEditerResultTabPane.setMinHeight(100);  // This will not let the results tab go down further with atleat 100px left
         
-        sqlEditerResultTab = new Tab("Result "+sqlEditerCount);
+        sqlEditerResultTab = new Tab((this.resourceBundle.getString("Result")) + " "+sqlEditerCount);
         sqlEditerResultTab.setId("allResultTabPane");
         
-        sqlEditerConsoleTab = new Tab("Console "+sqlEditerCount);
+        sqlEditerConsoleTab = new Tab((this.resourceBundle.getString("Console")) + " "+sqlEditerCount);
         sqlEditerConsoleTab.setId("allResultTabPane");
         
         sqlEditerResultTabPane.getTabs().add(sqlEditerResultTab);

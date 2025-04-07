@@ -74,6 +74,10 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	public Scene sceneDataBaseConnection;
 	public TabPane connectionDetailsTabs;
 	public Tab connectionDetailsTab;
+	public Tab driverPropertiesTab;
+	public Tab proxyDetailsTab;
+	public Tab sshDetailsTab;
+	public Tab sslDetailsTab;
 	public Text connectToDatabseText;
 	public TextField jdbcConnectionName;
 	public TextField jdbcConnectionPort;
@@ -86,6 +90,7 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	public Button buttonNext;
 	public Button buttonFinish;
 	public Button buttonCancel;
+	public Label connectToLabel;
 	
 	public ArrayList<Rectangle> avaialbleHighRectangleConnections = new ArrayList<Rectangle>();  
 	private HighLightRectangleHolder highLightRectangleHolder = new HighLightRectangleHolder(avaialbleHighRectangleConnections);
@@ -183,7 +188,7 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		});
 		
 		
-		Label connectToLabel = new Label("Connect to Database");
+	    connectToLabel = new Label(menu_Items_FX.resourceBundle.getString("ConnecttoDatabase"));
 		connectToLabel.setId("connectionlabel");
 		//connectToLabel.setPadding(new Insets(0, 0, 2, 2));
 		borderPaneProperties.setLeft(connectToLabel);
@@ -404,25 +409,25 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	// Use style class to set properties previously set above (with some changes)      
 		    borderPane.getStyleClass().add("hbox");
 	        
-	        buttonTestConnection = new Button("Test Connection");
+	        buttonTestConnection = new Button(menu_Items_FX.resourceBundle.getString("TestConnection"));
 	       // buttonTestConnection.setPrefSize(100, 20);
 	        buttonTestConnection.setDisable(true);
 	        buttonTestConnection.setId("buttons");
 	        buttonTestConnection.setOnMousePressed(onbuttonTestConnectionMousePressed());
 	        
-	        buttonBack = new Button("< Back");
+	        buttonBack = new Button(menu_Items_FX.resourceBundle.getString("<Back"));
 	        buttonBack.setId("buttons");
 	       // buttonBack.setPrefSize(100, 20);
 	        buttonBack.setDisable(true);
-	        buttonNext = new Button(" Next >");
+	        buttonNext = new Button(menu_Items_FX.resourceBundle.getString("Next>"));
 	        buttonNext.setId("buttons");
 	       // buttonNext.setPrefSize(100, 20);
 	        buttonNext.setDisable(true);
-	        buttonFinish = new Button("Finish");
+	        buttonFinish = new Button(menu_Items_FX.resourceBundle.getString("Finish"));
 	        buttonFinish.setId("buttons");
 	        //buttonFinish.setPrefSize(100, 20);
 	        buttonFinish.setDisable(true);
-	        buttonCancel = new Button("Cancel");
+	        buttonCancel = new Button(menu_Items_FX.resourceBundle.getString("Cancel"));
 	        buttonCancel.setId("buttons");
 	        //buttonCancel.setPrefSize(100, 20);
 	        
@@ -438,7 +443,7 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
                 @Override
 	        	public void handle(ActionEvent event) {
 					
-					connectToDatabseText.setText(menu_Items_FX.currentConnectionSelected + " connection settings");
+					connectToDatabseText.setText(menu_Items_FX.currentConnectionSelected + " "+ menu_Items_FX.resourceBundle.getString("connectionsettings"));
 					menu_Items_FX.borderSelectDatabase.setCenter(addConnectionDetails());
 					
 					System.out.println("Selected Connection is "+menu_Items_FX.currentConnectionSelected);
@@ -452,7 +457,8 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	        buttonBack.setOnAction(new EventHandler<ActionEvent>() {
 	        	@Override
 				public void handle(ActionEvent event) {			
-					connectToDatabseText.setText("Select your database to connect ");
+					connectToDatabseText.setText(menu_Items_FX.resourceBundle.getString("ConnectToDatabseText"));
+	                //connectToDatabseText.setText("Select your database to connect ");
 					menu_Items_FX.currentConnectionSelected = "";
 					menu_Items_FX.borderSelectDatabase.setCenter(menu_Items_FX.selectDatabaseConnectionsflow);
 					buttonNext.setDisable(true);
@@ -713,25 +719,25 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		 // connectionDetailsTabs.setId("connectionDetailsTabs");
 		  connectionDetailsTabs.getStyleClass().add("connectionDetailsTabs");
 		  connectionDetailsTabs.getStyleClass().addAll("databasesflowPane,connectionDetailsTabs");  // box for the connection tabbed pane
-		  connectionDetailsTab = new Tab("Connection");
+		  connectionDetailsTab = new Tab(menu_Items_FX.resourceBundle.getString("Connection"));
 		  connectionDetailsTab.setId("connectionDetailsTab");
 		  connectionDetailsTab.setClosable(false);
 		  
 		  connectionDetailsTab.setContent(addConnectionCredentials()); // will set fields to connectionDetailsTab
 	  
-		  Tab driverPropertiesTab = new Tab("Driver Properties");
+		  driverPropertiesTab = new Tab(menu_Items_FX.resourceBundle.getString("DriverProperties"));
 		  driverPropertiesTab.setClosable(false);	
 		  driverPropertiesTab.setId("driverPropertiesTab");
 		  
-		  Tab sshDetailsTab = new Tab("SSH");
+		  sshDetailsTab = new Tab(menu_Items_FX.resourceBundle.getString("SSH"));
 		  sshDetailsTab.setClosable(false);
 		  sshDetailsTab.setId("sshDetailsTab");
 		  
-		  Tab proxyDetailsTab = new Tab("Proxy");
+		  proxyDetailsTab = new Tab(menu_Items_FX.resourceBundle.getString("Proxy"));
 		  proxyDetailsTab.setClosable(false);
 		  proxyDetailsTab.setId("proxyDetailsTab");
 		  
-		  Tab sslDetailsTab = new Tab("SSL");
+		  sslDetailsTab = new Tab(menu_Items_FX.resourceBundle.getString("SSL"));
 		  sslDetailsTab.setClosable(false);
 		  sslDetailsTab.setId("sslDetailsTab");
 		  
