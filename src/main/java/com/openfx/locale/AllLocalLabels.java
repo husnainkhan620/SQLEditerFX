@@ -342,5 +342,11 @@ public class AllLocalLabels {
 //		 * menu_Items_FX.mysqlui.updatePrivilegeCheckBox.setText(menu_Items_FX.
 //		 * resourceBundle.getString("UPDATE"));
 //		 */
+
+		menu_Items_FX.mysqlui.mySqlTreeItemDatabases.setValue((menu_Items_FX.resourceBundle.getString("Databases")));
+		menu_Items_FX.mysqlui.mySqlTreeItemAdminister.setValue((menu_Items_FX.resourceBundle.getString("Administer")));
+		menu_Items_FX.mysqlui.mySqlTreeItemSystemInfo.setValue((menu_Items_FX.resourceBundle.getString("SystemInfo")));
+		menu_Items_FX.mysqlui.mySqlTreeItemAdministration.setValue((menu_Items_FX.resourceBundle.getString("Administration")));
+		
 	}
 }

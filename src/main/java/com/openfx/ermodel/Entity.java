@@ -13,14 +13,14 @@ import javafx.scene.text.FontPosture;
 public class Entity  extends ERModel {
 
 	
-	private Rectangle newRectangle;
-	private TextArea textAreaRecatangle;
+	public Rectangle newRectangle;
+	public TextArea textAreaRecatangle;
   
     
     double orgSceneX, orgSceneY;//Used to help keep up with change in mouse position
 
     
-	public Entity(double width,double height,double layoutX,double layoutY,Pane mainPane) {
+	public Entity(double width,double height,double layoutX,double layoutY,String tableName,Pane mainPane) {
 		
 		leftAnchor = new Circle(layoutX, layoutY+height/2, 5);
 		 
@@ -40,23 +40,23 @@ public class Entity  extends ERModel {
 		stackPaneRectangle.setLayoutY(layoutY);
 		//stackPaneRectangle.setBorder(new Border(new BorderStroke(Color.GAINSBORO, BorderStrokeStyle.DASHED, null, null))); 
 		
-		resizeRectangle = new Rectangle(width+4,height+4);
+		resizeRectangle = new Rectangle(width,height);
 		resizeRectangle.setStrokeWidth(1);
 		resizeRectangle.setLayoutX(layoutX);
 		resizeRectangle.setLayoutY(layoutY);
-		resizeRectangle.setStroke(Color.GAINSBORO);
-		resizeRectangle.setFill(Color.GAINSBORO);
+		resizeRectangle.setStroke(Color.TRANSPARENT);
+		resizeRectangle.setFill(Color.TRANSPARENT);
 		resizeRectangle.getStrokeDashArray().add(2d);
 		
 		newRectangle = new Rectangle(width,height);
 		newRectangle.setStrokeWidth(2);
 		stackPaneRectangle.setBorder(null); 
 		newRectangle.setStroke(Color.BLACK);
-		newRectangle.setFill(Color.GAINSBORO);
+		newRectangle.setFill(Color.SKYBLUE);  // change this  and textArea id themcss
 		textAreaRecatangle = new TextArea();
-		textAreaRecatangle.setText("Enity");
+		textAreaRecatangle.setText(tableName);
 		textAreaRecatangle.setMaxSize(newRectangle.getWidth() - 0.15*newRectangle.getWidth(), newRectangle.getHeight() - 0.15*newRectangle.getHeight());
-		textAreaRecatangle.setId("mytextarea");
+		textAreaRecatangle.setId("mytextarea");    // change this in Themecss as per newEllipseFille in line 55
 		textAreaRecatangle.setFont(Font.font("System Regular",FontPosture.REGULAR, 16));
 		textAreaRecatangle.setWrapText(true);
 		stackPaneRectangle.getChildren().addAll(resizeRectangle,newRectangle,textAreaRecatangle);
@@ -66,7 +66,7 @@ public class Entity  extends ERModel {
 		enableDragAndDrop(this,mainPane);
 		
 		stackPaneRectangle.setOnMouseClicked(event ->{
-			System.out.println("Mouse Clicked this StackPane");
+			System.out.println("Mouse Clicked Entity StackPane");
 			//	stackPaneRectangle.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.DASHED, null, null))); 
 			resizeRectangle.setStroke(Color.BLACK);
 			
@@ -117,6 +117,7 @@ public class Entity  extends ERModel {
 				bottomRightAnchor.setStroke(Color.BLACK);
 				mainPane.getChildren().add(bottomRightAnchor);
 			}
+			
 		});
 		
 		stackPaneRectangle.setOnMouseEntered(event ->{
@@ -129,7 +130,7 @@ public class Entity  extends ERModel {
 		});
 		
 		 
-		   leftAnchor.setOnMouseEntered((event) -> {
+		leftAnchor.setOnMouseEntered((event) -> {
 	            ((Circle) event.getSource()).getScene().setCursor(Cursor.E_RESIZE);
 	        });
 	        leftAnchor.setOnMousePressed((event) -> {
@@ -462,13 +463,11 @@ public class Entity  extends ERModel {
 	        bottomRightAnchor.setOnMouseExited((event) -> {
 	        	bottomRightAnchor.getScene().setCursor(null);
 	        });
-	        
-		
 	}
 	
 	private void enableDragAndDrop(ERModel erModel,Pane mainPane) {
 	
-
+		/*
 		 final double[] offset = new double[2];
 		 stackPaneRectangle.setOnMousePressed(event -> {
 		        	
@@ -521,9 +520,7 @@ public class Entity  extends ERModel {
 					erModel.bottomRightAnchor.setCenterY(erModel.stackPaneRectangle.getLayoutY() + erModel.stackPaneRectangle.getHeight());
 				
 				}
-			
-	    		
-	        });
+	        });  */ 
 	}
 			
 	public StackPane getStackPaneRectangle() {

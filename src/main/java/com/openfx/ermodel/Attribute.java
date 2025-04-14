@@ -1,5 +1,7 @@
 package com.openfx.ermodel;
 
+import java.util.Stack;
+
 import javafx.scene.Cursor;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.Border;
@@ -15,15 +17,16 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 
-public class Attribute extends ERModel {
+public class Attribute extends ERModel implements Cloneable{
 	
 	private Ellipse newEllipse;
 	private TextArea textAreaEllipse;
-	private Line connectionLine;
-	
+	public Line connectionLine;
+	public Circle connectionLineCircle;
 	double orgSceneX, orgSceneY;//Used to help keep up with change in mouse position
 	
-	public Attribute(String name,double radiusX,double radiusY,double layoutX,double layoutY,Pane mainPane) {
+	public Attribute(String name,double radiusX,double radiusY,double layoutX,double layoutY,Pane mainPane,Stack<Runnable> undoStack) {
+		
 		
 		leftAnchor = new Circle(layoutX, layoutY+radiusY, 5);
 		 
@@ -38,6 +41,7 @@ public class Attribute extends ERModel {
 	    bottomRightAnchor = new Circle(layoutX+radiusX*2,layoutY+radiusY*2,5);
 	    
 	    connectionLine = new Line();
+	    connectionLineCircle =  new Circle(5);
 	    
 		stackPaneRectangle = new StackPane();
 		stackPaneRectangle.setLayoutX(layoutX);
@@ -48,14 +52,14 @@ public class Attribute extends ERModel {
 		resizeRectangle.setStrokeWidth(1);
 		resizeRectangle.setLayoutX(layoutX);
 		resizeRectangle.setLayoutY(layoutY);
-		resizeRectangle.setStroke(Color.GAINSBORO);
-		resizeRectangle.setFill(Color.TRANSPARENT);
+		resizeRectangle.setStroke(Color.TRANSPARENT);  
+		resizeRectangle.setFill(Color.TRANSPARENT);  
 		resizeRectangle.getStrokeDashArray().add(2d);
 		
 		newEllipse = new Ellipse(radiusX,radiusY);
 		newEllipse.setStrokeWidth(2);
 		newEllipse.setStroke(Color.BLACK);
-		newEllipse.setFill(Color.GAINSBORO);
+		newEllipse.setFill(Color.SKYBLUE);  // change this  and textArea id themcss
 		textAreaEllipse = new TextArea();
 		if(name != null) {
 			textAreaEllipse.setText(name);
@@ -64,16 +68,14 @@ public class Attribute extends ERModel {
 			textAreaEllipse.setText(" No Name");
 		textAreaEllipse.setFont(Font.font("System Regular",FontPosture.REGULAR, 14));
 		textAreaEllipse.setMaxSize(newEllipse.getRadiusX() + 0.15*newEllipse.getRadiusX(), newEllipse.getRadiusY() + 0.15*newEllipse.getRadiusY());
-		textAreaEllipse.setId("mytextarea");
+		textAreaEllipse.setId("mytextarea");  // change this in Themecss as per newEllipseFille in line 62
 		textAreaEllipse.setWrapText(true);
 		stackPaneRectangle.getChildren().addAll(resizeRectangle,newEllipse,textAreaEllipse);
 		
-		mainPane.getChildren().add(connectionLine);
+		mainPane.getChildren().add(connectionLine);  
 		mainPane.getChildren().add(stackPaneRectangle);
 		
-		
-		enableDragAndDrop(this,mainPane);
-		
+		enableDragAndDrop(this,mainPane,undoStack);
 		stackPaneRectangle.setOnMouseClicked(event ->{
 			System.out.println("Mouse Clicked this StackPane");
 			//	stackPaneRectangle.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.DASHED, null, null))); 
@@ -126,6 +128,8 @@ public class Attribute extends ERModel {
 				bottomRightAnchor.setStroke(Color.BLACK);
 				mainPane.getChildren().add(bottomRightAnchor);
 			}
+			
+		
 		});
 		
 		stackPaneRectangle.setOnMouseEntered(event ->{
@@ -500,8 +504,7 @@ public class Attribute extends ERModel {
 	        
 	}
 
-	private void enableDragAndDrop(ERModel erModel,Pane mainPane) {
-		
+	private void enableDragAndDrop(ERModel erModel,Pane mainPane,Stack<Runnable> undoStack) {
 
 		 final double[] offset = new double[2];
 		 stackPaneRectangle.setOnMousePressed(event -> {
@@ -509,6 +512,15 @@ public class Attribute extends ERModel {
 	        	 offset[0] = event.getSceneX() - stackPaneRectangle.getLayoutX();
 	             offset[1] = event.getSceneY() - stackPaneRectangle.getLayoutY() ;
 	          
+	         	// Store original position for undo
+	             double originalX = stackPaneRectangle.getLayoutX();
+	             double originalY = stackPaneRectangle.getLayoutY();
+	             
+	             undoStack.push(() -> {
+	                 stackPaneRectangle.setLayoutX(originalX);
+	                 stackPaneRectangle.setLayoutY(originalY);
+	               
+	             });
 	        });
 	        
 	        // When dragging, update the TitledPane position
@@ -578,4 +590,9 @@ public class Attribute extends ERModel {
 		return connectionLine;
 	}
 
+	 @Override
+	 public Object clone() throws CloneNotSupportedException {
+	      // TODO: copy mutable state here, so the clone can't change the internals of the original
+	      return super.clone();
+	 }
 }

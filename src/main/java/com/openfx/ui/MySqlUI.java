@@ -1,5 +1,6 @@
 package com.openfx.ui;
 
+import java.awt.FlowLayout;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -9,13 +10,21 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Stack;
 import java.util.Map.Entry;
 
 import org.openjfx.fx.Menu_Items_FX;
 
 import com.openfx.constants.MySQLConstants;
+import com.openfx.erdiagram.ERModelApplication;
+import com.openfx.ermodel.Attribute;
+import com.openfx.ermodel.ERModel;
+import com.openfx.ermodel.Entity;
+import com.openfx.ermodel.KeyAttribute;
+import com.openfx.ermodel.TableERModel;
 import com.openfx.handlers.NewMenuItemEventHandler;
 import com.openfx.placeholders.ConnectionPlaceHolder;
 import com.openfx.placeholders.ImageItemsHolder;
@@ -29,11 +38,13 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
@@ -76,16 +87,36 @@ import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.MapValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Border;import javafx.scene.layout.BorderImage;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -195,9 +226,15 @@ public class MySqlUI {
 	
  	DecimalFormat decimalFormat = new DecimalFormat("#.##");
  	
- 	public Button performanceCopyQuery; 
-	//public Button performanceCopyQuery = new Button("Copy Query");
-    public Clipboard clipboard = Clipboard.getSystemClipboard();
+
+	public Button performanceCopyQuery = new Button("Copy Query");
+	public boolean shapePressed =false;
+	public boolean shapeDragged = false;
+	public boolean shapeReleased = false;
+	public boolean mouseEnteredMainPaneWithDraggedItem = false;
+	public StackPane selectedModelStackPane ;
+	
+	public Clipboard clipboard = Clipboard.getSystemClipboard();
     public ClipboardContent clipBoardcontent = new ClipboardContent();
 	 
 	public String actionTypes[] = {"BINARY LOGS","Server Logs","CHARACTER SET","COLLATION","ENGINES","ERRORS","EVENTS","OPEN TABLES","PLUGINS","PRIVILEGES","PROCESS LIST","PROFILES","REPLICAS","WARNINGS"};
@@ -268,8 +305,6 @@ public class MySqlUI {
 	 public Button addAccountButton;
 	 public Button deletetButton;
 
-	 
-	 
 	 
 	public MySqlUI(Menu_Items_FX menu_Items_FX,NewMenuItemEventHandler newMenuItemEventHandler) {
 		this.menu_Items_FX = menu_Items_FX;
@@ -3638,6 +3673,8 @@ public class MySqlUI {
 			}
 		return particularTabletriggersTab;
 	}
+	
+	
 
 	private Tab getParticularTableReferencesTab(String tableName,String databaseName,Tab particularTablereferencesTab) {
 
@@ -7042,6 +7079,7 @@ public class MySqlUI {
 	   databaseERDiagram = new Tab(menu_Items_FX.resourceBundle.getString("ERDiagram"));
 	   databaseERDiagram.getStyleClass().add("Tabs");
 	   databaseERDiagram.setClosable(false);
+
 	   databaseGrahicsStats = new Tab(menu_Items_FX.resourceBundle.getString("GraphicsStats"));
 	   databaseGrahicsStats.getStyleClass().add("Tabs");
 	   databaseGrahicsStats.setClosable(false);
@@ -7059,7 +7097,13 @@ public class MySqlUI {
 			if(newValue.getText().equals(menu_Items_FX.resourceBundle.getString("GraphicsStats"))) {
 			//	getSchemaGraphicsStats(loadedDatabaseName,databaseGrahicsStats);
 			}
+			if(newValue.getText().equals("ER Diagram")) {
+				  System.out.println("ER Diagram Selected");
+				  getSchemaERModel(loadedDatabaseName,databaseERDiagram);
+				
+			}
 		}
+
 	   });
 	   
 	   databaseTabPane.getTabs().addAll(databaseDetails,databaseERDiagram,databaseGrahicsStats,databaseAIPrompt);
@@ -7067,6 +7111,481 @@ public class MySqlUI {
        return mainDatabaseTab;
 	}
 
+	Stack<Runnable> undoStack;
+	private void getSchemaERModel(TreeItem<String> loadedDatabaseName, Tab databaseERDiagram) {
+		
+		undoStack = new Stack<>();
+		
+		menu_Items_FX.vBoxleftTabPane.getTabs().add(menu_Items_FX.erDiagramExplorerTab);  		
+		menu_Items_FX.vBoxleftTabPane.getSelectionModel().select(menu_Items_FX.erDiagramExplorerTab);
+		
+		ERModelApplication erModelApplication = new ERModelApplication();
+		StackPane erModelstackPane = erModelApplication.drawERModel(loadedDatabaseName, currentConnection,undoStack);
+		
+		
+		menu_Items_FX.erDiagramExplorerTab.setContent(createBirdsEyeView(erModelApplication,erModelstackPane,undoStack));
+		
+		databaseERDiagram.setContent(erModelstackPane);
+		
+	}
+	
+	Rectangle viewportRect ;
+	ScrollPane scrollPane;
+    private VBox createBirdsEyeView(ERModelApplication erModelApplication,StackPane stackPane,Stack<Runnable> undoStack ) {
+        // Create a scaled snapshot of the main content
+    	
+    	Pane mainPane = erModelApplication.mainPane;
+    	mainPane.setOnDragOver(e -> e.acceptTransferModes(javafx.scene.input.TransferMode.ANY));
+    	
+    	System.out.println(" --->" + mainPane.getBoundsInParent().getWidth());
+    	 WritableImage writableImage = new WritableImage((int)erModelApplication.CANVAS_WIDTH,(int)
+    			 erModelApplication.CANVAS_HEIGHT);
+        
+    	 mainPane.snapshot(null, writableImage);
+        
+        ImageView overviewImage = new ImageView(writableImage);
+        overviewImage.setFitWidth(290);
+        overviewImage.setFitHeight(220);
+        
+        // Create a viewport rectangle to show the visible area
+        viewportRect = new Rectangle(29,22);
+        viewportRect.setFill(Color.TRANSPARENT);
+        viewportRect.setStroke(Color.RED);
+        viewportRect.setStrokeWidth(2);
+        
+		
+		final double[] offset = new double[2];
+		
+		 // When the mouse is pressed, record the offset between the mouse position and the TitledPane position
+		
+		
+		viewportRect.setOnMouseEntered(event ->{
+			viewportRect.setCursor(Cursor.MOVE);
+			
+		});
+		viewportRect.setOnMouseExited(event ->{
+			viewportRect.setCursor(Cursor.DEFAULT);
+			
+		});
+		
+		viewportRect.setOnMousePressed(event -> {
+           offset[0] = event.getSceneX() - viewportRect.getLayoutX();
+           offset[1] = event.getSceneY() - viewportRect.getLayoutY();
+       });
+       
+		viewportRect.setOnMouseDragged(event -> { 
+
+			mainPane.setScaleX(1);
+	        mainPane.setScaleY(1);
+	            
+			double newX = event.getSceneX() - offset[0];
+			double newY = event.getSceneY() - offset[1];
+
+           // Restrict movement within the bounds of the mainPane
+           if (newX >= 0 && ( newX + viewportRect.getWidth()) <= 290  )  {
+        	   viewportRect.setLayoutX(newX);
+           }
+           if (newY >= 0 && ( newY + viewportRect.getHeight()) <= 220 ) {
+        	   viewportRect.setLayoutY(newY);
+           }
+           
+           System.out.println("Rectangle New X "+newX);
+           System.out.println("Rectangle New Y "+newY);
+           
+           scrollPane =  (ScrollPane)stackPane.getChildren().get(0);
+           scrollPane.setHvalue((newX )/ 290);
+           scrollPane.setVvalue((newY)/ 220);
+           
+           
+        });
+		scrollPane =  (ScrollPane)stackPane.getChildren().get(0);
+		Group group = new Group();
+		group.getChildren().addAll(overviewImage,viewportRect);
+		
+		
+		VBox vBox = new VBox();
+        vBox.getChildren().add(group);
+        
+       FlowPane flowPane = new FlowPane(10,10);
+       
+      StackPane attributeStackPane = new StackPane();
+      Ellipse attribute = new Ellipse(40,20);
+      attribute.setStrokeWidth(1);
+      attribute.setStroke(Color.BLACK);
+      attribute.setFill(Color.WHITE);
+      attributeStackPane.getChildren().addAll(attribute,new Text("Attribute"));
+      attributeStackPane.setId("Attribute StackPane");
+      flowPane.getChildren().add(attributeStackPane);
+      enableShapeDragAndDrop(attributeStackPane,mainPane,erModelApplication); 	
+      
+      StackPane keyAttributeStackPane = new StackPane();
+      Ellipse keyAttribute = new Ellipse(40,20);
+      keyAttribute.setStrokeWidth(1);
+      keyAttribute.setStroke(Color.BLACK);
+      keyAttribute.setFill(Color.WHITE);
+      Text text = new Text("Key Attribute");
+      text.setUnderline(true);
+      keyAttributeStackPane.getChildren().addAll(keyAttribute,text);
+      keyAttributeStackPane.setId("KeyAttribute StackPane");
+      flowPane.getChildren().add(keyAttributeStackPane);
+      enableShapeDragAndDrop(keyAttributeStackPane,mainPane,erModelApplication); 	
+      
+      Ellipse outerEllipseMultivaluedAttribute = new Ellipse(40,20);
+      outerEllipseMultivaluedAttribute.setStrokeWidth(1);
+      outerEllipseMultivaluedAttribute.setStroke(Color.BLACK);
+      outerEllipseMultivaluedAttribute.setFill(Color.WHITE);
+	  Ellipse innerEllipseMultivaluedAttribute = new Ellipse(40 -4,20 -4);
+	  innerEllipseMultivaluedAttribute.setStrokeWidth(1);
+	  innerEllipseMultivaluedAttribute.setStroke(Color.BLACK);
+	  innerEllipseMultivaluedAttribute.setFill(Color.WHITE);
+	  StackPane multivaluedAttributeStackPane = new StackPane();
+	  multivaluedAttributeStackPane.getChildren().addAll(outerEllipseMultivaluedAttribute,innerEllipseMultivaluedAttribute,new Text("Multivalued\n  Attribute"));
+	  multivaluedAttributeStackPane.setId("MultivaluedAttribute StackPane");
+	  flowPane.getChildren().add(multivaluedAttributeStackPane);
+	  enableShapeDragAndDrop(multivaluedAttributeStackPane,mainPane,erModelApplication); 
+	  
+	  Ellipse derivedAttribute = new Ellipse(40,20);
+	  derivedAttribute.getStrokeDashArray().addAll(10d);
+	  derivedAttribute.setStrokeWidth(1);
+	  derivedAttribute.setStroke(Color.BLACK);
+	  derivedAttribute.setFill(Color.WHITE);
+	  StackPane derivedAttributeStackPane = new StackPane();
+	  derivedAttributeStackPane.getChildren().addAll(derivedAttribute,new Text("  Derived\nAttribute"));
+	  derivedAttributeStackPane.setId("DerivedAttribute StackPane");
+	  flowPane.getChildren().add(derivedAttributeStackPane);
+	  enableShapeDragAndDrop(derivedAttributeStackPane,mainPane,erModelApplication);
+	  
+	  Ellipse outerEllipseWeakKeyAttribute = new Ellipse(40,20);
+	  outerEllipseWeakKeyAttribute.setStrokeWidth(1);
+	  outerEllipseWeakKeyAttribute.setStroke(Color.BLACK);
+	  outerEllipseWeakKeyAttribute.setFill(Color.WHITE);
+	  Ellipse innerEllipseWeakKeyAttribute = new Ellipse(40 -4,20 -4);
+	  innerEllipseWeakKeyAttribute.setStrokeWidth(1);
+	  innerEllipseWeakKeyAttribute.setStroke(Color.BLACK);
+	  innerEllipseWeakKeyAttribute.setFill(Color.WHITE);
+	  StackPane weakKeyAttributeStackPane = new StackPane();
+	  Text weakKeyAttributetext = new Text(" WeakKey\nAttribute");
+	  weakKeyAttributetext.setUnderline(true);
+	  weakKeyAttributeStackPane.getChildren().addAll(outerEllipseWeakKeyAttribute,innerEllipseWeakKeyAttribute,weakKeyAttributetext);
+	  weakKeyAttributeStackPane.setId("WeakKeyAttribute StackPane");
+	  flowPane.getChildren().add(weakKeyAttributeStackPane);
+	  enableShapeDragAndDrop(weakKeyAttributeStackPane,mainPane,erModelApplication);
+	  
+	  Rectangle entity = new Rectangle(80,40);
+	  entity.setStrokeWidth(1); 
+	  entity.setStroke(Color.BLACK);
+	  entity.setFill(Color.WHITE);
+	  StackPane entityStackPane = new StackPane();
+	  entityStackPane.getChildren().addAll(entity,new Text("Entity"));
+	  entityStackPane.setId("Entity StackPane");
+	  flowPane.getChildren().add(entityStackPane);
+	  enableShapeDragAndDrop(entityStackPane,mainPane,erModelApplication);
+	  
+	  
+	  Rectangle weakEntityouterRectangle = new Rectangle(80,40);
+	  weakEntityouterRectangle.setFill(Color.GAINSBORO);
+	  weakEntityouterRectangle.setStrokeWidth(2);
+	  weakEntityouterRectangle.setStroke(Color.BLACK);
+	  Rectangle weakEntityinnerRectangle = new Rectangle(80-4,40-4);
+	  weakEntityinnerRectangle.setFill(Color.GAINSBORO);
+	  weakEntityinnerRectangle.setStrokeWidth(2);
+	  weakEntityinnerRectangle.setStroke(Color.BLACK);
+	  StackPane weakEntityStackPane = new StackPane();
+	  weakEntityStackPane.getChildren().addAll(weakEntityouterRectangle,weakEntityinnerRectangle,new Text("  Weak \nEntity"));
+	  weakEntityStackPane.setId("WeakEntity StackPane");
+	  flowPane.getChildren().add(weakEntityStackPane);
+	  enableShapeDragAndDrop(weakEntityStackPane,mainPane,erModelApplication);
+	
+	  vBox.setSpacing(10);
+      vBox.getChildren().add(flowPane);
+      
+      Button undoButton = new Button("Undo");
+      undoButton.setOnAction(e -> {
+    	  if (!undoStack.isEmpty()) {
+              undoStack.pop().run();
+          }
+      });
+      
+      vBox.getChildren().addAll(undoButton);
+      return vBox;
+      
+    }
+
+  Shape shape ;
+  private void enableShapeDragAndDrop(StackPane shapeStackPane,Pane mainPane,ERModelApplication erModelApplication){
+	  
+	  final double[] offset = new double[2];
+	  
+	  shapeStackPane.setBorder(new Border(new BorderStroke(Color.TRANSPARENT, 
+	            BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+	
+	  shapeStackPane.setOnMousePressed(event -> {
+   	
+	  shapeStackPane.setBorder(new Border(new BorderStroke(Color.RED, 
+	            BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+		
+		if(viewportRect != null) {
+			System.out.println( " viewportRect.getLayoutX() " + viewportRect.getLayoutX());
+			System.out.println( " viewportRect.getLayoutY() " + viewportRect.getLayoutY());
+		
+		}
+	    if(scrollPane != null) {
+	    	System.out.println( "scrollPane.getHvalue() " + scrollPane.getHvalue() );
+			System.out.println( "scrollPane.getVvalue() " + scrollPane.getVvalue() );
+			
+			System.out.println("erModelApplication.CANVAS_HEIGHT" + erModelApplication.CANVAS_HEIGHT);  
+			System.out.println("erModelApplication.CANVAS_WIDTH " + erModelApplication.CANVAS_WIDTH);
+			
+			
+	    }
+	    
+		
+		 System.out.println("Who is Selected ? "+ shapeStackPane.getId().split(" ")[0] );
+		 shape =  getSmallCopyOftheSelectedComponent(shapeStackPane.getId().split(" ")[0]);
+		 shape.setLayoutX(scrollPane.getHvalue() * erModelApplication.CANVAS_WIDTH );
+		 shape.setLayoutY(scrollPane.getVvalue() * erModelApplication.CANVAS_HEIGHT);
+		 mainPane.getChildren().add(shape);
+				
+
+	    
+       	offset[0] = event.getSceneX() ;
+        offset[1] = event.getSceneY();
+        shapePressed = true;
+       
+       });
+  	  
+	  shapeStackPane.setOnMouseDragged(event -> {
+  		
+		  double newX = event.getSceneX() - offset[0];
+          double newY = event.getSceneY() - offset[1];
+
+		shapeDragged = true;
+		shape.setLayoutX(shape.getLayoutX() + newX);
+		shape.setLayoutY( shape.getLayoutY() + newY);
+  		
+  		offset[0] = event.getSceneX() ;
+        offset[1] = event.getSceneY();
+      });
+  	  
+	  shapeStackPane.setOnMouseReleased(event -> {
+  		 shapeReleased = true;
+  		 selectedModelStackPane = shapeStackPane;
+  		 shapeStackPane.setBorder(new Border(new BorderStroke(Color.TRANSPARENT, 
+ 	            BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+  		 mainPane.getChildren().remove(shape);
+  	  }); 
+  	  
+  	
+  	  mainPane.setOnMouseEntered(new EventHandler<MouseEvent>() {
+  		@Override
+  		public void handle(MouseEvent event) {
+  			
+  			System.out.println("Mouse Entered the mainPane shapePressed shapeDragged shapeReleased" +shapePressed + " "+ shapeDragged + " " + shapeReleased );
+  			if(shapeDragged && shapePressed && shapeReleased) {
+  				System.out.println("Shap dragged and released on mainpane");
+  
+	  			if(selectedModelStackPane != null)
+	  			{
+	  			  System.out.println("Who is dropped ? "+ selectedModelStackPane.getId().split(" ")[0] ); 
+	  			  createERModelComponentOnMouseRelease(mainPane,erModelApplication,selectedModelStackPane.getId().split(" ")[0]);
+	  			}	
+	  		  shapePressed =false;
+	  		  shapeDragged = false;
+	  		  shapeReleased = false;
+	  		}
+  		}
+  	});
+    }
+  
+  private Shape getSmallCopyOftheSelectedComponent(String selectedERComponent) {
+
+	  if(selectedERComponent.equalsIgnoreCase("Attribute")) {
+		  
+		  shape = new Ellipse(60,20);
+		  shape.setStrokeWidth(2);
+		  shape.setOpacity(0.5);
+	  }
+	  
+	  if(selectedERComponent.equalsIgnoreCase("KeyAttribute")) {
+		  
+		  shape = new Ellipse(60,20);
+		  shape.setStrokeWidth(2);
+		  shape.setOpacity(0.5);
+	  }
+	  
+	return shape;
+}
+
+private boolean createERModelComponentOnMouseRelease(Pane mainPane,ERModelApplication erModelApplication,String componentName) {
+	  
+	  if(componentName.equalsIgnoreCase("Attribute")) {
+			  Attribute attribute = new Attribute("unknown", 60, 20, shape.getLayoutX(), shape.getLayoutY(), mainPane,undoStack);
+			  erModelApplication.erModelList.add(attribute);
+			  // Set the line based on the location of attribute
+			  attribute.connectionLine.setEndX(shape.getLayoutX()+ (60/2));  // alraedy binded in Attribute
+			  attribute.connectionLine.setEndY(shape.getLayoutY() + (20/2));
+			  attribute.connectionLine.setStartX(shape.getLayoutX()+100);
+			  attribute.connectionLine.setStartY(shape.getLayoutY()+200);
+			  
+			  attribute.connectionLineCircle.setFill(Color.BLACK);
+			  attribute.connectionLineCircle.setStroke(Color.BLACK);
+			  mainPane.getChildren().add(attribute.connectionLineCircle);
+			  attribute.connectionLineCircle.setCenterX(attribute.connectionLine.getStartX());
+			  attribute.connectionLineCircle.setCenterY(attribute.connectionLine.getStartY());
+			  
+			  attribute.connectionLineCircle.setOnMouseEntered(event -> {
+				  ((Circle) event.getSource()).getScene().setCursor(Cursor.MOVE);
+			  });
+		  
+			  attribute.connectionLineCircle.setOnMouseDragged(event -> {
+				  System.out.println("Add circle at end");
+				 
+				  attribute.connectionLineCircle.setCenterX(event.getX());
+				  attribute.connectionLineCircle.setCenterY(event.getY());
+				  attribute.connectionLine.setStartX(event.getX());
+				  attribute.connectionLine.setStartY(event.getY());
+				  
+				  
+			  });
+			  
+			  attribute.connectionLineCircle.setOnMouseReleased(event -> {
+				  System.out.println("Mose Released at :"+ event.getX());
+				  System.out.println("Mose Released at :"+ event.getY());
+				  
+				  // iterate the modelList and check if its falls in any entity than bind it to this ,refer thecode in main class
+				  
+				  for(ERModel erModel : erModelApplication.erModelList) {
+					  
+					 if(erModel.stackPaneRectangle != null) {
+							
+							if(erModel instanceof Entity) {
+								
+								System.out.println(erModel.stackPaneRectangle.getBoundsInParent());
+								double minX = erModel.stackPaneRectangle.getBoundsInParent().getMinX();
+								double maxX = erModel.stackPaneRectangle.getBoundsInParent().getMaxX();
+								double minY = erModel.stackPaneRectangle.getBoundsInParent().getMinY();
+								double maxY = erModel.stackPaneRectangle.getBoundsInParent().getMaxY();
+								
+								if( ((event.getX() >= minX && event.getX() <= maxX) && (event.getY() >= minY && event.getY() <= maxY)) ) {
+									
+									System.out.println("Dropped inside the entity");
+									System.out.println( ((Entity)erModel).textAreaRecatangle.getText());						
+			
+									attribute.connectionLine.startXProperty().bind(((Entity)erModel).stackPaneRectangle.layoutXProperty().add(((Entity)erModel).resizeRectangle.getWidth()/2) );
+									attribute.connectionLine.startYProperty().bind(((Entity)erModel).stackPaneRectangle.layoutYProperty().add(((Entity)erModel).resizeRectangle.getHeight()/2) );
+				
+									mainPane.getChildren().remove(attribute.connectionLineCircle);
+									mainPane.getChildren().remove(((Entity)erModel).stackPaneRectangle);
+									mainPane.getChildren().add(((Entity)erModel).stackPaneRectangle);
+									
+									// Update the TableER Model which has this entity so that whan you move it this new once also gets effected
+									for(TableERModel  tableERModel : erModelApplication.tableERModelMap.values()) {
+										
+										if(tableERModel.entity.stackPaneRectangle.equals(((Entity)erModel).stackPaneRectangle)){
+											tableERModel.attributeArrayList.add(attribute);
+										}
+									}
+								}
+							}
+							
+							
+						}
+				  }
+			  });
+			  
+			  attribute.connectionLineCircle.setOnMouseExited(event ->{
+					 ((Circle) event.getSource()).getScene().setCursor(Cursor.DEFAULT);
+					
+				});
+			  
+	   }	  
+	  if(componentName.equalsIgnoreCase("KeyAttribute")) {
+		  
+		  KeyAttribute  attribute = new KeyAttribute("unknown", 60, 20, shape.getLayoutX(), shape.getLayoutY(), mainPane,undoStack);
+		  erModelApplication.erModelList.add(attribute);
+		  // Set the line based on the location of attribute
+		  attribute.connectionLine.setEndX(shape.getLayoutX()+ (60/2));  // alraedy binded in Attribute
+		  attribute.connectionLine.setEndY(shape.getLayoutY() + (20/2));
+		  attribute.connectionLine.setStartX(shape.getLayoutX()+100);
+		  attribute.connectionLine.setStartY(shape.getLayoutY()+200);
+		  
+		  attribute.connectionLineCircle.setFill(Color.BLACK);
+		  attribute.connectionLineCircle.setStroke(Color.BLACK);
+		  mainPane.getChildren().add(attribute.connectionLineCircle);
+		  attribute.connectionLineCircle.setCenterX(attribute.connectionLine.getStartX());
+		  attribute.connectionLineCircle.setCenterY(attribute.connectionLine.getStartY());
+		  
+		  attribute.connectionLineCircle.setOnMouseEntered(event -> {
+			  ((Circle) event.getSource()).getScene().setCursor(Cursor.MOVE);
+		  });
+	  
+		  attribute.connectionLineCircle.setOnMouseDragged(event -> {
+			  System.out.println("Add circle at end");
+			 
+			  attribute.connectionLineCircle.setCenterX(event.getX());
+			  attribute.connectionLineCircle.setCenterY(event.getY());
+			  attribute.connectionLine.setStartX(event.getX());
+			  attribute.connectionLine.setStartY(event.getY());
+			  
+			  
+		  });
+		  
+		  attribute.connectionLineCircle.setOnMouseReleased(event -> {
+			  System.out.println("Mose Released at :"+ event.getX());
+			  System.out.println("Mose Released at :"+ event.getY());
+			  
+			  // iterate the modelList and check if its falls in any entity than bind it to this ,refer thecode in main class
+			  
+			  for(ERModel erModel : erModelApplication.erModelList) {
+				  
+				 if(erModel.stackPaneRectangle != null) {
+						
+						if(erModel instanceof Entity) {
+							
+							System.out.println(erModel.stackPaneRectangle.getBoundsInParent());
+							double minX = erModel.stackPaneRectangle.getBoundsInParent().getMinX();
+							double maxX = erModel.stackPaneRectangle.getBoundsInParent().getMaxX();
+							double minY = erModel.stackPaneRectangle.getBoundsInParent().getMinY();
+							double maxY = erModel.stackPaneRectangle.getBoundsInParent().getMaxY();
+							
+							if( ((event.getX() >= minX && event.getX() <= maxX) && (event.getY() >= minY && event.getY() <= maxY)) ) {
+								
+								System.out.println("Dropped inside the entity");
+								System.out.println( ((Entity)erModel).textAreaRecatangle.getText());						
+		
+								attribute.connectionLine.startXProperty().bind(((Entity)erModel).stackPaneRectangle.layoutXProperty().add(((Entity)erModel).resizeRectangle.getWidth()/2) );
+								attribute.connectionLine.startYProperty().bind(((Entity)erModel).stackPaneRectangle.layoutYProperty().add(((Entity)erModel).resizeRectangle.getHeight()/2) );
+			
+								mainPane.getChildren().remove(attribute.connectionLineCircle);
+								mainPane.getChildren().remove(((Entity)erModel).stackPaneRectangle);
+								mainPane.getChildren().add(((Entity)erModel).stackPaneRectangle);
+								
+								// Update the TableER Model which has this entity so that whan you move it this new once also gets effected
+								for(TableERModel  tableERModel : erModelApplication.tableERModelMap.values()) {
+									
+									if(tableERModel.entity.stackPaneRectangle.equals(((Entity)erModel).stackPaneRectangle)){
+										tableERModel.keyAttributeArrayList.add(attribute);
+									}
+								}
+							}
+						}
+									
+					}
+			  }
+		  });
+		  
+		  attribute.connectionLineCircle.setOnMouseExited(event ->{
+				 ((Circle) event.getSource()).getScene().setCursor(Cursor.DEFAULT);
+				
+		   });
+		  
+	  }
+		  
+	  
+			  return true;
+  }
+    
+    
 	private Integer currentSchemaIndex;
 	private Button dashBoardPieBarButton;
 	private Tab topSchemasBySizesTab;

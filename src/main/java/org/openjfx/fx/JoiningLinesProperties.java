@@ -2,7 +2,7 @@ package org.openjfx.fx;
 
 import java.util.ArrayList;
 
-import com.openfx.ermodel.ERModelApplication;
+import com.openfx.erdiagram.ERModelApplication;
 
 import javafx.application.Application;
 import javafx.scene.Cursor;

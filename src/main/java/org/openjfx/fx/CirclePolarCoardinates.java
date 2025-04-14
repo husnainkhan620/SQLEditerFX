@@ -3,7 +3,7 @@ package org.openjfx.fx;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
-import com.openfx.ermodel.ERModelApplication;
+import com.openfx.erdiagram.ERModelApplication;
 
 import javafx.application.Application;
 import javafx.scene.Cursor;

@@ -115,6 +115,8 @@ public class Menu_Items_FX extends Application {
 	public HashMap<ConnectionPlaceHolder,Connection> duckDBConnectionsMap = new HashMap<ConnectionPlaceHolder, Connection>();
 	public HashMap<ConnectionPlaceHolder,Connection> mariaDBConnectionsMap = new HashMap<ConnectionPlaceHolder, Connection>();
 	
+	public TabPane vBoxleftTabPane;
+	public Tab erDiagramExplorerTab ;
 	
 	public static TreeItem<String> rootConnectionItem;
 	public static TreeView<String> treeConnectionsView;
@@ -325,7 +327,7 @@ public class Menu_Items_FX extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 	
-		this.locale = new Locale.Builder().setLanguage("ar").build();
+		this.locale = new Locale.Builder().setLanguage("en").build();
 		this.resourceBundle = ResourceBundle.getBundle("languages.LabelResource", locale);
 		
 		System.out.println("this.resourceBundle"+this.resourceBundle.getString("File"));
@@ -382,12 +384,13 @@ public class Menu_Items_FX extends Application {
 		
 	    VBox vBoxright = new VBox();
 	    vBoxright.setId("vBoxright");
-	    TabPane vBoxleftTabPane = new TabPane();
+	    
+	    vBoxleftTabPane = new TabPane();
 	    vBoxleftTabPane.setId("vBoxleftTabPane");
 	    connectionExplorerTab = new Tab( this.resourceBundle.getString("Connection_Explorer"));
 	    connectionExplorerTab.setId("connectionExplorerTab");
 	    
-	    Tab projectExplorerTab = new Tab("Project Explorer");
+	 
 	   
 		rootConnectionItem = new TreeItem<String>("Connections");
 		treeConnectionsView = new TreeView<String>();
@@ -407,7 +410,11 @@ public class Menu_Items_FX extends Application {
 		vBoxleftScrollPane.setContent(vBoxleftTabPane);
 		
 		vBoxleftTabPane.getTabs().add(connectionExplorerTab); 
-	//	vBoxleftTabPane.getTabs().add(projectExplorerTab);  enable from settings on new project
+	
+		
+		erDiagramExplorerTab = new Tab("ER Model/Diagram");
+		// vBoxleftTabPane.getTabs().add(erDiagramExplorerTab);  //enable from settings on new project
+		
 		vBoxleft.getChildren().add(vBoxleftScrollPane);
 		
         alltabbedEditors = new TabPane();

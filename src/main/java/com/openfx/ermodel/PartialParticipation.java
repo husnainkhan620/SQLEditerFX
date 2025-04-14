@@ -29,7 +29,7 @@ public class PartialParticipation extends ERModel{
 	
 	double orgSceneX, orgSceneY;//Used to help keep up with change in mouse position
 	  
-	public PartialParticipation(double startX,double startY,double endX,double endY,Pane mainPane,ArrayList<ERModel> erModelList) {
+	public PartialParticipation(double startX,double startY,double endX,double endY,Pane mainPane,ArrayList<ERModel> erModelList,boolean isEditable) {
 		
 		group = new Group();
 		leftAnchor = new Circle(startX, startY, 5);
@@ -53,21 +53,16 @@ public class PartialParticipation extends ERModel{
 		 endpoint2D = new Point2D((float)endX,(float)endY);
 		 distanceofLinePoints = startpoint2D.distance(endpoint2D);
 		
-		
-		
 		sampleLine = new Line();
-	//	sampleLine.setStartX(startX);
-	//	sampleLine.setStartY(startY);
-	//	sampleLine.setEndX(endX);
-	//	sampleLine.setEndY(endY);
-		
+		sampleLine.setStartX(startX);
+		sampleLine.setStartY(startY);
+		sampleLine.setEndX(endX);
+		sampleLine.setEndY(endY);		
 		
 		cardinalTextLabel = new Label("N");
 		cardinalTextLabel.setLayoutX(startX+distanceofLinePoints/2);
 		cardinalTextLabel.setLayoutY(startY);
 
-		
-		
 		choiceBox = new ChoiceBox<String>();
 		choiceBox.setLayoutX(startX+distanceofLinePoints/2-20);
 		choiceBox.setLayoutY(startY);
@@ -75,7 +70,6 @@ public class PartialParticipation extends ERModel{
 		choiceBox.getItems().addAll("N","M","1");
 		choiceBox.getSelectionModel().select(cardinalTextLabel.getText());
 		choiceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				System.out.println("Selected Choice is "+newValue);
@@ -109,25 +103,27 @@ public class PartialParticipation extends ERModel{
 			
 			group.getChildren().addAll(sampleLine,choiceBox);
 			
-			if(!mainPane.getChildren().contains(leftAnchor)) {
-				leftAnchor.setFill(Color.BLACK);
-				leftAnchor.setStroke(Color.BLACK);
-				mainPane.getChildren().add(leftAnchor);
+			if(isEditable) {
+				if(!mainPane.getChildren().contains(leftAnchor)) {
+					leftAnchor.setFill(Color.BLACK);
+					leftAnchor.setStroke(Color.BLACK);
+					mainPane.getChildren().add(leftAnchor);
+				}
+	
+				
+				if(!mainPane.getChildren().contains(rightAnchor)) {
+					rightAnchor.setFill(Color.BLACK);
+					rightAnchor.setStroke(Color.BLACK);
+					mainPane.getChildren().add(rightAnchor);
+				}
 			}
-
-			
-			if(!mainPane.getChildren().contains(rightAnchor)) {
-				rightAnchor.setFill(Color.BLACK);
-				rightAnchor.setStroke(Color.BLACK);
-				mainPane.getChildren().add(rightAnchor);
-			}
-			
 			orgSceneX = event.getSceneX();//Store current mouse position
 	        orgSceneY = event.getSceneY();//Store current mouse position
 			
 		});
 		
-	
+		
+		
 		// When dragging, update the TitledPane position
 		sampleLine.setOnMouseDragged(event -> {
 			double offSetX = event.getSceneX() - orgSceneX;//Find change in mouse X position
@@ -149,7 +145,26 @@ public class PartialParticipation extends ERModel{
 	        orgSceneX = event.getSceneX();//save last mouse position to recalculate change in mouse postion as the circle moves
 	        
 		});
-		 
+		
+		cardinalTextLabel.setOnMouseEntered(event ->{
+			((Label) event.getSource()).getScene().setCursor(Cursor.TEXT);
+			
+		});
+		
+		cardinalTextLabel.setOnMouseExited(event ->{
+			 ((Label) event.getSource()).getScene().setCursor(Cursor.DEFAULT);
+			
+		});
+		
+		cardinalTextLabel.setOnMousePressed(event ->{
+		
+			group.getChildren().clear();
+			group.getChildren().addAll(sampleLine,choiceBox);
+		});
+		
+		
+		
+		
 		   leftAnchor.setOnMouseEntered((event) -> {
 	            ((Circle) event.getSource()).getScene().setCursor(Cursor.E_RESIZE);
 	        });

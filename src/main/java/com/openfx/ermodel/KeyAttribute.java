@@ -1,5 +1,6 @@
 package com.openfx.ermodel;
 
+import java.util.Stack;					   
 import javafx.scene.Cursor;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.Border;
@@ -10,6 +11,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Line;							   
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -18,10 +20,12 @@ public class KeyAttribute extends ERModel{
 
 	private Ellipse newEllipse;
 	private TextArea textAreaEllipse;
+	public Line connectionLine;
+	public Circle connectionLineCircle;
 	
 	double orgSceneX, orgSceneY;//Used to help keep up with change in mouse position
 	
-	public KeyAttribute(double radiusX,double radiusY,double layoutX,double layoutY,Pane mainPane) {
+	public KeyAttribute(String name,double radiusX,double radiusY,double layoutX,double layoutY,Pane mainPane,Stack<Runnable> undoStack) {
 		
 		leftAnchor = new Circle(layoutX, layoutY+radiusY, 5);
 		 
@@ -35,6 +39,8 @@ public class KeyAttribute extends ERModel{
 		rightAnchor = new Circle(layoutX+radiusX*2, layoutY+radiusY, 5);
 	    bottomRightAnchor = new Circle(layoutX+radiusX*2,layoutY+radiusY*2,5);
 	    
+		connectionLine = new Line();
+	    connectionLineCircle =  new Circle(5);						 
 		stackPaneRectangle = new StackPane();
 		stackPaneRectangle.setLayoutX(layoutX);
 		stackPaneRectangle.setLayoutY(layoutY);
@@ -45,7 +51,7 @@ public class KeyAttribute extends ERModel{
 		resizeRectangle.setLayoutX(layoutX);
 		resizeRectangle.setLayoutY(layoutY);
 		resizeRectangle.setStroke(Color.GAINSBORO);
-		resizeRectangle.setFill(Color.GAINSBORO);
+		resizeRectangle.setFill(Color.TRANSPARENT);
 		resizeRectangle.getStrokeDashArray().add(2d);
 		
 		newEllipse = new Ellipse(radiusX,radiusY);
@@ -53,19 +59,23 @@ public class KeyAttribute extends ERModel{
 		newEllipse.setStroke(Color.BLACK);
 		newEllipse.setFill(Color.GAINSBORO);
 		textAreaEllipse = new TextArea();
-		textAreaEllipse.setText("   KEY    \n    ATTRIBUTE   ");
+		if(name != null) {
+			textAreaEllipse.setText(name);	
+		}
+		else
+			textAreaEllipse.setText("   KEY    \n    ATTRIBUTE   ");
 		textAreaEllipse.setId("keyAttributeTextArea");
 		textAreaEllipse.setFont(Font.font("System Regular",FontPosture.REGULAR, 16));
-		textAreaEllipse.setMaxSize(newEllipse.getRadiusX() + 0.45*newEllipse.getRadiusX(), newEllipse.getRadiusY() + 0.40*newEllipse.getRadiusY());
+		textAreaEllipse.setMaxSize(newEllipse.getRadiusX() + 0.45*newEllipse.getRadiusX(), newEllipse.getRadiusY() + 0.40*newEllipse.getRadiusY());									
 		textAreaEllipse.setWrapText(true);
-		textAreaEllipse.positionCaret(10);
+		
 	
 		stackPaneRectangle.getChildren().addAll(resizeRectangle,newEllipse,textAreaEllipse);
 	
+		mainPane.getChildren().add(connectionLine); 
 		mainPane.getChildren().add(stackPaneRectangle);
 		
-		enableDragAndDrop(this,mainPane);
-		
+		enableDragAndDrop(this,mainPane,undoStack);										
 		stackPaneRectangle.setOnMouseClicked(event ->{
 			System.out.println("Mouse Clicked this StackPane");
 			//	stackPaneRectangle.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.DASHED, null, null))); 
@@ -160,7 +170,10 @@ public class KeyAttribute extends ERModel{
 	            
 	            orgSceneX = event.getSceneX();//save last mouse position to recalculate change in mouse postion as the circle moves
 	            
+				connectionLine.endXProperty().bind(this.getStackPaneRectangle().layoutXProperty().add(this.getStackPaneRectangle().getBoundsInLocal(). getWidth()/2));
+				connectionLine.endYProperty().bind(this.getStackPaneRectangle().layoutYProperty().add(this.getStackPaneRectangle().getBoundsInLocal().getHeight()/2));
 	        });
+	        
 	        leftAnchor.setOnMouseExited((event) -> {
 	            leftAnchor.getScene().setCursor(null);
 	        });
@@ -188,6 +201,8 @@ public class KeyAttribute extends ERModel{
 	            bottomAnchor.setCenterX(bottomAnchor.getCenterX() + offSetX / 2);//Adjust top circle as rectangle's size change
 	          
 	            orgSceneX = event.getSceneX();//save last mouse position to recalculate change in mouse postion as the circle moves
+				connectionLine.endXProperty().bind(this.getStackPaneRectangle().layoutXProperty().add(this.getStackPaneRectangle().getBoundsInLocal(). getWidth()/2));
+				connectionLine.endYProperty().bind(this.getStackPaneRectangle().layoutYProperty().add(this.getStackPaneRectangle().getBoundsInLocal().getHeight()/2));																																								   																																		  
 	        });
 	        rightAnchor.setOnMouseExited((event) -> {
 	        	rightAnchor.getScene().setCursor(null);
@@ -239,8 +254,10 @@ public class KeyAttribute extends ERModel{
 	            
 	            orgSceneX = event.getSceneX();//save last mouse position to recalculate change in mouse postion as the circle moves
 	            orgSceneY = event.getSceneY();//save last mouse position to recalculate change in mouse postion as the circle moves
+				connectionLine.endXProperty().bind(this.getStackPaneRectangle().layoutXProperty().add(this.getStackPaneRectangle().getBoundsInLocal(). getWidth()/2));
+				connectionLine.endYProperty().bind(this.getStackPaneRectangle().layoutYProperty().add(this.getStackPaneRectangle().getBoundsInLocal().getHeight()/2));																																				   
 	        });
-	        bottomleftAnchor.setOnMouseExited((event) -> {
+			bottomleftAnchor.setOnMouseExited((event) -> {
 	        	bottomleftAnchor.getScene().setCursor(null);
 	        });
 
@@ -294,8 +311,10 @@ public class KeyAttribute extends ERModel{
 	            
 	            orgSceneY = event.getSceneY();//save last mouse position to recalculate change in mouse postion as the circle moves
 	            orgSceneX = event.getSceneX();//save last mouse position to recalculate change in mouse postion as the circle moves
+				connectionLine.endXProperty().bind(this.getStackPaneRectangle().layoutXProperty().add(this.getStackPaneRectangle().getBoundsInLocal(). getWidth()/2));
+				connectionLine.endYProperty().bind(this.getStackPaneRectangle().layoutYProperty().add(this.getStackPaneRectangle().getBoundsInLocal().getHeight()/2));																																				   
 	        });
-	        topLeftAnchor.setOnMouseExited((event) -> {
+			topLeftAnchor.setOnMouseExited((event) -> {
 	        	topLeftAnchor.getScene().setCursor(null);
 	        });
 	        
@@ -324,6 +343,8 @@ public class KeyAttribute extends ERModel{
 	            rightAnchor.setCenterY(rightAnchor.getCenterY() + offSetY / 2);
 	              
 	            orgSceneY = event.getSceneY();//save last mouse position to recalculate change in mouse postion as the circle moves
+				connectionLine.endXProperty().bind(this.getStackPaneRectangle().layoutXProperty().add(this.getStackPaneRectangle().getBoundsInLocal(). getWidth()/2));
+				connectionLine.endYProperty().bind(this.getStackPaneRectangle().layoutYProperty().add(this.getStackPaneRectangle().getBoundsInLocal().getHeight()/2));
 	        });
 	        topAnchor.setOnMouseExited((event) -> {
 	            topAnchor.getScene().setCursor(null);
@@ -376,8 +397,10 @@ public class KeyAttribute extends ERModel{
 	            
 	            orgSceneY = event.getSceneY();//save last mouse position to recalculate change in mouse postion as the circle moves
 	            orgSceneX = event.getSceneX();//save last mouse position to recalculate change in mouse postion as the circle moves
+				connectionLine.endXProperty().bind(this.getStackPaneRectangle().layoutXProperty().add(this.getStackPaneRectangle().getBoundsInLocal(). getWidth()/2));
+				connectionLine.endYProperty().bind(this.getStackPaneRectangle().layoutYProperty().add(this.getStackPaneRectangle().getBoundsInLocal().getHeight()/2));
 	        });
-	        topRightAnchor.setOnMouseExited((event) -> {
+			topRightAnchor.setOnMouseExited((event) -> {
 	        	topRightAnchor.getScene().setCursor(null);
 	        });
 
@@ -405,8 +428,10 @@ public class KeyAttribute extends ERModel{
 	            rightAnchor.setCenterY(rightAnchor.getCenterY() + offSetY / 2);
 	            
 	            orgSceneY = event.getSceneY();//save last mouse position to recalculate change in mouse postion as the circle moves
+				connectionLine.endXProperty().bind(this.getStackPaneRectangle().layoutXProperty().add(this.getStackPaneRectangle().getBoundsInLocal(). getWidth()/2));
+				connectionLine.endYProperty().bind(this.getStackPaneRectangle().layoutYProperty().add(this.getStackPaneRectangle().getBoundsInLocal().getHeight()/2));
 	        });
-	        bottomAnchor.setOnMouseExited((event) -> {
+			bottomAnchor.setOnMouseExited((event) -> {
 	        	bottomAnchor.getScene().setCursor(null);
 	        });
 	        
@@ -454,13 +479,15 @@ public class KeyAttribute extends ERModel{
 	            
 	            orgSceneX = event.getSceneX();//save last mouse position to recalculate change in mouse postion as the circle moves
 	            orgSceneY = event.getSceneY();//save last mouse position to recalculate change in mouse postion as the circle moves
+				connectionLine.endXProperty().bind(this.getStackPaneRectangle().layoutXProperty().add(this.getStackPaneRectangle().getBoundsInLocal(). getWidth()/2));
+				connectionLine.endYProperty().bind(this.getStackPaneRectangle().layoutYProperty().add(this.getStackPaneRectangle().getBoundsInLocal().getHeight()/2));
 	        });
-	        bottomRightAnchor.setOnMouseExited((event) -> {
+			bottomRightAnchor.setOnMouseExited((event) -> {
 	        	bottomRightAnchor.getScene().setCursor(null);
 	        });
 	}
 
-	private void enableDragAndDrop(ERModel erModel,Pane mainPane) {
+	private void enableDragAndDrop(ERModel erModel,Pane mainPane,Stack<Runnable> undoStack) {
 		
 
 		 final double[] offset = new double[2];
@@ -469,11 +496,21 @@ public class KeyAttribute extends ERModel{
 	        	 offset[0] = event.getSceneX() - stackPaneRectangle.getLayoutX();
 	             offset[1] = event.getSceneY() - stackPaneRectangle.getLayoutY() ;
 	          
-	        });
-	        
+				// Store original position for undo
+	             double originalX = stackPaneRectangle.getLayoutX();
+	             double originalY = stackPaneRectangle.getLayoutY();
+	             
+	             undoStack.push(() -> {
+	                 stackPaneRectangle.setLayoutX(originalX);
+	                 stackPaneRectangle.setLayoutY(originalY);
+	               
+	             });	
+		 });
 	        // When dragging, update the TitledPane position
 		 stackPaneRectangle.setOnMouseDragged(event -> {
 	        	
+			connectionLine.endXProperty().bind(this.getStackPaneRectangle().layoutXProperty().add(this.getStackPaneRectangle().getBoundsInLocal(). getWidth()/2));
+			connectionLine.endYProperty().bind(this.getStackPaneRectangle().layoutYProperty().add(this.getStackPaneRectangle().getBoundsInLocal().getHeight()/2));
 	            // Restrict movement within the bounds of the mainPane
 	            double newX = event.getSceneX() - offset[0];
 	    		double newY = event.getSceneY() - offset[1];
@@ -532,5 +569,13 @@ public class KeyAttribute extends ERModel{
 		return textAreaEllipse;
 	}
 	
+	public Line getConnectionLine() {
+		return connectionLine;
+	}
 
+	 @Override
+	 public Object clone() throws CloneNotSupportedException {
+	      // TODO: copy mutable state here, so the clone can't change the internals of the original
+	      return super.clone();
+	 }
 }

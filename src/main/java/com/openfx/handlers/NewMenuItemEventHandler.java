@@ -27,6 +27,7 @@ import com.openfx.ui.PostgreeUI;
 import com.openfx.ui.SQLiteUI;
 import com.openfx.ui.SapHanaUI;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -537,8 +538,6 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 					}
 					menu_Items_FX.currentConnectionSelected = "";
 				}
-				
-	
 			});
 
 	        
@@ -928,7 +927,13 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		menu_Items_FX.mySqlUIList.add(mySqlUI);
 		
 		TreeItem<String> mySQLTreeItem = mySqlUI.getmySqlTreeItem(connectionPlaceHolder,imageMySQLnode,imageDatbaseTablenode,databaseName);
-		menu_Items_FX.rootConnectionItem.getChildren().add(mySQLTreeItem);
+		
+		Platform.runLater(() -> {
+		    // Delay the modification slightly
+			menu_Items_FX.rootConnectionItem.getChildren().add(mySQLTreeItem);
+		});
+		
+		
 	}
 
 	private void createPostgreeConnection()

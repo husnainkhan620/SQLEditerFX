@@ -588,7 +588,95 @@
 	-fx-padding:0 0 0 400;
 }
  
+ .titled-pane > .title
+{
+    -fx-background-color: rgba(0, 60, 136, 0.5);
+    -fx-border-color: rgba(0, 60, 136, 0.8);
+    -fx-font-family: 'Lucida Grande',Verdana,Geneva,Lucida,Arial,Helvetica,sans-serif;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+
+.titled-pane > .title > .text
+{
+    -fx-fill: WHITE;
+}
+
+#mytextarea {
+	/*
+	-fx-background-color: rgba(0, 60, 136, 0.5);
+    -fx-border-color:  GAINSBORO;
+    -fx-border-style: none;
+    -fx-font-family: 'Lucida Grande',Verdana,Geneva,Lucida,Arial,Helvetica,sans-serif;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    */
+    
+ /*    -fx-border-color: rgba(0, 60, 136, 0.5); */
+    -fx-background-color: SKYBLUE;
+    -fx-resize: none;
+    -fx-outline: none;
+   
+}
+
+#mytextarea .content {
+  /*  -fx-background-color: CADETBLUE; */
+      -fx-background-color: SKYBLUE; 
+}
+
+
+#mytextarea .scroll-pane
+{
+        -fx-hbar-policy : never; 
+        -fx-vbar-policy : never;
+}
+
+#relationshipmytextarea {
+	
+    -fx-background-color: BLUEVIOLET;
+    -fx-resize: none;
+    -fx-outline: none;
+   
+}
+
+#relationshipmytextarea .content {
  
+      -fx-background-color: BLUEVIOLET; 
+}
+
+
+#relationshipmytextarea .scroll-pane
+{
+        -fx-hbar-policy : never; 
+        -fx-vbar-policy : never;
+}
+
+#keyAttributeTextArea {
+	
+    -fx-background-color: GAINSBORO;
+    -fx-resize: none;
+    -fx-outline: none;
+   
+}
+
+#keyAttributeTextArea .content { 
+	  -fx-background-color: GAINSBORO; 
+}
+#keyAttributeTextArea .content .text { 
+	-fx-underline: true; 
+	-fx-dotted-underline: true;
+}
+#keyAttributeTextArea .scroll-pane
+{
+        -fx-hbar-policy : never; 
+        -fx-vbar-policy : never;
+}
+
+#myPane {
+	/* -fx-background-color: rgba(0, 60, 136, 0.5);  */
+	 -fx-background-color: WHITE;  
+}
  
  
  

@@ -1,11 +1,12 @@
 package com.openfx.ermodel;
 
+import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
-public class ERModel {
+public class ERModel extends Line{
 	
 	public StackPane stackPaneRectangle;
 	public Rectangle resizeRectangle;
