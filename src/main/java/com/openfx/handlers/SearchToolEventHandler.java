@@ -1,6 +1,8 @@
 package com.openfx.handlers;
 
 
+import java.util.ResourceBundle;
+
 import org.openjfx.fx.Menu_Items_FX;
 
 import javafx.event.ActionEvent;
@@ -31,10 +33,20 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 
+
 public class SearchToolEventHandler implements EventHandler<ActionEvent> {
 
 	public Menu_Items_FX menu_Items_FX;
-	public SplitPane searchTabSplitPane;
+	public SplitPane searchTabSplitPane;	
+	public Label searchDatabasesLabel;
+	public Label searchTablesLabel;
+	public Label toSearchTablesLabel;
+	public Label searchDatabasesClearAllLable;
+	public Label searchTablesClearAllLable ;
+	public Label toSearchTablesClearAllLable;
+	public Button searchHelpButton;
+	public Button searchDataButton;
+	public Label dataValueToSearchLabel;
 	
 	public SearchToolEventHandler(Menu_Items_FX menu_Items_FX) {
 		this.menu_Items_FX = menu_Items_FX;
@@ -57,10 +69,10 @@ public class SearchToolEventHandler implements EventHandler<ActionEvent> {
 		VBox vBoxMain = new VBox();
 		
 		GridPane searchDatabasesGridPane= new GridPane();
-		Label searchDatabasesLabel = new Label("Find");
+		searchDatabasesLabel = new Label( menu_Items_FX.resourceBundle.getString("Find"));
 		TextField searchDatabasesTextField = new TextField();
 		searchDatabasesTextField.getStyleClass().add("textfield");
-		Label searchDatabasesClearAllLable = new Label("Clear All");
+		searchDatabasesClearAllLable = new Label(menu_Items_FX.resourceBundle.getString("ClearAll"));
 		searchDatabasesClearAllLable.setId("clearlabel");
 //		searchDatabasesClearAllLable.setFont(Font.font("System",FontWeight.NORMAL,FontPosture.ITALIC,12));
 //		searchDatabasesClearAllLable.setTextFill(Color.BLUE);
@@ -87,10 +99,10 @@ public class SearchToolEventHandler implements EventHandler<ActionEvent> {
 		// *****************//
 		
 		GridPane searchTablesGridPane= new GridPane();
-		Label searchTablesLabel = new Label("Find");
+		searchTablesLabel = new Label( menu_Items_FX.resourceBundle.getString("Find"));
 		TextField searchTablesTextField = new TextField();
 		searchTablesTextField.getStyleClass().add("textfield");
-		Label searchTablesClearAllLable = new Label("Clear All");
+		searchTablesClearAllLable =  new Label(menu_Items_FX.resourceBundle.getString("ClearAll"));
 		searchTablesClearAllLable.setId("clearlabel");
 		//searchTablesClearAllLable.setFont(Font.font("System",FontWeight.NORMAL,FontPosture.ITALIC,12));
 		//searchTablesClearAllLable.setTextFill(Color.BLUE);
@@ -112,10 +124,10 @@ public class SearchToolEventHandler implements EventHandler<ActionEvent> {
 		//*****************//
 		
 		GridPane toSearchTablesTextGridPane= new GridPane();
-		Label toSearchTablesLabel = new Label("Find");
+		toSearchTablesLabel = new Label( menu_Items_FX.resourceBundle.getString("Find"));
 		TextField toSearchTablesTextField = new TextField();
 		toSearchTablesTextField.getStyleClass().add("textfield");
-		Label toSearchTablesClearAllLable = new Label("Clear All");
+		toSearchTablesClearAllLable =  new Label(menu_Items_FX.resourceBundle.getString("ClearAll"));
 		toSearchTablesClearAllLable.setId("clearlabel");
 //		toSearchTablesClearAllLable.setFont(Font.font("System",FontWeight.NORMAL,FontPosture.ITALIC,12));
 //		toSearchTablesClearAllLable.setTextFill(Color.BLUE);
@@ -174,7 +186,7 @@ public class SearchToolEventHandler implements EventHandler<ActionEvent> {
 		gridPaneValueToSearch.setId("gridPaneValueToSearch");
 		//gridPaneValueToSearch.setPadding(new Insets(10, 0, 10, 20));
 		
-		Button searchHelpButton = new Button("Help");
+		searchHelpButton = new Button(menu_Items_FX.resourceBundle.getString("Help"));
 		searchHelpButton.setId("buttons");
 		gridPaneValueToSearch.getChildren().add(searchHelpButton);
 		GridPane.setConstraints(searchHelpButton, 0,0);
@@ -184,7 +196,7 @@ public class SearchToolEventHandler implements EventHandler<ActionEvent> {
 		GridPane.setConstraints(new Label(), 1,0);
 		gridPaneValueToSearch.getColumnConstraints().add(new ColumnConstraints(300));
 		
-		Label dataValueToSearchLabel = new Label("Enter the data value to search : ");
+		dataValueToSearchLabel = new Label(menu_Items_FX.resourceBundle.getString("Enterthedatavaluetosearch"));
 		dataValueToSearchLabel.setId("dataValueToSearchLabel");
 		GridPane.setHalignment(dataValueToSearchLabel,HPos.RIGHT);
 		gridPaneValueToSearch.getChildren().add(dataValueToSearchLabel);
@@ -201,7 +213,7 @@ public class SearchToolEventHandler implements EventHandler<ActionEvent> {
 		GridPane.setConstraints(new Label(), 4,0);
 		gridPaneValueToSearch.getColumnConstraints().add(new ColumnConstraints(10));
 		
-		Button searchDataButton = new Button("Search");
+		searchDataButton = new Button(menu_Items_FX.resourceBundle.getString("Search"));
 		searchDataButton.setId("buttons");
 		//searchDataButton.setMaxWidth(100);
 		gridPaneValueToSearch.getChildren().add(searchDataButton);

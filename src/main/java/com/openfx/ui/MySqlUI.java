@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Map.Entry;
 
 import org.openjfx.fx.Menu_Items_FX;
@@ -100,11 +101,74 @@ public class MySqlUI {
 	private Connection currentConnection ;
 	private String currentConnectionName;
 	private Statement stmt ;
+	public ResourceBundle resourceBundle;
 	private ImageView imagemySqlnode;
 	public Button refreshButton;
+	public Button createTableButton;
+	public Button ViewColumnsCreateButton;
+	public Button viewDataTabCreateButton;
+	public Button ViewColumnsDeleteButton;
+	public Button particularTableColumnsButtons;
+	public Button particularTableConstraintsButtons;
+	public Button particularTableforeignKeysButtons;
+	public Button particularTableReferencesButtons;
+	public Button particularTableTriggersButtons;
+	public Button particularIndexesColumnsButton;
+	public Button particularTablepartitionsButtons;
+	public Button particularTableIndexesButtons;
+	public Button particularProceduresColumnsButtons;
+	public Button particularFunctionsColumnsButtons;
+	public Button viewTableButton;
+	public Button createTableButtons;
+	public Button deleteTableButton;
+	public Button editTableButton;
+	public Button refreshTableButton;
+	public Button viewViewButton;
+	public Button createViewButton;
+	public Button editViewButton;
+	public Button deleteViewButton;
+	public Button refreshViewButton;
+	public Button viewIndexButton;
+	public Button createIndexButton;
+	public Button editIndexButton;
+	public Button deleteIndexButton;
+	public Button refreshIndexButton;
+	public Button viewProcedureButton;
+	public Button createProcedureButton;
+	public Button editProcedureButton;
+	public Button deleteProcedureButton;
+	public Button refreshProcedureButton;
+	public Button viewFunctionButton;
+	public Button createFunctionButton;
+	public Button editFunctionButton;
+	public Button deleteFunctionButton;
+	public Button viewTriggersButton;
+	public Button createTriggersButton;
+	public Button editTriggersButton;
+	public Button deleteTriggersButton;
+	public Button refreshTriggersButton;
+	public Button viewEventButton;
+	public Button createEventButton;
+	public Button editEventButton;
+	public Button deleteEventButton;
+	public Button refreshEventsButton;
+	public Button moreChartsButton;
+	public Button showBarGraphButton;
 	public TabPane statusSystemVariablesTabpane;
     public Tab statusVariablesTab;
 	public Tab systemVariablesTab;
+	public Tab databaseDetails;
+	public Tab databaseDetailsPropertiesTab;
+	public Tab databaseDetailsTablesTab;
+	public Tab databaseDetailsViewsTab;
+	public Tab databaseDetailsIndexesTab;
+	public Tab databaseDetailsProceduresTab;
+	public Tab databaseDetailsFunctionsTab;
+	public Tab databaseDetailsTriggersTab;
+	public Tab databaseDetailsEventsTab;
+	public Tab databaseERDiagram;
+	public Tab databaseGrahicsStats;
+	public Tab databaseAIPrompt;
 	  
 	public Tab globalSystemVariablesTab;
 	public Tab sessionSystemVariablesTab;
@@ -119,13 +183,20 @@ public class MySqlUI {
 	
 	public TableView performanceReportTableView;
 	public Label particularPerformanceReportLabel;
-	public Button refreshPerformanceButton  = new Button("Refresh");
-	public Button exportPerformanceButton = new Button("Export");
-	public Button performanceCopySelected = new Button("Copy Selected");
+	/*
+	 * public Button refreshPerformanceButton = new Button("Refresh");
+	 *  public Button exportPerformanceButton = new Button("Export"); 
+	 * public Button performanceCopySelected = new Button("Copy Selected");
+	 */
+	
+	public Button refreshPerformanceButton = new Button("Refresh");
+	public Button exportPerformanceButton;
+	public Button performanceCopySelected;
 	
  	DecimalFormat decimalFormat = new DecimalFormat("#.##");
  	
-	public Button performanceCopyQuery = new Button("Copy Query");
+ 	public Button performanceCopyQuery; 
+	//public Button performanceCopyQuery = new Button("Copy Query");
     public Clipboard clipboard = Clipboard.getSystemClipboard();
     public ClipboardContent clipBoardcontent = new ClipboardContent();
 	 
@@ -154,6 +225,51 @@ public class MySqlUI {
 	 public TreeItem<String> mySqlTreeItemAdminister;
 	 public TreeItem<String> mySqlTreeItemSystemInfo;
 	 public TreeItem<String> mySqlTreeItemAdministration;
+	 public TreeItem<String> mySqlTreeItemAdministerServerStatus;
+	 public TreeItem<String> mySqlTreeItemAdministerClientConnectionss;
+	 public TreeItem<String> mySqlTreeItemAdministerUserandPrivileges;
+	 public TreeItem<String> mySqlTreeItemAdministerStatusandSystemVariables;
+	 public TreeItem<String> mySqlTreeItemPerformance;
+	 public TreeItem<String> mySqlTreeItemAdministerDashboard;
+	 public TreeItem<String> mySqlTreeItemAdministerPerformanceReports;
+	 public TreeItem<String> mySqlTreeItemServer;
+	 public TreeItem<String> mySqlTreeItemAdministerServerLogs;
+	 public TreeItem<String> mySqlTreeItemSystemInfoBinaryLogs;
+	 public TreeItem<String> mySqlTreeItemSystemInfoCharacterSet;
+	 public TreeItem<String> mySqlTreeItemSystemInfoCollation;
+	 public TreeItem<String> mySqlTreeItemSystemInfoEngines;
+	 public TreeItem<String> mySqlTreeItemSystemInfoErrors;
+	 public TreeItem<String> mySqlTreeItemSystemInfoEvents;
+	 public TreeItem<String> mySqlTreeItemSystemInfoOpenTables;
+	 public TreeItem<String> mySqlTreeItemSystemInfoPlugins;
+	 public TreeItem<String> mySqlTreeItemSystemInfoPreviliges;
+	 public TreeItem<String> mySqlTreeItemSystemInfoProcessList;
+	 public TreeItem<String> mySqlTreeItemSystemInfoProfiles;
+	 public TreeItem<String> mySqlTreeItemSystemInfoReplicas;
+	 public TreeItem<String> mySqlTreeItemSystemInfoSessionStatus;
+	 public TreeItem<String> mySqlTreeItemSystemInfoGlobalStatus;
+	 public TreeItem<String> mySqlTreeItemSystemInfoSessionVariables;
+	 public TreeItem<String> mySqlTreeItemSystemInfoGlobalVariables;
+	 public TreeItem<String> mySqlTreeItemSystemInfoWarnings;
+	 	 
+	 public Tab particularTablePropertiesTab;
+	 public Tab particularTableDataTab;
+	 public Tab particularTableERDiagramTab;
+	 public Tab particularTableGraphVisualsTab; 
+	 public Tab particularTableAiPromptTab; 
+	 public Tab loginTab; 
+	 public Tab accountLimitsTab; 
+	 public Tab accountPrivilegesTab; 
+	 public Tab schemaPrivilegesTab; 
+	 
+	 public Label l;
+	 public Label userAccountsLabel;
+	 
+	 public Button addAccountButton;
+	 public Button deletetButton;
+
+	 
+	 
 	 
 	public MySqlUI(Menu_Items_FX menu_Items_FX,NewMenuItemEventHandler newMenuItemEventHandler) {
 		this.menu_Items_FX = menu_Items_FX;
@@ -169,7 +285,7 @@ public class MySqlUI {
 //		  connectionUrlCredentialsGridPane.setPadding(new Insets(20,10,20,10));
 //		  connectionUrlCredentialsGridPane.setVgap(5);
 //		  connectionUrlCredentialsGridPane.setHgap(5);
-		  Label jdbcUrlgeneralLabel = new Label("General"); 
+		  Label jdbcUrlgeneralLabel = new Label("General");
 		  GridPane.setConstraints(jdbcUrlgeneralLabel, 0, 0);   // column 0 row 0
 		  Label jdbcConnectionNameLabel= new Label("Name");
 		  GridPane.setConstraints(jdbcConnectionNameLabel, 0, 1);
@@ -1405,31 +1521,31 @@ public class MySqlUI {
 						}
 			}
 		}); */
-								
+		 
 		//Administrator
 		mySqlTreeItemAdminister = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Administer"));
 		
 		mySqlTreeItemAdministration = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Administration"));
 		mySqlTreeItemAdminister.getChildren().add(mySqlTreeItemAdministration);
-		TreeItem<String> mySqlTreeItemAdministerServerStatus = new TreeItem<String>("Server Status");
+		mySqlTreeItemAdministerServerStatus = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("ServerStatus"));
 		mySqlTreeItemAdministration.getChildren().add(mySqlTreeItemAdministerServerStatus);
-		TreeItem<String> mySqlTreeItemAdministerClientConnectionss = new TreeItem<String>("Client Connections");
+		mySqlTreeItemAdministerClientConnectionss = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("ClientConnections"));
 		mySqlTreeItemAdministration.getChildren().add(mySqlTreeItemAdministerClientConnectionss);
-		TreeItem<String> mySqlTreeItemAdministerUserandPrivileges = new TreeItem<String>("Users and Privileges");
+		mySqlTreeItemAdministerUserandPrivileges = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("UsersAndPrivileges"));
 		mySqlTreeItemAdministration.getChildren().add(mySqlTreeItemAdministerUserandPrivileges);
-		TreeItem<String> mySqlTreeItemAdministerStatusandSystemVariables = new TreeItem<String>("Status and System Variables");
+		mySqlTreeItemAdministerStatusandSystemVariables = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("StatusAndSystemVariables"));
 		mySqlTreeItemAdministration.getChildren().add(mySqlTreeItemAdministerStatusandSystemVariables);
 		
-		TreeItem<String> mySqlTreeItemPerformance = new TreeItem<String>("Performance");
+		mySqlTreeItemPerformance = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Performance"));
 		mySqlTreeItemAdminister.getChildren().add(mySqlTreeItemPerformance);
-		TreeItem<String> mySqlTreeItemAdministerDashboard = new TreeItem<String>("Dashboard");
+		mySqlTreeItemAdministerDashboard = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Dashboard"));
 		mySqlTreeItemPerformance.getChildren().add(mySqlTreeItemAdministerDashboard);
-		TreeItem<String> mySqlTreeItemAdministerPerformanceReports = new TreeItem<String>("Performance Reports");
+		mySqlTreeItemAdministerPerformanceReports = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("PerformanceReports"));
 		mySqlTreeItemPerformance.getChildren().add(mySqlTreeItemAdministerPerformanceReports);
 		
-		TreeItem<String> mySqlTreeItemServer = new TreeItem<String>("Server");
+		mySqlTreeItemServer = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Server"));
 		mySqlTreeItemAdminister.getChildren().add(mySqlTreeItemServer);
-		TreeItem<String> mySqlTreeItemAdministerServerLogs = new TreeItem<String>("Server Logs");
+		mySqlTreeItemAdministerServerLogs = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("ServerLogs"));
 		mySqlTreeItemServer.getChildren().add(mySqlTreeItemAdministerServerLogs);
 		
 		mySqlTreeItemAdminister.expandedProperty().addListener(new ChangeListener<Boolean>() {
@@ -1445,41 +1561,41 @@ public class MySqlUI {
 		
 		// System Info
 		mySqlTreeItemSystemInfo = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("SystemInfo"));
-		TreeItem<String> mySqlTreeItemSystemInfoBinaryLogs = new TreeItem<String>("BINARY LOGS");  // This will show Binary Log EVENTS
+	    mySqlTreeItemSystemInfoBinaryLogs = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("BinaryLogs"));  // This will show Binary Log EVENTS
 		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoBinaryLogs);
-		TreeItem<String> mySqlTreeItemSystemInfoCharacterSet = new TreeItem<String>("CHARACTER SET");
+		 mySqlTreeItemSystemInfoCharacterSet = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("CharacterSet"));
 		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoCharacterSet);
-		TreeItem<String> mySqlTreeItemSystemInfoCollation = new TreeItem<String>("COLLATION");
+		mySqlTreeItemSystemInfoCollation = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Collation"));
 		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoCollation);
-		TreeItem<String> mySqlTreeItemSystemInfoEngines = new TreeItem<String>("ENGINES");
+		mySqlTreeItemSystemInfoEngines = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Engines"));
 		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoEngines);
-		TreeItem<String> mySqlTreeItemSystemInfoErrors = new TreeItem<String>("ERRORS");
+		mySqlTreeItemSystemInfoErrors = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Errors"));
 		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoErrors);
-		TreeItem<String> mySqlTreeItemSystemInfoEvents = new TreeItem<String>("EVENTS");
+		mySqlTreeItemSystemInfoEvents = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Events"));
 		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoEvents);
 		//TreeItem<String> mySqlTreeItemSystemInfoGrants = new TreeItem<String>("GRANTS");
 		//mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoGrants);
-		TreeItem<String> mySqlTreeItemSystemInfoOpenTables = new TreeItem<String>("OPEN TABLES");
+		mySqlTreeItemSystemInfoOpenTables = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("OpenTables"));
 		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoOpenTables);
-		TreeItem<String> mySqlTreeItemSystemInfoPlugins = new TreeItem<String>("PLUGINS");
+		mySqlTreeItemSystemInfoPlugins = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Plugins"));
 		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoPlugins);
-		TreeItem<String> mySqlTreeItemSystemInfoPreviliges = new TreeItem<String>("PRIVILEGES");
+		mySqlTreeItemSystemInfoPreviliges = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Previliges"));
 		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoPreviliges);
-		TreeItem<String> mySqlTreeItemSystemInfoProcessList = new TreeItem<String>("PROCESS LIST");
+	    mySqlTreeItemSystemInfoProcessList = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("ProcessList"));
 		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoProcessList);
-		TreeItem<String> mySqlTreeItemSystemInfoProfiles = new TreeItem<String>("PROFILES");
+		mySqlTreeItemSystemInfoProfiles = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Profiles"));
 		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoProfiles);
-		TreeItem<String> mySqlTreeItemSystemInfoReplicas = new TreeItem<String>("REPLICAS");
+		mySqlTreeItemSystemInfoReplicas = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Replicas"));
 		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoReplicas);
-		TreeItem<String> mySqlTreeItemSystemInfoSessionStatus = new TreeItem<String>("SESSION STATUS");
+		mySqlTreeItemSystemInfoSessionStatus = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("SessionStatus"));
 		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoSessionStatus);
-		TreeItem<String> mySqlTreeItemSystemInfoGlobalStatus = new TreeItem<String>("GLOBAL STATUS");
+		mySqlTreeItemSystemInfoGlobalStatus = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("GlobalStatus"));
 		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoGlobalStatus);
-		TreeItem<String> mySqlTreeItemSystemInfoSessionVariables = new TreeItem<String>("SESSION VARIABLES");
+		mySqlTreeItemSystemInfoSessionVariables = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("SessionVariables"));
 		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoSessionVariables);
-		TreeItem<String> mySqlTreeItemSystemInfoGlobalVariables = new TreeItem<String>("GLOBAL VARIABLES");
+		mySqlTreeItemSystemInfoGlobalVariables = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("GlobalVariables"));
 		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoGlobalVariables);
-		TreeItem<String> mySqlTreeItemSystemInfoWarnings = new TreeItem<String>("WARNINGS");
+		mySqlTreeItemSystemInfoWarnings = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Warnings"));
 		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoWarnings);
 		
 		
@@ -1790,12 +1906,12 @@ public class MySqlUI {
 					 }
 					 
 				 }
-				 if(event.getClickCount() == 2 && getTreeItem().getParent().getValue().equals(menu_Items_FX.resourceBundle.getString("SystemInfo")) ) {
+				 if(event.getClickCount() == 2 && getTreeItem().getParent().getValue().equals(menu_Items_FX.resourceBundle.getString("SystemInfo")) ) { 
 					 
 					 System.out.println("System info componets like clciked!!!");
 				 }
 					 
-				 if(event.getClickCount() == 2  &&  (getTreeItem().getParent().getValue().equals(menu_Items_FX.resourceBundle.getString("SystemInfo")) || getTreeItem().getValue().equals("Server Logs") )  ) {
+				 if(event.getClickCount() == 2  &&  (getTreeItem().getParent().getValue().equals(menu_Items_FX.resourceBundle.getString("SystemInfo")) || getTreeItem().getValue().equals(menu_Items_FX.resourceBundle.getString("ServerLogs")))){
 					 
 					 if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
 						 if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {																			   
@@ -1853,7 +1969,7 @@ public class MySqlUI {
 											
 											TableView resultAsTableView = new TableView();
 											VBox topHalfResultTableView = new VBox();
-											if (getTreeItem().getValue().equalsIgnoreCase("BINARY LOGS") || getTreeItem().getValue().equalsIgnoreCase("Server Logs")) {
+											if (getTreeItem().getValue().equalsIgnoreCase("BINARY LOGS") || getTreeItem().getValue().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("ServerLogs"))) {
 												resultAsTableView = showResultSetInTheTableView(rs,getTreeItem().getValue());
 												topHalfResultTableView.getChildren().addAll(addTopHBoxForInfo(getTreeItem().getValue()),resultAsTableView);
 												((SplitPane) genericNode).getItems().addAll(topHalfResultTableView,secondHalfDisplayVBox); // Top half of query editer							      
@@ -1907,7 +2023,7 @@ public class MySqlUI {
 					 displayPerformanceTableView(performanceReportsTypes, performanceReportQueries,getTreeItem().getValue());
 					 
 				 }
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Dashboard") && getTreeItem().getParent().getValue().equals("Performance") && getTreeItem().getParent().getParent().getValue().equals(menu_Items_FX.resourceBundle.getString("Administer")) ) { 
+				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Dashboard")) && getTreeItem().getParent().getValue().equals(menu_Items_FX.resourceBundle.getString("Performance")) && getTreeItem().getParent().getParent().getValue().equals(menu_Items_FX.resourceBundle.getString("Administer")) ) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
 		  
 					  if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
@@ -1956,7 +2072,7 @@ public class MySqlUI {
 							});		
 		  
 				 } 				 
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Performance Reports") && getTreeItem().getParent().getValue().equalsIgnoreCase("Performance")
+				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("PerformanceReports")) && getTreeItem().getParent().getValue().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Performance"))
 						 && getTreeItem().getParent().getParent().getValue().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Administer")) ) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
 		  
@@ -2010,7 +2126,7 @@ public class MySqlUI {
 									Label performanceReportsLabel = new Label("Reports");
 									//userAccountsLabel.setTextFill(Color.BLUEVIOLET);
 									vboxLeft.getChildren().add(performanceReportsLabel);
-									vboxLeft.getChildren().add(performanceView);
+									vboxLeft.getChildren().add(performanceView);	
 									
 									VBox vBoxCenterTop = new VBox();									vBoxCenterTop.setId("vboxPerformanceRep");
 //									vBoxCenterTop.setPadding(new Insets(5,5,5,5));
@@ -2029,7 +2145,13 @@ public class MySqlUI {
 									HBox hboxPerformanceButtonsLeft = new HBox();
 									hboxPerformanceButtonsLeft.setId("hboxPerformanceButtonsLeftRight");
 //									hboxPerformanceButtonsLeft.setSpacing(10);
-//									hboxPerformanceButtonsLeft.setPadding(new Insets(10,10,10,10));
+//									hboxPerformanceButtonsLeft.setPadding(new Insets(10,10,10,10));  
+									
+									exportPerformanceButton = new Button(menu_Items_FX.resourceBundle.getString("Export"));
+									performanceCopySelected = new Button(menu_Items_FX.resourceBundle.getString("CopySelected"));
+									performanceCopyQuery = new Button(menu_Items_FX.resourceBundle.getString("CopySelected"));
+									
+									
 									exportPerformanceButton.setId("buttons");
 									performanceCopySelected.setId("buttons");
 									performanceCopyQuery.setId("buttons");
@@ -2038,7 +2160,7 @@ public class MySqlUI {
 									HBox hboxPerformanceButtonsRight = new HBox();
 									hboxPerformanceButtonsRight.setId("hboxPerformanceButtonsLeftRight");
 									hboxPerformanceButtonsRight.setPadding(new Insets(10,10,10,10));
-									
+									refreshPerformanceButton = new Button(menu_Items_FX.resourceBundle.getString("Refresh"));
 									refreshPerformanceButton.setId("buttons");
 									hboxPerformanceButtonsRight.getChildren().add(refreshPerformanceButton);
 									
@@ -2067,7 +2189,7 @@ public class MySqlUI {
 							});		
 				 }
 		  
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Server Status") && getTreeItem().getParent().getValue().equals(menu_Items_FX.resourceBundle.getString("Administration"))) { 
+				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("ServerStatus")) && getTreeItem().getParent().getValue().equals(menu_Items_FX.resourceBundle.getString("Administration"))) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());
 					  if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
 				    	  if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
@@ -2141,7 +2263,7 @@ public class MySqlUI {
 							  }
 							});
 				 }
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Client Connections") && getTreeItem().getParent().getValue().equals(menu_Items_FX.resourceBundle.getString("Administration"))) { 
+				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("ClientConnections")) && getTreeItem().getParent().getValue().equals(menu_Items_FX.resourceBundle.getString("Administration"))) { 
 				      System.out.println("Double clicked on this item"+ getTreeItem().getValue());
 					  if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
 							 if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
@@ -2212,7 +2334,7 @@ public class MySqlUI {
 						
 							});		
 				 }
-				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase("Users and Privileges") && getTreeItem().getParent().getValue().equals(menu_Items_FX.resourceBundle.getString("Administration"))) { 
+				 if(event.getClickCount() == 2 && getTreeItem().getValue().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("UsersAndPrivileges")) && getTreeItem().getParent().getValue().equals(menu_Items_FX.resourceBundle.getString("Administration"))) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());											   
 					  if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
 							 if( menu_Items_FX.alltabbedEditors.getSelectionModel().getSelectedItem().getGraphic() != null) {
@@ -2419,7 +2541,7 @@ public class MySqlUI {
 									vboxLeft.setId("vboxUserAcc");
 //									vboxLeft.setPadding(new Insets(5,5,5,5));
 //									vboxLeft.setSpacing(5);
-									Label userAccountsLabel = new Label("User Accounts");
+									userAccountsLabel = new Label(menu_Items_FX.resourceBundle.getString("UserAccounts"));
 									//userAccountsLabel.setTextFill(Color.BLUEVIOLET);
 									vboxLeft.getChildren().add(userAccountsLabel);
 									vboxLeft.getChildren().add(resultAsTableView);
@@ -2427,7 +2549,7 @@ public class MySqlUI {
 									HBox hBox = new HBox();
 									hBox.setId("hBoxUserAcc");
 									//hBox.setPadding(new Insets(5,5,5,5));
-									Button addAccountButton = new Button("Add Account");
+									addAccountButton = new Button(menu_Items_FX.resourceBundle.getString("AddAccount"));
 									addAccountButton.setId("buttons");
 									addAccountButton.setMinWidth(80);
 								    addAccountButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -2443,10 +2565,10 @@ public class MySqlUI {
 											hostsMatchingTextField.setText(newUserData.get("Host"));										
 							            }
 							        });
-									Button deletetButton = new Button("Delete");
+									deletetButton = new Button(menu_Items_FX.resourceBundle.getString("Delete"));
 									deletetButton.setId("buttons");
 									deletetButton.setMinWidth(80);
-									Button refreshButton = new Button("Refresh");
+									refreshButton = new Button(menu_Items_FX.resourceBundle.getString("Refresh"));
 									refreshButton.setId("buttons");
 									refreshButton.setMinWidth(80);
 									hBox.getChildren().add(addAccountButton);
@@ -2479,19 +2601,19 @@ public class MySqlUI {
 									vBoxCenterTop.getChildren().add(detailForAccountLabel);
 									TabPane accountDetailsTabs = new TabPane();
 									accountDetailsTabs.getStyleClass().addAll("accountDetailsTabs");  // box for the connection tabbed pane
-									Tab loginTab = new Tab("Login");
+									loginTab = new Tab(menu_Items_FX.resourceBundle.getString("Login"));
 									loginTab.getStyleClass().add("Tabs");
 									loginTab.setClosable(false);  
 									loginTab.setContent(addAccountLoginCredentials()); // pass the user details here as parameterand set them
-									Tab accountLimitsTab = new Tab("Account Limits");
+									accountLimitsTab = new Tab(menu_Items_FX.resourceBundle.getString("AccountLimits"));
 									accountLimitsTab.getStyleClass().add("Tabs");
 									accountLimitsTab.setClosable(false);	
 									accountLimitsTab.setContent(addAccountLimits());
-									Tab accountPrivilegesTab = new Tab("Account Privileges");
+									accountPrivilegesTab = new Tab(menu_Items_FX.resourceBundle.getString("AccountPrivileges"));
 									accountPrivilegesTab.getStyleClass().add("Tabs");
 									accountPrivilegesTab.setClosable(false);
 									accountPrivilegesTab.setContent(addAccountPrivileges());
-									Tab schemaPrivilegesTab = new Tab("Schema Privileges");
+									schemaPrivilegesTab = new Tab(menu_Items_FX.resourceBundle.getString("SchemaPrivileges"));
 									schemaPrivilegesTab.getStyleClass().add("Tabs");
 									schemaPrivilegesTab.setClosable(false);
 									schemaPrivilegesTab.setContent(addSchemaPrivileges(resultAsTableView,schemaPreviligestableView));
@@ -2516,7 +2638,7 @@ public class MySqlUI {
 							  }
 							});		
 				 }
-				 if(event.getClickCount() == 2 && (getTreeItem().getValue().equalsIgnoreCase("Status and System Variables") || getTreeItem().getValue().equalsIgnoreCase("SESSION STATUS")
+				 if(event.getClickCount() == 2 && (getTreeItem().getValue().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("StatusAndSystemVariables")) || getTreeItem().getValue().equalsIgnoreCase("SESSION STATUS")
 						 || getTreeItem().getValue().equalsIgnoreCase("GLOBAL STATUS") || getTreeItem().getValue().equalsIgnoreCase("SESSION VARIABLES") || getTreeItem().getValue().equalsIgnoreCase("GLOBAL VARIABLES"))) { 
 				      System.out.println("Duble clicked on this item"+ getTreeItem().getValue());											   
 					  if(!menu_Items_FX.alltabbedEditors.getTabs().isEmpty()) {
@@ -2793,6 +2915,11 @@ public class MySqlUI {
 		return tableView;
 	}
 	
+	public Label hboxDescriptionLabel;
+	public Label statusVariableLabel ;
+	public Label variableNameLabel;
+	public Button saveVariablebtn;
+	
 	private TableView showResultSetInTheTableView(ResultSet rs,String inputParam)  throws SQLException{
 		
 		TableView tableView = new TableView();
@@ -2826,7 +2953,7 @@ public class MySqlUI {
 					hboxDescriptionhBox.setId("description-box");
 //					hboxDescriptionhBox.setSpacing(10);
 //					hboxDescriptionhBox.setPadding(new Insets(20,10,20,30));
-					Label hboxDescriptionLabel = new Label("Description: ");
+					hboxDescriptionLabel = new Label(menu_Items_FX.resourceBundle.getString("Description"));
 					hboxDescriptionLabel.setId("label");
 					//hboxDescriptionLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));					
 					Label hboxDescriptionValueLabel = new Label(newValue.get("Description"));
@@ -2847,7 +2974,7 @@ public class MySqlUI {
 					variableNamehBox.setId("variableName-hbox");
 //					variableNamehBox.setSpacing(10);
 //					variableNamehBox.setPrefWidth(300);
-					Label variableNameLabel = new Label("Name: ");
+					variableNameLabel = new Label(menu_Items_FX.resourceBundle.getString("Name"));
 					variableNameLabel.setId("label");
 					//variableNameLabel.setFont(Font.font("System Regular",FontWeight.BOLD,12));
 					Label variableNameValueLabel = new Label(newValue.get("Variable_name"));
@@ -2857,7 +2984,7 @@ public class MySqlUI {
 					hboxVariableValue.setId("variableValue-hbox");
 //					hboxVariableValue.setSpacing(10);
 //					hboxVariableValue.setPrefWidth(200);
-					Label statusVariableLabel = new Label("Value:  ");
+					statusVariableLabel = new Label(menu_Items_FX.resourceBundle.getString("Value"));
 					TextField statusVariableValue = new TextField(newValue.get("Value"));
 					statusVariableLabel.setId("label");
 					statusVariableValue.getStyleClass().add("textfield");
@@ -2870,13 +2997,13 @@ public class MySqlUI {
 //					btnSaveVariablehBox.setAlignment(Pos.BOTTOM_RIGHT);
 					//btnBox.setPadding(new Insets(10,100,10,0));
 					
-					Button saveVariablebtn = new Button();					
+					saveVariablebtn = new Button();					
 					saveVariablebtn.setId("buttons");					
 					if("Y".equals( MySQLConstants.valueOf(newValue.get("Variable_name")).getIsEditable())) {
-						saveVariablebtn.setText("Save");
+						saveVariablebtn.setText(menu_Items_FX.resourceBundle.getString("Save"));
 						saveVariablebtn.setDisable(false);
 					}else {
-						saveVariablebtn.setText("Read Only");
+						saveVariablebtn.setText(menu_Items_FX.resourceBundle.getString("ReadOnly"));
 						saveVariablebtn.setDisable(true);
 					}
 					
@@ -2894,7 +3021,7 @@ public class MySqlUI {
 					//variablesSecondHalfDisplayVBox.setPadding(new Insets(0, 40, 10, 0));
 					variablesSecondHalfDisplayVBox.getChildren().add(gridPane);
 				}
-				if(inputParam.equalsIgnoreCase("BINARY LOGS") || inputParam.equalsIgnoreCase("Server Logs")) {
+				if(inputParam.equalsIgnoreCase("BINARY LOGS") || inputParam.equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("ServerLogs"))) {
 					secondHalfDisplayVBox.getChildren().clear();
 					for(Map.Entry<String, String> tableValues : newValue.entrySet()) {
 						System.out.println( tableValues.getKey()+ " "+ tableValues.getValue());
@@ -3114,22 +3241,22 @@ public class MySqlUI {
 		particularTableTabPane.setId("Tabpane");
 //		particularTableTabPane.setTabMinWidth(180);
 //		particularTableTabPane.setTabMinHeight(30);
-		Tab particularTablePropertiesTab = new Tab("Properties");
+		particularTablePropertiesTab = new Tab(menu_Items_FX.resourceBundle.getString("Properties"));
 		particularTablePropertiesTab.getStyleClass().add("Tabs");
 		particularTablePropertiesTab.setClosable(false);
-		Tab particularTableDataTab = new Tab("Data");
+		particularTableDataTab = new Tab(menu_Items_FX.resourceBundle.getString("Data"));
 		particularTableDataTab.getStyleClass().add("Tabs");
 		particularTableDataTab.setClosable(false);
-		Tab particularTableERDiagramTab = new Tab("ER Diagram");
+		particularTableERDiagramTab = new Tab(menu_Items_FX.resourceBundle.getString("ERDiagram"));
 		particularTableERDiagramTab.getStyleClass().add("Tabs");
 		particularTableERDiagramTab.setClosable(false);
 		
-		Tab particularTableGraphVisualsTab = new Tab("Graph Visuals");
+		particularTableGraphVisualsTab = new Tab(menu_Items_FX.resourceBundle.getString("GraphVisuals"));
 		particularTableGraphVisualsTab.getStyleClass().add("Tabs");
 		particularTableGraphVisualsTab.setClosable(false);
 		
 		
-		Tab particularTableAiPromptTab = new Tab("AI Prompt");
+	    particularTableAiPromptTab = new Tab(menu_Items_FX.resourceBundle.getString("AIPrompt"));
 		particularTableAiPromptTab.getStyleClass().add("Tabs");
 		particularTableAiPromptTab.setClosable(false);
 		particularTableMainTabVBox.getChildren().addAll(particularTableTabPane)	;
@@ -3150,7 +3277,7 @@ public class MySqlUI {
 		Tab particularTabledetailsTab = new Tab();
 		particularTabledetailsTab.getStyleClass().add("Tabs");
 		particularTabledetailsTab.setClosable(false);
-		Label l = new Label("Details");
+		l = new Label(menu_Items_FX.resourceBundle.getString("Details"));
 		l.setRotate(90);
 		StackPane stp = new StackPane(new Group(l));
 		particularTabledetailsTab.setGraphic(stp);
@@ -3161,7 +3288,7 @@ public class MySqlUI {
 		Tab particularTablecolumnsTab = new Tab();
 		particularTablecolumnsTab.getStyleClass().add("Tabs");
 		particularTablecolumnsTab.setClosable(false);
-		l = new Label("Columns");
+		l = new Label(menu_Items_FX.resourceBundle.getString("Columns"));
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularTablecolumnsTab.setGraphic(stp);
@@ -3170,7 +3297,7 @@ public class MySqlUI {
 		Tab particularTableconstraintsTab = new Tab();
 		particularTableconstraintsTab.getStyleClass().add("Tabs");
 		particularTableconstraintsTab.setClosable(false);
-		l = new Label("Constraints");
+		l = new Label(menu_Items_FX.resourceBundle.getString("Constraints"));
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularTableconstraintsTab.setGraphic(stp);
@@ -3179,7 +3306,7 @@ public class MySqlUI {
 		Tab particularTableforeignKeysTab = new Tab();
 		particularTableforeignKeysTab.getStyleClass().add("Tabs");
 		particularTableforeignKeysTab.setClosable(false);
-		l = new Label("Foreign Keys");
+		l = new Label(menu_Items_FX.resourceBundle.getString("ForeignKeys"));
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularTableforeignKeysTab.setGraphic(stp);
@@ -3188,7 +3315,7 @@ public class MySqlUI {
 		Tab particularTablereferencesTab = new Tab();
 		particularTablereferencesTab.getStyleClass().add("Tabs");
 		particularTablereferencesTab.setClosable(false);
-		l = new Label("References");
+		l = new Label(menu_Items_FX.resourceBundle.getString("References"));
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularTablereferencesTab.setGraphic(stp);
@@ -3196,7 +3323,7 @@ public class MySqlUI {
 		Tab particularTabletriggersTab = new Tab();
 		particularTabletriggersTab.getStyleClass().add("Tabs");
 		particularTabletriggersTab.setClosable(false);
-		l = new Label("Triggers");
+		l = new Label(menu_Items_FX.resourceBundle.getString("Triggers"));
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularTabletriggersTab.setGraphic(stp);
@@ -3205,7 +3332,7 @@ public class MySqlUI {
 		Tab particularTableindexesTab = new Tab();
 		particularTableindexesTab.getStyleClass().add("Tabs");
 		particularTableindexesTab.setClosable(false);
-		l = new Label("Indexes");
+		l = new Label(menu_Items_FX.resourceBundle.getString("Indexes"));
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularTableindexesTab.setGraphic(stp);
@@ -3213,7 +3340,7 @@ public class MySqlUI {
 		Tab particularTablepartitionsTab = new Tab();
 		particularTablepartitionsTab.getStyleClass().add("Tabs");
 		particularTablepartitionsTab.setClosable(false);
-		l = new Label("Partitions");
+		l = new Label(menu_Items_FX.resourceBundle.getString("Partitions"));
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularTablepartitionsTab.setGraphic(stp);
@@ -3221,7 +3348,7 @@ public class MySqlUI {
 		Tab particularTableDDLTab = new Tab();
 		particularTableDDLTab.getStyleClass().add("Tabs"); 
 		particularTableDDLTab.setClosable(false);
-		l = new Label("Source/DDL");
+		l = new Label(menu_Items_FX.resourceBundle.getString("Source/DDL"));
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularTableDDLTab.setGraphic(stp);
@@ -3231,28 +3358,28 @@ public class MySqlUI {
 			public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
 			
 				System.out.println("Tab swithced"+ ((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText());
-				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Columns")) {
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Columns"))) {
 					 getParticularTableColumnsTab(tableName,databaseName,particularTablecolumnsTab);
 				}
-				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Constraints")) {
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Constraints"))) {
 					getParticularTableConstraintsTab(tableName,databaseName,particularTableconstraintsTab);
 				}
-				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Foreign Keys")) {
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("ForeignKeys"))) {
 					getParticularTableForeignKeysTab(tableName,databaseName,particularTableforeignKeysTab);
 				}
-				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("References")) {
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("References"))) {
 					getParticularTableReferencesTab(tableName,databaseName,particularTablereferencesTab);
 				}
-				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Triggers")) {
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Triggers"))) {
 					getParticularTableTriggerTab(tableName,databaseName,particularTabletriggersTab);
 				}
-				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Indexes")) {
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Indexes"))) {
 					getParticulatTableIndexesTab(tableName,databaseName,particularTableindexesTab);
 				}
-				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Partitions")) {
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Partitions"))) {
 					getParticularTablePartitionTab(tableName,databaseName,particularTablepartitionsTab);
 				}
-				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Source/DDL")) {
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Source/DDL"))) {
 					getParticularTableSourceDDLTab(tableName,databaseName,particularTableDDLTab);
 				}
 			}
@@ -3271,7 +3398,7 @@ public class MySqlUI {
 
 				System.out.println("Tab under Table Selected is "+newValue.getText());
 
-				if(newValue.getText().equals("Data")) {
+				if(newValue.getText().equals(menu_Items_FX.resourceBundle.getString("Data"))) {
 					System.out.println("Data Tab under Table selected");
 					try {
 						ResultSet rsTableData = stmt.executeQuery("SELECT * FROM " + databaseName + "." + tableName);
@@ -3286,7 +3413,10 @@ public class MySqlUI {
 						HBox particularTableDatapartitionsButtonsHBox = new HBox();
 						particularTableDatapartitionsButtonsHBox.setId("DatapartitionsButtonsHBox");
 						//particularTableDatapartitionsButtonsHBox.setPadding(new Insets(10,10,10,10));
-						particularTableDatapartitionsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
+//						particularTableDatapartitionsButtonsHBox.getChildren().add(new Button(menu_Items_FX.resourceBundle.getString("Create")){{ setId("buttons"); }});
+						createTableButton =  new Button(menu_Items_FX.resourceBundle.getString("Create"));
+						createTableButton.setId("buttons");
+						particularTableDatapartitionsButtonsHBox.getChildren().add(createTableButton);
 						particularTableDataTabVBox.getChildren().addAll(particularTableDatapartitionsView,particularTableDatapartitionsButtonsHBox);
 						particularTableDataTab.setContent(particularTableDataTabVBox);
 						//particularTableDataTab.setContent(new TableView());
@@ -3294,7 +3424,7 @@ public class MySqlUI {
 						e.printStackTrace();
 					}		
 				}
-				if(newValue.getText().equals("Graph Visuals")) {
+				if(newValue.getText().equals(menu_Items_FX.resourceBundle.getString(menu_Items_FX.resourceBundle.getString("GraphVisuals")))) {
 					System.out.println("Graph Visual Tab under Table selected");
 					particularTableGraphVisualsTab.setContent(getGraphVisualsForParticulatTable(tableName,databaseName));
 				}
@@ -3440,7 +3570,10 @@ public class MySqlUI {
 			HBox particularTablepartitionsButtonsHBox = new HBox();
 			particularTablepartitionsButtonsHBox.setId("DatapartitionsButtonsHBox");
 			//particularTablepartitionsButtonsHBox.setPadding(new Insets(10,10,10,10));
-			particularTablepartitionsButtonsHBox.getChildren().add(new Button("Create") {{ setId("buttons"); }});
+			//particularTablepartitionsButtonsHBox.getChildren().add(new Button("Create") {{ setId("buttons"); }});
+			particularTablepartitionsButtons =  new Button(menu_Items_FX.resourceBundle.getString("Create"));
+			particularTablepartitionsButtons.setId("buttons");
+			particularTablepartitionsButtonsHBox.getChildren().add(particularTablepartitionsButtons);
 			particularTablepartitionsTabVBox.getChildren().addAll(particularTablepartitionsView,particularTablepartitionsButtonsHBox);
 			particularTablepartitionsTab.setContent(particularTablepartitionsTabVBox);
 		}catch(SQLException e) {
@@ -3466,7 +3599,10 @@ public class MySqlUI {
 			HBox particularTableindexesButtonsHBox = new HBox();
 			particularTableindexesButtonsHBox.setId("DatapartitionsButtonsHBox");
 			//particularTableindexesButtonsHBox.setPadding(new Insets(10,10,10,10));
-			particularTableindexesButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
+			//particularTableindexesButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
+			particularTableIndexesButtons =  new Button(menu_Items_FX.resourceBundle.getString("Create"));
+			particularTableIndexesButtons.setId("buttons");
+			particularTableindexesButtonsHBox.getChildren().add(particularTableindexesButtonsHBox);
 			particularTableindexesTabVBox.getChildren().addAll(particularTableindexesView,particularTableindexesButtonsHBox);
 			particularTableindexesTab.setContent(particularTableindexesTabVBox);
 		}catch(SQLException e) {
@@ -3491,7 +3627,10 @@ public class MySqlUI {
 				HBox particularTabletriggersButtonsHBox = new HBox();
 				particularTabletriggersButtonsHBox.setId("DatapartitionsButtonsHBox");
 				//particularTabletriggersButtonsHBox.setPadding(new Insets(10,10,10,10));
-				particularTabletriggersButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
+				//particularTabletriggersButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
+				particularTableTriggersButtons =  new Button(menu_Items_FX.resourceBundle.getString("Create"));
+				particularTableTriggersButtons.setId("buttons");
+				particularTabletriggersButtonsHBox.getChildren().add(particularTableTriggersButtons);
 				particularTabletriggersTabVBox.getChildren().addAll(particularTabletriggersView,particularTabletriggersButtonsHBox);
 				particularTabletriggersTab.setContent(particularTabletriggersTabVBox);
 			}catch(SQLException e) {
@@ -3517,7 +3656,10 @@ public class MySqlUI {
 			HBox particularTablereferencesButtonsHBox = new HBox();
 			particularTablereferencesButtonsHBox.setId("DatapartitionsButtonsHBox");
 			//particularTablereferencesButtonsHBox.setPadding(new Insets(10,10,10,10));
-			particularTablereferencesButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
+			//particularTablereferencesButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
+			particularTableReferencesButtons =  new Button(menu_Items_FX.resourceBundle.getString("Create"));
+			particularTableReferencesButtons.setId("buttons");
+			particularTablereferencesButtonsHBox.getChildren().add(particularTableReferencesButtons);
 			particularTablereferencesTabVBox.getChildren().addAll(particularTablereferencesView,particularTablereferencesButtonsHBox);
 			particularTablereferencesTab.setContent(particularTablereferencesTabVBox);
 		
@@ -3544,7 +3686,10 @@ public class MySqlUI {
 			HBox particularTableforeignKeysButtonsHBox = new HBox();
 			particularTableforeignKeysButtonsHBox.setId("DatapartitionsButtonsHBox");
 			//particularTableforeignKeysButtonsHBox.setPadding(new Insets(10,10,10,10));
-			particularTableforeignKeysButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
+			//particularTableforeignKeysButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
+			particularTableforeignKeysButtons =  new Button(menu_Items_FX.resourceBundle.getString("Create"));
+			particularTableforeignKeysButtons.setId("buttons");
+			particularTableforeignKeysButtonsHBox.getChildren().add(particularTableforeignKeysButtons);
 			particularTableforeignKeysTabVBox.getChildren().addAll(particularTableforeignKeysView,particularTableforeignKeysButtonsHBox);
 			particularTableforeignKeysTab.setContent(particularTableforeignKeysTabVBox);
 		}catch(SQLException e) {
@@ -3569,7 +3714,10 @@ public class MySqlUI {
 			HBox particularTableconstraintsButtonsHBox = new HBox();
 			particularTableconstraintsButtonsHBox.setId("DatapartitionsButtonsHBox");
 			//particularTableconstraintsButtonsHBox.setPadding(new Insets(10,10,10,10));
-			particularTableconstraintsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
+			//particularTableconstraintsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
+			particularTableConstraintsButtons =  new Button(menu_Items_FX.resourceBundle.getString("Create"));
+			particularTableConstraintsButtons.setId("buttons");
+			particularTableconstraintsButtonsHBox.getChildren().add(particularTableConstraintsButtons);
 			particularTableconstraintsTabVBox.getChildren().addAll(particularTableconstraintsView,particularTableconstraintsButtonsHBox);
 			particularTableconstraintsTab.setContent(particularTableconstraintsTabVBox);
 			
@@ -3603,7 +3751,10 @@ public class MySqlUI {
 			HBox particularTableColumnsButtonsHBox = new HBox();
 			particularTableColumnsButtonsHBox.setId("DatapartitionsButtonsHBox");
 			//particularTableColumnsButtonsHBox.setPadding(new Insets(10,10,10,10));
-			particularTableColumnsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
+			//particularTableColumnsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
+			particularTableColumnsButtons =  new Button(menu_Items_FX.resourceBundle.getString("Create"));
+			particularTableColumnsButtons.setId("buttons");
+			particularTableColumnsButtonsHBox.getChildren().add(particularTableColumnsButtons);
 			particularTablecolumnsTabVBox.getChildren().addAll(particularTableColumnsView,particularTableColumnsButtonsHBox);
 			particularTablecolumnsTab.setContent(particularTablecolumnsTabVBox);
 			
@@ -3798,15 +3949,15 @@ public class MySqlUI {
 		particularViewTabPane.setId("Tabpane");
 //		particularViewTabPane.setTabMinWidth(180);
 //		particularViewTabPane.setTabMinHeight(30);
-		Tab particularTablePropertiesTab = new Tab("Properties");
+		particularTablePropertiesTab = new Tab(menu_Items_FX.resourceBundle.getString("Properties"));
 		particularTablePropertiesTab.getStyleClass().add("Tabs");
-		Tab particularTableDataTab = new Tab("Data");
+		particularTableDataTab = new Tab(menu_Items_FX.resourceBundle.getString("Data"));
 		particularTableDataTab.getStyleClass().add("Tabs");
-		Tab particularTableERDiagramTab = new Tab("ER Diagram");
+	    particularTableERDiagramTab = new Tab(menu_Items_FX.resourceBundle.getString("ERDiagram"));
 		particularTableERDiagramTab.getStyleClass().add("Tabs");
-		Tab particularTableGraphVisualsTab = new Tab("Graph Visuals");
+		particularTableGraphVisualsTab = new Tab(menu_Items_FX.resourceBundle.getString("GraphVisuals"));
 		particularTableGraphVisualsTab.getStyleClass().add("Tabs");
-		Tab particularTableAiPromptTab = new Tab("AI Prompt");
+		particularTableAiPromptTab = new Tab(menu_Items_FX.resourceBundle.getString("AIPrompt"));
 		particularTableAiPromptTab.getStyleClass().add("Tabs");
 		particularViewMainTabVBox.getChildren().addAll(particularViewTabPane)	;
 		
@@ -3825,7 +3976,7 @@ public class MySqlUI {
 		Tab particularViewdetailsTab = new Tab();
 		particularViewdetailsTab.getStyleClass().add("Tabs");
 		particularViewdetailsTab.setClosable(false);
-		Label l = new Label("Details");
+		l = new Label(menu_Items_FX.resourceBundle.getString("Details"));
 		l.setRotate(90);
 		StackPane stp = new StackPane(new Group(l));
 		particularViewdetailsTab.setGraphic(stp);
@@ -3836,7 +3987,7 @@ public class MySqlUI {
 		Tab particularViewcolumnsTab = new Tab();
 		particularViewcolumnsTab.getStyleClass().add("Tabs");
 		particularViewcolumnsTab.setClosable(false);
-		l = new Label("Columns");
+		l = new Label(menu_Items_FX.resourceBundle.getString("Columns"));
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularViewcolumnsTab.setGraphic(stp);
@@ -3850,7 +4001,12 @@ public class MySqlUI {
 		HBox particularViewColumnsButtonsHBox = new HBox();
 		particularViewColumnsButtonsHBox.setId("DatapartitionsButtonsHBox");
 		//particularViewColumnsButtonsHBox.setPadding(new Insets(10,10,10,10));
-		particularViewColumnsButtonsHBox.getChildren().addAll(new Button("Create") {{ setId("buttons");}},new Button("Delete") {{ setId("buttons"); }});
+		//particularViewColumnsButtonsHBox.getChildren().addAll(new Button("Create") {{ setId("buttons");}},new Button("Delete") {{ setId("buttons"); }});
+	    ViewColumnsCreateButton =  new Button(menu_Items_FX.resourceBundle.getString("Create"));
+	    ViewColumnsCreateButton.setId("buttons");
+	    ViewColumnsDeleteButton =  new Button(menu_Items_FX.resourceBundle.getString("Delete"));
+	    ViewColumnsDeleteButton.setId("buttons");
+		particularViewColumnsButtonsHBox.getChildren().addAll(ViewColumnsCreateButton,ViewColumnsDeleteButton);
 		particularViewcolumnsTabVBox.getChildren().addAll(particularViewColumnsView,particularViewColumnsButtonsHBox);
 		particularViewcolumnsTab.setContent(particularViewcolumnsTabVBox);
 		
@@ -3858,7 +4014,7 @@ public class MySqlUI {
 		Tab particularViewDDLTab = new Tab();
 		particularViewDDLTab.getStyleClass().add("Tabs");
 		particularViewDDLTab.setClosable(false);
-		l = new Label("Source/DDL");
+		l = new Label(menu_Items_FX.resourceBundle.getString("Source/DDL"));
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularViewDDLTab.setGraphic(stp);
@@ -3872,11 +4028,11 @@ public class MySqlUI {
 			@Override
 			public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
 				System.out.println("Tab swithced"+ ((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText());
-				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Columns")) {
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Columns"))) {
 					particularViewColumnsView.getItems().clear();
 					getParticularViewColumnsTab(viewName,databaseName,particularViewcolumnsTab);
 				}
-				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Source/DDL")) {
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Source/DDL"))) {
 					getParticularTableSourceDDLTab(viewName,databaseName,particularViewDDLTab);
 				}
 			}
@@ -3888,7 +4044,7 @@ public class MySqlUI {
 
 				System.out.println("Tab under Table Selected is "+newValue.getText());
 
-				if(newValue.getText().equals("Data")) {
+				if(newValue.getText().equals(menu_Items_FX.resourceBundle.getString("Data"))) {
 					System.out.println("Data Tab under Table selected");
 					try {
 						ResultSet rsTableData = stmt.executeQuery("SELECT * FROM " + databaseName + "." + viewName);
@@ -3902,7 +4058,10 @@ public class MySqlUI {
 						HBox particularViewDatapartitionsButtonsHBox = new HBox();
 						particularViewDatapartitionsButtonsHBox.setId("DatapartitionsButtonsHBox");
 						//particularViewDatapartitionsButtonsHBox.setPadding(new Insets(10,10,10,10));
-						particularViewDatapartitionsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
+						//particularViewDatapartitionsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
+						viewDataTabCreateButton =  new Button(menu_Items_FX.resourceBundle.getString("Create"));
+						viewDataTabCreateButton.setId("buttons");
+						particularViewDatapartitionsButtonsHBox.getChildren().add(viewDataTabCreateButton);
 						particularViewDataTabVBox.getChildren().addAll(particularViewDatapartitionsView,particularViewDatapartitionsButtonsHBox);
 						particularTableDataTab.setContent(particularViewDataTabVBox);
 						//particularTableDataTab.setContent(new TableView());
@@ -4015,7 +4174,7 @@ public class MySqlUI {
 		particularIndexesTabPane.setId("Tabpane");
 //		particularIndexesTabPane.setTabMinWidth(180);
 //		particularIndexesTabPane.setTabMinHeight(30);
-		Tab particularTablePropertiesTab = new Tab("Properties");
+		particularTablePropertiesTab = new Tab(menu_Items_FX.resourceBundle.getString("Properties"));
 		particularTablePropertiesTab.getStyleClass().add("Tabs");
 		particularTablePropertiesTab.setClosable(false);
 		particularIndexesMainTabVBox.getChildren().addAll(particularIndexesTabPane)	;
@@ -4033,7 +4192,7 @@ public class MySqlUI {
 		Tab particularIndexesdetailsTab = new Tab();
 		particularIndexesdetailsTab.getStyleClass().add("Tabs");
 		particularIndexesdetailsTab.setClosable(false);
-		Label l = new Label("Details");
+		l = new Label(menu_Items_FX.resourceBundle.getString("Details"));
 		l.setRotate(90);
 		StackPane stp = new StackPane(new Group(l));
 		particularIndexesdetailsTab.setGraphic(stp);
@@ -4043,7 +4202,7 @@ public class MySqlUI {
 		Tab particularIndexescolumnsTab = new Tab();
 		particularIndexescolumnsTab.getStyleClass().add("Tabs");
 		particularIndexescolumnsTab.setClosable(false);
-		l = new Label("Index Columns");
+		l = new Label(menu_Items_FX.resourceBundle.getString("IndexColumns"));
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularIndexescolumnsTab.setGraphic(stp);
@@ -4057,7 +4216,10 @@ public class MySqlUI {
 		HBox particularIndexesColumnsButtonsHBox = new HBox();
 		particularIndexesColumnsButtonsHBox.setId("DatapartitionsButtonsHBox");
 		//particularIndexesColumnsButtonsHBox.setPadding(new Insets(10,10,10,10));
-		particularIndexesColumnsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
+		//particularIndexesColumnsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
+		particularIndexesColumnsButton =  new Button(menu_Items_FX.resourceBundle.getString("Create"));
+		particularIndexesColumnsButton.setId("buttons");
+		particularIndexesColumnsButtonsHBox.getChildren().add(particularIndexesColumnsButton);
 		particularIndexescolumnsTabVBox.getChildren().addAll(particularIndexesColumnsView,particularIndexesColumnsButtonsHBox);
 		particularIndexescolumnsTab.setContent(particularIndexescolumnsTabVBox);
 	
@@ -4069,7 +4231,7 @@ public class MySqlUI {
 			@Override
 			public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
 				System.out.println("Tab swithced"+ ((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText());
-				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Index Columns")) {
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("IndexColumns"))) {
 					particularIndexesColumnsView.getItems().clear();
 					getParticularIndexColumnsTab(indexesName,databaseName,particularIndexescolumnsTab);
 				}
@@ -4199,7 +4361,7 @@ public class MySqlUI {
 		particularProceduresTabPane.setId("Tabpane");
 //		particularProceduresTabPane.setTabMinWidth(180);
 //		particularProceduresTabPane.setTabMinHeight(30);
-		Tab particularTablePropertiesTab = new Tab("Properties");
+		particularTablePropertiesTab = new Tab(menu_Items_FX.resourceBundle.getString("Properties"));
 		particularTablePropertiesTab.getStyleClass().add("Tabs");
 		particularTablePropertiesTab.setClosable(false);
 		particularProceduresMainTabVBox.getChildren().addAll(particularProceduresTabPane)	;
@@ -4217,7 +4379,7 @@ public class MySqlUI {
 		Tab particularProceduresdetailsTab = new Tab();
 		particularProceduresdetailsTab.getStyleClass().add("Tabs");
 		particularProceduresdetailsTab.setClosable(false);
-		Label l = new Label("Details");
+	    l = new Label(menu_Items_FX.resourceBundle.getString("Details"));
 		l.setRotate(90);
 		StackPane stp = new StackPane(new Group(l));
 		particularProceduresdetailsTab.setGraphic(stp);
@@ -4227,7 +4389,7 @@ public class MySqlUI {
 		Tab particularProcedurescolumnsTab = new Tab();
 		particularProcedurescolumnsTab.getStyleClass().add("Tabs");
 		particularProcedurescolumnsTab.setClosable(false);
-		l = new Label("Procedure Parameters");
+		l = new Label(menu_Items_FX.resourceBundle.getString("ProcedureParameters"));
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularProcedurescolumnsTab.setGraphic(stp);
@@ -4240,14 +4402,17 @@ public class MySqlUI {
 		HBox particularProceduresColumnsButtonsHBox = new HBox();
 		particularProceduresColumnsButtonsHBox.setId("DatapartitionsButtonsHBox");
 		//particularProceduresColumnsButtonsHBox.setPadding(new Insets(10,10,10,10));
-		particularProceduresColumnsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
+		//particularProceduresColumnsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
+		particularProceduresColumnsButtons =  new Button(menu_Items_FX.resourceBundle.getString("Create"));
+		particularProceduresColumnsButtons.setId("buttons");
+		particularProceduresColumnsButtonsHBox.getChildren().add(particularProceduresColumnsButtons);
 		particularProcedurescolumnsTabVBox.getChildren().addAll(particularProceduresColumnsView,particularProceduresColumnsButtonsHBox);
 		particularProcedurescolumnsTab.setContent(particularProcedurescolumnsTabVBox);
 		
 		Tab particularProceduresDDLTab = new Tab();
 		particularProceduresDDLTab.getStyleClass().add("Tabs");
 		particularProceduresDDLTab.setClosable(false);
-		l = new Label("Source/DDL");
+		l = new Label(menu_Items_FX.resourceBundle.getString("Source/DDL"));
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularProceduresDDLTab.setGraphic(stp);
@@ -4264,11 +4429,11 @@ public class MySqlUI {
 			@Override
 			public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
 				System.out.println("Tab swithced"+ ((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText());
-				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Procedure Parameters")) {
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("ProcedureParameters"))) {
 					particularProceduresColumnsView.getItems().clear();
 					getParticularProceduresParametersTab(proceduresName,databaseName,particularProcedurescolumnsTab);
 				}
-				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Source/DDL")) {
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Source/DDL"))) {
 					getParticularProcedureSourceDDLTab(proceduresName,databaseName,particularProceduresDDLTab);
 				}
 			}
@@ -4396,7 +4561,7 @@ public class MySqlUI {
 		particularFunctionsTabPane.setId("Tabpane");
 //		particularFunctionsTabPane.setTabMinWidth(180);
 //		particularFunctionsTabPane.setTabMinHeight(30);
-		Tab particularTablePropertiesTab = new Tab("Properties");
+		particularTablePropertiesTab = new Tab(menu_Items_FX.resourceBundle.getString("Properties"));
 		particularTablePropertiesTab.getStyleClass().add("Tabs");
 		particularTablePropertiesTab.setClosable(false);
 		particularFunctionsMainTabVBox.getChildren().addAll(particularFunctionsTabPane)	;
@@ -4414,7 +4579,7 @@ public class MySqlUI {
 		Tab particularFunctionsdetailsTab = new Tab();
 		particularFunctionsdetailsTab.getStyleClass().add("Tabs");
 		particularFunctionsdetailsTab.setClosable(false);
-		Label l = new Label("Details");
+		l = new Label(menu_Items_FX.resourceBundle.getString("Details"));
 		l.setRotate(90);
 		StackPane stp = new StackPane(new Group(l));
 		particularFunctionsdetailsTab.setGraphic(stp);
@@ -4424,7 +4589,7 @@ public class MySqlUI {
 		Tab particularFunctionscolumnsTab = new Tab();
 		particularFunctionscolumnsTab.getStyleClass().add("Tabs");
 		particularFunctionscolumnsTab.setClosable(false);
-		l = new Label("Function Parameters");
+		l = new Label(menu_Items_FX.resourceBundle.getString("FunctionParameters"));
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularFunctionscolumnsTab.setGraphic(stp);
@@ -4437,14 +4602,17 @@ public class MySqlUI {
 		HBox particularFunctionsColumnsButtonsHBox = new HBox();
 		particularFunctionsColumnsButtonsHBox.setId("DatapartitionsButtonsHBox");
 		//particularFunctionsColumnsButtonsHBox.setPadding(new Insets(10,10,10,10));
-		particularFunctionsColumnsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
+		//particularFunctionsColumnsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
+		particularFunctionsColumnsButtons =  new Button(menu_Items_FX.resourceBundle.getString("Create"));
+		particularFunctionsColumnsButtons.setId("buttons");
+		particularFunctionsColumnsButtonsHBox.getChildren().add(particularFunctionsColumnsButtons);
 		particularFunctionscolumnsTabVBox.getChildren().addAll(particularFunctionsColumnsView,particularFunctionsColumnsButtonsHBox);
 		particularFunctionscolumnsTab.setContent(particularFunctionscolumnsTabVBox);
 	
 		Tab particularFunctionsDDLTab = new Tab();
 		particularFunctionsDDLTab.getStyleClass().add("Tabs");
 		particularFunctionsDDLTab.setClosable(false);
-		l = new Label("Source/DDL");
+		l = new Label(menu_Items_FX.resourceBundle.getString("Source/DDL"));
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularFunctionsDDLTab.setGraphic(stp);
@@ -4467,11 +4635,11 @@ public class MySqlUI {
 			@Override
 			public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
 				System.out.println("Tab swithced"+ ((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText());
-				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Function Parameters")) {
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("FunctionParameters"))) {
 					particularFunctionsColumnsView.getItems().clear();
 					getParticularFunctionsParametersTab(functionsName,databaseName,particularFunctionscolumnsTab);
 				}
-				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Source/DDL")) {
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Source/DDL"))) {
 					getParticularFunctionSourceDDLTab(functionsName,databaseName,particularFunctionsDDLTab);
 				}
 			}
@@ -4574,7 +4742,7 @@ public class MySqlUI {
 		particularTriggersTabPane.setId("Tabpane");
 //		particularTriggersTabPane.setTabMinWidth(180);
 //		particularTriggersTabPane.setTabMinHeight(30);
-		Tab particularTablePropertiesTab = new Tab("Properties");
+		particularTablePropertiesTab = new Tab(menu_Items_FX.resourceBundle.getString("Properties"));
 		particularTablePropertiesTab.getStyleClass().add("Tabs");
 		particularTablePropertiesTab.setClosable(false);
 		particularTriggersMainTabVBox.getChildren().addAll(particularTriggersTabPane);
@@ -4592,7 +4760,7 @@ public class MySqlUI {
 		Tab particularTriggersdetailsTab = new Tab();
 		particularTriggersdetailsTab.getStyleClass().add("Tabs");
 		particularTriggersdetailsTab.setClosable(false);
-		Label l = new Label("Details");
+		l = new Label(menu_Items_FX.resourceBundle.getString("Details"));
 		l.setRotate(90);
 		StackPane stp = new StackPane(new Group(l));
 		particularTriggersdetailsTab.setGraphic(stp);
@@ -4609,7 +4777,7 @@ public class MySqlUI {
 		Tab particularTriggersDDLTab = new Tab();
 		particularTriggersDDLTab.getStyleClass().add("Tabs");
 		particularTriggersDDLTab.setClosable(false);
-		l = new Label("Source/DDL");
+		l = new Label(menu_Items_FX.resourceBundle.getString("Source/DDL"));
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularTriggersDDLTab.setGraphic(stp);
@@ -4635,7 +4803,7 @@ public class MySqlUI {
 //					particularTriggersColumnsView.getItems().clear();
 //					getParticularProceduresParametersTab(triggersName,databaseName,particularTriggerscolumnsTab);
 //				}
-				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Source/DDL")) {
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Source/DDL"))) {
 					getParticularTriggerSourceDDLTab(triggersName,databaseName,particularTriggersDDLTab);
 				}
 			}
@@ -4730,7 +4898,7 @@ public class MySqlUI {
 		particularEventsTabPane.setId("Tabpane");
 //		particularEventsTabPane.setTabMinWidth(180);
 //		particularEventsTabPane.setTabMinHeight(30);
-		Tab particularTablePropertiesTab = new Tab("Properties");
+		particularTablePropertiesTab = new Tab(menu_Items_FX.resourceBundle.getString("Properties"));
 		particularTablePropertiesTab.getStyleClass().add("Tabs");
 		particularTablePropertiesTab.setClosable(false);	
 		particularEventsMainTabVBox.getChildren().addAll(particularEventsTabPane)	;
@@ -4750,7 +4918,7 @@ public class MySqlUI {
 		Tab particularEventsdetailsTab = new Tab();
 		particularEventsdetailsTab.getStyleClass().add("Tabs");
 		particularEventsdetailsTab.setClosable(false);
-		Label l = new Label("Details");
+		l = new Label(menu_Items_FX.resourceBundle.getString("Details"));
 		l.setRotate(90);
 		StackPane stp = new StackPane(new Group(l));
 		particularEventsdetailsTab.setGraphic(stp);
@@ -4767,7 +4935,7 @@ public class MySqlUI {
 		Tab particularEventsDDLTab = new Tab();
 		particularEventsDDLTab.getStyleClass().add("Tabs");
 		particularEventsDDLTab.setClosable(false);
-		l = new Label("Source/DDL");
+		l = new Label(menu_Items_FX.resourceBundle.getString("Source/DDL"));
 		l.setRotate(90);
 		stp = new StackPane(new Group(l));
 		particularEventsDDLTab.setGraphic(stp);
@@ -4790,7 +4958,7 @@ public class MySqlUI {
 			public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
 				System.out.println("Tab swithced"+ ((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText());
 
-				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase("Source/DDL")) {
+				if(((Label)((Group)((StackPane)newValue.getGraphic()).getChildren().get(0)).getChildren().get(0)).getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Source/DDL"))) {
 					getParticularEventSourceDDLTab(eventsName,databaseName,particularEventsDDLTab);
 				}
 			}
@@ -5032,7 +5200,9 @@ public class MySqlUI {
 		  
 
 	  }	
-
+      
+	public Label searchDatabasesLabel;
+	  
 	private VBox getVariablesData(String variableType) {
 		
 	    VBox vBoxMain = new VBox();
@@ -5040,10 +5210,10 @@ public class MySqlUI {
 		GridPane searchDatabasesGridPane= new GridPane();
 		searchDatabasesGridPane.setId("searchDatabasesGridPane");
 		//searchDatabasesGridPane.setPadding(new Insets(5,0,0,10));
-		Label searchDatabasesLabel = new Label("Find");
+		searchDatabasesLabel = new Label(menu_Items_FX.resourceBundle.getString("Find"));
 		TextField searchDatabasesTextField = new TextField();
 		searchDatabasesTextField.getStyleClass().add("textfield");
-		refreshButton = new Button("Refresh");
+		refreshButton = new Button(menu_Items_FX.resourceBundle.getString("Refresh"));
 		refreshButton.setId("buttons");
 		Label placeholderLabel = new Label("");
 		searchDatabasesGridPane.getChildren().addAll(searchDatabasesLabel,searchDatabasesTextField,refreshButton,placeholderLabel);
@@ -5141,9 +5311,19 @@ public class MySqlUI {
 	public TextField hostsMatchingTextField;
 	public Label passwordExpiredStatusLabel;
 	public Label passwordLastchangedDate;
+	public Label authenticationStringLabelDescription;
+	public Label hostmatchingDescriptionLable;
+	public Label passwordLastchangedLabel;
+	public Label passwordDescriptionLabel;
+	public Label confirmPasswordDescriptionLabel;
+	public Label loginNameDescriptionLable;
+	public Label authenticationTypeLabelDescription;
 	public TextField passwordTextField;
 	public TextField confirmPasswordTextField;
-	
+	public Button updatePasswordButton;
+	public Button expirePasswordButton;
+	public Button revertAccountChangesButton;
+	public Button saveAccountChangesButton;
 	
 	public VBox addAccountLoginCredentials() {
 		
@@ -5155,7 +5335,7 @@ public class MySqlUI {
 		  
 		  Label accountLockedLabel = new Label("Account Locked :");
 		  accountLockedStatus = new Label("Y/N"); // Look up the status	
-		  accountlockUnLock = new Button("Lock/Unlock");
+		  accountlockUnLock = new Button(menu_Items_FX.resourceBundle.getString("Lock/Unlock"));
 		  accountlockUnLock.setId("buttons");
 		  accountLockedHBox.getChildren().addAll(accountLockedLabel,accountLockedStatus,accountlockUnLock);
 		  accountDetailsVbox.getChildren().add(accountLockedHBox);
@@ -5173,7 +5353,7 @@ public class MySqlUI {
 		  loginNameTextFeild.setPrefWidth(200);
 		 // jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
 		  GridPane.setConstraints(loginNameTextFeild, 1, 1);
-		  Label loginNameDescriptionLable = new Label("You may create multiple accounts with the same name to connect from different hosts. place holer place holder");
+		  loginNameDescriptionLable = new Label(menu_Items_FX.resourceBundle.getString("loginNameDescription"));
 		  loginNameDescriptionLable.setId("addAccountLoginCredentialsLabels");
 		 // loginNameDescriptionLable.setPrefWidth(300);
 		  loginNameDescriptionLable.setWrapText(true);
@@ -5187,7 +5367,7 @@ public class MySqlUI {
 		  authenticationTypeTextField.setPrefHeight(15);
 		  authenticationTypeTextField.setPrefWidth(200);
 		  GridPane.setConstraints(authenticationTypeTextField, 1, 2);
-		  Label authenticationTypeLabelDescription = new Label("For the standard password and/or host based authication,select 'standard'  place holer place holder  place holer place holder");
+		  authenticationTypeLabelDescription = new Label(menu_Items_FX.resourceBundle.getString("authenticationTypeDescription"));
 		  authenticationTypeLabelDescription.setId("addAccountLoginCredentialsLabels");
 		  //authenticationTypeLabelDescription.setPrefWidth(300);
 		  authenticationTypeLabelDescription.setWrapText(true);
@@ -5201,7 +5381,7 @@ public class MySqlUI {
 		  authenticationStringTextField.setPrefHeight(15);
 		  authenticationStringTextField.setPrefWidth(200);
 		  GridPane.setConstraints(authenticationStringTextField, 1, 3);
-		  Label authenticationStringLabelDescription = new Label("Authentication plugin specific parameters");
+		  authenticationStringLabelDescription = new Label(menu_Items_FX.resourceBundle.getString("Authenticationpluginspecificparameters"));
 		  authenticationStringLabelDescription.setId("addAccountLoginCredentialsLabels");
 		  //authenticationStringLabelDescription.setPrefWidth(300);
 		  authenticationStringLabelDescription.setWrapText(true);
@@ -5216,7 +5396,7 @@ public class MySqlUI {
 		  hostsMatchingTextField.setPrefHeight(15);
 		  hostsMatchingTextField.setPrefWidth(100);  
 		  GridPane.setConstraints(hostsMatchingTextField, 1, 4);
-		  Label hostmatchingDescriptionLable = new Label("% and _ wildcards may be used , % accesses from anywhere");
+		  hostmatchingDescriptionLable = new Label(menu_Items_FX.resourceBundle.getString("%and_wildcardsmaybeused,%accessesfromanywhere"));
 		  hostmatchingDescriptionLable.setId("addAccountLoginCredentialsLabels");
 		 // hostmatchingDescriptionLable.setPrefWidth(300);
 		  hostmatchingDescriptionLable.setWrapText(true);
@@ -5228,7 +5408,7 @@ public class MySqlUI {
 		  passwordExpiredStatusLabel = new Label("Y/N");
 		  GridPane.setConstraints(passwordExpiredStatusLabel, 1, 5);
 		  
-		  Label passwordLastchangedLabel = new Label("Password Last Changed:");
+		  passwordLastchangedLabel = new Label(menu_Items_FX.resourceBundle.getString("PasswordLastChanged"));
 		  GridPane.setConstraints(passwordLastchangedLabel, 2, 5);
 		  passwordLastchangedDate = new Label("10/12/2024");
 		  GridPane.setConstraints(passwordLastchangedDate, 3, 5);
@@ -5242,7 +5422,7 @@ public class MySqlUI {
 		  passwordTextField.setPrefHeight(15);
 		  passwordTextField.setPrefWidth(100);  
 		  GridPane.setConstraints(passwordTextField, 1, 6);
-		  Label passwordDescriptionLabel = new Label("Enter the password to reset it. Follow the passord requiements");
+		  passwordDescriptionLabel = new Label(menu_Items_FX.resourceBundle.getString("Enterthepasswordtoresetit.Followthepasswordrequiements"));
 		  passwordDescriptionLabel.setId("addAccountLoginCredentialsLabels");
 		  //passwordDescriptionLabel.setPrefWidth(300);
 		  passwordDescriptionLabel.setWrapText(true);
@@ -5257,7 +5437,7 @@ public class MySqlUI {
 		  confirmPasswordTextField.setPrefHeight(15);
 		  confirmPasswordTextField.setPrefWidth(100);  
 		  GridPane.setConstraints(confirmPasswordTextField, 1, 7);
-		  Label confirmPasswordDescriptionLabel = new Label("Enter the password again to confirm");
+		  confirmPasswordDescriptionLabel = new Label(menu_Items_FX.resourceBundle.getString("Enterthepasswordagaintoconfirm"));
 		  confirmPasswordDescriptionLabel.setId("addAccountLoginCredentialsLabels");
 		  // confirmPasswordDescriptionLabel.setPrefWidth(300);
 		  confirmPasswordDescriptionLabel.setWrapText(true);
@@ -5270,13 +5450,13 @@ public class MySqlUI {
 		  accountButtonsHBox.setId("accountButtonsHBox");
 //		  accountButtonsHBox.setPadding(new Insets(15,15,15,100));
 //		  accountButtonsHBox.setSpacing(30);
-		  Button updatePasswordButton = new Button("Update Password");
+		  updatePasswordButton = new Button(menu_Items_FX.resourceBundle.getString("UpdatePassword"));
 		  updatePasswordButton.setId("buttons");
-		  Button expirePasswordButton = new Button("Expire Password");
+		  expirePasswordButton = new Button(menu_Items_FX.resourceBundle.getString("ExpirePassword"));
 		  expirePasswordButton.setId("buttons");
-		  Button revertAccountChangesButton = new Button("Revert");
+		  revertAccountChangesButton = new Button(menu_Items_FX.resourceBundle.getString("Revert"));
 		  revertAccountChangesButton.setId("buttons");
-		  Button saveAccountChangesButton = new Button("Save");
+		  saveAccountChangesButton = new Button(menu_Items_FX.resourceBundle.getString("SaveButton"));
 		  saveAccountChangesButton.setId("buttons");
 		  
 		  accountButtonsHBox.getChildren().addAll(updatePasswordButton,expirePasswordButton,revertAccountChangesButton,saveAccountChangesButton);
@@ -5292,6 +5472,12 @@ public class MySqlUI {
 	public TextField maxUpdatesTextFeild;
 	public TextField maxConnectionsTextFeild;
 	public TextField concurrentConnectionsTextFeild;
+	public Button revertAccountLimitsButton;
+	public Button saveAccountLimitsButton;
+    public Label maxQueriesDescription; 
+    public Label maxUpdatesDescription; 
+    public Label maxConnectionsDescription; 
+    public Label concurrentConnectionsDescription; 
 	
 	public VBox addAccountLimits(){
 		
@@ -5311,7 +5497,7 @@ public class MySqlUI {
 		maxQueriesTextFeild.setPrefWidth(200);
 		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
 		GridPane.setConstraints(maxQueriesTextFeild, 1, 1);
-		Label maxQueriesDescription = new Label("The number of queries the account can execute within one hour");
+		maxQueriesDescription = new Label(menu_Items_FX.resourceBundle.getString("Thenumberofqueriestheaccountcanexecutewithinonehour"));
 		maxQueriesDescription.setId("addAccountLoginCredentialsLabels");
 		//maxQueriesDescription.setPrefWidth(300);
 		maxQueriesDescription.setWrapText(true);
@@ -5326,7 +5512,7 @@ public class MySqlUI {
 		maxUpdatesTextFeild.setPrefWidth(200);
 		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
 		GridPane.setConstraints(maxUpdatesTextFeild, 1, 2);
-		Label maxUpdatesDescription = new Label("The number of updates the account can execute within one hour");
+		maxUpdatesDescription = new Label(menu_Items_FX.resourceBundle.getString("Thenumberofupdatestheaccountcanexecutewithinonehour"));
 		maxUpdatesDescription.setId("addAccountLoginCredentialsLabels");
 		//maxUpdatesDescription.setPrefWidth(300);
 		maxUpdatesDescription.setWrapText(true);
@@ -5342,7 +5528,7 @@ public class MySqlUI {
 		maxConnectionsTextFeild.setPrefWidth(200);
 		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
 		GridPane.setConstraints(maxConnectionsTextFeild, 1, 3);
-		Label maxConnectionsDescription = new Label("The number of updates the account can execute within one hour");
+		maxConnectionsDescription = new Label(menu_Items_FX.resourceBundle.getString("Thenumberofupdatestheaccountcanexecutewithinonehour"));
 		maxConnectionsDescription.setId("addAccountLoginCredentialsLabels");
 		//maxConnectionsDescription.setPrefWidth(300);
 		maxConnectionsDescription.setWrapText(true);
@@ -5357,7 +5543,7 @@ public class MySqlUI {
 		concurrentConnectionsTextFeild.setPrefWidth(200);
 		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
 		GridPane.setConstraints(concurrentConnectionsTextFeild, 1, 4);
-		Label concurrentConnectionsDescription = new Label("The number of updates the account can execute within one hour");
+		concurrentConnectionsDescription = new Label(menu_Items_FX.resourceBundle.getString("Thenumberofupdatestheaccountcanexecutewithinonehour"));
 		concurrentConnectionsDescription.setId("addAccountLoginCredentialsLabels");
 		//concurrentConnectionsDescription.setPrefWidth(300);
 		concurrentConnectionsDescription.setWrapText(true);
@@ -5370,9 +5556,9 @@ public class MySqlUI {
 		accountLimitsButtonshbox.setId("accountLimitsButtonshbox");
 //		accountLimitsButtonshbox.setSpacing(30);
 //		accountLimitsButtonshbox.setPadding(new Insets(20,10,10,500));
-		Button revertAccountLimitsButton = new Button("Revert");
+		revertAccountLimitsButton = new Button(menu_Items_FX.resourceBundle.getString("Revert"));
 		revertAccountLimitsButton.setId("buttons");
-		Button saveAccountLimitsButton = new Button("Save");
+		saveAccountLimitsButton = new Button(menu_Items_FX.resourceBundle.getString("SaveButton"));
 		saveAccountLimitsButton.setId("buttons");
 		accountLimitsButtonshbox.getChildren().addAll(revertAccountLimitsButton,saveAccountLimitsButton);
 		  
@@ -5382,6 +5568,7 @@ public class MySqlUI {
 		return accountLimitsVBox;
 	}
 	
+	public Label globalPrivilegesLable;
 	public CheckBox alterPrivilegeCheckBox;
 	public CheckBox alterRoutinePrivilegeCheckBox;
 	public CheckBox createPrivilegeCheckBox;
@@ -5443,7 +5630,7 @@ public class MySqlUI {
 //		accountPrivilegesVBox.setSpacing(10);
 //		accountPrivilegesVBox.setPadding(new Insets(10,10,10,10));
 		
-		Label globalPrivilegesLable = new Label("Global Privileges");
+		globalPrivilegesLable = new Label(menu_Items_FX.resourceBundle.getString("GlobalPrivileges"));
 		CheckBox selectAllCheckBox = new CheckBox("Select All");
 		accountPrivilegesVBox.getChildren().addAll(globalPrivilegesLable,selectAllCheckBox);
 		
@@ -5517,6 +5704,17 @@ public class MySqlUI {
 	private TableView schemaPreviligestableView;
 	private  Label userAccessSchemaDescriptionLabel;
 	private String schemaValueHolder;
+	
+	public Button killQuerysButton;
+	public Button killConnectionsButton;
+    public Button addSchemaPrivilegesEntryButton;
+    public Button deleteSchemaPrivilegesEntryButton;
+    public Button reverPriviligestButton;
+    public Button savePrivilegesButton;
+    public Label allsSchemaSelectedDescriptionLabel;
+    public Label schemaMatchingPatternDescriptionLabel;
+    public Label selectedSchemaDescription;
+	
 	private String[] schemaPriviligesColumnNames = {"Schema","Privileges"};
 	private ObservableList<HashMap<String,String>> schemaPriviligesMapdata =
             FXCollections.observableArrayList();
@@ -5565,7 +5763,7 @@ public class MySqlUI {
 		allSchemasSelectedLabel.setPrefWidth(200);
 		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
 		GridPane.setConstraints(allSchemasSelectedLabel, 1, 0);
-		Label allsSchemaSelectedDescriptionLabel = new Label("This rule will apply to any schema name");
+		allsSchemaSelectedDescriptionLabel = new Label(menu_Items_FX.resourceBundle.getString("Thisrulewillapplytoanyschemaname"));
 		allsSchemaSelectedDescriptionLabel.setId("addAccountLoginCredentialsLabels");
 		//allsSchemaSelectedDescriptionLabel.setPrefWidth(300);
 		allsSchemaSelectedDescriptionLabel.setWrapText(true);
@@ -5581,7 +5779,7 @@ public class MySqlUI {
 		schemaMatchingPatternTextField.setPrefWidth(150);
 		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
 		GridPane.setConstraints(schemaMatchingPatternTextField, 1, 1);
-		Label schemaMatchingPatternDescriptionLabel = new Label("You may use % and _ as wildcards in a pattern.");
+		schemaMatchingPatternDescriptionLabel = new Label(menu_Items_FX.resourceBundle.getString("Youmayuse%and_aswildcardsinapattern."));
 		schemaMatchingPatternDescriptionLabel.setId("addAccountLoginCredentialsLabels");
 		//schemaMatchingPatternDescriptionLabel.setPrefWidth(300);
 		schemaMatchingPatternDescriptionLabel.setWrapText(true);
@@ -5601,7 +5799,7 @@ public class MySqlUI {
 		selectedSchemascomboBox.setVisibleRowCount(5); // after this their will be scroll bar
 		// jdbcConnectionName.setOnKeyTyped(onjdbcUrlTextFieldKeyPressed() );
 		GridPane.setConstraints(selectedSchemascomboBox, 1, 2);
-		Label selectedSchemaDescription = new Label("Select a specific schema for the rule to apply to:");
+		selectedSchemaDescription = new Label(menu_Items_FX.resourceBundle.getString("Selectaspecificschemafortheruletoapplyto"));
 		selectedSchemaDescription.setId("addAccountLoginCredentialsLabels");
 		//selectedSchemaDescription.setPrefWidth(300);
 		selectedSchemaDescription.setWrapText(true);
@@ -5612,7 +5810,7 @@ public class MySqlUI {
 		HBox addSchemaEntryHbox = new HBox();
 		addSchemaEntryHbox.setId("addSchemaEntryHbox");
 		//addSchemaEntryHbox.setPadding(new Insets(0,0,0,500));	
-		Button addSchemaPrivilegesEntryButton = new Button("Add Schema Entry");
+		addSchemaPrivilegesEntryButton = new Button(menu_Items_FX.resourceBundle.getString("AddSchemaEntry"));
 		addSchemaPrivilegesEntryButton.setId("buttons");
 		addSchemaEntryHbox.getChildren().add(addSchemaPrivilegesEntryButton);
 		schemaPrivilegesVbox.getChildren().add(addSchemaEntryHbox);
@@ -5711,7 +5909,7 @@ public class MySqlUI {
 		});
         //userAccessSchemaDescriptionLabel.setText("The use "+ newValue.get("User")+"@"+newValue.get("Host")+" will have the following access rights to the schema"+newValue.get("Schema"));
         selectSchemaDescription.setTextFill(Color.BLUEVIOLET);
-     	Button deleteSchemaPrivilegesEntryButton = new Button("Delete Schema Entry");
+     	deleteSchemaPrivilegesEntryButton = new Button(menu_Items_FX.resourceBundle.getString("DeleteSchemaEntry"));
      	deleteSchemaPrivilegesEntryButton.setId("buttons");
      	deleteSchemaPrivilegesEntryButton.setDisable(true);  // enable it when one of the schema entry is selected
         userAccessSchemaDescriptionHbox.getChildren().addAll(userAccessSchemaDescriptionLabel,deleteSchemaPrivilegesEntryButton);
@@ -5759,7 +5957,7 @@ public class MySqlUI {
 		VBox fourthSegmentWithButtonsVbox = new VBox();
 		fourthSegmentWithButtonsVbox.setId("SegmentWithButtonsVbox");
 		//fourthSegmentWithButtonsVbox.setPadding(new Insets(130,10,10,20));
-		Button reverPriviligestButton = new Button("Revert Privileges");
+		reverPriviligestButton = new Button(menu_Items_FX.resourceBundle.getString("RevertPrivileges"));
 		reverPriviligestButton.setId("buttons");
 		reverPriviligestButton.setDisable(true); // enable them when one of the schema entry is selected
 		fourthSegmentWithButtonsVbox.getChildren().add(reverPriviligestButton);
@@ -5767,7 +5965,7 @@ public class MySqlUI {
 		VBox fifthSegmentWithButtonsVbox = new VBox();
 		fifthSegmentWithButtonsVbox.setId("SegmentWithButtonsVbox");
 		//fifthSegmentWithButtonsVbox.setPadding(new Insets(130,10,10,20));
-		Button savePrivilegesButton = new Button("Save Privileges");
+		savePrivilegesButton = new Button(menu_Items_FX.resourceBundle.getString("SavePrivileges"));
 		savePrivilegesButton.setId("buttons");
 		savePrivilegesButton.setDisable(true); // enable them when one of the schema entry is selected
 		fifthSegmentWithButtonsVbox.getChildren().add(savePrivilegesButton);
@@ -5880,11 +6078,11 @@ public class MySqlUI {
         HBox clientConnectionKillButtonshbox = new HBox();
         clientConnectionKillButtonshbox.setId("clientConnectionsVBox");
         //clientConnectionKillButtonshbox.setSpacing(10);
-        Button killQuerysButton = new Button("Kill Query(s)");
+        killQuerysButton = new Button(menu_Items_FX.resourceBundle.getString("KillQuery(s)"));
         killQuerysButton.setId("buttons");
-        Button killConnectionsButton = new Button("Kill Connection(s)");
+        killConnectionsButton = new Button(menu_Items_FX.resourceBundle.getString("KillConnection(s)"));
         killConnectionsButton.setId("buttons");
-        Button refreshButton = new Button("Refresh");
+        refreshButton = new Button(menu_Items_FX.resourceBundle.getString("Refresh"));
         refreshButton.setId("buttons");
         clientConnectionKillButtonshbox.getChildren().addAll(killQuerysButton,killConnectionsButton,refreshButton);
         
@@ -6360,18 +6558,18 @@ public class MySqlUI {
 //			  tableButtonsHbox.setSpacing(20);
 //			  tableButtonsHbox.setPadding(new Insets(0,50,0,0));
 			  
-			  Button viewTableButton = new Button("View Table");
+			  viewTableButton = new Button(menu_Items_FX.resourceBundle.getString("ViewTable"));
 			  viewTableButton.setId("buttons");
-			  Button createTableButton = new Button("Create Table");
-			  createTableButton.setId("buttons");
-			  Button editTableButton = new Button("Edit Table");
+			  createTableButtons = new Button(menu_Items_FX.resourceBundle.getString("CreateTable"));
+			  createTableButtons.setId("buttons");
+			  editTableButton = new Button(menu_Items_FX.resourceBundle.getString("EditTable"));
 			  editTableButton.setId("buttons");
-			  Button deleteTableButton = new Button("Delete Table");
+			  deleteTableButton = new Button(menu_Items_FX.resourceBundle.getString("DeleteTable"));
 			  deleteTableButton.setId("buttons");
-			  Button refreshTableButton = new Button("Refresh");
+			  refreshTableButton = new Button(menu_Items_FX.resourceBundle.getString("Refresh"));
 			  refreshTableButton.setId("buttons");
 			  
-			  createTableButton.setOnAction(new EventHandler<ActionEvent>() {
+			  createTableButtons.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
 					
@@ -6380,7 +6578,7 @@ public class MySqlUI {
 				}	
 			  });
 			  
-			  tableButtonsHbox.getChildren().addAll(viewTableButton,createTableButton,editTableButton,deleteTableButton);
+			  tableButtonsHbox.getChildren().addAll(viewTableButton,createTableButtons,editTableButton,deleteTableButton);
 			  allButtonsHBox.getChildren().addAll(tableButtonsHbox,refreshTableButton);
 			  
 			  tableDetailsSplitPane.getItems().addAll(tablesView,allButtonsHBox);
@@ -6431,15 +6629,15 @@ public class MySqlUI {
 //			  viewButtonsHbox.setSpacing(20);
 //			  viewButtonsHbox.setPadding(new Insets(0,50,0,0));
 			  
-			  Button viewViewButton = new Button("View View");
+			  viewViewButton = new Button(menu_Items_FX.resourceBundle.getString("ViewView"));
 			  viewViewButton.setId("buttons");
-			  Button createViewButton = new Button("Create View");
+			  createViewButton = new Button(menu_Items_FX.resourceBundle.getString("CreateView"));
 			  createViewButton.setId("buttons");
-			  Button editViewButton = new Button("Edit View");
+			  editViewButton = new Button(menu_Items_FX.resourceBundle.getString("EditView"));
 			  editViewButton.setId("buttons");
-			  Button deleteViewButton = new Button("Delete View");
+			  deleteViewButton = new Button(menu_Items_FX.resourceBundle.getString("DeleteView"));
 			  deleteViewButton.setId("buttons");
-			  Button refreshViewButton = new Button("Refresh");
+			  refreshViewButton = new Button(menu_Items_FX.resourceBundle.getString("Refresh"));
 			  refreshViewButton.setId("buttons");
 			  
 			  createViewButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -6498,15 +6696,15 @@ public class MySqlUI {
 			  indexButtonsHbox.setId("ButtonsHbox");
 			 // indexButtonsHbox.setSpacing(20);
 			  
-			  Button viewIndexButton = new Button("View Index");
+			  viewIndexButton = new Button(menu_Items_FX.resourceBundle.getString("ViewIndex"));
 			  viewIndexButton.setId("buttons");
-			  Button createIndexButton = new Button("Create Index");
+			  createIndexButton = new Button(menu_Items_FX.resourceBundle.getString("CreateIndex"));
 			  createIndexButton.setId("buttons");
-			  Button editIndexButton = new Button("Edit Index");
+			  editIndexButton = new Button(menu_Items_FX.resourceBundle.getString("EditIndex"));
 			  editIndexButton.setId("buttons");
-			  Button deleteIndexButton = new Button("Delete Index");
+			  deleteIndexButton = new Button(menu_Items_FX.resourceBundle.getString("DeleteIndex"));
 			  deleteIndexButton.setId("buttons");
-			  Button refreshIndexButton = new Button("Refresh");
+			  refreshIndexButton = new Button(menu_Items_FX.resourceBundle.getString("Refresh"));
 			  refreshIndexButton.setId("buttons");
 			  createIndexButton.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
@@ -6564,15 +6762,15 @@ public class MySqlUI {
 			  proceduresButtonsHbox.setId("ButtonsHbox");
 			//  proceduresButtonsHbox.setSpacing(20);
 			  
-			  Button viewProcedureButton = new Button("View Procedure");
+			  viewProcedureButton = new Button(menu_Items_FX.resourceBundle.getString("ViewProcedure"));
 			  viewProcedureButton.setId("buttons");
-			  Button createProcedureButton = new Button("Create Procedure");
+			  createProcedureButton = new Button(menu_Items_FX.resourceBundle.getString("CreateProcedure"));
 			  createProcedureButton.setId("buttons");
-			  Button editProcedureButton = new Button("Edit Procedure");
+			  editProcedureButton = new Button(menu_Items_FX.resourceBundle.getString("EditProcedure"));
 			  editProcedureButton.setId("buttons");
-			  Button deleteProcedureButton = new Button("Delete Procedure");
+			  deleteProcedureButton = new Button(menu_Items_FX.resourceBundle.getString("DeleteProcedure"));
 			  deleteProcedureButton.setId("buttons");
-			  Button refreshProcedureButton = new Button("Refresh");
+			  refreshProcedureButton = new Button(menu_Items_FX.resourceBundle.getString("Refresh"));
 			  refreshProcedureButton.setId("buttons");
 			  createProcedureButton.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
@@ -6630,15 +6828,15 @@ public class MySqlUI {
 			  functionsButtonsHbox.setId("ButtonsHbox");
 			 // functionsButtonsHbox.setSpacing(20);
 			  
-			  Button viewFunctionButton = new Button("View Function");
+			  viewFunctionButton = new Button(menu_Items_FX.resourceBundle.getString("ViewFunction"));
 			  viewFunctionButton.setId("buttons");
-			  Button createFunctionButton = new Button("Create Function");
+			  createFunctionButton = new Button(menu_Items_FX.resourceBundle.getString("CreateFunction"));
 			  createFunctionButton.setId("buttons");
-			  Button editFunctionButton = new Button("Edit Function");
+			  editFunctionButton = new Button(menu_Items_FX.resourceBundle.getString("EditFunction"));
 			  editFunctionButton.setId("buttons");
-			  Button deleteFunctionButton = new Button("Delete Function");
+			  deleteFunctionButton = new Button(menu_Items_FX.resourceBundle.getString("DeleteFunction"));
 			  deleteFunctionButton.setId("buttons");
-			  Button refreshProcedureButton = new Button("Refresh");
+			  refreshProcedureButton = new Button(menu_Items_FX.resourceBundle.getString("Refresh"));
 			  refreshProcedureButton.setId("buttons");
 			  createFunctionButton.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
@@ -6696,15 +6894,15 @@ public class MySqlUI {
 			  triggersButtonsHbox.setId("ButtonsHbox");
 			 // triggersButtonsHbox.setSpacing(20);
 			  
-			  Button viewTriggersButton = new Button("View Trigger");
+			  viewTriggersButton = new Button(menu_Items_FX.resourceBundle.getString("ViewTrigger"));
 			  viewTriggersButton.setId("buttons");
-			  Button createTriggersButton = new Button("Create Trigger");
+			  createTriggersButton = new Button(menu_Items_FX.resourceBundle.getString("CreateTrigger"));
 			  createTriggersButton.setId("buttons");
-			  Button editTriggersButton = new Button("Edit Trigger");
+			  editTriggersButton = new Button(menu_Items_FX.resourceBundle.getString("EditTrigger"));
 			  editTriggersButton.setId("buttons");
-			  Button deleteTriggersButton = new Button("Delete Trigger");
+			  deleteTriggersButton = new Button(menu_Items_FX.resourceBundle.getString("DeleteTrigger"));
 			  deleteTriggersButton.setId("buttons");
-			  Button refreshTriggersButton = new Button("Refresh");
+			  refreshTriggersButton = new Button(menu_Items_FX.resourceBundle.getString("Refresh"));
 			  refreshTriggersButton.setId("buttons");
 			  createTriggersButton.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
@@ -6738,32 +6936,32 @@ public class MySqlUI {
 		databaseTabPane.getStyleClass().add("Tabs");
 		//databaseTabPane.setTabMinWidth(200);	
 		
-		Tab databaseDetails = new Tab("Details");
+		databaseDetails = new Tab(menu_Items_FX.resourceBundle.getString("Details"));
 		databaseDetails.getStyleClass().add("Tabs");
 		databaseDetails.setClosable(false);
 		
-		Tab databaseDetailsPropertiesTab = new Tab("Properties");
+		databaseDetailsPropertiesTab = new Tab(menu_Items_FX.resourceBundle.getString("Properties"));
 		databaseDetailsPropertiesTab.getStyleClass().add("Tabs");
 		databaseDetailsPropertiesTab.setClosable(false);
-		Tab databaseDetailsTablesTab = new Tab("Tables");
+		databaseDetailsTablesTab = new Tab(menu_Items_FX.resourceBundle.getString("Tables"));
 		databaseDetailsTablesTab.getStyleClass().add("Tabs");
 		databaseDetailsTablesTab.setClosable(false);
-		Tab databaseDetailsViewsTab = new Tab("Views");
+		databaseDetailsViewsTab = new Tab(menu_Items_FX.resourceBundle.getString("Views"));
 		databaseDetailsViewsTab.getStyleClass().add("Tabs");
 		databaseDetailsViewsTab.setClosable(false);
-		Tab databaseDetailsIndexesTab = new Tab("Indexes");
+		databaseDetailsIndexesTab = new Tab(menu_Items_FX.resourceBundle.getString("Indexes"));
 		databaseDetailsIndexesTab.getStyleClass().add("Tabs");
 		databaseDetailsIndexesTab.setClosable(false);
-		Tab databaseDetailsProceduresTab = new Tab("Procedures");
+		databaseDetailsProceduresTab = new Tab(menu_Items_FX.resourceBundle.getString("Procedures"));
 		databaseDetailsProceduresTab.getStyleClass().add("Tabs");
 		databaseDetailsProceduresTab.setClosable(false);
-		Tab databaseDetailsFunctionsTab = new Tab("Functions");
+		databaseDetailsFunctionsTab = new Tab(menu_Items_FX.resourceBundle.getString("Functions"));
 		databaseDetailsFunctionsTab.getStyleClass().add("Tabs");
 		databaseDetailsFunctionsTab.setClosable(false);
-		Tab databaseDetailsTriggersTab = new Tab("Triggers");
+		databaseDetailsTriggersTab = new Tab(menu_Items_FX.resourceBundle.getString("Triggers"));
 		databaseDetailsTriggersTab.getStyleClass().add("Tabs");
 		databaseDetailsTriggersTab.setClosable(false);
-		Tab databaseDetailsEventsTab = new Tab("Events");
+		databaseDetailsEventsTab = new Tab(menu_Items_FX.resourceBundle.getString("Events"));
 		databaseDetailsEventsTab.getStyleClass().add("Tabs");
 		databaseDetailsEventsTab.setClosable(false);
 		
@@ -6777,31 +6975,31 @@ public class MySqlUI {
 					 // System.out.println("Old Tab Selected -->"+oldValue.getText());
 					  System.out.println("New Tab Selected -->"+newValue.getText());
 					  
-					  if(newValue.getText().equalsIgnoreCase("Properties")) {
+					  if(newValue.getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Properties"))) {
 						  System.out.println("Properties Tab selected ");
 						  
 						  getdatabasePropertiesDisplayTab(loadedDatabaseName,databaseDetailsPropertiesTab);
 					  }
-					  if(newValue.getText().equalsIgnoreCase("Tables")) {
+					  if(newValue.getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Tables"))) {
 						  getdatabaseTablesDisplayTab(loadedDatabaseName, databaseDetailsTablesTab);
 					  }
-					  if(newValue.getText().equalsIgnoreCase("Views")) {
+					  if(newValue.getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Views"))) {
 						  getdatabaseViewsDisplayTab(loadedDatabaseName, databaseDetailsViewsTab);
 					  }
 					  
-					  if(newValue.getText().equalsIgnoreCase("Indexes")) {
+					  if(newValue.getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Indexes"))) {
 						  getdatabaseIndexesDisplayTab(loadedDatabaseName, databaseDetailsIndexesTab);
 					  }
-					  if(newValue.getText().equalsIgnoreCase("Procedures")) {
+					  if(newValue.getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Procedures"))) {
 						  getdatabaseProceduresDisplayTab(loadedDatabaseName, databaseDetailsProceduresTab);
 					  }
-					  if(newValue.getText().equalsIgnoreCase("Functions")) {
+					  if(newValue.getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Functions"))) {
 						  getdatabaseFunctionsDisplayTab(loadedDatabaseName, databaseDetailsFunctionsTab);
 					  }
-					  if(newValue.getText().equalsIgnoreCase("Triggers")) {
+					  if(newValue.getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Triggers"))) {
 						  getdatabaseTriggersDisplayTab(loadedDatabaseName, databaseDetailsTriggersTab);
 					  }
-					  if(newValue.getText().equalsIgnoreCase("Events")) {
+					  if(newValue.getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("Events"))) {
 						  getdatabaseEventsDisplayTab(loadedDatabaseName, databaseDetailsEventsTab);
 					  }
 				}
@@ -6810,45 +7008,45 @@ public class MySqlUI {
 	   databaseDetailsTabPane.getTabs().addAll(databaseDetailsPropertiesTab,databaseDetailsTablesTab,databaseDetailsViewsTab,databaseDetailsIndexesTab,
 				databaseDetailsProceduresTab,databaseDetailsFunctionsTab,databaseDetailsTriggersTab,databaseDetailsEventsTab);
 				 
-	   if(componentToFocus.equals("Tables")) {
+	   if(componentToFocus.equals(menu_Items_FX.resourceBundle.getString("Tables"))) {
 			 getdatabaseTablesDisplayTab(loadedDatabaseName, databaseDetailsTablesTab);
 			 databaseDetailsTabPane.getSelectionModel().select(1);
 	   }
-	   if(componentToFocus.equals("Views")) {
+	   if(componentToFocus.equals(menu_Items_FX.resourceBundle.getString("Views"))) {
 		   getdatabaseViewsDisplayTab(loadedDatabaseName, databaseDetailsTablesTab);
 			 databaseDetailsTabPane.getSelectionModel().select(2);
 	   }
-	   if(componentToFocus.equals("Indexes")) {
+	   if(componentToFocus.equals(menu_Items_FX.resourceBundle.getString("Indexes"))) {
 		   getdatabaseIndexesDisplayTab(loadedDatabaseName, databaseDetailsTablesTab);
 			 databaseDetailsTabPane.getSelectionModel().select(3);
 	   }
-	   if(componentToFocus.equals("Procedures")) {
+	   if(componentToFocus.equals(menu_Items_FX.resourceBundle.getString("Procedures"))) {
 		   getdatabaseProceduresDisplayTab(loadedDatabaseName, databaseDetailsTablesTab);
 			 databaseDetailsTabPane.getSelectionModel().select(4);
 	   }	
-	   if(componentToFocus.equals("Functions")) {
+	   if(componentToFocus.equals(menu_Items_FX.resourceBundle.getString("Functions"))) {
 		    getdatabaseFunctionsDisplayTab(loadedDatabaseName, databaseDetailsTablesTab);
 			 databaseDetailsTabPane.getSelectionModel().select(5);
 	   }
-	   if(componentToFocus.equals("Triggers")) {
+	   if(componentToFocus.equals(menu_Items_FX.resourceBundle.getString("Triggers"))) {
 		    getdatabaseTriggersDisplayTab(loadedDatabaseName, databaseDetailsTablesTab);
 			 databaseDetailsTabPane.getSelectionModel().select(6);
 	   }
-	   if(componentToFocus.equals("Events")) {
+	   if(componentToFocus.equals(menu_Items_FX.resourceBundle.getString("Events"))) {
 		    getdatabaseEventsDisplayTab(loadedDatabaseName, databaseDetailsTablesTab);
 			 databaseDetailsTabPane.getSelectionModel().select(7);
 	   }
 	   
 	   databaseDetails.setContent(databaseDetailsTabPane);
 		
-	   Tab databaseERDiagram = new Tab("ER Diagram");
+	   databaseERDiagram = new Tab(menu_Items_FX.resourceBundle.getString("ERDiagram"));
 	   databaseERDiagram.getStyleClass().add("Tabs");
 	   databaseERDiagram.setClosable(false);
-	   Tab databaseGrahicsStats = new Tab("Graphics Stats");
+	   databaseGrahicsStats = new Tab(menu_Items_FX.resourceBundle.getString("GraphicsStats"));
 	   databaseGrahicsStats.getStyleClass().add("Tabs");
 	   databaseGrahicsStats.setClosable(false);
 	   
-	   Tab databaseAIPrompt = new Tab("AI Prompt");
+	   databaseAIPrompt = new Tab(menu_Items_FX.resourceBundle.getString("AIPrompt"));
 	   databaseAIPrompt.getStyleClass().add("Tabs");
 	   databaseAIPrompt.setClosable(false);				
 	   
@@ -6858,7 +7056,7 @@ public class MySqlUI {
 			
 			System.out.println("Selected tab under Scehama ---->"+newValue.getText());
 			
-			if(newValue.getText().equals("Graphics Stats")) {
+			if(newValue.getText().equals(menu_Items_FX.resourceBundle.getString("GraphicsStats"))) {
 			//	getSchemaGraphicsStats(loadedDatabaseName,databaseGrahicsStats);
 			}
 		}
@@ -7860,7 +8058,7 @@ public class MySqlUI {
 	    HBox moreChartshbox = new HBox();
 	    moreChartshbox.setId("moreChartshbox");
 	   // moreChartshbox.setPadding( new Insets(0,0,0,400));
-	    Button moreChartsButton = new Button("More Charts");
+	    moreChartsButton = new Button(menu_Items_FX.resourceBundle.getString("MoreCharts"));
 	    moreChartsButton.setId("buttons");
 	    moreChartsButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -7870,7 +8068,7 @@ public class MySqlUI {
 		});
 	    moreChartshbox.getChildren().add(moreChartsButton);
 	    
-	    Button  showBarGraphButton =  new Button("Bar Graph");
+	    showBarGraphButton =  new Button(menu_Items_FX.resourceBundle.getString("BarGraph"));
 	    showBarGraphButton.setId("buttons");
 	    pieOrBarChartVBox.getChildren().addAll(pieChartSchemaSizes,showBarGraphButton);
 	    
@@ -7878,12 +8076,12 @@ public class MySqlUI {
 			@Override
 			public void handle(ActionEvent event) {
 				 pieOrBarChartVBox.getChildren().clear();
-				 if(showBarGraphButton.getText().equalsIgnoreCase("Bar Graph")) {
-				 	showBarGraphButton.setText("Pie Graph");
+				 if(showBarGraphButton.getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("BarGraph"))) {
+				 	showBarGraphButton.setText(menu_Items_FX.resourceBundle.getString("PieGraph"));
 				 	pieOrBarChartVBox.getChildren().addAll(barChartScemaSizes,showBarGraphButton);
 				 }
-				 else if(showBarGraphButton.getText().equalsIgnoreCase("Pie Graph")) {
-					 showBarGraphButton.setText("Bar Graph");
+				 else if(showBarGraphButton.getText().equalsIgnoreCase(menu_Items_FX.resourceBundle.getString("PieGraph"))) {
+					 showBarGraphButton.setText(menu_Items_FX.resourceBundle.getString("BarGraph"));
 					 pieOrBarChartVBox.getChildren().addAll(pieChartSchemaSizes,showBarGraphButton);
 				 }
 			}
@@ -8102,15 +8300,15 @@ public class MySqlUI {
 			  eventsButtonsHbox.setId("eventsButtonsHbox");
 			 // eventsButtonsHbox.setSpacing(20);
 			  
-			  Button viewEventButton = new Button("View Event");
+			  viewEventButton = new Button(menu_Items_FX.resourceBundle.getString("ViewEvent"));
 			  viewEventButton.setId("buttons");
-			  Button createEventButton = new Button("Create Event");
+			  createEventButton = new Button(menu_Items_FX.resourceBundle.getString("CreateEvent"));
 			  createEventButton.setId("buttons");
-			  Button editEventButton = new Button("Edit Event");
+			  editEventButton = new Button(menu_Items_FX.resourceBundle.getString("EditEvent"));
 			  editEventButton.setId("buttons");
-			  Button deleteEventButton = new Button("Delete Event");
+			  deleteEventButton = new Button(menu_Items_FX.resourceBundle.getString("DeleteEvent"));
 			  deleteEventButton.setId("buttons");
-			  Button refreshEventsButton = new Button("Refresh");
+			  refreshEventsButton = new Button(menu_Items_FX.resourceBundle.getString("Refresh"));
 			  refreshEventsButton.setId("buttons");
 			  createEventButton.setOnAction(new EventHandler<ActionEvent>() {
 				@Override

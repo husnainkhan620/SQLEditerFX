@@ -36,7 +36,7 @@ public class Main {
 		
 	//	CirclePolarCoardinates.main(args);
 		
-	//	ERDiagramApplication1.main(args);
+	//	ERDiagramApplication1.main(args); 
 		
 	//	ERModelApplication.main(args);
 		

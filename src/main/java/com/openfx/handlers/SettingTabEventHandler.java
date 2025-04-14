@@ -1,12 +1,15 @@
 package com.openfx.handlers;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.openjfx.fx.Menu_Items_FX;
 
 import com.openfx.locale.AllLocalLabels;
+import com.openfx.ui.MySqlUI;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -45,7 +48,19 @@ public Scene scene;
 public Stage settingsStage;
 public Menu_Items_FX menu_Items_FX;
 public NewMenuItemEventHandler newMenuItemEventHandler;
-
+public TreeItem appreanceItem;
+public TreeItem themeItem;
+public TreeItem LayoutItem;
+public TreeItem languageItem;
+public TreeItem EnglishLanguage;
+public TreeItem ArabicLanguage;
+public 	Label themeLabel ;
+public ComboBox<String> themeDropdown;
+public ComboBox<String> languageDropdown;
+public Button okButton;
+public Button cancelButton;
+public Button applyButton;
+public Label LanguageLabel; 
 
 
 	public SettingTabEventHandler(Menu_Items_FX menu_Items_FX) {
@@ -82,14 +97,19 @@ public NewMenuItemEventHandler newMenuItemEventHandler;
 		leftControl.setId("leftControl");
 		TreeItem rootItem = new TreeItem("Settings");
 		
-		TreeItem appreanceItem = new TreeItem("Appearance");
-		appreanceItem.getChildren().add(new TreeItem("Theme"));
-		appreanceItem.getChildren().add(new TreeItem("Layout"));
+		appreanceItem = new TreeItem(menu_Items_FX.resourceBundle.getString("Appearance"));
+		
+		themeItem = new TreeItem(menu_Items_FX.resourceBundle.getString("Theme"));
+		appreanceItem.getChildren().add(themeItem);
+		LayoutItem = new TreeItem(menu_Items_FX.resourceBundle.getString("Layout"));
+		appreanceItem.getChildren().add(LayoutItem);
 		rootItem.getChildren().add(appreanceItem);
 		
-		TreeItem languageItem = new TreeItem("Languages");
-		languageItem.getChildren().add(new TreeItem("English"));
-		languageItem.getChildren().add(new TreeItem("Arabic"));
+		languageItem = new TreeItem(menu_Items_FX.resourceBundle.getString("Languages"));
+		EnglishLanguage = new TreeItem(menu_Items_FX.resourceBundle.getString("English"));
+		languageItem.getChildren().add(EnglishLanguage);
+		ArabicLanguage = new TreeItem(menu_Items_FX.resourceBundle.getString("Arabic"));
+		languageItem.getChildren().add(ArabicLanguage);
 		rootItem.getChildren().add(languageItem);
 		
 		TreeView treeView = new TreeView();
@@ -107,34 +127,43 @@ public NewMenuItemEventHandler newMenuItemEventHandler;
 		VBox rightControlVBox = new VBox();
 		rightControlVBox.setId("rightControl");
 		HBox hbox = new HBox();
-		Label themeLabel = new Label("Theme :  ");
+		themeLabel = new Label(menu_Items_FX.resourceBundle.getString("ThemeLabel"));
 		themeLabel.setId("themeLabel");
 		
 		// ComboBox (Dropdown)
-		ComboBox<String> themeDropdown = new ComboBox<>();
+		 themeDropdown = new ComboBox<>();
 		themeDropdown.setId("themeDropdown");
-		themeDropdown.getItems().addAll("Light", "Dark");
-		themeDropdown.setPromptText("Select Theme");
+		//themeDropdown.getItems().addAll("Light", "Dark");
+		themeDropdown.getItems().addAll(
+				menu_Items_FX.resourceBundle.getString("Light"),
+				menu_Items_FX.resourceBundle.getString("Dark")
+				);
+		themeDropdown.setPromptText(menu_Items_FX.resourceBundle.getString("SelectTheme"));
 		hbox.getChildren().addAll(themeLabel, themeDropdown);
 		
 		HBox bottomhbox = new HBox();
 	    bottomhbox.setId("bottomhboxSettings");
-		Button okButton = new Button("OK");
+		okButton = new Button(menu_Items_FX.resourceBundle.getString("OK"));
 		okButton.setId("buttons");
-		Button cancelButton = new Button("Cancel");
+	    cancelButton = new Button(menu_Items_FX.resourceBundle.getString("Cancel"));
 		cancelButton.setId("buttons");
-		Button applyButton = new Button("Apply");
+		applyButton = new Button(menu_Items_FX.resourceBundle.getString("Apply"));
 		applyButton.setId("buttons");
 		
 		HBox languageHBox = new HBox();
-		Label LanguageLabel = new Label("Language :  ");
+		LanguageLabel = new Label(menu_Items_FX.resourceBundle.getString("Languagelabel"));
 		LanguageLabel.setId("themeLabel");
 		
 		// ComboBox (Dropdown)
-		ComboBox<String> languageDropdown = new ComboBox<>();
+		languageDropdown = new ComboBox<>();
 		languageDropdown.setId("themeDropdown");
-		languageDropdown.getItems().addAll("English", "Arabic","French");
-		languageDropdown.setPromptText("Select Language");
+//		languageDropdown.getItems().addAll(
+//				menu_Items_FX.resourceBundle.getString("English"),
+//				menu_Items_FX.resourceBundle.getString("Arabic"),
+//				menu_Items_FX.resourceBundle.getString("French")
+//				);
+		languageDropdown.getItems().addAll("English", "Arabic", "French");
+		languageDropdown.setPromptText(menu_Items_FX.resourceBundle.getString("SelectLanguage"));
 		languageHBox.getChildren().addAll(LanguageLabel, languageDropdown);
 			
 		applyButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -235,7 +264,7 @@ public NewMenuItemEventHandler newMenuItemEventHandler;
 		 settingsStage = new Stage();
 		 settingsStage.initModality(Modality.APPLICATION_MODAL);
 		 settingsStage.initOwner(menu_Items_FX.primaryStage.getScene().getWindow());
-		settingsStage.setTitle("Settings");
+		settingsStage.setTitle(menu_Items_FX.resourceBundle.getString("SettingsTab"));
 		settingsStage.setWidth(750);
 		settingsStage.setHeight(550);
 		settingsStage.setScene(menu_Items_FX.sceneForSettings);

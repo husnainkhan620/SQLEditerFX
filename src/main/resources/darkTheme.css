@@ -22,7 +22,9 @@
     -fx-border-color: #DAE6F3; /* Border color on hover */
 }
 
-
+.labels {
+    -fx-text-fill: white; /* Set text color to white */
+}
 .textfield {
     -fx-background-color: #2B2B2B; /* Dark background */
     -fx-text-fill: white; /* Text color */
@@ -298,7 +300,7 @@
 }
 
 .label, .borderPaneProperties{
- -fx-text-fill: #000000;
+/*  -fx-text-fill: #000000; */
  /*-fx-background-color: #080838;*/
 }
 
@@ -723,7 +725,7 @@
 .check-box .box {
     -fx-border-color: #44475a; /* Border around the checkmark */
     -fx-border-radius: 3px;
-    -fx-background-color: 2B2B2B; /* Background color for the box */
+    -fx-background-color: #2B2B2B; /* Background color for the box */
 }
 
 
@@ -1017,6 +1019,7 @@
     -fx-font-family: "System Regular";
     -fx-font-weight: bold;
     -fx-font-size: 14px;
+    -fx-text-fill: white;
 }
 
 #eventsButtonsHbox{
@@ -1055,8 +1058,54 @@
   -fx-background-color: #083280; /* Color of the progress bar */
 }
 
-
 .choice-box {
+    -fx-background-color: #2B2B2B;
+    -fx-border-color: #44475a;
+    -fx-border-width: 1px;
+    -fx-text-fill: white;
+    -fx-background-radius: 5px;
+}
+
+.choice-box:hover {
+    -fx-background-color: #083280;
+}
+
+.choice-box .label {
+    -fx-text-fill: white;
+}
+
+.choice-box .arrow-button {
+    -fx-background-color: #2B2B2B;
+    -fx-text-fill: white;
+    -fx-background-radius: 0;
+    -fx-padding: 0 5 0 5;
+}
+
+.choice-box .arrow {
+    -fx-background-color: #FFFFFF;
+    -fx-shape: "M 0 0 L 4 4 L 8 0 Z"; /* down-pointing triangle */
+    -fx-scale-shape: false;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.choice-box .context-menu {
+    -fx-background-color: #2B2B2B;
+    -fx-border-color: #44475a;
+}
+
+.choice-box .menu-item {
+    -fx-background-color: #2B2B2B;
+    -fx-text-fill: white;
+}
+
+.choice-box .menu-item:hover {
+    -fx-background-color: #083280;
+    -fx-text-fill: white;
+}
+
+
+/* .choice-box {
     -fx-background-color: #2B2B2B;
      -fx-border-color: #44475a;
     -fx-border-width: 1px;
@@ -1074,7 +1123,7 @@
 
 .choice-box .arrow {
     -fx-background-color: #d0d0d0;
-}
+} */
 .grid-pane {
     -fx-background-color: transparent; /* Base GridPane background */
 }
