@@ -928,14 +928,22 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		
 		TreeItem<String> mySQLTreeItem = mySqlUI.getmySqlTreeItem(connectionPlaceHolder,imageMySQLnode,imageDatbaseTablenode,databaseName);
 		
-		Platform.runLater(() -> {
-		    // Delay the modification slightly
-			menu_Items_FX.rootConnectionItem.getChildren().add(mySQLTreeItem);
-		});
+	
+		// Delay the modification slightly
+		//	menu_Items_FX.rootConnectionItem.getChildren().add(mySQLTreeItem);
+			threadsafeAddTreeItem(menu_Items_FX.rootConnectionItem,mySQLTreeItem);
 		
 		
 	}
 
+	private void threadsafeAddTreeItem(TreeItem<String> mainTreeItem,TreeItem<String> toAddTreeItem) {
+		
+		Platform.runLater(() -> {
+		    // Delay the modification slightly
+			mainTreeItem.getChildren().add(toAddTreeItem);
+		});
+	}
+	
 	private void createPostgreeConnection()
 	{
 		
@@ -982,6 +990,7 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 				TreeItem<String> postgreeSQLTreeItem = new TreeItem<String>(connectionPlaceHolder.getConnectionName(),imagePostgreeSqlnode);
 				
 				TreeItem<String> postgreeSQLTreeItemTables = new TreeItem<String>("Tables",imageDatbaseTablenode);
+			//	threadsafeAddTreeItem(postgreeSQLTreeItemTables, new TreeItem<String>("Loading.."));
 				postgreeSQLTreeItemTables.getChildren().add(new TreeItem<String>("Loading.."));
 				
 				TreeItem<String> postgreeSQLTreeItemViews = new TreeItem<String>("Views");

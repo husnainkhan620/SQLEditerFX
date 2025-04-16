@@ -115,6 +115,7 @@ import javafx.scene.paint.Stop;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
@@ -412,7 +413,8 @@ public class MySqlUI {
 		mySqlTreeItemDatabases = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Databases"));
 		
 		TreeItem<String> loadingTreeItem = new TreeItem<String>("Loading..");
-		mySqlTreeItemDatabases.getChildren().add(loadingTreeItem);
+	//	mySqlTreeItemDatabases.getChildren().add(loadingTreeItem);
+		threadsafeAddTreeItem(mySqlTreeItemDatabases, loadingTreeItem);
 		
 		mySqlTreeItemDatabases.expandedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
@@ -454,7 +456,11 @@ public class MySqlUI {
 													// TODO Auto-generated catch block
 													e.printStackTrace();
 												}
-												mySqlTreeItemDatabases.getChildren().remove(0);  // Remove the Loading...
+									    		Platform.runLater(() -> {
+									    		    // Delay the modification slightly
+									    			mySqlTreeItemDatabases.getChildren().remove(0);  // Remove the Loading.
+									    		});
+												
 												while(rs.next()) {
 													  System.out.println(rs.getString(1));
 													  TreeItem<String> loadedDatabaseName = new TreeItem<String>(rs.getString(1));
@@ -7230,11 +7236,11 @@ public class MySqlUI {
       flowPane.getChildren().add(keyAttributeStackPane);
       enableShapeDragAndDrop(keyAttributeStackPane,mainPane,erModelApplication); 	
       
-      Ellipse outerEllipseMultivaluedAttribute = new Ellipse(40,20);
+      Ellipse outerEllipseMultivaluedAttribute = new Ellipse(45,25);
       outerEllipseMultivaluedAttribute.setStrokeWidth(1);
       outerEllipseMultivaluedAttribute.setStroke(Color.BLACK);
       outerEllipseMultivaluedAttribute.setFill(Color.WHITE);
-	  Ellipse innerEllipseMultivaluedAttribute = new Ellipse(40 -4,20 -4);
+	  Ellipse innerEllipseMultivaluedAttribute = new Ellipse(45 -4,25 -4);
 	  innerEllipseMultivaluedAttribute.setStrokeWidth(1);
 	  innerEllipseMultivaluedAttribute.setStroke(Color.BLACK);
 	  innerEllipseMultivaluedAttribute.setFill(Color.WHITE);
@@ -7255,11 +7261,11 @@ public class MySqlUI {
 	  flowPane.getChildren().add(derivedAttributeStackPane);
 	  enableShapeDragAndDrop(derivedAttributeStackPane,mainPane,erModelApplication);
 	  
-	  Ellipse outerEllipseWeakKeyAttribute = new Ellipse(40,20);
+	  Ellipse outerEllipseWeakKeyAttribute = new Ellipse(45,25);
 	  outerEllipseWeakKeyAttribute.setStrokeWidth(1);
 	  outerEllipseWeakKeyAttribute.setStroke(Color.BLACK);
 	  outerEllipseWeakKeyAttribute.setFill(Color.WHITE);
-	  Ellipse innerEllipseWeakKeyAttribute = new Ellipse(40 -4,20 -4);
+	  Ellipse innerEllipseWeakKeyAttribute = new Ellipse(45 -4,25 -4);
 	  innerEllipseWeakKeyAttribute.setStrokeWidth(1);
 	  innerEllipseWeakKeyAttribute.setStroke(Color.BLACK);
 	  innerEllipseWeakKeyAttribute.setFill(Color.WHITE);
@@ -7283,12 +7289,12 @@ public class MySqlUI {
 	  
 	  
 	  Rectangle weakEntityouterRectangle = new Rectangle(80,40);
-	  weakEntityouterRectangle.setFill(Color.GAINSBORO);
-	  weakEntityouterRectangle.setStrokeWidth(2);
+	  weakEntityouterRectangle.setFill(Color.WHITE);
+	  weakEntityouterRectangle.setStrokeWidth(1);
 	  weakEntityouterRectangle.setStroke(Color.BLACK);
-	  Rectangle weakEntityinnerRectangle = new Rectangle(80-4,40-4);
-	  weakEntityinnerRectangle.setFill(Color.GAINSBORO);
-	  weakEntityinnerRectangle.setStrokeWidth(2);
+	  Rectangle weakEntityinnerRectangle = new Rectangle(80-6,40-6);
+	  weakEntityinnerRectangle.setFill(Color.WHITE);
+	  weakEntityinnerRectangle.setStrokeWidth(1);
 	  weakEntityinnerRectangle.setStroke(Color.BLACK);
 	  StackPane weakEntityStackPane = new StackPane();
 	  weakEntityStackPane.getChildren().addAll(weakEntityouterRectangle,weakEntityinnerRectangle,new Text("  Weak \nEntity"));
@@ -7296,8 +7302,21 @@ public class MySqlUI {
 	  flowPane.getChildren().add(weakEntityStackPane);
 	  enableShapeDragAndDrop(weakEntityStackPane,mainPane,erModelApplication);
 	
+	  Double[] rhombusSizevalues = new Double[]{100.0, 100.0, 65.0, 125.0, 100.0,150.0, 135.0,125.0,}; 
+	  Polygon relationshipRhombus = new Polygon();
+	  relationshipRhombus.setStrokeWidth(1);
+	  relationshipRhombus.setStroke(Color.BLACK);
+	  relationshipRhombus.setFill(Color.WHITE);   // change this  and relationshipmytextarea id themcss
+	  relationshipRhombus.getPoints().addAll(rhombusSizevalues);
+	  StackPane raltionshipRhombusStackPane = new StackPane();
+	  raltionshipRhombusStackPane.getChildren().addAll(relationshipRhombus,new Text("Relationship"));
+	  raltionshipRhombusStackPane.setId("Relationship StackPane");
+	  flowPane.getChildren().add(raltionshipRhombusStackPane);	
+	  
 	  vBox.setSpacing(10);
       vBox.getChildren().add(flowPane);
+      
+      
       
       Button undoButton = new Button("Undo");
       undoButton.setOnAction(e -> {
@@ -8847,6 +8866,14 @@ private boolean createERModelComponentOnMouseRelease(Pane mainPane,ERModelApplic
 			}catch(Exception e) {
 				e.printStackTrace();
 			}
+	}
+	
+	private void threadsafeAddTreeItem(TreeItem<String> mainTreeItem,TreeItem<String> toAddTreeItem) {
+		
+		Platform.runLater(() -> {
+		    // Delay the modification slightly
+			mainTreeItem.getChildren().add(toAddTreeItem);
+		});
 	}
 	 
 }
