@@ -3,13 +3,17 @@ package com.openfx.erdiagram;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
+
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
@@ -19,11 +23,15 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 public class ERDiagramApplication1 extends Application{
@@ -37,7 +45,6 @@ public class ERDiagramApplication1 extends Application{
 		   launch(ERDiagramApplication1.class, args);
 	}
 	
-	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
@@ -50,141 +57,111 @@ public class ERDiagramApplication1 extends Application{
 		minatureMainPane = new Pane();
 		minatureMainPane.setPrefSize(size.getWidth(),size.getHeight());
 		
+		
 		// Diagram using TitledPane
-		TitledPaneNode actortitledPane = new TitledPaneNode();
+		String entityAttributes[] = new String[] {"passengerId","first_name","lasr_name","date_of_birth"};
+		TitledPaneNode passengerSecurityTitledPane = new TitledPaneNode("passengerSecurity",new Tooltip("This is a table in RDBD \n This is tool tip for table"),100,100,entityAttributes);
+		passengerSecurityTitledPane.setPrefWidth(150);
+		enableDragAndDrop(passengerSecurityTitledPane, mainPane);
+		allTitledPaneNodes.add(passengerSecurityTitledPane);
+				
+		entityAttributes = new String[] {"id","check_result","comments","created_at","updated_at","passenger_id"};
+		TitledPaneNode securityCheckTitledPane = new TitledPaneNode("securityCheck",new Tooltip("This is a table in RDBD \n This is tool tip for table"),100,100,entityAttributes);
+		securityCheckTitledPane.setPrefWidth(150);
+		enableDragAndDrop(securityCheckTitledPane, mainPane);
+		allTitledPaneNodes.add(securityCheckTitledPane);
+		
+		entityAttributes = new String[] {"id","check_result","created_at","updated_at","booking_id","passenger_id"};
+		TitledPaneNode baggageCheckTitledPane = new TitledPaneNode("baggageCheck",new Tooltip("This is a table in RDBD \n This is tool tip for table"),100,100,entityAttributes);
+		baggageCheckTitledPane.setPrefWidth(150);
+		enableDragAndDrop(baggageCheckTitledPane, mainPane);
+		allTitledPaneNodes.add(baggageCheckTitledPane);
+	
+		entityAttributes = new String[] {"id","active_from","active_to","reason","created_at","updated_at","passenger_id"};
+		TitledPaneNode noFlyListTitledPane = new TitledPaneNode("noFlyList",new Tooltip("This is a table in RDBD \n This is tool tip for table"),100,100,entityAttributes);
+		noFlyListTitledPane.setPrefWidth(150);
+		enableDragAndDrop(noFlyListTitledPane, mainPane);
+		allTitledPaneNodes.add(noFlyListTitledPane);
+	
+		RelationShips relationShips = new RelationShips(passengerSecurityTitledPane,securityCheckTitledPane,mainPane);
+		allRelationships.add(relationShips);
+		relationShips = new RelationShips(passengerSecurityTitledPane,baggageCheckTitledPane,mainPane);
+		allRelationships.add(relationShips);
+		relationShips = new RelationShips(passengerSecurityTitledPane,noFlyListTitledPane,mainPane);
+		allRelationships.add(relationShips);
+		
+		mainPane.getChildren().add(passengerSecurityTitledPane); minatureMainPane.getChildren().add(passengerSecurityTitledPane);
+		mainPane.getChildren().add(securityCheckTitledPane);minatureMainPane.getChildren().add(securityCheckTitledPane);
+		mainPane.getChildren().add(baggageCheckTitledPane); minatureMainPane.getChildren().add(baggageCheckTitledPane);
+		mainPane.getChildren().add(noFlyListTitledPane);minatureMainPane.getChildren().add(noFlyListTitledPane);
+		
+		
+		entityAttributes = new String[] {"id","departing_gate","arriving_gate","created_at","updated_at","airline_id","departing_airport_id","arriving_airport_id"};
+		TitledPaneNode flightTitledPane = new TitledPaneNode("flight",new Tooltip("This is a table in RDBD \n This is tool tip for table"),100,100,entityAttributes);
+		flightTitledPane.setPrefWidth(150);
+		enableDragAndDrop(flightTitledPane, mainPane);
+		allTitledPaneNodes.add(flightTitledPane);
+		
+		entityAttributes = new String[] {"id","airport_name","country","state","city","created_at","updated_at"};
+		TitledPaneNode airportTitledPane = new TitledPaneNode("airport",new Tooltip("This is a table in RDBD \n This is tool tip for table"),100,100,entityAttributes);
+		airportTitledPane.setPrefWidth(150);
+		enableDragAndDrop(airportTitledPane, mainPane);
+		allTitledPaneNodes.add(airportTitledPane);
+		
+		entityAttributes = new String[] {"id","airline_code","airline_name","airline_country","created_at","updated_at"};
+		TitledPaneNode airlineTitledPane = new TitledPaneNode("airline",new Tooltip("This is a table in RDBD \n This is tool tip for table"),100,100,entityAttributes);
+		airlineTitledPane.setPrefWidth(150);
+		enableDragAndDrop(airlineTitledPane, mainPane);
+		allTitledPaneNodes.add(airlineTitledPane);
+		
+		relationShips = new RelationShips(flightTitledPane,airportTitledPane,mainPane);
+		allRelationships.add(relationShips);
+		relationShips = new RelationShips(flightTitledPane,airlineTitledPane,mainPane);
+		allRelationships.add(relationShips);
+		
+		mainPane.getChildren().add(flightTitledPane); minatureMainPane.getChildren().add(flightTitledPane);
+		mainPane.getChildren().add(airportTitledPane); minatureMainPane.getChildren().add(airportTitledPane);
+		mainPane.getChildren().add(airlineTitledPane); minatureMainPane.getChildren().add(airlineTitledPane);
+		
+		/*
+		// Diagram using TitledPane
+		String entityAttributes[] = new String[] {"actorId","actorName","actorCity","actorId","actorName","actorCity","actorCountry"};
+		TitledPaneNode actortitledPane = new TitledPaneNode("actor",new Tooltip("This is a table in RDBD \n This is tool tip for table"),100,100,entityAttributes);
 		actortitledPane.setPrefWidth(150);
-		actortitledPane.setText("actor");
-		actortitledPane.alignmentProperty().setValue(Pos.CENTER);
-		actortitledPane.setTooltip(new Tooltip("This is a table in RDBD \n This is tool tip for table"));
-		VBox titledPaneVBox = new VBox();
-		titledPaneVBox.setBackground(new Background(  new BackgroundFill(Color.AZURE,  CornerRadii.EMPTY,Insets.EMPTY )));
-		titledPaneVBox.setSpacing(3);
-		titledPaneVBox.getChildren().add(new Label("actorId"));
-		titledPaneVBox.getChildren().add(new Label("actorName"));
-		titledPaneVBox.getChildren().add(new Label("actorCity"));
-		titledPaneVBox.getChildren().add(new Label("actorId"));
-		titledPaneVBox.getChildren().add(new Label("actorName"));
-		titledPaneVBox.getChildren().add(new Label("actorCity"));
-		titledPaneVBox.getChildren().add(new Label("actorCountry"));
-		actortitledPane.setContent(titledPaneVBox);
-		actortitledPane.setCollapsible(false);
-		actortitledPane.setLayoutX(100);   // used to place it a particular X location on screen
-		actortitledPane.setLayoutY(100);   // used to place it a particular Y location on screen
 	    enableDragAndDrop(actortitledPane, mainPane);
 	    allTitledPaneNodes.add(actortitledPane);
 		
 		
-		TitledPaneNode addresstitledPane = new TitledPaneNode();
+	    entityAttributes = new String[] {"address_id","address","address2","district","city_id","postal_code","phone","location","last_update"};
+		TitledPaneNode addresstitledPane = new TitledPaneNode("address",new Tooltip("This is a table in RDBD \n This is tool tip for table"),300,300,entityAttributes);
 		addresstitledPane.setPrefWidth(150);
-		addresstitledPane.setText("address");
-		addresstitledPane.alignmentProperty().setValue(Pos.CENTER);
-		addresstitledPane.setTooltip(new Tooltip("This is a table in RDBD \n This is tool tip for table"));
-		titledPaneVBox = new VBox();
-		titledPaneVBox.setBackground(new Background(  new BackgroundFill(javafx.scene.paint.Color.AZURE,  CornerRadii.EMPTY,Insets.EMPTY )));
-		titledPaneVBox.setSpacing(3);
-		titledPaneVBox.getChildren().add(new Label("address_id"));
-		titledPaneVBox.getChildren().add(new Label("address"));
-		titledPaneVBox.getChildren().add(new Label("address2"));
-		titledPaneVBox.getChildren().add(new Label("district"));
-		titledPaneVBox.getChildren().add(new Label("city_id"));
-		titledPaneVBox.getChildren().add(new Label("postal_code"));
-		titledPaneVBox.getChildren().add(new Label("phone"));
-		titledPaneVBox.getChildren().add(new Label("location"));
-		titledPaneVBox.getChildren().add(new Label("last_update"));
-		addresstitledPane.setContent(titledPaneVBox);
-		addresstitledPane.setCollapsible(false);
-		addresstitledPane.setLayoutX(300);   // used to place it a particular X location on screen
-		addresstitledPane.setLayoutY(300); // used to place it a particular Y location on screen
 		enableDragAndDrop(addresstitledPane, mainPane);
 		allTitledPaneNodes.add(addresstitledPane);
 	
 	
-		TitledPaneNode companytitledPane = new TitledPaneNode();
+		entityAttributes = new String[] {"company_id","company_nam","company_loc","company_pin","city","last_updated"};
+		TitledPaneNode companytitledPane = new TitledPaneNode("company",new Tooltip("This is a table in RDBD \n This is tool tip for table"),100,500,entityAttributes);
 		companytitledPane.setPrefWidth(150);
-		companytitledPane.setText("company");
-		companytitledPane.alignmentProperty().setValue(Pos.CENTER);
-		companytitledPane.setTooltip(new Tooltip("This is a table in RDBD \n This is tool tip for table"));
-		titledPaneVBox = new VBox();
-		titledPaneVBox.setBackground(new Background(  new BackgroundFill(javafx.scene.paint.Color.AZURE,  CornerRadii.EMPTY,Insets.EMPTY )));
-		titledPaneVBox.setSpacing(3);
-		titledPaneVBox.getChildren().add(new Label("company_id"));
-		titledPaneVBox.getChildren().add(new Label("company_nam"));
-		titledPaneVBox.getChildren().add(new Label("company_loc"));
-		titledPaneVBox.getChildren().add(new Label("company_pin"));
-		titledPaneVBox.getChildren().add(new Label("city"));
-		titledPaneVBox.getChildren().add(new Label("last_updated"));
-		companytitledPane.setContent(titledPaneVBox);
-		companytitledPane.setCollapsible(false);
-		companytitledPane.setLayoutX(100);   // used to place it a particular X location on screen
-		companytitledPane.setLayoutY(500); // used to place it a particular Y location on screen
 		enableDragAndDrop(companytitledPane, mainPane);
 		allTitledPaneNodes.add(companytitledPane);
 		
 		
-		TitledPaneNode employeetitledPane = new TitledPaneNode();
-		employeetitledPane.setPrefWidth(150);
-		employeetitledPane.setText("employee");
-		employeetitledPane.alignmentProperty().setValue(Pos.CENTER);
-		employeetitledPane.setTooltip(new Tooltip("This is a table in RDBD \n This is tool tip for table"));
-		titledPaneVBox = new VBox();
-		titledPaneVBox.setBackground(new Background(  new BackgroundFill(javafx.scene.paint.Color.AZURE,  CornerRadii.EMPTY,Insets.EMPTY )));
-		titledPaneVBox.setSpacing(3);
-		titledPaneVBox.getChildren().add(new Label("employee_id"));
-		titledPaneVBox.getChildren().add(new Label("employee_nam"));
-		titledPaneVBox.getChildren().add(new Label("employee_loc"));
-		titledPaneVBox.getChildren().add(new Label("company_pin"));
-		titledPaneVBox.getChildren().add(new Label("city"));
-		titledPaneVBox.getChildren().add(new Label("last_updated"));
-		employeetitledPane.setContent(titledPaneVBox);
-		employeetitledPane.setCollapsible(false);
-		employeetitledPane.setLayoutX(550);   // used to place it a particular X location on screen
-		employeetitledPane.setLayoutY(100); // used to place it a particular Y location on screen
+		entityAttributes = new String[] {"employee_id","employee_nam","employee_loc","company_pin","city","last_updated"};
+		TitledPaneNode employeetitledPane = new TitledPaneNode("employee",new Tooltip("This is a table in RDBD \n This is tool tip for table"),550,100,entityAttributes);		
 		enableDragAndDrop(employeetitledPane, mainPane);
 		allTitledPaneNodes.add(employeetitledPane);
 		
-		
-		TitledPaneNode departmenttitledPane = new TitledPaneNode();
+		entityAttributes = new String[] {"department_id","department_nam","department_loc","department_pin","city","last_updated"};
+		TitledPaneNode departmenttitledPane = new TitledPaneNode("department",new Tooltip("This is a table in RDBD \n This is tool tip for table"),550,500,entityAttributes);
 		departmenttitledPane.setPrefWidth(150);
-		departmenttitledPane.setText("department");
-		departmenttitledPane.alignmentProperty().setValue(Pos.CENTER);
-		departmenttitledPane.setTooltip(new Tooltip("This is a table in RDBD \n This is tool tip for table"));
-		titledPaneVBox = new VBox();
-		titledPaneVBox.setBackground(new Background(  new BackgroundFill(javafx.scene.paint.Color.AZURE,  CornerRadii.EMPTY,Insets.EMPTY )));
-		titledPaneVBox.setSpacing(3);
-		titledPaneVBox.getChildren().add(new Label("department_id"));
-		titledPaneVBox.getChildren().add(new Label("department_nam"));
-		titledPaneVBox.getChildren().add(new Label("department_loc"));
-		titledPaneVBox.getChildren().add(new Label("department_pin"));
-		titledPaneVBox.getChildren().add(new Label("city"));
-		titledPaneVBox.getChildren().add(new Label("last_updated"));
-		departmenttitledPane.setContent(titledPaneVBox);
-		departmenttitledPane.setCollapsible(false);
-		departmenttitledPane.setLayoutX(550);   // used to place it a particular X location on screen
-		departmenttitledPane.setLayoutY(500); // used to place it a particular Y location on screen
 		enableDragAndDrop(departmenttitledPane, mainPane);
 		allTitledPaneNodes.add(departmenttitledPane);
 		
-		TitledPaneNode schooltitledPane = new TitledPaneNode();
+		entityAttributes = new String[] {"school_id","school_nam","school_loc","school_pin","city","last_updated"};
+		TitledPaneNode schooltitledPane = new TitledPaneNode("school",new Tooltip("This is a table in RDBD \n This is tool tip for table"),750,500,entityAttributes);
 		schooltitledPane.setPrefWidth(150);
-		schooltitledPane.setText("school");
-		schooltitledPane.alignmentProperty().setValue(Pos.CENTER);
-		schooltitledPane.setTooltip(new Tooltip("This is a table in RDBD \n This is tool tip for table"));
-		titledPaneVBox = new VBox();
-		titledPaneVBox.setBackground(new Background(  new BackgroundFill(javafx.scene.paint.Color.AZURE,  CornerRadii.EMPTY,Insets.EMPTY )));
-		titledPaneVBox.setSpacing(3);
-		titledPaneVBox.getChildren().add(new Label("school_id"));
-		titledPaneVBox.getChildren().add(new Label("school_nam"));
-		titledPaneVBox.getChildren().add(new Label("school_loc"));
-		titledPaneVBox.getChildren().add(new Label("school_pin"));
-		titledPaneVBox.getChildren().add(new Label("city"));
-		titledPaneVBox.getChildren().add(new Label("last_updated"));
-		schooltitledPane.setContent(titledPaneVBox);
-		schooltitledPane.setCollapsible(false);
-		schooltitledPane.setLayoutX(750);   // used to place it a particular X location on screen
-		schooltitledPane.setLayoutY(500); // used to place it a particular Y location on screen
 		enableDragAndDrop(schooltitledPane, mainPane);
 		allTitledPaneNodes.add(schooltitledPane);
-		
 		 
 		// Establish the relationships between the titlesPanes/Tables
 		RelationShips relationShips = new RelationShips(actortitledPane,addresstitledPane,mainPane);
@@ -206,6 +183,7 @@ public class ERDiagramApplication1 extends Application{
 		mainPane.getChildren().add(employeetitledPane);minatureMainPane.getChildren().add(employeetitledPane);
 		mainPane.getChildren().add(departmenttitledPane);minatureMainPane.getChildren().add(departmenttitledPane);
 		mainPane.getChildren().add(schooltitledPane);minatureMainPane.getChildren().add(schooltitledPane);
+		*/
 		
 		// This will set the backgroud color the Zoom Pane
 		mainPane.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.WHITE,  CornerRadii.EMPTY,Insets.EMPTY ) ));
@@ -364,7 +342,7 @@ public class ERDiagramApplication1 extends Application{
 			//check if its X close with B moving
 			if( (boundsB.getMinX() > boundsA.getMinX()) && (boundsB.getMinX() < (boundsA.getMinX() + boundsA.getWidth()))  ) {
 				isXClose = true;
-				System.out.println("This is x close with "+titledPaneNodeA.getText() +"B(moving)");
+				System.out.println("This is x close with "+titledPaneNodeB.getText() +"B(moving)");
 			}
 			
 			if(isTop && isRight && !isYClose) {
@@ -513,6 +491,7 @@ public class ERDiagramApplication1 extends Application{
 		Bounds boundsA = titledPaneNodeA.getBoundsInParent();
 		Bounds boundsB = titledPaneNodeB.getBoundsInParent();
 		
+		
 		// check if its below
 		// Ya+(ha*0.75) - Yb < 0
 		if(( ( boundsA.getMinY() + (boundsA.getHeight()*0.75) ) - boundsB.getMinY()) < 0  ) {
@@ -578,53 +557,210 @@ public class ERDiagramApplication1 extends Application{
 
 			System.out.println("Checking if "+titledPaneNodeA.getText()+" has multiple left connections ? current size is " + titledPaneNodeA.getLeftRelatedTitledPanes().size());
 			System.out.println("Checking if "+titledPaneNodeB.getText()+" has multiple Top connections ? current size is " + titledPaneNodeB.getTopRelatedTitledPanes().size());
+			boolean isLessthanScreenWidth = true;
+			if( (boundsA.getMinX() - boundsB.getMaxX())  > 900) {
+				isLessthanScreenWidth = false;
+			}
+
+			if(isLessthanScreenWidth) {
+				double P1x = boundsA.getMinX();
+				double P1y = boundsA.getMinY()+boundsA.getHeight()/2;
+				double Q1x = boundsB.getMinX()+boundsB.getWidth()/2;
+				double Q1y = boundsA.getMinY()+boundsA.getHeight()/2;
+				double R1x = boundsB.getMinX() + boundsB.getWidth()/2;
+				double R1y = boundsB.getMinY();
 				
-			double P1x = boundsA.getMinX();
-			double P1y = boundsA.getMinY()+boundsA.getHeight()/2;
-			double Q1x = boundsB.getMinX()+boundsB.getWidth()/2;
-			double Q1y = boundsA.getMinY()+boundsA.getHeight()/2;
-			double R1x = boundsB.getMinX() + boundsB.getWidth()/2;
-			double R1y = boundsB.getMinY();
+				int position = titledPaneNodeA.getLeftRelatedTitledPanes().headSet(titledPaneNodeB).size();
+				P1y = boundsA.getMinY()+boundsA.getHeight()/2+30*position;
+				Q1y = boundsA.getMinY()+boundsA.getHeight()/2+30*position;
 			
-			int position = titledPaneNodeA.getLeftRelatedTitledPanes().headSet(titledPaneNodeB).size();
-			P1y = boundsA.getMinY()+boundsA.getHeight()/2+20*position;
-			Q1y = boundsA.getMinY()+boundsA.getHeight()/2+20*position;
-		
-			position = titledPaneNodeB.getTopRelatedTitledPanes().headSet(titledPaneNodeA).size();
-		//	System.out.println( " Position of "+titledPaneNodeA.getText()+ " "+position);
-			Q1x = boundsB.getMinX()+boundsB.getWidth()/2+20*position;
-			R1x = boundsB.getMinX()+boundsB.getWidth()/2+20*position;
-			
-			
-			Line line1 = relationShip.getRelationshipLineNodes().get(0);
-			Line line2 = relationShip.getRelationshipLineNodes().get(1);
-			Line line3 = relationShip.getRelationshipLineNodes().get(2);
-			
-			line3.setStartX(0);line3.setStartY(0);line3.setEndX(0);line3.setEndY(0);
-			relationShip.getPolygon().getPoints().clear();
-			
-			line1.setStartX(P1x);line1.setStartY(P1y);line1.setEndX(Q1x);line1.setEndY(Q1y);
-			line2.setStartX(Q1x);line2.setStartY(Q1y);line2.setEndX(R1x);line2.setEndY(R1y);
-			isCovered=true;
-			
-			
-			if(titledPaneNodeA.equals(relationShip.getRelatedOtherEndTitledPane())){
-				System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeA");
+				position = titledPaneNodeB.getTopRelatedTitledPanes().headSet(titledPaneNodeA).size();
+			//	System.out.println( " Position of "+titledPaneNodeA.getText()+ " "+position);
+				Q1x = boundsB.getMinX()+boundsB.getWidth()/2+30*position;
+				R1x = boundsB.getMinX()+boundsB.getWidth()/2+30*position;
+				
+				
+				Line line1 = relationShip.getRelationshipLineNodes().get(0);
+				Line line2 = relationShip.getRelationshipLineNodes().get(1);
+				Line line3 = relationShip.getRelationshipLineNodes().get(2);
+				line3.setStartX(0);line3.setStartY(0);line3.setEndX(0);line3.setEndY(0);
+				
+				Circle circle = relationShip.gettoRelationshipCircle();
+				circle.setRadius(0);
+								
+				relationShip.getPolygon().getPoints().clear();
+				
+				line1.setStartX(P1x);line1.setStartY(P1y);line1.setEndX(Q1x);line1.setEndY(Q1y);
+				line2.setStartX(Q1x);line2.setStartY(Q1y);line2.setEndX(R1x);line2.setEndY(R1y);
+				
+				if(titledPaneNodeA.equals(relationShip.getRelatedOtherEndTitledPane())){
+					System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeA");
 
-				relationShip.getPolygon().getPoints().addAll(new Double[]{
-						line1.getStartX(), line1.getStartY(),
-						line1.getStartX()-10, line1.getStartY()-10,
-						line1.getStartX()-10, line1.getStartY()+10});
-		
-			}else if(titledPaneNodeB.equals(relationShip.getRelatedOtherEndTitledPane())){
-				System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeB");
+			/*		relationShip.getPolygon().getPoints().addAll(new Double[]{
+							line1.getStartX(), line1.getStartY(),
+							line1.getStartX()-10, line1.getStartY()-10,
+							line1.getStartX()-10, line1.getStartY()+10});
+				*/	
+					
+					// one to Many relationship
+					double x1 = line1.getStartX()-20;
+					double y1 = line1.getStartY();					
+					circle.setRadius(5);circle.setCenterX(x1);circle.setCenterY(y1);
+					
+					Line toRelationshipCrowLine1 =  relationShip.gettoRelationshipCrowLine1();
+					Line toRelationshipCrowLine2 =  relationShip.gettoRelationshipCrowLine2();
+					
+					toRelationshipCrowLine1.setStartX(x1);toRelationshipCrowLine1.setStartY(y1);
+					toRelationshipCrowLine1.setEndX(line1.getStartX());toRelationshipCrowLine1.setEndY(line1.getStartY()-10);
+					
+					toRelationshipCrowLine2.setStartX(x1);toRelationshipCrowLine2.setStartY(y1);
+					toRelationshipCrowLine2.setEndX(line1.getStartX());toRelationshipCrowLine2.setEndY(line1.getStartY()+10);
+					
+					Line fromRelationshipMain =  relationShip.getfromRelationshipMain();					
+					x1 = line2.getEndX()-10;
+					double x2 = line2.getEndX()+10;
+					y1 = line2.getEndY()-10;
+					
+					fromRelationshipMain.setStartX(x1);fromRelationshipMain.setStartY(y1);
+					fromRelationshipMain.setEndX(x2);fromRelationshipMain.setEndY(y1);
+			
+				}else if(titledPaneNodeB.equals(relationShip.getRelatedOtherEndTitledPane())){
+					System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeB");
 
-				relationShip.getPolygon().getPoints().addAll(new Double[]{
-						line2.getEndX(), line2.getEndY(),
-						line2.getEndX()-10, line2.getEndY()-10,
-						line2.getEndX()+10, line2.getEndY()-10});
+			/*		relationShip.getPolygon().getPoints().addAll(new Double[]{
+							line2.getEndX(), line2.getEndY(),
+							line2.getEndX()-10, line2.getEndY()-10,
+							line2.getEndX()+10, line2.getEndY()-10});
+			*/
+					// one to Many relationship
+					double x1 = line2.getEndX();
+					double y1 = line2.getEndY()-20;
+					
+					circle.setRadius(5);circle.setCenterX(x1);circle.setCenterY(y1);
+					Line toRelationshipCrowLine1 =  relationShip.gettoRelationshipCrowLine1();
+					Line toRelationshipCrowLine2 =  relationShip.gettoRelationshipCrowLine2();
+					
+					toRelationshipCrowLine1.setStartX(line2.getEndX());toRelationshipCrowLine1.setStartY(line2.getEndY()-10);
+					toRelationshipCrowLine1.setEndX(line2.getEndX()-10);toRelationshipCrowLine1.setEndY(line2.getEndY());
+				
+					toRelationshipCrowLine2.setStartX(line2.getEndX());toRelationshipCrowLine2.setStartY(line2.getEndY()-10);
+					toRelationshipCrowLine2.setEndX(line2.getEndX()+10);toRelationshipCrowLine2.setEndY(line2.getEndY());
+		
+					Line fromRelationshipMain =  relationShip.getfromRelationshipMain();					
+					x1 = line1.getStartX()-10;
+					y1 = line1.getEndY()-10;
+					double y2 = line1.getEndY()+10;
+					
+					fromRelationshipMain.setStartX(x1);fromRelationshipMain.setStartY(y1);
+					fromRelationshipMain.setEndX(x1);fromRelationshipMain.setEndY(y2);
+		
+				}
+				
+			}
+			else {
+				double P1x = boundsA.getMinX();
+				double P1y = boundsA.getMinY()+boundsA.getHeight()/2;
+				double Q1x = boundsA.getMinX() - ((boundsA.getMinX() - boundsB.getMaxX())/2);
+				double Q1y = P1y;
+				double R1x = Q1x;
+				double R1y = boundsB.getMinY() - ((boundsB.getMinY() - P1y)/2);
+				double S1x = boundsB.getMinX() + (boundsB.getWidth()/2);
+				double S1y = R1y;
+				double T1x = S1x;
+				double T1y = boundsB.getMinY();
+				
+				int position = titledPaneNodeA.getLeftRelatedTitledPanes().headSet(titledPaneNodeB).size();
+				P1y = P1y+30*position;
+				Q1y = Q1y+30*position;
+			
+				position = titledPaneNodeB.getTopRelatedTitledPanes().headSet(titledPaneNodeA).size();
+			//	System.out.println( " Position of "+titledPaneNodeA.getText()+ " "+position);
+				S1x = S1x+30*position;
+				T1x = T1x+30*position; 
+				
+				
+				Line line1 = relationShip.getRelationshipLineNodes().get(0);
+				Line line2 = relationShip.getRelationshipLineNodes().get(1);
+				Line line3 = relationShip.getRelationshipLineNodes().get(2);
+				Line line4 = relationShip.getRelationshipLineNodes().get(3);
+				
+				Circle circle = relationShip.gettoRelationshipCircle();
+				circle.setRadius(0);
+			
+				relationShip.getPolygon().getPoints().clear();
+				
+				line1.setStartX(P1x);line1.setStartY(P1y);line1.setEndX(Q1x);line1.setEndY(Q1y);
+				line2.setStartX(Q1x);line2.setStartY(Q1y);line2.setEndX(R1x);line2.setEndY(R1y);
+				line3.setStartX(R1x);line3.setStartY(R1y);line3.setEndX(S1x);line3.setEndY(S1y);
+				line4.setStartX(S1x);line4.setStartY(S1y);line4.setEndX(T1x);line4.setEndY(T1y);
+				
+				if(titledPaneNodeA.equals(relationShip.getRelatedOtherEndTitledPane())){
+					System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeA");
+
+				/*	relationShip.getPolygon().getPoints().addAll(new Double[]{
+							line1.getStartX(), line1.getStartY(),
+							line1.getStartX()-10, line1.getStartY()-10,
+							line1.getStartX()-10, line1.getStartY()+10});
+				*/
+					// one to Many relationship
+					double x1 = line1.getStartX()-20;
+					double y1 = line1.getStartY();					
+					circle.setRadius(5);circle.setCenterX(x1);circle.setCenterY(y1);
+					
+					Line toRelationshipCrowLine1 =  relationShip.gettoRelationshipCrowLine1();
+					Line toRelationshipCrowLine2 =  relationShip.gettoRelationshipCrowLine2();
+					
+					toRelationshipCrowLine1.setStartX(x1);toRelationshipCrowLine1.setStartY(y1);
+					toRelationshipCrowLine1.setEndX(line1.getStartX());toRelationshipCrowLine1.setEndY(line1.getStartY()-10);
+					
+					toRelationshipCrowLine2.setStartX(x1);toRelationshipCrowLine2.setStartY(y1);
+					toRelationshipCrowLine2.setEndX(line1.getStartX());toRelationshipCrowLine2.setEndY(line1.getStartY()+10);
+					
+					Line fromRelationshipMain =  relationShip.getfromRelationshipMain();					
+					x1 = line2.getEndX()-10;
+					double x2 = line2.getEndX()+10;
+					y1 = line2.getEndY()-10;
+					
+					fromRelationshipMain.setStartX(x1);fromRelationshipMain.setStartY(y1);
+					fromRelationshipMain.setEndX(x2);fromRelationshipMain.setEndY(y1);
+
+				
+					
+				}else if(titledPaneNodeB.equals(relationShip.getRelatedOtherEndTitledPane())){
+					System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeB");
+
+				/*	relationShip.getPolygon().getPoints().addAll(new Double[]{
+							line4.getEndX(), line4.getEndY(),
+							line4.getEndX()-10, line4.getEndY()-10,
+							line4.getEndX()+10, line4.getEndY()-10});
+				*/
+					// one to Many relationship
+					double x1 = line2.getEndX();
+					double y1 = line2.getEndY()-20;
+					
+					circle.setRadius(5);circle.setCenterX(x1);circle.setCenterY(y1);
+					Line toRelationshipCrowLine1 =  relationShip.gettoRelationshipCrowLine1();
+					Line toRelationshipCrowLine2 =  relationShip.gettoRelationshipCrowLine2();
+					
+					toRelationshipCrowLine1.setStartX(line2.getEndX());toRelationshipCrowLine1.setStartY(line2.getEndY()-10);
+					toRelationshipCrowLine1.setEndX(line2.getEndX()-10);toRelationshipCrowLine1.setEndY(line2.getEndY());
+				
+					toRelationshipCrowLine2.setStartX(line2.getEndX());toRelationshipCrowLine2.setStartY(line2.getEndY()-10);
+					toRelationshipCrowLine2.setEndX(line2.getEndX()+10);toRelationshipCrowLine2.setEndY(line2.getEndY());
+		
+					Line fromRelationshipMain =  relationShip.getfromRelationshipMain();					
+					x1 = line1.getStartX()-10;
+					y1 = line1.getEndY()-10;
+					double y2 = line1.getEndY()+10;
+					
+					fromRelationshipMain.setStartX(x1);fromRelationshipMain.setStartY(y1);
+					fromRelationshipMain.setEndX(x1);fromRelationshipMain.setEndY(y2);
+
+				}	
 			}
 			
+			isCovered=true;
+						
 		}
 		if(isTop && isLeft && !isYClose) {
 			System.out.println("Its Top left");
@@ -632,50 +768,205 @@ public class ERDiagramApplication1 extends Application{
 			System.out.println("Checking if "+titledPaneNodeA.getText()+" has multiple right connections ? current size is " + titledPaneNodeA.getRigtRelatedTitledPanes().size());
 			System.out.println("Checking if "+titledPaneNodeB.getText()+" has multiple Top connections ? current size is " + titledPaneNodeB.getTopRelatedTitledPanes().size());
 			
-			double P1x = boundsA.getMaxX();
-			double P1y = boundsA.getMinY()+boundsA.getHeight()/2;
-			double Q1x = boundsB.getMinX()+boundsB.getWidth()/2;
-			double Q1y = boundsA.getMinY()+boundsA.getHeight()/2;
-			double R1x = boundsB.getMinX()+boundsB.getWidth()/2;
-			double R1y = boundsB.getMinY();
-			
-			int position = titledPaneNodeA.getRigtRelatedTitledPanes().headSet(titledPaneNodeB).size();
-			P1y = boundsA.getMinY()+boundsA.getHeight()/2+20*position;
-			Q1y = boundsA.getMinY()+boundsA.getHeight()/2+20*position;
-			
-			position = titledPaneNodeB.getTopRelatedTitledPanes().headSet(titledPaneNodeA).size();
-			System.out.println( " Position of "+titledPaneNodeA.getText()+ " "+position);
-			Q1x = boundsB.getMinX()+boundsB.getWidth()/2-20*position;
-			R1x = boundsB.getMinX()+boundsB.getWidth()/2-20*position;
-			
-			
-			Line line1 = relationShip.getRelationshipLineNodes().get(0);
-			Line line2 = relationShip.getRelationshipLineNodes().get(1);
-			Line line3 = relationShip.getRelationshipLineNodes().get(2);
-			
-			line3.setStartX(0);line3.setStartY(0);line3.setEndX(0);line3.setEndY(0);
-			relationShip.getPolygon().getPoints().clear();
-			
-			line1.setStartX(P1x);line1.setStartY(P1y);line1.setEndX(Q1x);line1.setEndY(Q1y);
-			line2.setStartX(Q1x);line2.setStartY(Q1y);line2.setEndX(R1x);line2.setEndY(R1y);
-			isCovered=true;
-
-			if(titledPaneNodeA.equals(relationShip.getRelatedOtherEndTitledPane())){
-				System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeA");
-
-				relationShip.getPolygon().getPoints().addAll(new Double[]{
-						line1.getStartX(), line1.getStartY(),
-						line1.getStartX()+10, line1.getStartY()-10,
-						line1.getStartX()+10, line1.getStartY()+10});
-		
-			}else if(titledPaneNodeB.equals(relationShip.getRelatedOtherEndTitledPane())){
-				System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeB");
-
-				relationShip.getPolygon().getPoints().addAll(new Double[]{
-						line2.getEndX(), line2.getEndY(),
-						line2.getEndX()-10, line2.getEndY()-10,
-						line2.getEndX()+10, line2.getEndY()-10});
+			boolean isLessthanScreenWidth = true;
+			if( (boundsB.getMinX() - boundsA.getMaxX())  > 900) {
+				isLessthanScreenWidth = false;
 			}
+			if(isLessthanScreenWidth) {
+				double P1x = boundsA.getMaxX();
+				double P1y = boundsA.getMinY()+boundsA.getHeight()/2;
+				double Q1x = boundsB.getMinX()+boundsB.getWidth()/2;
+				double Q1y = boundsA.getMinY()+boundsA.getHeight()/2;
+				double R1x = boundsB.getMinX()+boundsB.getWidth()/2;
+				double R1y = boundsB.getMinY();
+				
+				int position = titledPaneNodeA.getRigtRelatedTitledPanes().headSet(titledPaneNodeB).size();
+				P1y = boundsA.getMinY()+boundsA.getHeight()/2+30*position;
+				Q1y = boundsA.getMinY()+boundsA.getHeight()/2+30*position;
+				
+				position = titledPaneNodeB.getTopRelatedTitledPanes().headSet(titledPaneNodeA).size();
+				System.out.println( " Position of "+titledPaneNodeA.getText()+ " "+position);
+				Q1x = boundsB.getMinX()+boundsB.getWidth()/2-30*position;
+				R1x = boundsB.getMinX()+boundsB.getWidth()/2-30*position;
+				
+				
+				Line line1 = relationShip.getRelationshipLineNodes().get(0);
+				Line line2 = relationShip.getRelationshipLineNodes().get(1);
+				Line line3 = relationShip.getRelationshipLineNodes().get(2);				
+				line3.setStartX(0);line3.setStartY(0);line3.setEndX(0);line3.setEndY(0);
+				
+				Circle circle = relationShip.gettoRelationshipCircle();
+				circle.setRadius(0);
+			
+				relationShip.getPolygon().getPoints().clear();
+				
+				line1.setStartX(P1x);line1.setStartY(P1y);line1.setEndX(Q1x);line1.setEndY(Q1y);
+				line2.setStartX(Q1x);line2.setStartY(Q1y);line2.setEndX(R1x);line2.setEndY(R1y);
+				isCovered=true;
+	
+				if(titledPaneNodeA.equals(relationShip.getRelatedOtherEndTitledPane())){
+					System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeA");
+	
+				/*	relationShip.getPolygon().getPoints().addAll(new Double[]{
+							line1.getStartX(), line1.getStartY(),
+							line1.getStartX()+10, line1.getStartY()-10,
+							line1.getStartX()+10, line1.getStartY()+10});
+			   */
+					
+					// one to Many relationship
+					double x1 = line1.getStartX()+20;
+					double y1 = line1.getStartY();					
+					circle.setRadius(5);circle.setCenterX(x1);circle.setCenterY(y1);
+					
+					Line toRelationshipCrowLine1 =  relationShip.gettoRelationshipCrowLine1();
+					Line toRelationshipCrowLine2 =  relationShip.gettoRelationshipCrowLine2();
+					
+					toRelationshipCrowLine1.setStartX(x1);toRelationshipCrowLine1.setStartY(y1);
+					toRelationshipCrowLine1.setEndX(line1.getStartX());toRelationshipCrowLine1.setEndY(line1.getStartY()-10);
+					
+					toRelationshipCrowLine2.setStartX(x1);toRelationshipCrowLine2.setStartY(y1);
+					toRelationshipCrowLine2.setEndX(line1.getStartX());toRelationshipCrowLine2.setEndY(line1.getStartY()+10);
+					
+					Line fromRelationshipMain =  relationShip.getfromRelationshipMain();					
+					x1 = line2.getEndX()-10;
+					double x2 = line2.getEndX()+10;
+					y1 = line2.getEndY()-10;
+					
+					fromRelationshipMain.setStartX(x1);fromRelationshipMain.setStartY(y1);
+					fromRelationshipMain.setEndX(x2);fromRelationshipMain.setEndY(y1);
+
+				}else if(titledPaneNodeB.equals(relationShip.getRelatedOtherEndTitledPane())){
+					System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeB");
+	
+				/*	relationShip.getPolygon().getPoints().addAll(new Double[]{
+							line2.getEndX(), line2.getEndY(),
+							line2.getEndX()-10, line2.getEndY()-10,
+							line2.getEndX()+10, line2.getEndY()-10});
+				*/
+					// one to Many relationship
+					double x1 = line2.getEndX();
+					double y1 = line2.getEndY()-20;
+					
+					circle.setRadius(5);circle.setCenterX(x1);circle.setCenterY(y1);
+					Line toRelationshipCrowLine1 =  relationShip.gettoRelationshipCrowLine1();
+					Line toRelationshipCrowLine2 =  relationShip.gettoRelationshipCrowLine2();
+					
+					toRelationshipCrowLine1.setStartX(line2.getEndX());toRelationshipCrowLine1.setStartY(line2.getEndY()-10);
+					toRelationshipCrowLine1.setEndX(line2.getEndX()-10);toRelationshipCrowLine1.setEndY(line2.getEndY());
+				
+					toRelationshipCrowLine2.setStartX(line2.getEndX());toRelationshipCrowLine2.setStartY(line2.getEndY()-10);
+					toRelationshipCrowLine2.setEndX(line2.getEndX()+10);toRelationshipCrowLine2.setEndY(line2.getEndY());
+		
+					Line fromRelationshipMain =  relationShip.getfromRelationshipMain();					
+					x1 = line1.getStartX()+10;
+					y1 = line1.getEndY()-10;
+					double y2 = line1.getEndY()+10;
+					
+					fromRelationshipMain.setStartX(x1);fromRelationshipMain.setStartY(y1);
+					fromRelationshipMain.setEndX(x1);fromRelationshipMain.setEndY(y2);
+				
+				}
+			}
+			else {
+				double P1x = boundsA.getMaxX();
+				double P1y = boundsA.getMinY()+boundsA.getHeight()/2;
+				double Q1x = boundsA.getMaxX() + ((boundsB.getMinX()-boundsA.getMaxX())/2);
+				double Q1y = P1y;
+				double R1x = Q1x;
+				double R1y = boundsB.getMinY() - ((boundsB.getMinY()- (boundsA.getMinY() + boundsA.getHeight()/2) )/2);
+				double S1x = boundsB.getMinX() + boundsB.getWidth()/2;
+				double S1y = R1y;
+				double T1x = S1x;
+				double T1y = boundsB.getMinY();
+				
+				int position = titledPaneNodeA.getRigtRelatedTitledPanes().headSet(titledPaneNodeB).size();
+				P1y = P1y+30*position;
+				Q1y = Q1y+30*position;
+				
+				position = titledPaneNodeB.getTopRelatedTitledPanes().headSet(titledPaneNodeA).size();
+				System.out.println( " Position of "+titledPaneNodeA.getText()+ " "+position);
+				S1x = S1x-30*position;
+				T1x = T1x-30*position;
+				
+				
+				Line line1 = relationShip.getRelationshipLineNodes().get(0);
+				Line line2 = relationShip.getRelationshipLineNodes().get(1);
+				Line line3 = relationShip.getRelationshipLineNodes().get(2);
+				Line line4 = relationShip.getRelationshipLineNodes().get(3);
+				
+				relationShip.getPolygon().getPoints().clear();
+				
+				Circle circle = relationShip.gettoRelationshipCircle();
+				circle.setRadius(0);
+				
+				line1.setStartX(P1x);line1.setStartY(P1y);line1.setEndX(Q1x);line1.setEndY(Q1y);
+				line2.setStartX(Q1x);line2.setStartY(Q1y);line2.setEndX(R1x);line2.setEndY(R1y);
+				line3.setStartX(R1x);line3.setStartY(R1y);line3.setEndX(S1x);line3.setEndY(S1y);
+				line4.setStartX(S1x);line4.setStartY(S1y);line4.setEndX(T1x);line4.setEndY(T1y);
+				isCovered=true;
+	
+				if(titledPaneNodeA.equals(relationShip.getRelatedOtherEndTitledPane())){
+					System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeA");
+	
+				/*	relationShip.getPolygon().getPoints().addAll(new Double[]{
+							line1.getStartX(), line1.getStartY(),
+							line1.getStartX()+10, line1.getStartY()-10,
+							line1.getStartX()+10, line1.getStartY()+10});
+				*/	
+					// one to Many relationship
+					double x1 = line1.getStartX()+20;
+					double y1 = line1.getStartY();					
+					circle.setRadius(5);circle.setCenterX(x1);circle.setCenterY(y1);
+					
+					Line toRelationshipCrowLine1 =  relationShip.gettoRelationshipCrowLine1();
+					Line toRelationshipCrowLine2 =  relationShip.gettoRelationshipCrowLine2();
+					
+					toRelationshipCrowLine1.setStartX(x1);toRelationshipCrowLine1.setStartY(y1);
+					toRelationshipCrowLine1.setEndX(line1.getStartX());toRelationshipCrowLine1.setEndY(line1.getStartY()-10);
+					
+					toRelationshipCrowLine2.setStartX(x1);toRelationshipCrowLine2.setStartY(y1);
+					toRelationshipCrowLine2.setEndX(line1.getStartX());toRelationshipCrowLine2.setEndY(line1.getStartY()+10);
+					
+					Line fromRelationshipMain =  relationShip.getfromRelationshipMain();					
+					x1 = line2.getEndX()-10;
+					double x2 = line2.getEndX()+10;
+					y1 = line2.getEndY()-10;
+					
+					fromRelationshipMain.setStartX(x1);fromRelationshipMain.setStartY(y1);
+					fromRelationshipMain.setEndX(x2);fromRelationshipMain.setEndY(y1);
+
+			
+				}else if(titledPaneNodeB.equals(relationShip.getRelatedOtherEndTitledPane())){
+					System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeB");
+	
+				/*	relationShip.getPolygon().getPoints().addAll(new Double[]{
+							line4.getEndX(), line4.getEndY(),
+							line4.getEndX()-10, line4.getEndY()-10,
+							line4.getEndX()+10, line4.getEndY()-10});
+				*/
+					// one to Many relationship
+					double x1 = line2.getEndX();
+					double y1 = line2.getEndY()-20;
+					
+					circle.setRadius(5);circle.setCenterX(x1);circle.setCenterY(y1);
+					Line toRelationshipCrowLine1 =  relationShip.gettoRelationshipCrowLine1();
+					Line toRelationshipCrowLine2 =  relationShip.gettoRelationshipCrowLine2();
+					
+					toRelationshipCrowLine1.setStartX(line2.getEndX());toRelationshipCrowLine1.setStartY(line2.getEndY()-10);
+					toRelationshipCrowLine1.setEndX(line2.getEndX()-10);toRelationshipCrowLine1.setEndY(line2.getEndY());
+				
+					toRelationshipCrowLine2.setStartX(line2.getEndX());toRelationshipCrowLine2.setStartY(line2.getEndY()-10);
+					toRelationshipCrowLine2.setEndX(line2.getEndX()+10);toRelationshipCrowLine2.setEndY(line2.getEndY());
+		
+					Line fromRelationshipMain =  relationShip.getfromRelationshipMain();					
+					x1 = line1.getStartX()+10;
+					y1 = line1.getEndY()-10;
+					double y2 = line1.getEndY()+10;
+					
+					fromRelationshipMain.setStartX(x1);fromRelationshipMain.setStartY(y1);
+					fromRelationshipMain.setEndX(x1);fromRelationshipMain.setEndY(y2);
+				}
+			}			
 		}
 		if(isBottom && isRight && !isYClose) {
 			System.out.println("Its Bottom right");
@@ -694,18 +985,24 @@ public class ERDiagramApplication1 extends Application{
 			int postion = titledPaneNodeA.getLeftRelatedTitledPanes().headSet(titledPaneNodeB).size();
 			System.out.println( " Position of "+titledPaneNodeB.getText()+ " "+titledPaneNodeA.getLeftRelatedTitledPanes().headSet(titledPaneNodeB).size());
 			P1x = boundsA.getMinX();
-			P1y = boundsA.getMinY()+boundsA.getHeight()/2-20*postion;
-			Q1y = boundsA.getMinY()+boundsA.getHeight()/2-20*postion;
+			P1y = boundsA.getMinY()+boundsA.getHeight()/2-30*postion;
+			Q1y = boundsA.getMinY()+boundsA.getHeight()/2-30*postion;
 			
 			postion = titledPaneNodeB.getBottomRelatedTitledPanes().headSet(titledPaneNodeA).size();
-			Q1x = boundsB.getMinX()+boundsB.getWidth()/2+20*postion;
-			R1x = boundsB.getMinX()+boundsB.getWidth()/2+20*postion;
+			Q1x = boundsB.getMinX()+boundsB.getWidth()/2+30*postion;
+			R1x = boundsB.getMinX()+boundsB.getWidth()/2+30*postion;
 			
 			Line line1 = relationShip.getRelationshipLineNodes().get(0);
 			Line line2 = relationShip.getRelationshipLineNodes().get(1);
 			Line line3 = relationShip.getRelationshipLineNodes().get(2);
+			Line line4 = relationShip.getRelationshipLineNodes().get(3);
 			
 			line3.setStartX(0);line3.setStartY(0);line3.setEndX(0);line3.setEndY(0);
+			line4.setStartX(0);line4.setStartY(0);line4.setEndX(0);line4.setEndY(0);
+			
+			Circle circle = relationShip.gettoRelationshipCircle();
+			circle.setRadius(0);
+			
 			relationShip.getPolygon().getPoints().clear();
 			
 			line1.setStartX(P1x);line1.setStartY(P1y);line1.setEndX(Q1x);line1.setEndY(Q1y);
@@ -715,18 +1012,65 @@ public class ERDiagramApplication1 extends Application{
 			if(titledPaneNodeA.equals(relationShip.getRelatedOtherEndTitledPane())){
 				System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeA");
 
-				relationShip.getPolygon().getPoints().addAll(new Double[]{
+			/*	relationShip.getPolygon().getPoints().addAll(new Double[]{
 						line1.getStartX(), line1.getStartY(),
 						line1.getStartX()-10, line1.getStartY()-10,
 						line1.getStartX()-10, line1.getStartY()+10});
-		
+			*/
+			
+				// one to Many relationship
+				double x1 = line1.getStartX()-20;
+				double y1 = line1.getStartY();					
+				circle.setRadius(5);circle.setCenterX(x1);circle.setCenterY(y1);
+				
+				Line toRelationshipCrowLine1 =  relationShip.gettoRelationshipCrowLine1();
+				Line toRelationshipCrowLine2 =  relationShip.gettoRelationshipCrowLine2();
+				
+				toRelationshipCrowLine1.setStartX(x1);toRelationshipCrowLine1.setStartY(y1);
+				toRelationshipCrowLine1.setEndX(line1.getStartX());toRelationshipCrowLine1.setEndY(line1.getStartY()-10);
+				
+				toRelationshipCrowLine2.setStartX(x1);toRelationshipCrowLine2.setStartY(y1);
+				toRelationshipCrowLine2.setEndX(line1.getStartX());toRelationshipCrowLine2.setEndY(line1.getStartY()+10);
+				
+				Line fromRelationshipMain =  relationShip.getfromRelationshipMain();					
+				x1 = line2.getEndX()-10;
+				y1 = line2.getEndY()+10;
+				double x2 = line2.getEndX()+10;
+				
+				fromRelationshipMain.setStartX(x1);fromRelationshipMain.setStartY(y1);
+				fromRelationshipMain.setEndX(x2);fromRelationshipMain.setEndY(y1);
+						
 			}else if(titledPaneNodeB.equals(relationShip.getRelatedOtherEndTitledPane())){
 				System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeB");
 
-				relationShip.getPolygon().getPoints().addAll(new Double[]{
+			/*	relationShip.getPolygon().getPoints().addAll(new Double[]{
 						line2.getEndX(), line2.getEndY(),
 						line2.getEndX()-10, line2.getEndY()+10,
 						line2.getEndX()+10, line2.getEndY()+10});
+			*/
+				
+				// one to Many relationship
+				double x1 = line2.getEndX();
+				double y1 = line2.getEndY()+20;					
+				circle.setRadius(5);circle.setCenterX(x1);circle.setCenterY(y1);
+				
+				Line toRelationshipCrowLine1 =  relationShip.gettoRelationshipCrowLine1();
+				Line toRelationshipCrowLine2 =  relationShip.gettoRelationshipCrowLine2();
+				
+				toRelationshipCrowLine1.setStartX(x1);toRelationshipCrowLine1.setStartY(y1);
+				toRelationshipCrowLine1.setEndX(line2.getEndX()-10);toRelationshipCrowLine1.setEndY(line2.getEndY());
+				
+				toRelationshipCrowLine2.setStartX(x1);toRelationshipCrowLine2.setStartY(y1);
+				toRelationshipCrowLine2.setEndX(line2.getEndX()+10);toRelationshipCrowLine2.setEndY(line2.getEndY());
+				
+				Line fromRelationshipMain =  relationShip.getfromRelationshipMain();					
+				x1 = line1.getStartX()-10;
+				y1 = line1.getStartY()+10;
+				double y2 = line1.getStartY()-10;
+				
+				fromRelationshipMain.setStartX(x1);fromRelationshipMain.setStartY(y1);
+				fromRelationshipMain.setEndX(x1);fromRelationshipMain.setEndY(y2);
+				
 			}
 		}
 		if(isBottom && isLeft && !isYClose) {
@@ -747,19 +1091,26 @@ public class ERDiagramApplication1 extends Application{
 			int position = titledPaneNodeA.getRigtRelatedTitledPanes().headSet(titledPaneNodeB).size();
 			System.out.println( " Position of "+titledPaneNodeB.getText()+ " "+position);
 			P1x = boundsA.getMaxX();
-			P1y = boundsA.getMinY()+boundsA.getHeight()/2-20*position;
-			Q1y = boundsA.getMinY()+boundsA.getHeight()/2-20*position;
+			P1y = boundsA.getMinY()+boundsA.getHeight()/2-30*position;
+			Q1y = boundsA.getMinY()+boundsA.getHeight()/2-30*position;
 			
 			position = titledPaneNodeB.getBottomRelatedTitledPanes().headSet(titledPaneNodeA).size();
-			Q1x = boundsB.getMinX()+boundsB.getWidth()/2-20*position;
-			R1x = boundsB.getMinX()+boundsB.getWidth()/2-20*position;
+			Q1x = boundsB.getMinX()+boundsB.getWidth()/2-30*position;
+			R1x = boundsB.getMinX()+boundsB.getWidth()/2-30*position;
 			
 			Line line1 = relationShip.getRelationshipLineNodes().get(0);
 			Line line2 = relationShip.getRelationshipLineNodes().get(1);
 			Line line3 = relationShip.getRelationshipLineNodes().get(2);
+			Line line4 = relationShip.getRelationshipLineNodes().get(3);
 			
 			line3.setStartX(0);line3.setStartY(0);line3.setEndX(0);line3.setEndY(0);
+			line4.setStartX(0);line4.setStartY(0);line4.setEndX(0);line4.setEndY(0);
+			
 			relationShip.getPolygon().getPoints().clear();
+			
+			Circle circle = relationShip.gettoRelationshipCircle();
+			circle.setRadius(0);
+			
 			line1.setStartX(P1x);line1.setStartY(P1y);line1.setEndX(Q1x);line1.setEndY(Q1y);
 			line2.setStartX(Q1x);line2.setStartY(Q1y);line2.setEndX(R1x);line2.setEndY(R1y);
 			isCovered=true;
@@ -768,19 +1119,66 @@ public class ERDiagramApplication1 extends Application{
 			if(titledPaneNodeA.equals(relationShip.getRelatedOtherEndTitledPane())){
 				System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeA");
 
-				relationShip.getPolygon().getPoints().addAll(new Double[]{
+			/*	relationShip.getPolygon().getPoints().addAll(new Double[]{
 						line1.getStartX(), line1.getStartY(),
 						line1.getStartX()+10, line1.getStartY()-10,
 						line1.getStartX()+10, line1.getStartY()+10});
-		
+			*/
+				// one to Many relationship
+				double x1 = line1.getStartX()+20;
+				double y1 = line1.getStartY();					
+				circle.setRadius(5);circle.setCenterX(x1);circle.setCenterY(y1);
+				
+				Line toRelationshipCrowLine1 =  relationShip.gettoRelationshipCrowLine1();
+				Line toRelationshipCrowLine2 =  relationShip.gettoRelationshipCrowLine2();
+				
+				toRelationshipCrowLine1.setStartX(x1);toRelationshipCrowLine1.setStartY(y1);
+				toRelationshipCrowLine1.setEndX(line1.getStartX());toRelationshipCrowLine1.setEndY(line1.getStartY()+10);
+				
+				toRelationshipCrowLine2.setStartX(x1);toRelationshipCrowLine2.setStartY(y1);
+				toRelationshipCrowLine2.setEndX(line1.getStartX());toRelationshipCrowLine2.setEndY(line1.getStartY()-10);
+				
+				Line fromRelationshipMain =  relationShip.getfromRelationshipMain();					
+				x1 = line2.getEndX()+10;
+				y1 = line2.getEndY()+10;
+				double x2 = line2.getEndX()-10;
+				
+				fromRelationshipMain.setStartX(x1);fromRelationshipMain.setStartY(y1);
+				fromRelationshipMain.setEndX(x2);fromRelationshipMain.setEndY(y1);
+				
 			}else if(titledPaneNodeB.equals(relationShip.getRelatedOtherEndTitledPane())){
 				System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeB");
 
-				relationShip.getPolygon().getPoints().addAll(new Double[]{
+			/*	relationShip.getPolygon().getPoints().addAll(new Double[]{
 						line2.getEndX(), line2.getEndY(),
 						line2.getEndX()-10, line2.getEndY()+10,
 						line2.getEndX()+10, line2.getEndY()+10});
+						*/
+
+				// one to Many relationship
+				double x1 = line2.getEndX();
+				double y1 = line2.getEndY()+20;					
+				circle.setRadius(5);circle.setCenterX(x1);circle.setCenterY(y1);
+				
+				Line toRelationshipCrowLine1 =  relationShip.gettoRelationshipCrowLine1();
+				Line toRelationshipCrowLine2 =  relationShip.gettoRelationshipCrowLine2();
+				
+				toRelationshipCrowLine1.setStartX(x1);toRelationshipCrowLine1.setStartY(y1);
+				toRelationshipCrowLine1.setEndX(line2.getEndX()-10);toRelationshipCrowLine1.setEndY(line2.getEndY());
+				
+				toRelationshipCrowLine2.setStartX(x1);toRelationshipCrowLine2.setStartY(y1);
+				toRelationshipCrowLine2.setEndX(line2.getEndX()+10);toRelationshipCrowLine2.setEndY(line2.getEndY());
+				
+				Line fromRelationshipMain =  relationShip.getfromRelationshipMain();					
+				x1 = line1.getStartX()+10;
+				y1 = line1.getStartY()+10;
+				double y2 = line1.getStartY()-10;
+				
+				fromRelationshipMain.setStartX(x1);fromRelationshipMain.setStartY(y1);
+				fromRelationshipMain.setEndX(x1);fromRelationshipMain.setEndY(y2);
+
 			}
+			
 
 		}
 		
@@ -796,6 +1194,10 @@ public class ERDiagramApplication1 extends Application{
 			
 			line1.setStartX(0);line1.setStartY(0);line1.setEndX(0);line1.setEndY(0);
 			line2.setStartX(0);line2.setStartY(0);line2.setEndX(0);line2.setEndY(0);
+
+			Circle circle = relationShip.gettoRelationshipCircle();
+			circle.setRadius(0);
+
 			relationShip.getPolygon().getPoints().clear();
 			
 			double P1x = boundsA.getMaxX();
@@ -810,22 +1212,22 @@ public class ERDiagramApplication1 extends Application{
 			int position = titledPaneNodeA.getRigtRelatedTitledPanes().headSet(titledPaneNodeB).size();
 			System.out.println( " Position of "+titledPaneNodeB.getText()+ " "+position);
 			if(boundsA.getMinY()-boundsB.getMinY()>0) { // A is below
-				P1y = boundsA.getMinY()+boundsA.getHeight()/2-20*position;
-				Q1y = boundsA.getMinY()+boundsA.getHeight()/2-20*position;
+				P1y = boundsA.getMinY()+boundsA.getHeight()/2-30*position;
+				Q1y = boundsA.getMinY()+boundsA.getHeight()/2-30*position;
 			}
 			else {
-				P1y = boundsA.getMinY()+boundsA.getHeight()/2+20*position;
-				Q1y = boundsA.getMinY()+boundsA.getHeight()/2+20*position;
+				P1y = boundsA.getMinY()+boundsA.getHeight()/2+30*position;
+				Q1y = boundsA.getMinY()+boundsA.getHeight()/2+30*position;
 			}
 			
 			position = titledPaneNodeB.getLeftRelatedTitledPanes().headSet(titledPaneNodeA).size();
 			if(boundsA.getMinY()-boundsB.getMinY()>0) { // A is below
-				S1y = boundsB.getMinY()+boundsB.getHeight()/2-20*position;
-				R1y = boundsB.getMinY()+boundsB.getHeight()/2-20*position;
+				S1y = boundsB.getMinY()+boundsB.getHeight()/2-30*position;
+				R1y = boundsB.getMinY()+boundsB.getHeight()/2-30*position;
 			}
 			else {
-				S1y = boundsB.getMinY()+boundsB.getHeight()/2+20*position;
-				R1y = boundsB.getMinY()+boundsB.getHeight()/2+20*position;
+				S1y = boundsB.getMinY()+boundsB.getHeight()/2+30*position;
+				R1y = boundsB.getMinY()+boundsB.getHeight()/2+30*position;
 			}
 			
 			line1.setStartX(P1x);line1.setStartY(P1y);line1.setEndX(Q1x);line1.setEndY(Q1y);
@@ -837,18 +1239,66 @@ public class ERDiagramApplication1 extends Application{
 			if(titledPaneNodeA.equals(relationShip.getRelatedOtherEndTitledPane())){
 				System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeA");
 
-				relationShip.getPolygon().getPoints().addAll(new Double[]{
+			/*	relationShip.getPolygon().getPoints().addAll(new Double[]{
 						line1.getStartX(), line1.getStartY(),
 						line1.getStartX()+10, line1.getStartY()-10,
 						line1.getStartX()+10, line1.getStartY()+10});
-		
+			*/
+				
+				// one to Many relationship
+				double x1 = line1.getStartX()+20;
+				double y1 = line1.getStartY();					
+				circle.setRadius(5);circle.setCenterX(x1);circle.setCenterY(y1);
+				
+				Line toRelationshipCrowLine1 =  relationShip.gettoRelationshipCrowLine1();
+				Line toRelationshipCrowLine2 =  relationShip.gettoRelationshipCrowLine2();
+				
+				toRelationshipCrowLine1.setStartX(x1);toRelationshipCrowLine1.setStartY(y1);
+				toRelationshipCrowLine1.setEndX(line1.getStartX());toRelationshipCrowLine1.setEndY(line1.getStartY()+10);
+				
+				toRelationshipCrowLine2.setStartX(x1);toRelationshipCrowLine2.setStartY(y1);
+				toRelationshipCrowLine2.setEndX(line1.getStartX());toRelationshipCrowLine2.setEndY(line1.getStartY()-10);
+				
+				Line fromRelationshipMain =  relationShip.getfromRelationshipMain();					
+				x1 = line3.getEndX()-10;
+				y1 = line3.getEndY()+10;
+				double y2 = line3.getEndY()-10;
+				
+				fromRelationshipMain.setStartX(x1);fromRelationshipMain.setStartY(y1);
+				fromRelationshipMain.setEndX(x1);fromRelationshipMain.setEndY(y2);
+
+				
 			} else if(titledPaneNodeB.equals(relationShip.getRelatedOtherEndTitledPane())){
 				System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeB");
 
-				relationShip.getPolygon().getPoints().addAll(new Double[]{
+			/*	relationShip.getPolygon().getPoints().addAll(new Double[]{
 						line3.getEndX(), line3.getEndY(),
 						line3.getEndX()-10, line3.getEndY()-10,
 						line3.getEndX()-10, line3.getEndY()+10});
+			*/
+				
+				// one to Many relationship
+				double x1 = line3.getEndX()-20;
+				double y1 = line3.getEndY();					
+				circle.setRadius(5);circle.setCenterX(x1);circle.setCenterY(y1);
+				
+				Line toRelationshipCrowLine1 =  relationShip.gettoRelationshipCrowLine1();
+				Line toRelationshipCrowLine2 =  relationShip.gettoRelationshipCrowLine2();
+				
+				toRelationshipCrowLine1.setStartX(x1);toRelationshipCrowLine1.setStartY(y1);
+				toRelationshipCrowLine1.setEndX(line3.getEndX());toRelationshipCrowLine1.setEndY(line3.getEndY()+10);
+				
+				toRelationshipCrowLine2.setStartX(x1);toRelationshipCrowLine2.setStartY(y1);
+				toRelationshipCrowLine2.setEndX(line3.getEndX());toRelationshipCrowLine2.setEndY(line3.getEndY()-10);
+				
+				Line fromRelationshipMain =  relationShip.getfromRelationshipMain();					
+				x1 = line1.getStartX()+10;
+				y1 = line1.getStartY()+10;
+				double y2 = line1.getStartY()-10;
+				
+				fromRelationshipMain.setStartX(x1);fromRelationshipMain.setStartY(y1);
+				fromRelationshipMain.setEndX(x1);fromRelationshipMain.setEndY(y2);
+
 			} 
 			
 		}
@@ -864,6 +1314,10 @@ public class ERDiagramApplication1 extends Application{
 			
 			line1.setStartX(0);line1.setStartY(0);line1.setEndX(0);line1.setEndY(0);
 			line2.setStartX(0);line2.setStartY(0);line2.setEndX(0);line2.setEndY(0);
+	
+			Circle circle = relationShip.gettoRelationshipCircle();
+			circle.setRadius(0);
+
 			relationShip.getPolygon().getPoints().clear();
 			
 			double P1x = boundsA.getMinX();
@@ -878,22 +1332,22 @@ public class ERDiagramApplication1 extends Application{
 			int position = titledPaneNodeA.getLeftRelatedTitledPanes().headSet(titledPaneNodeB).size();
 			System.out.println( " Position of "+titledPaneNodeB.getText()+ " "+position);
 			if(boundsA.getMinY()-boundsB.getMinY()>0) { // A is below
-				P1y = boundsA.getMinY()+boundsA.getHeight()/2-20*position;
-				Q1y = boundsA.getMinY()+boundsA.getHeight()/2-20*position;
+				P1y = boundsA.getMinY()+boundsA.getHeight()/2-30*position;
+				Q1y = boundsA.getMinY()+boundsA.getHeight()/2-30*position;
 			}
 			else {
-				P1y = boundsA.getMinY()+boundsA.getHeight()/2+20*position;
-				Q1y = boundsA.getMinY()+boundsA.getHeight()/2+20*position;
+				P1y = boundsA.getMinY()+boundsA.getHeight()/2+30*position;
+				Q1y = boundsA.getMinY()+boundsA.getHeight()/2+30*position;
 			}
 			
 			position = titledPaneNodeB.getRigtRelatedTitledPanes().headSet(titledPaneNodeA).size();
 			if(boundsA.getMinY()-boundsB.getMinY()>0) { // A is below
-				S1y = boundsB.getMinY()+boundsB.getHeight()/2-20*position;
-				R1y = boundsB.getMinY()+boundsB.getHeight()/2-20*position;
+				S1y = boundsB.getMinY()+boundsB.getHeight()/2-30*position;
+				R1y = boundsB.getMinY()+boundsB.getHeight()/2-30*position;
 			}
 			else {
-				S1y = boundsB.getMinY()+boundsB.getHeight()/2+20*position;
-				R1y = boundsB.getMinY()+boundsB.getHeight()/2+20*position;
+				S1y = boundsB.getMinY()+boundsB.getHeight()/2+30*position;
+				R1y = boundsB.getMinY()+boundsB.getHeight()/2+30*position;
 			}
 
 			
@@ -906,18 +1360,65 @@ public class ERDiagramApplication1 extends Application{
 			if(titledPaneNodeA.equals(relationShip.getRelatedOtherEndTitledPane())){
 				System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeA");
 
-				relationShip.getPolygon().getPoints().addAll(new Double[]{
+			/*	relationShip.getPolygon().getPoints().addAll(new Double[]{
 						line1.getStartX(), line1.getStartY(),
 						line1.getStartX()-10, line1.getStartY()-10,
 						line1.getStartX()-10, line1.getStartY()+10});
+			*/
+				
+				// one to Many relationship
+				double x1 = line1.getStartX()-20;
+				double y1 = line1.getStartY();					
+				circle.setRadius(5);circle.setCenterX(x1);circle.setCenterY(y1);
+				
+				Line toRelationshipCrowLine1 =  relationShip.gettoRelationshipCrowLine1();
+				Line toRelationshipCrowLine2 =  relationShip.gettoRelationshipCrowLine2();
+				
+				toRelationshipCrowLine1.setStartX(x1);toRelationshipCrowLine1.setStartY(y1);
+				toRelationshipCrowLine1.setEndX(line1.getStartX());toRelationshipCrowLine1.setEndY(line1.getStartY()+10);
+				
+				toRelationshipCrowLine2.setStartX(x1);toRelationshipCrowLine2.setStartY(y1);
+				toRelationshipCrowLine2.setEndX(line1.getStartX());toRelationshipCrowLine2.setEndY(line1.getStartY()-10);
+				
+				Line fromRelationshipMain =  relationShip.getfromRelationshipMain();					
+				x1 = line3.getEndX()+10;
+				y1 = line3.getEndY()+10;
+				double y2 = line3.getEndY()-10;
+				
+				fromRelationshipMain.setStartX(x1);fromRelationshipMain.setStartY(y1);
+				fromRelationshipMain.setEndX(x1);fromRelationshipMain.setEndY(y2);
 		
 			}else if(titledPaneNodeB.equals(relationShip.getRelatedOtherEndTitledPane())){
 				System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeB");
 
-				relationShip.getPolygon().getPoints().addAll(new Double[]{
+			/*	relationShip.getPolygon().getPoints().addAll(new Double[]{
 						line3.getEndX(), line3.getEndY(),
 						line3.getEndX()+10, line3.getEndY()-10,
 						line3.getEndX()+10, line3.getEndY()+10});
+			*/
+				
+				// one to Many relationship
+				double x1 = line3.getEndX()+20;
+				double y1 = line3.getEndY();					
+				circle.setRadius(5);circle.setCenterX(x1);circle.setCenterY(y1);
+				
+				Line toRelationshipCrowLine1 =  relationShip.gettoRelationshipCrowLine1();
+				Line toRelationshipCrowLine2 =  relationShip.gettoRelationshipCrowLine2();
+				
+				toRelationshipCrowLine1.setStartX(x1);toRelationshipCrowLine1.setStartY(y1);
+				toRelationshipCrowLine1.setEndX(line3.getEndX());toRelationshipCrowLine1.setEndY(line3.getEndY()+10);
+				
+				toRelationshipCrowLine2.setStartX(x1);toRelationshipCrowLine2.setStartY(y1);
+				toRelationshipCrowLine2.setEndX(line3.getEndX());toRelationshipCrowLine2.setEndY(line3.getEndY()-10);
+				
+				Line fromRelationshipMain =  relationShip.getfromRelationshipMain();					
+				x1 = line1.getStartX()-10;
+				y1 = line1.getStartY()+10;
+				double y2 = line1.getStartY()-10;
+				
+				fromRelationshipMain.setStartX(x1);fromRelationshipMain.setStartY(y1);
+				fromRelationshipMain.setEndX(x1);fromRelationshipMain.setEndY(y2);
+				
 			}
 		}
 		
@@ -933,6 +1434,10 @@ public class ERDiagramApplication1 extends Application{
 			
 			line1.setStartX(0);line1.setStartY(0);line1.setEndX(0);line1.setEndY(0);
 			line2.setStartX(0);line2.setStartY(0);line2.setEndX(0);line2.setEndY(0);
+
+			Circle circle = relationShip.gettoRelationshipCircle();
+			circle.setRadius(0);
+
 			relationShip.getPolygon().getPoints().clear();
 			
 			double P1x = boundsA.getMinX() + boundsA.getWidth()/2;
@@ -947,22 +1452,22 @@ public class ERDiagramApplication1 extends Application{
 			int position = titledPaneNodeA.getBottomRelatedTitledPanes().headSet(titledPaneNodeB).size();
 			System.out.println( " Position of "+titledPaneNodeB.getText()+ " "+position);
 			if(( boundsA.getMaxX() - (boundsB.getMinX() + boundsB.getWidth()/2)) < 0) { // A is left
-				P1x = boundsA.getMinX()+boundsA.getWidth()/2-20*position;
-				Q1x = boundsA.getMinX()+boundsA.getWidth()/2-20*position;
+				P1x = boundsA.getMinX()+boundsA.getWidth()/2-30*position;
+				Q1x = boundsA.getMinX()+boundsA.getWidth()/2-30*position;
 			}
 			else {
-				P1x = boundsA.getMinX()+boundsA.getWidth()/2+20*position;
-				Q1x = boundsA.getMinX()+boundsA.getWidth()/2+20*position;;
+				P1x = boundsA.getMinX()+boundsA.getWidth()/2+30*position;
+				Q1x = boundsA.getMinX()+boundsA.getWidth()/2+30*position;;
 			}
 			
 			position = titledPaneNodeB.getTopRelatedTitledPanes().headSet(titledPaneNodeA).size();
 			if((boundsA.getMaxX() - (boundsB.getMinX() + boundsB.getWidth()/2)) < 0) { // A is left
-				S1x = boundsB.getMinX()+boundsB.getWidth()/2-20*position;
-				R1x = boundsB.getMinX()+boundsB.getWidth()/2-20*position;
+				S1x = boundsB.getMinX()+boundsB.getWidth()/2-30*position;
+				R1x = boundsB.getMinX()+boundsB.getWidth()/2-30*position;
 			}
 			else {
-				S1x = boundsB.getMinX()+boundsB.getWidth()/2+20*position;
-				R1x = boundsB.getMinX()+boundsB.getWidth()/2+20*position;
+				S1x = boundsB.getMinX()+boundsB.getWidth()/2+30*position;
+				R1x = boundsB.getMinX()+boundsB.getWidth()/2+30*position;
 			}
 			
 			line1.setStartX(P1x);line1.setStartY(P1y);line1.setEndX(Q1x);line1.setEndY(Q1y);
@@ -974,19 +1479,66 @@ public class ERDiagramApplication1 extends Application{
 			if(titledPaneNodeA.equals(relationShip.getRelatedOtherEndTitledPane())){
 				System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeA");
 
-				relationShip.getPolygon().getPoints().addAll(new Double[]{
+			/*	relationShip.getPolygon().getPoints().addAll(new Double[]{
 						line1.getStartX(), line1.getStartY(),
 						line1.getStartX()-10, line1.getStartY()+10,
 						line1.getStartX()+10, line1.getStartY()+10});
+			*/
+				// one to Many relationship
+				double x1 = line1.getStartX();
+				double y1 = line1.getStartY()+20;					
+				circle.setRadius(5);circle.setCenterX(x1);circle.setCenterY(y1);
+				
+				Line toRelationshipCrowLine1 =  relationShip.gettoRelationshipCrowLine1();
+				Line toRelationshipCrowLine2 =  relationShip.gettoRelationshipCrowLine2();
+				
+				toRelationshipCrowLine1.setStartX(x1);toRelationshipCrowLine1.setStartY(y1);
+				toRelationshipCrowLine1.setEndX(line1.getStartX()-10);toRelationshipCrowLine1.setEndY(line1.getStartY());
+				
+				toRelationshipCrowLine2.setStartX(x1);toRelationshipCrowLine2.setStartY(y1);
+				toRelationshipCrowLine2.setEndX(line1.getStartX()+10);toRelationshipCrowLine2.setEndY(line1.getStartY());
+				
+				Line fromRelationshipMain =  relationShip.getfromRelationshipMain();					
+				x1 = line3.getEndX()+10;
+				y1 = line3.getEndY()-10;
+				double x2 = line3.getEndX()-10;
+				
+				fromRelationshipMain.setStartX(x1);fromRelationshipMain.setStartY(y1);
+				fromRelationshipMain.setEndX(x2);fromRelationshipMain.setEndY(y1);
+
 		
 			} else if(titledPaneNodeB.equals(relationShip.getRelatedOtherEndTitledPane())){
 				System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeB");
 
-				relationShip.getPolygon().getPoints().addAll(new Double[]{
+			/*	relationShip.getPolygon().getPoints().addAll(new Double[]{
 						line3.getEndX(), line3.getEndY(),
 						line3.getEndX()-10, line3.getEndY()-10,
 						line3.getEndX()+10, line3.getEndY()-10});
+			*/
+				
+				// one to Many relationship
+				double x1 = line3.getEndX();
+				double y1 = line3.getEndY()-20;					
+				circle.setRadius(5);circle.setCenterX(x1);circle.setCenterY(y1);
+				
+				Line toRelationshipCrowLine1 =  relationShip.gettoRelationshipCrowLine1();
+				Line toRelationshipCrowLine2 =  relationShip.gettoRelationshipCrowLine2();
+				
+				toRelationshipCrowLine1.setStartX(x1);toRelationshipCrowLine1.setStartY(y1);
+				toRelationshipCrowLine1.setEndX(line3.getStartX()-10);toRelationshipCrowLine1.setEndY(line3.getEndY());
+				
+				toRelationshipCrowLine2.setStartX(x1);toRelationshipCrowLine2.setStartY(y1);
+				toRelationshipCrowLine2.setEndX(line3.getStartX()+10);toRelationshipCrowLine2.setEndY(line3.getEndY());
+				
+				Line fromRelationshipMain =  relationShip.getfromRelationshipMain();					
+				x1 = line1.getStartX()+10;
+				y1 = line1.getStartY()+10;
+				double x2 = line1.getStartX()-10;
+				
+				fromRelationshipMain.setStartX(x1);fromRelationshipMain.setStartY(y1);
+				fromRelationshipMain.setEndX(x2);fromRelationshipMain.setEndY(y1);
 			} 		
+			
 			
 		}
 		if(isBottom && isXClose) {
@@ -1001,6 +1553,10 @@ public class ERDiagramApplication1 extends Application{
 			
 			line1.setStartX(0);line1.setStartY(0);line1.setEndX(0);line1.setEndY(0);
 			line2.setStartX(0);line2.setStartY(0);line2.setEndX(0);line2.setEndY(0);
+			
+			Circle circle = relationShip.gettoRelationshipCircle();
+			circle.setRadius(0);
+			
 			relationShip.getPolygon().getPoints().clear();
 			
 			double P1x = boundsA.getMinX() + boundsA.getWidth()/2;
@@ -1015,22 +1571,22 @@ public class ERDiagramApplication1 extends Application{
 			int position = titledPaneNodeA.getTopRelatedTitledPanes().headSet(titledPaneNodeB).size();
 			System.out.println( " Position of "+titledPaneNodeB.getText()+ " "+position);
 			if(( boundsA.getMinX() - (boundsB.getMinX() + boundsB.getWidth()/2)) > 0) { // A is right
-				P1x = boundsA.getMinX()+boundsA.getWidth()/2-20*position;
-				Q1x = boundsA.getMinX()+boundsA.getWidth()/2-20*position;
+				P1x = boundsA.getMinX()+boundsA.getWidth()/2-30*position;
+				Q1x = boundsA.getMinX()+boundsA.getWidth()/2-30*position;
 			}
 			else {
-				P1x = boundsA.getMinX()+boundsA.getWidth()/2+20*position;
-				Q1x = boundsA.getMinX()+boundsA.getWidth()/2+20*position;;
+				P1x = boundsA.getMinX()+boundsA.getWidth()/2+30*position;
+				Q1x = boundsA.getMinX()+boundsA.getWidth()/2+30*position;;
 			}
 			
 			position = titledPaneNodeB.getBottomRelatedTitledPanes().headSet(titledPaneNodeA).size();
 			if((boundsA.getMaxX() - (boundsB.getMinX() + boundsB.getWidth()/2)) < 0) { // A is left
-				S1x = boundsB.getMinX()+boundsB.getWidth()/2-20*position;
-				R1x = boundsB.getMinX()+boundsB.getWidth()/2-20*position;
+				S1x = boundsB.getMinX()+boundsB.getWidth()/2-30*position;
+				R1x = boundsB.getMinX()+boundsB.getWidth()/2-30*position;
 			}
 			else {
-				S1x = boundsB.getMinX()+boundsB.getWidth()/2+20*position;
-				R1x = boundsB.getMinX()+boundsB.getWidth()/2+20*position;
+				S1x = boundsB.getMinX()+boundsB.getWidth()/2+30*position;
+				R1x = boundsB.getMinX()+boundsB.getWidth()/2+30*position;
 			}
 			
 			line1.setStartX(P1x);line1.setStartY(P1y);line1.setEndX(Q1x);line1.setEndY(Q1y);
@@ -1041,20 +1597,66 @@ public class ERDiagramApplication1 extends Application{
 			if(titledPaneNodeA.equals(relationShip.getRelatedOtherEndTitledPane())){
 				System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeA");
 
-				relationShip.getPolygon().getPoints().addAll(new Double[]{
+			/*	relationShip.getPolygon().getPoints().addAll(new Double[]{
 						line1.getStartX(), line1.getStartY(),
 						line1.getStartX()-10, line1.getStartY()-10,
 						line1.getStartX()+10, line1.getStartY()-10});
+			*/
+				// one to Many relationship
+				double x1 = line1.getStartX();
+				double y1 = line1.getStartY()-20;					
+				circle.setRadius(5);circle.setCenterX(x1);circle.setCenterY(y1);
+				
+				Line toRelationshipCrowLine1 =  relationShip.gettoRelationshipCrowLine1();
+				Line toRelationshipCrowLine2 =  relationShip.gettoRelationshipCrowLine2();
+				
+				toRelationshipCrowLine1.setStartX(x1);toRelationshipCrowLine1.setStartY(y1);
+				toRelationshipCrowLine1.setEndX(line1.getStartX()-10);toRelationshipCrowLine1.setEndY(line1.getStartY());
+				
+				toRelationshipCrowLine2.setStartX(x1);toRelationshipCrowLine2.setStartY(y1);
+				toRelationshipCrowLine2.setEndX(line1.getStartX()+10);toRelationshipCrowLine2.setEndY(line1.getStartY());
+				
+				Line fromRelationshipMain =  relationShip.getfromRelationshipMain();					
+				x1 = line3.getEndX()+10;
+				y1 = line3.getEndY()+10;
+				double x2 = line3.getEndX()-10;
+				
+				fromRelationshipMain.setStartX(x1);fromRelationshipMain.setStartY(y1);
+				fromRelationshipMain.setEndX(x2);fromRelationshipMain.setEndY(y1);
 		
 			} else if(titledPaneNodeB.equals(relationShip.getRelatedOtherEndTitledPane())){
 				System.out.println( " Master Node is -->"+ relationShip.getRelatedOtherEndTitledPane().getText()+" titledPaneNodeB");
 
-				relationShip.getPolygon().getPoints().addAll(new Double[]{
+			/*	relationShip.getPolygon().getPoints().addAll(new Double[]{
 						line3.getEndX(), line3.getEndY(),
 						line3.getEndX()-10, line3.getEndY()+10,
 						line3.getEndX()+10, line3.getEndY()+10});
+			*/
+				
+				// one to Many relationship
+				double x1 = line3.getEndX();
+				double y1 = line3.getEndY()+20;					
+				circle.setRadius(5);circle.setCenterX(x1);circle.setCenterY(y1);
+				
+				Line toRelationshipCrowLine1 =  relationShip.gettoRelationshipCrowLine1();
+				Line toRelationshipCrowLine2 =  relationShip.gettoRelationshipCrowLine2();
+				
+				toRelationshipCrowLine1.setStartX(x1);toRelationshipCrowLine1.setStartY(y1);
+				toRelationshipCrowLine1.setEndX(line3.getStartX()-10);toRelationshipCrowLine1.setEndY(line3.getEndY());
+				
+				toRelationshipCrowLine2.setStartX(x1);toRelationshipCrowLine2.setStartY(y1);
+				toRelationshipCrowLine2.setEndX(line3.getStartX()+10);toRelationshipCrowLine2.setEndY(line3.getEndY());
+				
+				Line fromRelationshipMain =  relationShip.getfromRelationshipMain();					
+				x1 = line1.getStartX()+10;
+				y1 = line1.getStartY()-10;
+				double x2 = line1.getStartX()-10;
+				
+				fromRelationshipMain.setStartX(x1);fromRelationshipMain.setStartY(y1);
+				fromRelationshipMain.setEndX(x2);fromRelationshipMain.setEndY(y1);
+
 			} 
-			
+						
 		}
 		
 		if(isRight && !isCovered) {
@@ -1143,6 +1745,8 @@ public class ERDiagramApplication1 extends Application{
             }
             
             
+           
+            
         });
 
         // Optional: Provide feedback on mouse release
@@ -1180,9 +1784,13 @@ public class ERDiagramApplication1 extends Application{
 class LineEnteredEventHandler implements EventHandler<MouseEvent>{
 
 	private ArrayList<LineNode> getRelationshipLineNodes;
+	private ArrayList<Line> toFromLines;
+	private ArrayList<Circle> toFromCircles;
 	
-	public LineEnteredEventHandler( ArrayList<LineNode> lineNodes) {
+	public LineEnteredEventHandler( ArrayList<LineNode> lineNodes,ArrayList<Line> toFromLines,ArrayList<Circle> toFromCircles) {
 		this.getRelationshipLineNodes = lineNodes;
+		this.toFromLines = toFromLines;
+		this.toFromCircles = toFromCircles;
 	}
 	
 	@Override
@@ -1194,7 +1802,17 @@ class LineEnteredEventHandler implements EventHandler<MouseEvent>{
 		//	lineNode.setEffect(this.highlightEffectOnHover);
 			lineNode.setStroke(Color.DARKORANGE);
 		}	
-		
+	
+		for(Line line : toFromLines) {
+			line.setStrokeWidth(2);
+		//	lineNode.setEffect(this.highlightEffectOnHover);
+			line.setStroke(Color.DARKORANGE);
+		}
+		for(Circle circle : toFromCircles) {
+			circle.setStrokeWidth(2);
+		//	lineNode.setEffect(this.highlightEffectOnHover);
+			circle.setStroke(Color.DARKORANGE);
+		}
 	}	
 }
 
@@ -1202,9 +1820,14 @@ class LineEnteredEventHandler implements EventHandler<MouseEvent>{
 class LineExitedEventHandler implements EventHandler<MouseEvent>{
 
 	private ArrayList<LineNode> getRelationshipLineNodes;
+	private ArrayList<Line> toFromLines;
+	private ArrayList<Circle> toFromCircles;
 	
-	public LineExitedEventHandler( ArrayList<LineNode> lineNodes) {
+	
+	public LineExitedEventHandler( ArrayList<LineNode> lineNodes,ArrayList<Line> toFromLines,ArrayList<Circle> toFromCircles) {
 		this.getRelationshipLineNodes = lineNodes;
+		this.toFromLines = toFromLines;
+		this.toFromCircles = toFromCircles;
 	}
 	
 	@Override
@@ -1215,6 +1838,17 @@ class LineExitedEventHandler implements EventHandler<MouseEvent>{
 			lineNode.setStrokeWidth(2);
 		//	lineNode.setEffect(null);
 			lineNode.setStroke(Color.BLACK);
+		}
+		
+		for(Line line : toFromLines) {
+			line.setStrokeWidth(2);
+		//	lineNode.setEffect(this.highlightEffectOnHover);
+			line.setStroke(Color.BLACK);
+		}
+		for(Circle circle : toFromCircles) {
+			circle.setStrokeWidth(2);
+		//	lineNode.setEffect(this.highlightEffectOnHover);
+			circle.setStroke(Color.BLACK);
 		}
 		
 	}
