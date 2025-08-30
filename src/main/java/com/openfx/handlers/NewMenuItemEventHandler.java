@@ -118,6 +118,7 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	public DuckDBUI duckDBUI;
 	public MariaDBUI mariaDBUI;
 	public SettingTabEventHandler settingTabEventHandler;
+	public CreateNewTableHandler createNewTableHandler;
 		
 	public NewMenuItemEventHandler(Menu_Items_FX menu_Items_FX) {
 		this.menu_Items_FX = menu_Items_FX;
@@ -125,6 +126,10 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	} 
 	public NewMenuItemEventHandler(SettingTabEventHandler settingTabEventHandler) {
 		this.settingTabEventHandler = settingTabEventHandler;
+		
+	} 
+	public NewMenuItemEventHandler(CreateNewTableHandler createNewTableHandler) {
+		this.createNewTableHandler = createNewTableHandler;
 		
 	} 
 	

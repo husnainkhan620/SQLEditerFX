@@ -1191,3 +1191,145 @@
 #moreChartshbox{
 	-fx-padding:0 0 0 400;
 }
+
+
+/* CreateNewTableHandler*/
+.editLabelColumnVbox{
+    -fx-pref-width: 400;
+    -fx-pref-height: 60;
+  -fx-background-color: #2B2B2B;
+    -fx-alignment: center-left;   
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+     -fx-border-colour:#44475a;
+   }
+
+/* Properties section */
+.propertiesVbox {
+	-fx-border-width:1;
+	-fx-border-color:GAINSBORO;
+    -fx-spacing: 10;
+    -fx-padding: 10;
+   }
+#keysVBox{
+	-fx-border-width:1;
+	-fx-border-color:GAINSBORO;
+	
+}
+
+/* HBoxes for name and description */
+.nameValueHbox, .defaultHbox, .extraHbox, .expressionHbox{
+    -fx-spacing: 10;
+    -fx-alignment: center-left;
+}
+
+.descriptionValueHBox , .commentsHbox{
+    -fx-spacing: 10;
+    -fx-alignment: center-left;
+}
+.datatypeHBox{
+	 -fx-spacing: 10;
+    -fx-alignment: center-left;
+}
+/* TextFields should take available space */
+.Valuetextfield{
+    -fx-pref-width: 300;
+}
+
+.descriptiontextfield{
+    -fx-pref-width: 300;
+    -fx-pref-height: 60;
+}
+
+ .Commenttextfield{
+    -fx-pref-width: 300;
+    -fx-pref-height: 100;
+ }
+ .EditCommenttextArea{
+ -fx-pref-width: 300;
+    -fx-pref-height: 150;
+ }
+/* Buttons section */
+.buttons--hbox {
+    -fx-spacing: 20;
+    -fx-padding: 15;
+    -fx-alignment: center-right;
+}
+
+#labels{
+	-fx-pref-width: 75;
+}
+
+#createTableTabLabels{
+	-fx-pref-width: 100;
+}
+#checkboxHBox, #textHbox{
+	   -fx-padding: 10 20 10 100;
+	    -fx-spacing: 20;
+}
+
+#keyBox{
+	-fx-spacing: 10;
+    -fx-padding: 10;
+}
+
+#othersBox{
+	-fx-spacing: 10;
+    -fx-padding: 10;
+}
+
+#textHbox{
+	-fx-spacing: 30;
+	 
+}
+#editCommentVBox{
+	-fx-padding:10, 15, 10, 15;
+	-fx-spacing:15;
+}
+
+.tablenameValueHbox, .enginehbox, .autoincrementHbox, .charsetHBox, .collationHBox{
+	  -fx-spacing: 10;
+    -fx-alignment: center-left;
+}
+
+
+/* CreateNewTableHandler*/
+
+.propertiesVbox {
+	-fx-border-width:1;
+	-fx-border-color:GAINSBORO;
+    -fx-spacing: 10;
+    -fx-padding: 10;
+	-fx-border-color:#44475a;
+    -fx-background-color: #2B2B2B;
+   }
+
+   /* #Tabpane  {
+    -fx-tab-min-width: 180;
+    -fx-tab-min-height: 30;
+} */
+
+.tablestabpane{
+	 -fx-tab-min-height: 100;
+    -fx-tab-max-height: 200;
+    -fx-tab-min-width: 22;
+    -fx-tab-max-width: 22;
+}
+/* #tablestabpaneVBox{
+	 -fx-pref-height: 10;
+	 -fx-min-height: 10;
+    -fx-max-height: 10;
+} */
+
+/* .Tabs{
+	-fx-background:#000000;
+	-fx-background-color:#000000;
+	
+}
+.tab .tab-label{
+	 -fx-text-fill: white;
+}
+
+.Tabs:selected{
+	-fx-background:#44475a;
+} */

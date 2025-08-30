@@ -47,6 +47,8 @@ public Scene sceneDataBaseConnection;
 public Scene scene;
 public Stage settingsStage;
 public Menu_Items_FX menu_Items_FX;
+public MySqlUI mysqlui;
+public CreateNewTableHandler createNewTableHandler;
 public NewMenuItemEventHandler newMenuItemEventHandler;
 public TreeItem appreanceItem;
 public TreeItem themeItem;
@@ -178,12 +180,12 @@ public Label LanguageLabel;
 					// Select theme file
 					selectedTheme = themeSelectedValue.equals("Light") ? whiteThemeCss : darkThemeCss;
 					menu_Items_FX.selectedTheme = selectedTheme;
-
+									
 					// Apply theme to all open scenes dynamically
 					applyTheme(menu_Items_FX.scene, selectedTheme);
 					applyTheme(menu_Items_FX.sceneDataBaseConnection, selectedTheme);
 					applyTheme(menu_Items_FX.sceneForSettings, selectedTheme);
-
+							
 					// Ensure the settings window itself is updated
 					applyTheme(settingsStage.getScene(), selectedTheme);
                     settingsStage.close();

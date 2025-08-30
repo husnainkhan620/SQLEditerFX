@@ -25,7 +25,19 @@ import com.openfx.ermodel.ERModel;
 import com.openfx.ermodel.Entity;
 import com.openfx.ermodel.KeyAttribute;
 import com.openfx.ermodel.TableERModel;
+import com.openfx.handlers.CreateNewColumnHandler;
+import com.openfx.handlers.CreateNewConstraintHandler;
+import com.openfx.handlers.CreateNewEventHandler;
+import com.openfx.handlers.CreateNewForeignKeyHandler;
+import com.openfx.handlers.CreateNewFunctionHandler;
+import com.openfx.handlers.CreateNewIndexHandler;
+import com.openfx.handlers.CreateNewProcedureHandler;
+import com.openfx.handlers.CreateNewTableHandler;
+import com.openfx.handlers.CreateNewTriggerHandler;
+import com.openfx.handlers.CreateNewViewHandler;
+import com.openfx.handlers.GeneratedSQLQueryHandler;
 import com.openfx.handlers.NewMenuItemEventHandler;
+import com.openfx.handlers.SettingTabEventHandler;
 import com.openfx.placeholders.ConnectionPlaceHolder;
 import com.openfx.placeholders.ImageItemsHolder;
 
@@ -47,6 +59,7 @@ import javafx.geometry.Side;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
@@ -121,16 +134,34 @@ import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 // import javafx.scene.web.HTMLEditor;
 import javafx.util.Callback;
 
 public class MySqlUI {
 	
+	public String whiteThemeCss = Menu_Items_FX.class.getResource("/whiteTheme.css").toExternalForm();
+	public String darkThemeCss = Menu_Items_FX.class.getResource("/darkTheme.css").toExternalForm();
+	public String selectedTheme = whiteThemeCss;
+	
+	public Stage primaryStage;
+	public Stage stage;
+	public Scene scene;
+	public Scene createNewViewScene;
+	public Scene createNewProcedureScene;
+	public Scene createNewEventScene;
+	public Scene createNewFunctionScene;
+	
 	public Menu_Items_FX menu_Items_FX;
 	public NewMenuItemEventHandler newMenuItemEventHandler;
-	
+	public CreateNewTableHandler createNewTableHandler;
+	public CreateNewViewHandler createNewViewHandler;
+	public CreateNewProcedureHandler createNewProcedureHandler;
+	public CreateNewFunctionHandler createNewFunctionHandler;
+	public CreateNewEventHandler createNewEventHandler;
+	public GeneratedSQLQueryHandler generatedSQLQueryHandler;
 	private ConnectionPlaceHolder connectionPlaceHolder;
-	private Connection currentConnection ;
+	public Connection currentConnection ;
 	private String currentConnectionName;
 	private Statement stmt ;
 	public ResourceBundle resourceBundle;
@@ -3589,7 +3620,7 @@ public class MySqlUI {
 						e.printStackTrace();
 					}		
 				}
-				if(newValue.getText().equals(menu_Items_FX.resourceBundle.getString(menu_Items_FX.resourceBundle.getString("GraphVisuals")))) {
+				if(newValue.getText().equals(menu_Items_FX.resourceBundle.getString("GraphVisuals"))) {
 					System.out.println("Graph Visual Tab under Table selected");
 					particularTableGraphVisualsTab.setContent(getGraphVisualsForParticulatTable(tableName,databaseName));
 				}
@@ -3767,7 +3798,8 @@ public class MySqlUI {
 			//particularTableindexesButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
 			particularTableIndexesButtons =  new Button(menu_Items_FX.resourceBundle.getString("Create"));
 			particularTableIndexesButtons.setId("buttons");
-			particularTableindexesButtonsHBox.getChildren().add(particularTableindexesButtonsHBox);
+			particularTableIndexesButtons.setOnAction(new CreateNewIndexHandler(createNewTableHandler, this));
+			particularTableindexesButtonsHBox.getChildren().add(particularTableIndexesButtons);
 			particularTableindexesTabVBox.getChildren().addAll(particularTableindexesView,particularTableindexesButtonsHBox);
 			particularTableindexesTab.setContent(particularTableindexesTabVBox);
 		}catch(SQLException e) {
@@ -3795,6 +3827,7 @@ public class MySqlUI {
 				//particularTabletriggersButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
 				particularTableTriggersButtons =  new Button(menu_Items_FX.resourceBundle.getString("Create"));
 				particularTableTriggersButtons.setId("buttons");
+				particularTableTriggersButtons.setOnAction(new CreateNewTriggerHandler(createNewTableHandler,this));
 				particularTabletriggersButtonsHBox.getChildren().add(particularTableTriggersButtons);
 				particularTabletriggersTabVBox.getChildren().addAll(particularTabletriggersView,particularTabletriggersButtonsHBox);
 				particularTabletriggersTab.setContent(particularTabletriggersTabVBox);
@@ -3856,6 +3889,7 @@ public class MySqlUI {
 			//particularTableforeignKeysButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
 			particularTableforeignKeysButtons =  new Button(menu_Items_FX.resourceBundle.getString("Create"));
 			particularTableforeignKeysButtons.setId("buttons");
+			particularTableforeignKeysButtons.setOnAction(new CreateNewForeignKeyHandler(createNewTableHandler,this));
 			particularTableforeignKeysButtonsHBox.getChildren().add(particularTableforeignKeysButtons);
 			particularTableforeignKeysTabVBox.getChildren().addAll(particularTableforeignKeysView,particularTableforeignKeysButtonsHBox);
 			particularTableforeignKeysTab.setContent(particularTableforeignKeysTabVBox);
@@ -3884,6 +3918,7 @@ public class MySqlUI {
 			//particularTableconstraintsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
 			particularTableConstraintsButtons =  new Button(menu_Items_FX.resourceBundle.getString("Create"));
 			particularTableConstraintsButtons.setId("buttons");
+			particularTableConstraintsButtons.setOnAction(new CreateNewConstraintHandler(createNewTableHandler,this));
 			particularTableconstraintsButtonsHBox.getChildren().add(particularTableConstraintsButtons);
 			particularTableconstraintsTabVBox.getChildren().addAll(particularTableconstraintsView,particularTableconstraintsButtonsHBox);
 			particularTableconstraintsTab.setContent(particularTableconstraintsTabVBox);
@@ -3921,6 +3956,7 @@ public class MySqlUI {
 			//particularTableColumnsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
 			particularTableColumnsButtons =  new Button(menu_Items_FX.resourceBundle.getString("Create"));
 			particularTableColumnsButtons.setId("buttons");
+			particularTableColumnsButtons.setOnAction(new CreateNewColumnHandler(createNewTableHandler, this));
 			particularTableColumnsButtonsHBox.getChildren().add(particularTableColumnsButtons);
 			particularTablecolumnsTabVBox.getChildren().addAll(particularTableColumnsView,particularTableColumnsButtonsHBox);
 			particularTablecolumnsTab.setContent(particularTablecolumnsTabVBox);
@@ -6799,14 +6835,15 @@ public class MySqlUI {
 			  refreshTableButton = new Button(menu_Items_FX.resourceBundle.getString("Refresh"));
 			  refreshTableButton.setId("buttons");
 			  
-			  createTableButtons.setOnAction(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent event) {
-					
-					tableDetailsSplitPane.getItems().remove(tableButtonsHbox);
-					tableDetailsSplitPane.setDividerPositions(0.99);
-				}	
-			  });
+			  createTableButtons.setOnAction(new CreateNewTableHandler(this));
+//			  createTableButtons.setOnAction(new EventHandler<ActionEvent>() {
+//				@Override
+//				public void handle(ActionEvent event) {
+//					
+//					tableDetailsSplitPane.getItems().remove(tableButtonsHbox);
+//					tableDetailsSplitPane.setDividerPositions(0.99);
+//				}	
+//			  });
 			  
 			  tableButtonsHbox.getChildren().addAll(viewTableButton,createTableButtons,editTableButton,deleteTableButton);
 			  allButtonsHBox.getChildren().addAll(tableButtonsHbox,refreshTableButton);
@@ -6870,14 +6907,15 @@ public class MySqlUI {
 			  refreshViewButton = new Button(menu_Items_FX.resourceBundle.getString("Refresh"));
 			  refreshViewButton.setId("buttons");
 			  
-			  createViewButton.setOnAction(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent event) {
-					
-					viewDetailsSplitPane.getItems().remove(viewButtonsHbox);
-					viewDetailsSplitPane.setDividerPositions(0.99);
-				}	
-			  });
+			  createViewButton.setOnAction(new CreateNewViewHandler(this));
+//			  createViewButton.setOnAction(new EventHandler<ActionEvent>() {
+//				@Override
+//				public void handle(ActionEvent event) {
+//					
+//					viewDetailsSplitPane.getItems().remove(viewButtonsHbox);
+//					viewDetailsSplitPane.setDividerPositions(0.99);
+//				}	
+//			  });
 			  
 			  viewButtonsHbox.getChildren().addAll(viewViewButton,createViewButton,editViewButton,deleteViewButton);
 			  allButtonsHBox.getChildren().addAll(viewButtonsHbox,refreshViewButton);
@@ -7002,14 +7040,17 @@ public class MySqlUI {
 			  deleteProcedureButton.setId("buttons");
 			  refreshProcedureButton = new Button(menu_Items_FX.resourceBundle.getString("Refresh"));
 			  refreshProcedureButton.setId("buttons");
-			  createProcedureButton.setOnAction(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent event) {
-					
-					proceduresDetailsSplitPane.getItems().remove(proceduresButtonsHbox);
-					proceduresDetailsSplitPane.setDividerPositions(0.99);
-				}	
-			  });
+			  
+			  createProcedureButton.setOnAction(new CreateNewProcedureHandler(this));
+			  
+//			  createProcedureButton.setOnAction(new EventHandler<ActionEvent>() {
+//				@Override
+//				public void handle(ActionEvent event) {
+//					
+//					proceduresDetailsSplitPane.getItems().remove(proceduresButtonsHbox);
+//					proceduresDetailsSplitPane.setDividerPositions(0.99);
+//				}	
+//			  });
 			  
 			  proceduresButtonsHbox.getChildren().addAll(viewProcedureButton,createProcedureButton,editProcedureButton,deleteProcedureButton);
 			  allButtonsHBox.getChildren().addAll(proceduresButtonsHbox,refreshProcedureButton);
@@ -7068,14 +7109,15 @@ public class MySqlUI {
 			  deleteFunctionButton.setId("buttons");
 			  refreshProcedureButton = new Button(menu_Items_FX.resourceBundle.getString("Refresh"));
 			  refreshProcedureButton.setId("buttons");
-			  createFunctionButton.setOnAction(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent event) {
-					
-					functionsDetailsSplitPane.getItems().remove(functionsButtonsHbox);
-					functionsDetailsSplitPane.setDividerPositions(0.99);
-				}	
-			  });
+			  createFunctionButton.setOnAction(new CreateNewFunctionHandler(this));
+//			  createFunctionButton.setOnAction(new EventHandler<ActionEvent>() {
+//				@Override
+//				public void handle(ActionEvent event) {
+//					
+//					functionsDetailsSplitPane.getItems().remove(functionsButtonsHbox);
+//					functionsDetailsSplitPane.setDividerPositions(0.99);
+//				}	
+//			  });
 			  
 			  functionsButtonsHbox.getChildren().addAll(viewFunctionButton,createFunctionButton,editFunctionButton,deleteFunctionButton);
 			  allButtonsHBox.getChildren().addAll(functionsButtonsHbox,refreshProcedureButton);
@@ -8116,6 +8158,8 @@ private boolean createERModelComponentOnMouseRelease(Pane mainPane,ERModelApplic
 
 	private Integer currentHostIndex=0;
 	private ChoiceBox memoryDistributionHostByChoiceBox;
+						
+	
 	private VBox getTopMemoryUsageByHostsVBox(TreeItem<String> loadedDatabaseName,ArrayList<String> columnNamesForGraph) {
 		
 		if(currentLoggedInUser ==null || currentLoggedInHost == null) {
@@ -9035,14 +9079,15 @@ private boolean createERModelComponentOnMouseRelease(Pane mainPane,ERModelApplic
 			  deleteEventButton.setId("buttons");
 			  refreshEventsButton = new Button(menu_Items_FX.resourceBundle.getString("Refresh"));
 			  refreshEventsButton.setId("buttons");
-			  createEventButton.setOnAction(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent event) {
-					
-					eventsDetailsSplitPane.getItems().remove(eventsButtonsHbox);
-					eventsDetailsSplitPane.setDividerPositions(0.99);
-				}	
-			  });
+			  createEventButton.setOnAction(new CreateNewEventHandler(this));
+//			  createEventButton.setOnAction(new EventHandler<ActionEvent>() {
+//				@Override
+//				public void handle(ActionEvent event) {
+//					
+//					eventsDetailsSplitPane.getItems().remove(eventsButtonsHbox);
+//					eventsDetailsSplitPane.setDividerPositions(0.99);
+//				}	
+//			  });
 			  
 			  
 			  eventsButtonsHbox.getChildren().addAll(viewEventButton,createEventButton,editEventButton,deleteEventButton);
