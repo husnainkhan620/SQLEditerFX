@@ -680,4 +680,309 @@
  
  
  
+/* CreateNewTableHandler*/
+
+/* Style for the edit label column */
+/* .addColumnLabelVbox, .constriantLabelVbox, .indexLabelVbox{
+   -fx-pref-width: 400;
+    -fx-pref-height: 100;
+    -fx-background-color: GAINSBORO;
+    -fx-alignment: center-left;   
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+   } */
+   .sqlGeneratedLabelHBox, .addColumnLabelVbox, .constriantLabelVbox, .indexLabelVbox,  .foreignKeyLabelVbox, .newProcedureTabLabelHbox{
+   
+     -fx-pref-width: 400;
+    -fx-max-height: 60;
+    -fx-min-height: 60;
+    -fx-pref-height: 60;
+    -fx-background-color: GAINSBORO;
+    -fx-alignment: center-left;   
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+   }
+/*    .foreignKeyLabelVbox{
+    -fx-pref-width: 400;
+    -fx-pref-height: 100;
+    -fx-background-color: GAINSBORO;
+    -fx-alignment: center-left;   
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+   }
+.newProcedureTabLabelHbox{
+    -fx-pref-width: 400;
+    -fx-pref-height: 60;
+    -fx-background-color: GAINSBORO;
+    -fx-alignment: center-left;   
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+   } */
+
+/* Properties section */
+.propertiesHbox {
+	-fx-border-width:1;
+	-fx-border-color:GAINSBORO;
+    -fx-spacing: 30;
+    -fx-padding: 10;
+   }
+.viewpropertiesHbox {
+	
+    -fx-spacing: 30;
+    -fx-padding: 10;
+   }
+   .triggerPropertiesHbox{
+    -fx-spacing: 10;
+    -fx-padding: 10;
+     -fx-alignment: top-left; 
+   }
+   .procedurePropertiesHbox{
+	-fx-spacing: 10;
+    -fx-padding: 10;
+   }
+#keysVBox{
+	-fx-border-width:1;
+	-fx-border-color:GAINSBORO;
+	}
+
+/* HBoxes for name and description */
+.nameValueHbox, .extraHbox, .expressionHbox,  .constraintNameValueHbox, .columnNameValueHbox,.tableNameValueHbox, .UniqueNameValueHbox{
+    -fx-spacing: 10;
+    -fx-alignment: center-left;
+    
+}
+
+ .commentsHbox, .defaultHbox{
+    -fx-spacing: 10;
+    -fx-alignment: center-left;
+    
+}
+.datatypeHBox, .constraintTypeHBox , .uniqueKeyHBox, .indexTypeHBox{
+	 -fx-spacing: 10;
+	/*  -fx-pref-height:100; */
+    -fx-alignment: center-left;
+}
+/* TextFields should take available space */
+.Valuetextfield{
+    -fx-pref-width: 300;
+}
+.triggerValuetextfield{
+	-fx-pref-width: 270;
+}
+.descriptiontextfield{
+    -fx-pref-width: 300;
+    -fx-pref-height: 60;
+    -fx-min-height:60;
+    -fx-max-height:60;
+}
+.functiondescriptiontextfield, .proceduredescriptiontextfield{
+	-fx-pref-width: 300;
+    -fx-pref-height: 60;
+     -fx-min-height:60;
+    -fx-max-height:60;
+}
+.triggerdescriptionTextArea{
+	 -fx-pref-width: 270;
+     -fx-pref-height: 60 ;
+      -fx-min-height:60;
+    -fx-max-height:60;
+}
+ .Commenttextfield{
+    -fx-pref-width: 400;
+    -fx-pref-height: 100;
+ }
+ .EditCommenttextArea{
+ -fx-pref-width: 300;
+    -fx-pref-height: 150;
+ }
  
+/* Buttons section */
+.buttons--hbox {
+    -fx-spacing: 10;
+    -fx-padding: 10;
+    -fx-alignment: CENTER_RIGHT;
+}
+.optionsHBox{
+	-fx-spacing: 10;
+    -fx-padding: 10;
+}
+
+#labels{
+	-fx-pref-width: 75;
+}
+
+
+#createTableTabLabels, #createViewTabLabels, #createProcedureTabLabels, #createEventTabLabels, #createForeignKeyLabels, #createTriggerTabLabels, #createFunctionTabLabels {
+	-fx-pref-width: 100;
+}
+
+#createTriggerTabRightVBoxLabels{
+	-fx-pref-width: 125;
+}
+#definerLabels{
+	-fx-pref-width: 70;
+}
+#viewQueryLabel{
+	-fx-pref-width: 70;
+}
+#charsetLabel{
+	-fx-pref-width: 60;
+}
+
+ #textHbox{
+	   -fx-padding: 10 20 10 100;
+	    -fx-spacing: 20;
+}
+
+#checkboxHBox{
+	 -fx-padding: 0 0 0 85; /* top right bottom left */
+	-fx-spacing: 20;
+}
+#keyBox{
+	-fx-spacing: 10;
+    -fx-padding: 10;
+
+}
+
+#othersBox{
+	-fx-spacing: 10;
+    -fx-padding: 10;
+}
+
+#textHbox{
+	-fx-spacing: 30;
+	 
+}
+#editCommentVBox , #newColumnOptionsVBox{
+	-fx-padding:10, 15, 10, 15;
+	-fx-spacing:15;
+}
+
+.tablenameValueHbox,  .autoincrementHbox, .descriptionValueHBox ,.enginehbox,.charsetHBox, .collationHBox, .viewnameValueHbox,.checkOptionHbox,.algorithmHBox, .updatablehbox
+, .definerHBox, .databasenameValueHbox, .procedureNameHBox, .typeHbox, .procedurenameValueHbox, .procedureTypeHBox, .deterministichbox, .resultTypeHBox, .bodyTypeHBox,
+.eventnameValueHbox, .eventTypeHBox, .executeAtValuehbox, .intervalValuehbox, .intervalFieldHBox, .functionnameValueHbox, .functionTypeHBox {
+	-fx-spacing: 10;
+	-fx-alignment: center-left;
+	-fx-pref-height: 40px;
+	}
+
+ .triggerNameHbox, .tablenameHbox, .timingValueHBox, .typeValueHBox,.clientCharsethbox, .sqlModehbox, .triggerdescriptionValuehbox{
+	-fx-spacing: 10;
+	-fx-alignment: center-left;
+	}
+	
+/* .enginehbox,.charsetHBox, .collationHBox{
+	-fx-padding-left: 30;
+	-fx-spacing: 20;
+} */
+
+.propertiesVbox, .constriantPropertiesVbox , .foreignKeyPropertiesVbox, .newTriggerTabVBox, .indexPropertiesVbox{
+	 -fx-spacing: 10;
+	 -fx-padding:10;
+}
+.leftpropertiesVbox{
+	 -fx-spacing: 10;
+    -fx-alignment: center-left;   
+}
+ .rightpropertiesVbox{
+	 -fx-spacing: 10;
+    -fx-alignment: center-left;
+       
+}
+.combobox {
+    -fx-pref-width: 100px; /* Adjust as needed */
+}
+/* #Tabpane  {
+    -fx-tab-min-width: 180;
+    -fx-tab-min-height: 30;
+} */
+
+.tablestabpane, .viewtabletabpane, .eventtabletabpane{
+	 -fx-tab-min-height: 100;
+    -fx-tab-max-height: 200;
+    -fx-tab-min-width: 22;
+    -fx-tab-max-width: 22;
+}
+
+  .procedurestabletabpane, .functionstabletabpane{
+	 -fx-tab-min-height: 130;
+    -fx-tab-max-height: 130;
+    -fx-tab-min-width: 33;
+} 
+#generatedSQLLabel{
+	-fx-alignment:CENTER_LEFT;
+	-fx-font-size:12;
+	}
+.generatedSQLQueryTextArea{
+	 -fx-min-width: 530;
+    -fx-max-width: 530;
+    -fx-pref-width: 530;
+	 -fx-pref-height: 300;
+}
+
+.generatedSQLQueryTextAreaIndexTab{
+	 -fx-min-width: 350;
+    -fx-max-width: 350;
+    -fx-pref-width: 350;
+	 -fx-pref-height: 250;
+}
+.generatedSQLLabelHBox{
+	-fx-spacing: 20 ;
+    -fx-padding: 10;
+ }
+  
+.sqlHBox{
+	-fx-padding:10;
+	-fx-spacing:20;
+}
+
+.sqlqueryArea{
+	-fx-font-size:13;
+	-fx-padding-bottom:10;
+	-fx-padding-left:300;
+	-fx-spacing-bottom: 10;
+	-fx-pref-width: 700;
+    -fx-pref-height: 0;
+}
+
+/* HBox for OK/Cancel buttons */
+.SQLButtonshbox , .buttonsHBox {
+    -fx-alignment: bottom-right;
+    -fx-spacing: 10;
+    -fx-padding: 20; /* Top padding to create space from TextArea */
+}
+
+#sqlbutton {
+	-fx-spacing:10;	
+    -fx-pref-width: 100px;
+    -fx-pref-height: 20px;
+}
+
+
+#buttonWrapper{
+	-fx-spacing: 20;
+}
+#viewQueryTextArea{
+    -fx-pref-width: 400;
+    -fx-pref-height: 200;
+    
+ }
+
+.TableView{
+	-fx-pref-height: 340;
+	/* -fx-max-height:200;
+	-fx-min-height:300; */
+}
+.ConstraintsTableView{
+	-fx-pref-height: 260;
+	}
+	
+.referenceTableView, .columnsTableView, .IndexTableView{
+	-fx-pref-height: 200;
+}	
+#checkExpressionField{
+	-fx-pref-height: 300;
+	-fx-pref-width: 500;
+	-fx-padding:10;
+
+}

@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
+import com.openfx.handlers.CreateNewTableHandler;
 import com.openfx.handlers.NewMenuItemEventHandler;
 import com.openfx.handlers.SearchToolEventHandler;
 import com.openfx.handlers.SettingTabEventHandler;
@@ -84,10 +85,14 @@ public class Menu_Items_FX extends Application {
 	public SettingTabEventHandler settingTabEventHandler;
 	public SqlQueryRunButtonSubmit sqlQueryRunButtonSubmit;
 	public SearchToolEventHandler searchToolEventHandler;
+	public CreateNewTableHandler createNewTableHandler;
+	
+	
 	public MySqlUI mysqlui;
 	public Stage primaryStage;
 	
 	public Scene scene;
+	public Scene CreateNewTablescene;
 
 	public VBox rootPane;
 	
@@ -521,6 +526,8 @@ public class Menu_Items_FX extends Application {
 
 	double oldYposition = 0;
 	double newYposition = 0;
+
+	
 	
 	private void createSQLEditer(TreeItem<String> connectionTreeItem,File selectedFile) {
 		

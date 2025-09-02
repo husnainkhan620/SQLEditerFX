@@ -118,6 +118,7 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	public DuckDBUI duckDBUI;
 	public MariaDBUI mariaDBUI;
 	public SettingTabEventHandler settingTabEventHandler;
+	public CreateNewTableHandler createNewTableHandler;
 		
 	public NewMenuItemEventHandler(Menu_Items_FX menu_Items_FX) {
 		this.menu_Items_FX = menu_Items_FX;
@@ -125,6 +126,10 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 	} 
 	public NewMenuItemEventHandler(SettingTabEventHandler settingTabEventHandler) {
 		this.settingTabEventHandler = settingTabEventHandler;
+		
+	} 
+	public NewMenuItemEventHandler(CreateNewTableHandler createNewTableHandler) {
+		this.createNewTableHandler = createNewTableHandler;
 		
 	} 
 	
@@ -990,19 +995,26 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 				TreeItem<String> postgreeSQLTreeItem = new TreeItem<String>(connectionPlaceHolder.getConnectionName(),imagePostgreeSqlnode);
 				
 				TreeItem<String> postgreeSQLTreeItemTables = new TreeItem<String>("Tables",imageDatbaseTablenode);
-			//	threadsafeAddTreeItem(postgreeSQLTreeItemTables, new TreeItem<String>("Loading.."));
-				postgreeSQLTreeItemTables.getChildren().add(new TreeItem<String>("Loading.."));
+				threadsafeAddTreeItem(postgreeSQLTreeItemTables, new TreeItem<String>("Loading.."));
+				//postgreeSQLTreeItemTables.getChildren().add(new TreeItem<String>("Loading.."));
 				
 				TreeItem<String> postgreeSQLTreeItemViews = new TreeItem<String>("Views");
-				postgreeSQLTreeItemViews.getChildren().add(new TreeItem<String>("Loading.."));
+				//postgreeSQLTreeItemViews.getChildren().add(new TreeItem<String>("Loading.."));
+				threadsafeAddTreeItem(postgreeSQLTreeItemViews, new TreeItem<String>("Loading.."));
 				
 				TreeItem<String> postgreeSQLTreeItemProcedures = new TreeItem<String>("Procedures");
-				postgreeSQLTreeItemProcedures.getChildren().add(new TreeItem<String>("Loading.."));
+				//postgreeSQLTreeItemProcedures.getChildren().add(new TreeItem<String>("Loading.."));
+				threadsafeAddTreeItem(postgreeSQLTreeItemProcedures, new TreeItem<String>("Loading.."));
 				
-				postgreeSQLTreeItem.getChildren().add(postgreeSQLTreeItemTables);
-				postgreeSQLTreeItem.getChildren().add(postgreeSQLTreeItemViews);
-				postgreeSQLTreeItem.getChildren().add(postgreeSQLTreeItemProcedures);
-				menu_Items_FX.rootConnectionItem.getChildren().add(postgreeSQLTreeItem);
+				//postgreeSQLTreeItem.getChildren().add(postgreeSQLTreeItemTables);
+				//postgreeSQLTreeItem.getChildren().add(postgreeSQLTreeItemViews);
+				//postgreeSQLTreeItem.getChildren().add(postgreeSQLTreeItemProcedures);
+				threadsafeAddTreeItem(postgreeSQLTreeItem, postgreeSQLTreeItemTables);
+				threadsafeAddTreeItem(postgreeSQLTreeItem, postgreeSQLTreeItemViews);
+				threadsafeAddTreeItem(postgreeSQLTreeItem, postgreeSQLTreeItemProcedures);
+				
+				//menu_Items_FX.rootConnectionItem.getChildren().add(postgreeSQLTreeItem);
+				threadsafeAddTreeItem(menu_Items_FX.rootConnectionItem, postgreeSQLTreeItem);
 	}
 	
 	private void createSQLiteConnection() {
@@ -1050,18 +1062,26 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		TreeItem<String> sQLiteTreeItem = new TreeItem<String>(connectionPlaceHolder.getConnectionName(),imageSQLitenode);
 		
 		TreeItem<String> sQLiteTreeItemLTreeItemTables = new TreeItem<String>("Tables",imageDatbaseTablenode);
-		sQLiteTreeItemLTreeItemTables.getChildren().add(new TreeItem<String>("Loading.."));
+		//sQLiteTreeItemLTreeItemTables.getChildren().add(new TreeItem<String>("Loading.."));
+		threadsafeAddTreeItem(sQLiteTreeItemLTreeItemTables, new TreeItem<String>("Loading.."));
 		
 		TreeItem<String> sQLiteTreeItemViews = new TreeItem<String>("Views");
-		sQLiteTreeItemViews.getChildren().add(new TreeItem<String>("Loading.."));
+		//sQLiteTreeItemViews.getChildren().add(new TreeItem<String>("Loading.."));
+		threadsafeAddTreeItem(sQLiteTreeItemViews, new TreeItem<String>("Loading.."));
 		
 		TreeItem<String> sQLiteTreeItemProcedures = new TreeItem<String>("Procedures");
-		sQLiteTreeItemProcedures.getChildren().add(new TreeItem<String>("Loading.."));
+		//sQLiteTreeItemProcedures.getChildren().add(new TreeItem<String>("Loading.."));
+		threadsafeAddTreeItem(sQLiteTreeItemProcedures, new TreeItem<String>("Loading.."));
 		
-		sQLiteTreeItem.getChildren().add(sQLiteTreeItemLTreeItemTables);
-		sQLiteTreeItem.getChildren().add(sQLiteTreeItemViews);
-		sQLiteTreeItem.getChildren().add(sQLiteTreeItemProcedures);
-		menu_Items_FX.rootConnectionItem.getChildren().add(sQLiteTreeItem);
+		//sQLiteTreeItem.getChildren().add(sQLiteTreeItemLTreeItemTables);
+		//sQLiteTreeItem.getChildren().add(sQLiteTreeItemViews);
+		//sQLiteTreeItem.getChildren().add(sQLiteTreeItemProcedures);		
+		threadsafeAddTreeItem(sQLiteTreeItem,sQLiteTreeItemLTreeItemTables);
+		threadsafeAddTreeItem(sQLiteTreeItem,sQLiteTreeItemViews);
+		threadsafeAddTreeItem(sQLiteTreeItem,sQLiteTreeItemProcedures);
+		
+		//menu_Items_FX.rootConnectionItem.getChildren().add(sQLiteTreeItem);
+		threadsafeAddTreeItem(menu_Items_FX.rootConnectionItem,sQLiteTreeItem);
 	}
 	
 	private void createSapHanaConnection() {
@@ -1108,18 +1128,27 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		TreeItem<String> sapHanaTreeItem = new TreeItem<String>(connectionPlaceHolder.getConnectionName(),imageSapHananode);
 				
 		TreeItem<String> sapHanaTreeItemLTreeItemTables = new TreeItem<String>("Tables",imageDatbaseTablenode);
-		sapHanaTreeItemLTreeItemTables.getChildren().add(new TreeItem<String>("Loading.."));
+		//sapHanaTreeItemLTreeItemTables.getChildren().add(new TreeItem<String>("Loading.."));
+		threadsafeAddTreeItem(sapHanaTreeItemLTreeItemTables,new TreeItem<String>("Loading.."));
 				
 		TreeItem<String> sapHanaTreeItemViews = new TreeItem<String>("Views");
-		sapHanaTreeItemViews.getChildren().add(new TreeItem<String>("Loading.."));
-				
+		//sapHanaTreeItemViews.getChildren().add(new TreeItem<String>("Loading.."));
+		threadsafeAddTreeItem(sapHanaTreeItemViews,new TreeItem<String>("Loading.."));	
+		
 		TreeItem<String> sapHanaTreeItemProcedures = new TreeItem<String>("Procedures");
-		sapHanaTreeItemProcedures.getChildren().add(new TreeItem<String>("Loading.."));
-				
-		sapHanaTreeItem.getChildren().add(sapHanaTreeItemLTreeItemTables);
-		sapHanaTreeItem.getChildren().add(sapHanaTreeItemViews);
-		sapHanaTreeItem.getChildren().add(sapHanaTreeItemProcedures);
-		menu_Items_FX.rootConnectionItem.getChildren().add(sapHanaTreeItem);
+		//sapHanaTreeItemProcedures.getChildren().add(new TreeItem<String>("Loading.."));
+		threadsafeAddTreeItem(sapHanaTreeItemProcedures,new TreeItem<String>("Loading.."));	
+		
+		//sapHanaTreeItem.getChildren().add(sapHanaTreeItemLTreeItemTables);
+		//sapHanaTreeItem.getChildren().add(sapHanaTreeItemViews);
+		//sapHanaTreeItem.getChildren().add(sapHanaTreeItemProcedures);
+		threadsafeAddTreeItem(sapHanaTreeItem,sapHanaTreeItemLTreeItemTables);	
+		threadsafeAddTreeItem(sapHanaTreeItem,sapHanaTreeItemViews);	
+		threadsafeAddTreeItem(sapHanaTreeItem,sapHanaTreeItemProcedures);	
+		
+		
+		//menu_Items_FX.rootConnectionItem.getChildren().add(sapHanaTreeItem);
+		threadsafeAddTreeItem(menu_Items_FX.rootConnectionItem,sapHanaTreeItem);	
 		
 	}
 
@@ -1167,18 +1196,26 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		TreeItem<String> oracleTreeItem = new TreeItem<String>(connectionPlaceHolder.getConnectionName(),imageOraclenode);
 						
 		TreeItem<String> oracleTreeItemTables = new TreeItem<String>("Tables",imageDatbaseTablenode);
-		oracleTreeItemTables.getChildren().add(new TreeItem<String>("Loading.."));
+		//oracleTreeItemTables.getChildren().add(new TreeItem<String>("Loading.."));
+		threadsafeAddTreeItem(oracleTreeItemTables,new TreeItem<String>("Loading.."));
 						
 		TreeItem<String> oracleTreeItemViews = new TreeItem<String>("Views");
-		oracleTreeItemViews.getChildren().add(new TreeItem<String>("Loading.."));
+		//oracleTreeItemViews.getChildren().add(new TreeItem<String>("Loading.."));
+		threadsafeAddTreeItem(oracleTreeItemViews,new TreeItem<String>("Loading.."));
 						
 		TreeItem<String> oracleTreeItemProcedures = new TreeItem<String>("Procedures");
-		oracleTreeItemProcedures.getChildren().add(new TreeItem<String>("Loading.."));
+		//oracleTreeItemProcedures.getChildren().add(new TreeItem<String>("Loading.."));
+		threadsafeAddTreeItem(oracleTreeItemProcedures,new TreeItem<String>("Loading.."));
 						
-		oracleTreeItem.getChildren().add(oracleTreeItemTables);
-		oracleTreeItem.getChildren().add(oracleTreeItemViews);
-		oracleTreeItem.getChildren().add(oracleTreeItemViews);
-		menu_Items_FX.rootConnectionItem.getChildren().add(oracleTreeItem);
+		//oracleTreeItem.getChildren().add(oracleTreeItemTables);
+		//oracleTreeItem.getChildren().add(oracleTreeItemViews);
+		//oracleTreeItem.getChildren().add(oracleTreeItemViews);
+		threadsafeAddTreeItem(oracleTreeItem,oracleTreeItemTables);
+		threadsafeAddTreeItem(oracleTreeItem,oracleTreeItemViews);
+		threadsafeAddTreeItem(oracleTreeItem,oracleTreeItemProcedures);
+		
+		//menu_Items_FX.rootConnectionItem.getChildren().add(oracleTreeItem);
+		threadsafeAddTreeItem(menu_Items_FX.rootConnectionItem,oracleTreeItem);
 	}
 	
 	
@@ -1227,19 +1264,26 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 		TreeItem<String> databricksTreeItem = new TreeItem<String>(connectionPlaceHolder.getConnectionName(),imageDatabricksnode);
 						
 		TreeItem<String> databricksTreeItemTables = new TreeItem<String>("Tables",imageDatbaseTablenode);
-		databricksTreeItemTables.getChildren().add(new TreeItem<String>("Loading.."));
+		//databricksTreeItemTables.getChildren().add(new TreeItem<String>("Loading.."));
+		threadsafeAddTreeItem(databricksTreeItemTables,new TreeItem<String>("Loading.."));
 						
 		TreeItem<String> databricksTreeItemViews = new TreeItem<String>("Views");
-		databricksTreeItemViews.getChildren().add(new TreeItem<String>("Loading.."));
-						
-		TreeItem<String> databricksTreeItemProcedures = new TreeItem<String>("Procedures");
-		databricksTreeItemProcedures.getChildren().add(new TreeItem<String>("Loading.."));
-						
-		databricksTreeItem.getChildren().add(databricksTreeItemTables);
-		databricksTreeItem.getChildren().add(databricksTreeItemViews);
-		databricksTreeItem.getChildren().add(databricksTreeItemProcedures);
-		menu_Items_FX.rootConnectionItem.getChildren().add(databricksTreeItem);
+		//databricksTreeItemViews.getChildren().add(new TreeItem<String>("Loading.."));
+		threadsafeAddTreeItem(databricksTreeItemViews,new TreeItem<String>("Loading.."));
 		
+		TreeItem<String> databricksTreeItemProcedures = new TreeItem<String>("Procedures");
+		//databricksTreeItemProcedures.getChildren().add(new TreeItem<String>("Loading.."));
+		threadsafeAddTreeItem(databricksTreeItemProcedures,new TreeItem<String>("Loading.."));
+		
+		//databricksTreeItem.getChildren().add(databricksTreeItemTables);
+		//databricksTreeItem.getChildren().add(databricksTreeItemViews);
+		//databricksTreeItem.getChildren().add(databricksTreeItemProcedures);
+		threadsafeAddTreeItem(databricksTreeItem,databricksTreeItemTables);
+		threadsafeAddTreeItem(databricksTreeItem,databricksTreeItemViews);
+		threadsafeAddTreeItem(databricksTreeItem,databricksTreeItemProcedures);
+
+		//menu_Items_FX.rootConnectionItem.getChildren().add(databricksTreeItem);
+		threadsafeAddTreeItem(menu_Items_FX.rootConnectionItem,databricksTreeItem);
 	}
 	
 	private void createDuckDBConnection() {
@@ -1284,8 +1328,9 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 
 		TreeItem<String> duckDBTreeItem = new DuckDBUI(menu_Items_FX,this).getDuckDBTreeItem(connectionPlaceHolder,imageDuckDBnode,imageDatbaseTablenode);
 
-		menu_Items_FX.rootConnectionItem.getChildren().add(duckDBTreeItem);
-
+		//menu_Items_FX.rootConnectionItem.getChildren().add(duckDBTreeItem);
+		threadsafeAddTreeItem(menu_Items_FX.rootConnectionItem,duckDBTreeItem);
+		
 	}
 	private void createMariaDBConnection() {
 		jdbcUrlTextField.getText();
@@ -1339,7 +1384,9 @@ public class NewMenuItemEventHandler implements  EventHandler<ActionEvent> {
 
 		TreeItem<String> mariaDBTreeItem = new MariaDBUI(menu_Items_FX,this).getmariaDBTreeItem(connectionPlaceHolder,imageMariaDBnode,imageDatbaseTablenode, databaseName);
 
-		menu_Items_FX.rootConnectionItem.getChildren().add(mariaDBTreeItem);
+		//menu_Items_FX.rootConnectionItem.getChildren().add(mariaDBTreeItem);
+		threadsafeAddTreeItem(menu_Items_FX.rootConnectionItem,mariaDBTreeItem);
+		
 	}
 }
 

@@ -25,7 +25,19 @@ import com.openfx.ermodel.ERModel;
 import com.openfx.ermodel.Entity;
 import com.openfx.ermodel.KeyAttribute;
 import com.openfx.ermodel.TableERModel;
+import com.openfx.handlers.CreateNewColumnHandler;
+import com.openfx.handlers.CreateNewConstraintHandler;
+import com.openfx.handlers.CreateNewEventHandler;
+import com.openfx.handlers.CreateNewForeignKeyHandler;
+import com.openfx.handlers.CreateNewFunctionHandler;
+import com.openfx.handlers.CreateNewIndexHandler;
+import com.openfx.handlers.CreateNewProcedureHandler;
+import com.openfx.handlers.CreateNewTableHandler;
+import com.openfx.handlers.CreateNewTriggerHandler;
+import com.openfx.handlers.CreateNewViewHandler;
+import com.openfx.handlers.GeneratedSQLQueryHandler;
 import com.openfx.handlers.NewMenuItemEventHandler;
+import com.openfx.handlers.SettingTabEventHandler;
 import com.openfx.placeholders.ConnectionPlaceHolder;
 import com.openfx.placeholders.ImageItemsHolder;
 
@@ -47,6 +59,7 @@ import javafx.geometry.Side;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
@@ -121,16 +134,34 @@ import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 // import javafx.scene.web.HTMLEditor;
 import javafx.util.Callback;
 
 public class MySqlUI {
 	
+	public String whiteThemeCss = Menu_Items_FX.class.getResource("/whiteTheme.css").toExternalForm();
+	public String darkThemeCss = Menu_Items_FX.class.getResource("/darkTheme.css").toExternalForm();
+	public String selectedTheme = whiteThemeCss;
+	
+	public Stage primaryStage;
+	public Stage stage;
+	public Scene scene;
+	public Scene createNewViewScene;
+	public Scene createNewProcedureScene;
+	public Scene createNewEventScene;
+	public Scene createNewFunctionScene;
+	
 	public Menu_Items_FX menu_Items_FX;
 	public NewMenuItemEventHandler newMenuItemEventHandler;
-	
+	public CreateNewTableHandler createNewTableHandler;
+	public CreateNewViewHandler createNewViewHandler;
+	public CreateNewProcedureHandler createNewProcedureHandler;
+	public CreateNewFunctionHandler createNewFunctionHandler;
+	public CreateNewEventHandler createNewEventHandler;
+	public GeneratedSQLQueryHandler generatedSQLQueryHandler;
 	private ConnectionPlaceHolder connectionPlaceHolder;
-	private Connection currentConnection ;
+	public Connection currentConnection ;
 	private String currentConnectionName;
 	private Statement stmt ;
 	public ResourceBundle resourceBundle;
@@ -467,31 +498,38 @@ public class MySqlUI {
 													  
 													 TreeItem<String> mySqlTreeItemTables = new TreeItem<String>("Tables",imagemySqlTablenode);
 													 TreeItem<String> loadingTreeItemTables = new TreeItem<String>("Loading..");
-													 mySqlTreeItemTables.getChildren().add(loadingTreeItemTables);
-														
+													 //mySqlTreeItemTables.getChildren().add(loadingTreeItemTables);
+													 threadsafeAddTreeItem(mySqlTreeItemTables, loadingTreeItemTables);	
+													 
 													 TreeItem<String> mySqlTreeItemViews = new TreeItem<String>("Views");
 													 TreeItem<String> loadingTreeItemViews = new TreeItem<String>("Loading..");
-													 mySqlTreeItemViews.getChildren().add(loadingTreeItemViews);
+													 //mySqlTreeItemViews.getChildren().add(loadingTreeItemViews);
+													 threadsafeAddTreeItem(mySqlTreeItemViews, loadingTreeItemViews);	
 													 
 													 TreeItem<String> mySqlTreeItemIndexes = new TreeItem<String>("Indexes");
 													 TreeItem<String> loadingTreeItemIndexes = new TreeItem<String>("Loading..");
-													 mySqlTreeItemIndexes.getChildren().add(loadingTreeItemIndexes);
+													 //mySqlTreeItemIndexes.getChildren().add(loadingTreeItemIndexes);
+													 threadsafeAddTreeItem(mySqlTreeItemIndexes, loadingTreeItemIndexes);
 													 
 													 TreeItem<String> mySqlTreeItemProcedures = new TreeItem<String>("Procedures");
 													 TreeItem<String> loadingTreeItemProcedures = new TreeItem<String>("Loading..");
-													 mySqlTreeItemProcedures.getChildren().add(loadingTreeItemProcedures);
+													 //mySqlTreeItemProcedures.getChildren().add(loadingTreeItemProcedures);
+													 threadsafeAddTreeItem(mySqlTreeItemProcedures, loadingTreeItemProcedures);
 													 
 													 TreeItem<String> mySqlTreeItemFunctions = new TreeItem<String>("Functions");
 													 TreeItem<String> loadingTreeItemFunctions = new TreeItem<String>("Loading..");
-													 mySqlTreeItemFunctions.getChildren().add(loadingTreeItemFunctions);
+													 //mySqlTreeItemFunctions.getChildren().add(loadingTreeItemFunctions);
+													 threadsafeAddTreeItem(mySqlTreeItemFunctions, loadingTreeItemFunctions);
 													 
 													 TreeItem<String> mySqlTreeItemTriggers = new TreeItem<String>("Triggers");
 													 TreeItem<String> loadingTreeItemTriggers = new TreeItem<String>("Loading..");
-													 mySqlTreeItemTriggers.getChildren().add(loadingTreeItemTriggers);
+													 //mySqlTreeItemTriggers.getChildren().add(loadingTreeItemTriggers);
+													 threadsafeAddTreeItem(mySqlTreeItemTriggers, loadingTreeItemTriggers);
 													 
 													 TreeItem<String> mySqlTreeItemEvents = new TreeItem<String>("Events");
 													 TreeItem<String> loadingTreeItemEvents = new TreeItem<String>("Loading..");
-													 mySqlTreeItemEvents.getChildren().add(loadingTreeItemEvents);
+													 //mySqlTreeItemEvents.getChildren().add(loadingTreeItemEvents);
+													 threadsafeAddTreeItem(mySqlTreeItemEvents, loadingTreeItemEvents);
 													  
 													 loadedDatabaseName.getChildren().add(mySqlTreeItemTables);
 													 loadedDatabaseName.getChildren().add(mySqlTreeItemViews);
@@ -549,7 +587,12 @@ public class MySqlUI {
 																						// TODO Auto-generated catch block
 																						e.printStackTrace();
 																					}
-																		    		mySqlTreeItemTables.getChildren().remove(0);  // Remove the Loading...
+																		    		
+																		    		Platform.runLater(() -> {
+																		    		    // Delay the modification slightly
+																		    			mySqlTreeItemTables.getChildren().remove(0);  // Remove the Loading...
+																		    		});
+																		    		
 																					while(rs.next()) {			
 																						  
 																						  TreeItem<String> loadedTableName = new TreeItem<String>(rs.getString(1));  // get the table one by one 
@@ -571,7 +614,8 @@ public class MySqlUI {
 																						  
 																						  TreeItem<String> tableColumns = new TreeItem<String>("Columns");
 																						  TreeItem<String> loadingTableNameColumns = new TreeItem<String>("Loading..");
-																						  tableColumns.getChildren().add(loadingTableNameColumns);
+																						  //tableColumns.getChildren().add(loadingTableNameColumns);
+																						  threadsafeAddTreeItem(tableColumns, loadingTableNameColumns);
 																						  tableColumns.expandedProperty().addListener(new ChangeListener<Boolean>() {
 																								@Override
 																								public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -599,11 +643,16 @@ public class MySqlUI {
 																																// TODO Auto-generated catch block
 																																e.printStackTrace();
 																															}
-																											    		   tableColumns.getChildren().remove(0);  // Remove the Loading...
+																											    		   Platform.runLater(() -> {
+																												    		    // Delay the modification slightly
+																											    			   tableColumns.getChildren().remove(0);  // Remove the Loading...
+																												    		});
+																											    		   
 																															while(rs.next()) {
 																																  System.out.println(rs.getString(1) + " , "+rs.getString(2));
 																																  TreeItem<String> constraintsName = new TreeItem<String>(rs.getString(1) + " , "+rs.getString(2));
-																																  tableColumns.getChildren().add(constraintsName);
+																																  //tableColumns.getChildren().add(constraintsName);
+																																  threadsafeAddTreeItem(tableColumns, constraintsName);
 																															}
 																											    		   
 																													     
@@ -617,13 +666,15 @@ public class MySqlUI {
 																									}else {
 																										System.out.println("Columns Collpapsed!! "+ "Database Selected "+loadedDatabaseName.getValue() +" Tables Selected " +loadedTableName.getValue());
 																										tableColumns.getChildren().clear();
-																										tableColumns.getChildren().add(loadingTableNameColumns);
+																										//tableColumns.getChildren().add(loadingTableNameColumns);
+																										threadsafeAddTreeItem(tableColumns, loadingTableNameColumns);
 																									}
 																								}
 																						  });
 																						  TreeItem<String> tableConstraints = new TreeItem<String>("Constaints");
 																						  TreeItem<String> loadingTableNameConstraints = new TreeItem<String>("Loading..");
-																						  tableConstraints.getChildren().add(loadingTableNameConstraints);
+																						 // tableConstraints.getChildren().add(loadingTableNameConstraints);
+																						  threadsafeAddTreeItem(tableConstraints, loadingTableNameConstraints);
 																						  tableConstraints.expandedProperty().addListener(new ChangeListener<Boolean>() {
 																								@Override
 																								public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -652,7 +703,11 @@ public class MySqlUI {
 																																// TODO Auto-generated catch block
 																																e.printStackTrace();
 																															}
+																													        
+																													        Platform.runLater(() -> {
 																													        tableConstraints.getChildren().remove(0);  // Remove the Loading...
+																													        });
+																													        
 																															while(rs.next()) {
 																																  System.out.println(rs.getString(2) );
 																																  // break down the show table result and get the primary key details
@@ -665,7 +720,8 @@ public class MySqlUI {
 																																		
 																																			System.out.println( mysqlQuerySplit[i]);
 																																			TreeItem<String> foreignKeysName = new TreeItem<String>(mysqlQuerySplit[i]);
-																																			tableConstraints.getChildren().add(foreignKeysName);																	  
+																																			//tableConstraints.getChildren().add(foreignKeysName);
+																																			threadsafeAddTreeItem(tableConstraints, foreignKeysName);
 																																		}
 																																		
 																																	} 	
@@ -682,7 +738,8 @@ public class MySqlUI {
 																									}else {
 																										System.out.println("Constraints Collpapsed!! "+ "Database Selected "+loadedDatabaseName.getValue() +" Tables Selected " +loadedTableName.getValue());
 																										tableConstraints.getChildren().clear();
-																										tableConstraints.getChildren().add(loadingTableNameConstraints);
+																										//tableConstraints.getChildren().add(loadingTableNameConstraints);
+																										threadsafeAddTreeItem(tableConstraints, loadingTableNameConstraints);
 																									}
 																								}
 																						  });
@@ -692,7 +749,8 @@ public class MySqlUI {
 																						  
 																						  
 																						  TreeItem<String> loadingTableNameForeignKeys = new TreeItem<String>("Loading..");
-																						  tableForeignKeys.getChildren().add(loadingTableNameForeignKeys);
+																						  //tableForeignKeys.getChildren().add(loadingTableNameForeignKeys);
+																						  threadsafeAddTreeItem(tableForeignKeys, loadingTableNameForeignKeys);
 																						  tableForeignKeys.expandedProperty().addListener(new ChangeListener<Boolean>() {
 																								@Override
 																								public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -721,7 +779,10 @@ public class MySqlUI {
 																																// TODO Auto-generated catch block
 																																e.printStackTrace();
 																															}
+																													        Platform.runLater(() -> {
 																													        tableForeignKeys.getChildren().remove(0);  // Remove the Loading...
+																													        });
+																													        
 																															while(rs.next()) {
 																																  System.out.println(rs.getString(2) );
 																																  // break down the show table result and get the foreigh key details
@@ -734,7 +795,8 @@ public class MySqlUI {
 																																		
 																																			System.out.println( mysqlQuerySplit[i]);
 																																			TreeItem<String> foreignKeysName = new TreeItem<String>(mysqlQuerySplit[i].replace("CONSTRAINT", ""));
-																																			 tableForeignKeys.getChildren().add(foreignKeysName);
+																																			// tableForeignKeys.getChildren().add(foreignKeysName);
+																																			 threadsafeAddTreeItem(tableForeignKeys, foreignKeysName);
 																																		}
 																																	}	 	
 																															}
@@ -753,7 +815,8 @@ public class MySqlUI {
 																						  });
 																						  TreeItem<String> tableReferences = new TreeItem<String>("References");
 																						  TreeItem<String> loadingTableNameReferences = new TreeItem<String>("Loading..");
-																						  tableReferences.getChildren().add(loadingTableNameReferences);
+																						 // tableReferences.getChildren().add(loadingTableNameReferences);
+																						  threadsafeAddTreeItem(tableReferences, loadingTableNameReferences);
 																						  tableReferences.expandedProperty().addListener(new ChangeListener<Boolean>() {
 																								@Override
 																								public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -780,7 +843,9 @@ public class MySqlUI {
 																																	// TODO Auto-generated catch block
 																																	e.printStackTrace();
 																														}
+																												    	 Platform.runLater(() -> {
 																												    	tableReferences.getChildren().remove(0);  // Remove the Loading...
+																												    	 });
 																														while(rs.next()) {
 																															System.out.println(rs.getString(2) );
 																															// break down the show table result and get the foreigh key details
@@ -793,7 +858,8 @@ public class MySqlUI {
 																																			
 																																System.out.println( mysqlQuerySplit[i]);
 																																TreeItem<String> foreignKeysName = new TreeItem<String>(mysqlQuerySplit[i].replace("CONSTRAINT", ""));
-																																tableReferences.getChildren().add(foreignKeysName);
+																																//tableReferences.getChildren().add(foreignKeysName);
+																																threadsafeAddTreeItem(tableReferences, foreignKeysName);
 																															}
 																														}	 	
 																													}
@@ -807,13 +873,15 @@ public class MySqlUI {
 																									}else {
 																										System.out.println("References Collpapsed!!" + "Database Selected "+loadedDatabaseName.getValue() +" Tables Selected " +loadedTableName.getValue());
 																										tableReferences.getChildren().clear();
-																										tableReferences.getChildren().add(loadingTableNameConstraints);
+																										//tableReferences.getChildren().add(loadingTableNameConstraints);
+																										threadsafeAddTreeItem(tableReferences, loadingTableNameConstraints);
 																									}
 																								}
 																						  });
 																						  TreeItem<String> tableTriggers = new TreeItem<String>("Triggers");
 																						  TreeItem<String> loadingTableNameTriggers = new TreeItem<String>("Loading..");
-																						  tableTriggers.getChildren().add(loadingTableNameTriggers);
+																						 // tableTriggers.getChildren().add(loadingTableNameTriggers);
+																						  threadsafeAddTreeItem(tableTriggers, loadingTableNameTriggers);
 																						  tableTriggers.expandedProperty().addListener(new ChangeListener<Boolean>() {
 																								@Override
 																								public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -840,13 +908,16 @@ public class MySqlUI {
 																																	// TODO Auto-generated catch block
 																																	e.printStackTrace();
 																														}
+																												    	 Platform.runLater(() -> {
 																												    	tableTriggers.getChildren().remove(0);  // Remove the Loading...
+																												    	 });
+																												    	 
 																														while(rs.next()) {
 																															System.out.println(rs.getString(1) );
 																															// break down the show table result and get the foreigh key details	
 																															TreeItem<String> triggerName = new TreeItem<String>(rs.getString(1));
-																															tableTriggers.getChildren().add(triggerName);
-																															
+																															//tableTriggers.getChildren().add(triggerName);
+																															threadsafeAddTreeItem(tableTriggers, triggerName);
 																															 	
 																													}
 																														        
@@ -860,14 +931,16 @@ public class MySqlUI {
 																									}else {
 																										System.out.println("Triggers Collpapsed!! "+ "Database Selected "+loadedDatabaseName.getValue() +" Tables Selected " +loadedTableName.getValue());
 																										tableTriggers.getChildren().clear();
-																										tableTriggers.getChildren().add(loadingTableNameConstraints);
+																										//tableTriggers.getChildren().add(loadingTableNameConstraints);
+																										threadsafeAddTreeItem(tableTriggers, loadingTableNameConstraints);
 																									}
 																									
 																								}
 																						  });
 																						  TreeItem<String> tableIndexes = new TreeItem<String>("Indexes");
 																						  TreeItem<String> loadingTableNameIndexes = new TreeItem<String>("Loading..");
-																						  tableIndexes.getChildren().add(loadingTableNameIndexes);
+																						  //tableIndexes.getChildren().add(loadingTableNameIndexes);
+																						  threadsafeAddTreeItem(tableIndexes, loadingTableNameIndexes);
 																						  tableIndexes.expandedProperty().addListener(new ChangeListener<Boolean>() {
 																								@Override
 																								public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -894,13 +967,16 @@ public class MySqlUI {
 																																	// TODO Auto-generated catch block
 																																	e.printStackTrace();
 																														}
+																												    	Platform.runLater(() -> {
 																												    	tableIndexes.getChildren().remove(0);  // Remove the Loading...
+																												    	});
+																												    	 
 																														while(rs.next()) {
 																															System.out.println(rs.getString(3)+ " , " + rs.getString(5));
 																															// break down the show table result and get the foreigh key details	
 																															TreeItem<String> indexName = new TreeItem<String>(rs.getString(3)+ " , " + rs.getString(5));
-																															tableIndexes.getChildren().add(indexName);
-																															
+																															//tableIndexes.getChildren().add(indexName);
+																															threadsafeAddTreeItem(tableIndexes, indexName);
 																															 	
 																													}
 																													//stmt.close();
@@ -916,14 +992,16 @@ public class MySqlUI {
 																									}else {
 																										System.out.println("Indexes Collpapsed!! "+ "Database Selected "+loadedDatabaseName.getValue() +" Tables Selected " +loadedTableName.getValue());
 																										tableIndexes.getChildren().clear();
-																										tableIndexes.getChildren().add(loadingTableNameIndexes);
+																										//tableIndexes.getChildren().add(loadingTableNameIndexes);
+																										threadsafeAddTreeItem(tableIndexes, loadingTableNameIndexes);
 																									}
 																								}
 																						  });
 																						  
 																						  TreeItem<String> tablePartitions = new TreeItem<String>("Partitions");
 																						  TreeItem<String> loadingTableNamePartitions = new TreeItem<String>("Loading..");
-																						  tablePartitions.getChildren().add(loadingTableNamePartitions);
+																						 // tablePartitions.getChildren().add(loadingTableNamePartitions);
+																						  threadsafeAddTreeItem(tablePartitions, loadingTableNamePartitions);
 																						  tablePartitions.expandedProperty().addListener(new ChangeListener<Boolean>() {
 																								@Override
 																								public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -955,7 +1033,10 @@ public class MySqlUI {
 																																	// TODO Auto-generated catch block
 																																	e.printStackTrace();
 																														}
+																												        Platform.runLater(() -> {
 																												    	tablePartitions.getChildren().remove(0);  // Remove the Loading...
+																												        });
+																												        
 																														while(rs.next()) {
 																															String createShowTableQuery = rs.getString(2);
 																															System.out.println(createShowTableQuery);
@@ -970,7 +1051,8 @@ public class MySqlUI {
 																														 				if(arrayWithPartitionDescriptions[i].split(" ")[j].contains("PARTITION") && (arrayWithPartitionDescriptions[i].split(" ")[j].replace("(","").length() == "PARTITION".length()) ) {
 																														 					System.out.println(arrayWithPartitionDescriptions[i].split(" ")[j+1]);
 																														 					TreeItem<String> partitionName = new TreeItem<String>(arrayWithPartitionDescriptions[i].split(" ")[j+1]);
-																																			tablePartitions.getChildren().add(partitionName);
+																																			//tablePartitions.getChildren().add(partitionName);
+																																			threadsafeAddTreeItem(tablePartitions, partitionName);
 																														 				}
 																														 			}
 																														 		}
@@ -988,6 +1070,7 @@ public class MySqlUI {
 																										System.out.println("Partitions Collpapsed!!"+ "Database Selected "+loadedDatabaseName.getValue() +" Tables Selected " +loadedTableName.getValue());
 																										tablePartitions.getChildren().clear();
 																										tablePartitions.getChildren().add(loadingTableNameIndexes);
+																										threadsafeAddTreeItem(tablePartitions, loadingTableNameIndexes);
 																									}
 																								}
 																						  });
@@ -1001,8 +1084,8 @@ public class MySqlUI {
 																						  loadedTableName.getChildren().add(tableIndexes);
 																						  loadedTableName.getChildren().add(tablePartitions);
 																						  
-																						  mySqlTreeItemTables.getChildren().add(loadedTableName);
-																						
+																						  //mySqlTreeItemTables.getChildren().add(loadedTableName);
+																						  threadsafeAddTreeItem(mySqlTreeItemTables, loadedTableName);
 																					}
 																				} catch (SQLException e) {
 																					// TODO Auto-generated catch block
@@ -1013,7 +1096,8 @@ public class MySqlUI {
 																  }else {
 																		System.out.println("Collapsed!!! Tables "+name);
 																		mySqlTreeItemTables.getChildren().clear();
-																		mySqlTreeItemTables.getChildren().add(loadingTreeItemTables);
+																		//mySqlTreeItemTables.getChildren().add(loadingTreeItemTables);
+																		threadsafeAddTreeItem(mySqlTreeItemTables, loadingTreeItemTables);
 																  }
 															}
 													 });
@@ -1049,13 +1133,17 @@ public class MySqlUI {
 																					// TODO Auto-generated catch block
 																					e.printStackTrace();
 																				}
+																	    		Platform.runLater(() -> {
 																	    		mySqlTreeItemViews.getChildren().remove(0);  // Remove the Loading...
+																	    		});
+																	    		
 																				while(rs.next()) {
 																					  System.out.println(rs.getString(1));
 																					  
 																					  TreeItem<String> viewName = new TreeItem<String>(rs.getString(1));
 																					  TreeItem<String> viewNameLoading = new TreeItem<String>("Loading");
-																					  viewName.getChildren().addAll(viewNameLoading);
+																					  //viewName.getChildren().addAll(viewNameLoading);
+																					  threadsafeAddTreeItem(viewName, viewNameLoading);
 																					  
 																					  viewName.expandedProperty().addListener(new ChangeListener<Boolean>() {
 																							@Override
@@ -1077,11 +1165,15 @@ public class MySqlUI {
 																										    	 try {
 																										    		  // stmt.execute("use "+loadedDatabaseName.getValue());
 																										    		   ResultSet rs = currentConnection.createStatement().executeQuery("desc "+viewName.getValue());
+																										    		   
+																										    		   Platform.runLater(() -> {
 																										    		   viewName.getChildren().remove(0);  // Remove the Loading...
+																										    		   });
 																														while(rs.next()) {
 																															  
 																															  TreeItem<String> constraintsName = new TreeItem<String>(rs.getString(1)+","+rs.getString(2));
-																															  viewName.getChildren().add(constraintsName);
+																															  //viewName.getChildren().add(constraintsName);
+																															  threadsafeAddTreeItem(viewName, constraintsName);
 																														}
   
 																												    } catch (SQLException e) {
@@ -1094,14 +1186,15 @@ public class MySqlUI {
 																								}else {
 																									System.out.println("Views Collpapsed!! "+ "Database Selected "+loadedDatabaseName.getValue() +" Views Selected " +viewName.getValue());
 																									viewName.getChildren().clear();
-																									viewName.getChildren().add(viewNameLoading);
+																									//viewName.getChildren().add(viewNameLoading);
+																									threadsafeAddTreeItem(viewName, viewNameLoading);
 																								}
 																							}
 																					  });
 																					  
 																					  
-																					  mySqlTreeItemViews.getChildren().add(viewName);
-																					
+																					  //mySqlTreeItemViews.getChildren().add(viewName);
+																					  threadsafeAddTreeItem(mySqlTreeItemViews, viewName);
 																				}
 																				//stmt.close();
 																			} catch (SQLException e) {
@@ -1114,7 +1207,8 @@ public class MySqlUI {
 																 else {
 																	   System.out.println("Collapsed!!! Views ");
 																	   mySqlTreeItemViews.getChildren().clear();
-																	   mySqlTreeItemViews.getChildren().add(loadingTreeItemViews);
+																	  // mySqlTreeItemViews.getChildren().add(loadingTreeItemViews);
+																	   threadsafeAddTreeItem(mySqlTreeItemViews, loadingTreeItemViews);
 																 }
 															}
 													 });
@@ -1146,12 +1240,15 @@ public class MySqlUI {
 																						// TODO Auto-generated catch block
 																						e.printStackTrace();
 																					}
+																			    	Platform.runLater(() -> {
 																			    	mySqlTreeItemIndexes.getChildren().remove(0);  // Remove the Loading...
+																			    	});
+																			    	
 																					while(rs.next()) {
 																							
 																						TreeItem<String> indexName = new TreeItem<String>(rs.getString(1)+ "." + rs.getString(2));
-																						mySqlTreeItemIndexes.getChildren().add(indexName);
-																						
+																						//mySqlTreeItemIndexes.getChildren().add(indexName);
+																						threadsafeAddTreeItem(mySqlTreeItemIndexes, indexName);
 																						 	
 																				}
 																				//stmt.close();
@@ -1167,7 +1264,8 @@ public class MySqlUI {
 																}else {
 																	System.out.println("Indexes Collpapsed!! "+ "Database Selected "+loadedDatabaseName.getValue() );
 																	mySqlTreeItemIndexes.getChildren().clear();
-																	mySqlTreeItemIndexes.getChildren().add(loadingTreeItemIndexes);
+																	//mySqlTreeItemIndexes.getChildren().add(loadingTreeItemIndexes);
+																	threadsafeAddTreeItem(mySqlTreeItemIndexes, loadingTreeItemIndexes);
 																}
 															}
 													  });
@@ -1201,7 +1299,10 @@ public class MySqlUI {
 																					// TODO Auto-generated catch block
 																					e.printStackTrace();
 																				}
+																	    		Platform.runLater(() -> {
 																	    		mySqlTreeItemProcedures.getChildren().remove(0);  // Remove the Loading...
+																	    		});
+																	    		
 																				while(rs.next()) {
 																					  
 																					  TreeItem<String> procedureName = new TreeItem<String>(rs.getString(2));
@@ -1216,17 +1317,20 @@ public class MySqlUI {
 																						  
 																						  if(rsProcedures.getString(1).equals("IN")) {
 																							  TreeItem<String> procedureParameterIN = new TreeItem<String>(rsProcedures.getString(2)+","+rsProcedures.getString(5));
-																							  procedureParametersIN.getChildren().add(procedureParameterIN);
+																							  //procedureParametersIN.getChildren().add(procedureParameterIN);
+																							  threadsafeAddTreeItem(procedureParametersIN, procedureParameterIN);
 																						  }
 																						  if(rsProcedures.getString(1).equals("OUT")) {
 																							  TreeItem<String> procedureParameterOUT = new TreeItem<String>(rsProcedures.getString(2)+","+rsProcedures.getString(5));
-																							  procedureParametersOUT.getChildren().add(procedureParameterOUT);
+																							  //procedureParametersOUT.getChildren().add(procedureParameterOUT);
+																							  threadsafeAddTreeItem(procedureParametersOUT, procedureParameterOUT);
 																						  }
 																					  }
 																					  
 																					  procedureName.getChildren().addAll(procedureParametersIN,procedureParametersOUT);
 																					
-																					  mySqlTreeItemProcedures.getChildren().add(procedureName);
+																					 // mySqlTreeItemProcedures.getChildren().add(procedureName);
+																					  threadsafeAddTreeItem(mySqlTreeItemProcedures, procedureName);
 																					
 																				}
 																				//stmt.close();
@@ -1239,7 +1343,8 @@ public class MySqlUI {
 																}else {
 																	System.out.println("Procedures Collpapsed!! "+ "Database Selected "+loadedDatabaseName.getValue() );
 																	mySqlTreeItemProcedures.getChildren().clear();
-																	mySqlTreeItemProcedures.getChildren().add(loadingTreeItemProcedures);
+																	//mySqlTreeItemProcedures.getChildren().add(loadingTreeItemProcedures);
+																	threadsafeAddTreeItem(mySqlTreeItemProcedures, loadingTreeItemProcedures);
 																}
 															}
 													 });
@@ -1271,7 +1376,10 @@ public class MySqlUI {
 																					// TODO Auto-generated catch block
 																					e.printStackTrace();
 																				}
+																	    		Platform.runLater(() -> {
 																	    		mySqlTreeItemFunctions.getChildren().remove(0);  // Remove the Loading...
+																	    		});
+																	    		
 																	    		while(rs.next()) {
 																					  
 																					  TreeItem<String> functionName = new TreeItem<String>(rs.getString(2));
@@ -1286,17 +1394,20 @@ public class MySqlUI {
 																						  
 																						  if(rsFunctions.getString(1) != null &&  rsFunctions.getString(1).equals("IN")) {
 																							  TreeItem<String> procedureParameterIN = new TreeItem<String>(rsFunctions.getString(2)+","+rsFunctions.getString(5));
-																							  functionsParametersIN.getChildren().add(procedureParameterIN);
+																							 // functionsParametersIN.getChildren().add(procedureParameterIN);
+																							  threadsafeAddTreeItem(functionsParametersIN, procedureParameterIN);
 																						  }
 																						  if(rsFunctions.getString(1) == null ) {
 																							  TreeItem<String> procedureParameterOUT = new TreeItem<String>("RETURN,"+rsFunctions.getString(5));
-																							  functionsParametersOUT.getChildren().add(procedureParameterOUT);
+																							  //functionsParametersOUT.getChildren().add(procedureParameterOUT);
+																							  threadsafeAddTreeItem(functionsParametersOUT, procedureParameterOUT);
 																						  }
 																					  }
 																					  
 																					  functionName.getChildren().addAll(functionsParametersIN,functionsParametersOUT);
 																					
-																					  mySqlTreeItemFunctions.getChildren().add(functionName);																					
+																					 // mySqlTreeItemFunctions.getChildren().add(functionName);
+																					  threadsafeAddTreeItem(mySqlTreeItemFunctions, functionName);
 																				}
 																				//stmt.close();
 																			} catch (SQLException e) {
@@ -1308,7 +1419,8 @@ public class MySqlUI {
 															}else {
 																System.out.println("Functions Collpapsed!! "+ "Database Selected "+loadedDatabaseName.getValue() );
 																mySqlTreeItemFunctions.getChildren().clear();
-																mySqlTreeItemFunctions.getChildren().add(loadingTreeItemFunctions);
+																//mySqlTreeItemFunctions.getChildren().add(loadingTreeItemFunctions);
+																 threadsafeAddTreeItem(mySqlTreeItemFunctions, loadingTreeItemFunctions);
 															}
 														}
 													 });
@@ -1341,11 +1453,15 @@ public class MySqlUI {
 																				// TODO Auto-generated catch block
 																				e.printStackTrace();
 																			}
+																    		Platform.runLater(() -> {
 																    		mySqlTreeItemTriggers.getChildren().remove(0);  // Remove the Loading...
+																    		});
+																    		
 																			while(rs.next()) {
 																				  System.out.println(rs.getString(1));
 																				  TreeItem<String> triggerName = new TreeItem<String>(rs.getString(3));
-																				  mySqlTreeItemTriggers.getChildren().add(triggerName);																				
+																				 // mySqlTreeItemTriggers.getChildren().add(triggerName);	
+																				  threadsafeAddTreeItem(mySqlTreeItemTriggers, triggerName);
 																			}
 																			//stmt.close();
 																		} catch (SQLException e) {
@@ -1358,7 +1474,8 @@ public class MySqlUI {
 															 else {
 																   System.out.println("Collapsed!!! Events ");
 																   mySqlTreeItemTriggers.getChildren().clear();
-																   mySqlTreeItemTriggers.getChildren().add(loadingTreeItemTriggers);
+																  // mySqlTreeItemTriggers.getChildren().add(loadingTreeItemTriggers);
+																   threadsafeAddTreeItem(mySqlTreeItemTriggers, loadingTreeItemTriggers);
 															 }															
 														}
 													
@@ -1392,11 +1509,15 @@ public class MySqlUI {
 																					// TODO Auto-generated catch block
 																					e.printStackTrace();
 																				}
+																	    		Platform.runLater(() -> {
 																	    		mySqlTreeItemEvents.getChildren().remove(0);  // Remove the Loading...
+																	    		});
+																	    		
 																				while(rs.next()) {
 																					  System.out.println(rs.getString(1));
 																					  TreeItem<String> ViewName = new TreeItem<String>(rs.getString(2));
-																					  mySqlTreeItemEvents.getChildren().add(ViewName);
+																					  //mySqlTreeItemEvents.getChildren().add(ViewName);
+																					   threadsafeAddTreeItem(mySqlTreeItemEvents, ViewName);
 																					
 																				}
 																				//stmt.close();
@@ -1410,7 +1531,8 @@ public class MySqlUI {
 																 else {
 																	   System.out.println("Collapsed!!! Events ");
 																	   mySqlTreeItemEvents.getChildren().clear();
-																	   mySqlTreeItemEvents.getChildren().add(loadingTreeItemViews);
+																	  // mySqlTreeItemEvents.getChildren().add(loadingTreeItemViews);
+																	   threadsafeAddTreeItem(mySqlTreeItemEvents, loadingTreeItemViews);
 																 }
 															}
 													 });
@@ -1418,7 +1540,8 @@ public class MySqlUI {
 													 // ---------------END------------------
 													 
 													 // Add the Databse to the Databse tree
-													 mySqlTreeItemDatabases.getChildren().add(loadedDatabaseName);
+													 //mySqlTreeItemDatabases.getChildren().add(loadedDatabaseName);
+													 threadsafeAddTreeItem(mySqlTreeItemDatabases, loadedDatabaseName);
 												}
 											} catch (SQLException e) {
 												// TODO Auto-generated catch block
@@ -1433,7 +1556,8 @@ public class MySqlUI {
 						else {
 							System.out.println("Databases Collapsed!!!" + name);
 							mySqlTreeItemDatabases.getChildren().clear();  // Clear the list
-							mySqlTreeItemDatabases.getChildren().add(loadingTreeItem);
+							//mySqlTreeItemDatabases.getChildren().add(loadingTreeItem);
+							 threadsafeAddTreeItem(mySqlTreeItemDatabases, loadingTreeItem);
 						}
 		}
 		});
@@ -1567,27 +1691,37 @@ public class MySqlUI {
 		mySqlTreeItemAdminister = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Administer"));
 		
 		mySqlTreeItemAdministration = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Administration"));
-		mySqlTreeItemAdminister.getChildren().add(mySqlTreeItemAdministration);
+		//mySqlTreeItemAdminister.getChildren().add(mySqlTreeItemAdministration);
+		threadsafeAddTreeItem(mySqlTreeItemAdminister, mySqlTreeItemAdministration);
 		mySqlTreeItemAdministerServerStatus = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("ServerStatus"));
-		mySqlTreeItemAdministration.getChildren().add(mySqlTreeItemAdministerServerStatus);
+		//mySqlTreeItemAdministration.getChildren().add(mySqlTreeItemAdministerServerStatus);
+		threadsafeAddTreeItem(mySqlTreeItemAdministration, mySqlTreeItemAdministerServerStatus);
 		mySqlTreeItemAdministerClientConnectionss = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("ClientConnections"));
-		mySqlTreeItemAdministration.getChildren().add(mySqlTreeItemAdministerClientConnectionss);
+		//mySqlTreeItemAdministration.getChildren().add(mySqlTreeItemAdministerClientConnectionss);
+		threadsafeAddTreeItem(mySqlTreeItemAdministration, mySqlTreeItemAdministerClientConnectionss);
 		mySqlTreeItemAdministerUserandPrivileges = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("UsersAndPrivileges"));
-		mySqlTreeItemAdministration.getChildren().add(mySqlTreeItemAdministerUserandPrivileges);
+		//mySqlTreeItemAdministration.getChildren().add(mySqlTreeItemAdministerUserandPrivileges);
+		threadsafeAddTreeItem(mySqlTreeItemAdministration, mySqlTreeItemAdministerUserandPrivileges);
 		mySqlTreeItemAdministerStatusandSystemVariables = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("StatusAndSystemVariables"));
-		mySqlTreeItemAdministration.getChildren().add(mySqlTreeItemAdministerStatusandSystemVariables);
+		//mySqlTreeItemAdministration.getChildren().add(mySqlTreeItemAdministerStatusandSystemVariables);
+		threadsafeAddTreeItem(mySqlTreeItemAdministration, mySqlTreeItemAdministerStatusandSystemVariables);
 		
 		mySqlTreeItemPerformance = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Performance"));
-		mySqlTreeItemAdminister.getChildren().add(mySqlTreeItemPerformance);
+		//mySqlTreeItemAdminister.getChildren().add(mySqlTreeItemPerformance);
+		threadsafeAddTreeItem(mySqlTreeItemAdminister, mySqlTreeItemPerformance);
 		mySqlTreeItemAdministerDashboard = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Dashboard"));
-		mySqlTreeItemPerformance.getChildren().add(mySqlTreeItemAdministerDashboard);
+		//mySqlTreeItemPerformance.getChildren().add(mySqlTreeItemAdministerDashboard);
+		threadsafeAddTreeItem(mySqlTreeItemPerformance, mySqlTreeItemAdministerDashboard);
 		mySqlTreeItemAdministerPerformanceReports = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("PerformanceReports"));
-		mySqlTreeItemPerformance.getChildren().add(mySqlTreeItemAdministerPerformanceReports);
+		//mySqlTreeItemPerformance.getChildren().add(mySqlTreeItemAdministerPerformanceReports);
+		threadsafeAddTreeItem(mySqlTreeItemPerformance, mySqlTreeItemAdministerPerformanceReports);
 		
 		mySqlTreeItemServer = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Server"));
-		mySqlTreeItemAdminister.getChildren().add(mySqlTreeItemServer);
+		//mySqlTreeItemAdminister.getChildren().add(mySqlTreeItemServer);
+		threadsafeAddTreeItem(mySqlTreeItemAdminister, mySqlTreeItemServer);
 		mySqlTreeItemAdministerServerLogs = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("ServerLogs"));
-		mySqlTreeItemServer.getChildren().add(mySqlTreeItemAdministerServerLogs);
+		//mySqlTreeItemServer.getChildren().add(mySqlTreeItemAdministerServerLogs);
+	    threadsafeAddTreeItem(mySqlTreeItemServer, mySqlTreeItemAdministerServerLogs);
 		
 		mySqlTreeItemAdminister.expandedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
@@ -1603,48 +1737,69 @@ public class MySqlUI {
 		// System Info
 		mySqlTreeItemSystemInfo = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("SystemInfo"));
 	    mySqlTreeItemSystemInfoBinaryLogs = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("BinaryLogs"));  // This will show Binary Log EVENTS
-		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoBinaryLogs);
+		//mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoBinaryLogs);
+		threadsafeAddTreeItem(mySqlTreeItemSystemInfo, mySqlTreeItemSystemInfoBinaryLogs);
 		 mySqlTreeItemSystemInfoCharacterSet = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("CharacterSet"));
-		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoCharacterSet);
+		//mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoCharacterSet);
+		threadsafeAddTreeItem(mySqlTreeItemSystemInfo, mySqlTreeItemSystemInfoCharacterSet);
 		mySqlTreeItemSystemInfoCollation = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Collation"));
-		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoCollation);
+		//mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoCollation);
+		threadsafeAddTreeItem(mySqlTreeItemSystemInfo, mySqlTreeItemSystemInfoCollation);
 		mySqlTreeItemSystemInfoEngines = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Engines"));
-		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoEngines);
+		//mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoEngines);
+		threadsafeAddTreeItem(mySqlTreeItemSystemInfo, mySqlTreeItemSystemInfoEngines);
 		mySqlTreeItemSystemInfoErrors = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Errors"));
-		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoErrors);
+		//mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoErrors);
+		threadsafeAddTreeItem(mySqlTreeItemSystemInfo, mySqlTreeItemSystemInfoErrors);
 		mySqlTreeItemSystemInfoEvents = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Events"));
-		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoEvents);
+		//mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoEvents);
+		threadsafeAddTreeItem(mySqlTreeItemSystemInfo, mySqlTreeItemSystemInfoEvents);
 		//TreeItem<String> mySqlTreeItemSystemInfoGrants = new TreeItem<String>("GRANTS");
 		//mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoGrants);
 		mySqlTreeItemSystemInfoOpenTables = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("OpenTables"));
-		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoOpenTables);
+		//mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoOpenTables);
+		threadsafeAddTreeItem(mySqlTreeItemSystemInfo, mySqlTreeItemSystemInfoOpenTables);
 		mySqlTreeItemSystemInfoPlugins = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Plugins"));
-		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoPlugins);
+		//mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoPlugins);
+		threadsafeAddTreeItem(mySqlTreeItemSystemInfo, mySqlTreeItemSystemInfoPlugins);
 		mySqlTreeItemSystemInfoPreviliges = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Previliges"));
-		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoPreviliges);
+		//mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoPreviliges);
+		threadsafeAddTreeItem(mySqlTreeItemSystemInfo, mySqlTreeItemSystemInfoPreviliges);
 	    mySqlTreeItemSystemInfoProcessList = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("ProcessList"));
-		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoProcessList);
+		//mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoProcessList);
+		threadsafeAddTreeItem(mySqlTreeItemSystemInfo, mySqlTreeItemSystemInfoProcessList);
 		mySqlTreeItemSystemInfoProfiles = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Profiles"));
-		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoProfiles);
+		//mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoProfiles);
+		threadsafeAddTreeItem(mySqlTreeItemSystemInfo, mySqlTreeItemSystemInfoProfiles);
 		mySqlTreeItemSystemInfoReplicas = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Replicas"));
-		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoReplicas);
+		//mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoReplicas);
+		threadsafeAddTreeItem(mySqlTreeItemSystemInfo, mySqlTreeItemSystemInfoReplicas);
 		mySqlTreeItemSystemInfoSessionStatus = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("SessionStatus"));
-		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoSessionStatus);
+		//mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoSessionStatus);
+		threadsafeAddTreeItem(mySqlTreeItemSystemInfo, mySqlTreeItemSystemInfoSessionStatus);
 		mySqlTreeItemSystemInfoGlobalStatus = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("GlobalStatus"));
-		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoGlobalStatus);
+		//mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoGlobalStatus);
+		threadsafeAddTreeItem(mySqlTreeItemSystemInfo, mySqlTreeItemSystemInfoGlobalStatus);
 		mySqlTreeItemSystemInfoSessionVariables = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("SessionVariables"));
-		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoSessionVariables);
+		//mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoSessionVariables);
+		threadsafeAddTreeItem(mySqlTreeItemSystemInfo, mySqlTreeItemSystemInfoSessionVariables);
 		mySqlTreeItemSystemInfoGlobalVariables = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("GlobalVariables"));
-		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoGlobalVariables);
+		//mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoGlobalVariables);
+		threadsafeAddTreeItem(mySqlTreeItemSystemInfo, mySqlTreeItemSystemInfoGlobalVariables);
 		mySqlTreeItemSystemInfoWarnings = new TreeItem<String>(menu_Items_FX.resourceBundle.getString("Warnings"));
-		mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoWarnings);
+		//mySqlTreeItemSystemInfo.getChildren().add(mySqlTreeItemSystemInfoWarnings);
+		threadsafeAddTreeItem(mySqlTreeItemSystemInfo, mySqlTreeItemSystemInfoWarnings);
 		
 		
-		mySqlTreeItem.getChildren().add(mySqlTreeItemDatabases);
+		//mySqlTreeItem.getChildren().add(mySqlTreeItemDatabases);
 	//	mySqlTreeItem.getChildren().add(mySqlTreeItemUsers);
-		mySqlTreeItem.getChildren().add(mySqlTreeItemAdminister);
-		mySqlTreeItem.getChildren().add(mySqlTreeItemSystemInfo);
+		//mySqlTreeItem.getChildren().add(mySqlTreeItemAdminister);
+		//mySqlTreeItem.getChildren().add(mySqlTreeItemSystemInfo);
 				
+		threadsafeAddTreeItem(mySqlTreeItem, mySqlTreeItemDatabases);
+		threadsafeAddTreeItem(mySqlTreeItem, mySqlTreeItemAdminister);
+		threadsafeAddTreeItem(mySqlTreeItem, mySqlTreeItemSystemInfo);
+		
 		return mySqlTreeItem; 
 		
 	}
@@ -3465,7 +3620,7 @@ public class MySqlUI {
 						e.printStackTrace();
 					}		
 				}
-				if(newValue.getText().equals(menu_Items_FX.resourceBundle.getString(menu_Items_FX.resourceBundle.getString("GraphVisuals")))) {
+				if(newValue.getText().equals(menu_Items_FX.resourceBundle.getString("GraphVisuals"))) {
 					System.out.println("Graph Visual Tab under Table selected");
 					particularTableGraphVisualsTab.setContent(getGraphVisualsForParticulatTable(tableName,databaseName));
 				}
@@ -3643,7 +3798,8 @@ public class MySqlUI {
 			//particularTableindexesButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
 			particularTableIndexesButtons =  new Button(menu_Items_FX.resourceBundle.getString("Create"));
 			particularTableIndexesButtons.setId("buttons");
-			particularTableindexesButtonsHBox.getChildren().add(particularTableindexesButtonsHBox);
+			particularTableIndexesButtons.setOnAction(new CreateNewIndexHandler(createNewTableHandler, this));
+			particularTableindexesButtonsHBox.getChildren().add(particularTableIndexesButtons);
 			particularTableindexesTabVBox.getChildren().addAll(particularTableindexesView,particularTableindexesButtonsHBox);
 			particularTableindexesTab.setContent(particularTableindexesTabVBox);
 		}catch(SQLException e) {
@@ -3671,6 +3827,7 @@ public class MySqlUI {
 				//particularTabletriggersButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
 				particularTableTriggersButtons =  new Button(menu_Items_FX.resourceBundle.getString("Create"));
 				particularTableTriggersButtons.setId("buttons");
+				particularTableTriggersButtons.setOnAction(new CreateNewTriggerHandler(createNewTableHandler,this));
 				particularTabletriggersButtonsHBox.getChildren().add(particularTableTriggersButtons);
 				particularTabletriggersTabVBox.getChildren().addAll(particularTabletriggersView,particularTabletriggersButtonsHBox);
 				particularTabletriggersTab.setContent(particularTabletriggersTabVBox);
@@ -3732,6 +3889,7 @@ public class MySqlUI {
 			//particularTableforeignKeysButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
 			particularTableforeignKeysButtons =  new Button(menu_Items_FX.resourceBundle.getString("Create"));
 			particularTableforeignKeysButtons.setId("buttons");
+			particularTableforeignKeysButtons.setOnAction(new CreateNewForeignKeyHandler(createNewTableHandler,this));
 			particularTableforeignKeysButtonsHBox.getChildren().add(particularTableforeignKeysButtons);
 			particularTableforeignKeysTabVBox.getChildren().addAll(particularTableforeignKeysView,particularTableforeignKeysButtonsHBox);
 			particularTableforeignKeysTab.setContent(particularTableforeignKeysTabVBox);
@@ -3760,6 +3918,7 @@ public class MySqlUI {
 			//particularTableconstraintsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
 			particularTableConstraintsButtons =  new Button(menu_Items_FX.resourceBundle.getString("Create"));
 			particularTableConstraintsButtons.setId("buttons");
+			particularTableConstraintsButtons.setOnAction(new CreateNewConstraintHandler(createNewTableHandler,this));
 			particularTableconstraintsButtonsHBox.getChildren().add(particularTableConstraintsButtons);
 			particularTableconstraintsTabVBox.getChildren().addAll(particularTableconstraintsView,particularTableconstraintsButtonsHBox);
 			particularTableconstraintsTab.setContent(particularTableconstraintsTabVBox);
@@ -3797,6 +3956,7 @@ public class MySqlUI {
 			//particularTableColumnsButtonsHBox.getChildren().add(new Button("Create"){{ setId("buttons"); }});
 			particularTableColumnsButtons =  new Button(menu_Items_FX.resourceBundle.getString("Create"));
 			particularTableColumnsButtons.setId("buttons");
+			particularTableColumnsButtons.setOnAction(new CreateNewColumnHandler(createNewTableHandler, this));
 			particularTableColumnsButtonsHBox.getChildren().add(particularTableColumnsButtons);
 			particularTablecolumnsTabVBox.getChildren().addAll(particularTableColumnsView,particularTableColumnsButtonsHBox);
 			particularTablecolumnsTab.setContent(particularTablecolumnsTabVBox);
@@ -6428,7 +6588,12 @@ public class MySqlUI {
 		TreeItem<String> memoryUsageTreeItemTotalMemoryHost = new TreeItem<String>("Total Memory By Host");
 		TreeItem<String> memoryUsageTreeItemTotalMemoryThread = new TreeItem<String>("Total Memory By Thread");
 		
-		memoryUsageTreeItem.getChildren().addAll(memoryUsageTreeItemTotalMemory,memoryUsageTreeItemTotalMemoryEvent,memoryUsageTreeItemTotalMemoryUser,memoryUsageTreeItemTotalMemoryHost,memoryUsageTreeItemTotalMemoryThread);
+		//memoryUsageTreeItem.getChildren().addAll(memoryUsageTreeItemTotalMemory,memoryUsageTreeItemTotalMemoryEvent,memoryUsageTreeItemTotalMemoryUser,memoryUsageTreeItemTotalMemoryHost,memoryUsageTreeItemTotalMemoryThread);
+		threadsafeAddTreeItem(memoryUsageTreeItem,memoryUsageTreeItemTotalMemory);
+		threadsafeAddTreeItem(memoryUsageTreeItem,memoryUsageTreeItemTotalMemoryEvent);
+		threadsafeAddTreeItem(memoryUsageTreeItem,memoryUsageTreeItemTotalMemoryUser);
+		threadsafeAddTreeItem(memoryUsageTreeItem,memoryUsageTreeItemTotalMemoryHost);		
+		threadsafeAddTreeItem(memoryUsageTreeItem,memoryUsageTreeItemTotalMemoryThread);
 		
 		TreeItem<String> hotspotsIOTreeItem = new TreeItem<String>("Hot Spots for I/O");
 		TreeItem<String> hotspotsIOTreeItemActivityReport = new TreeItem<String>("Top File I/O Activity Report");
@@ -6437,7 +6602,12 @@ public class MySqlUI {
 		TreeItem<String> hotspotsIOTreeItemTimeEventCategories = new TreeItem<String>("Top I/O In Time By Event Categories");
 		TreeItem<String> hotspotsIOTreeItemTimeThread = new TreeItem<String>("Top I/O Time By Uer/Thread");
 		
-		hotspotsIOTreeItem.getChildren().addAll(hotspotsIOTreeItemActivityReport,hotspotsIOTreeItemFileTime,hotspotsIOTreeItemEventCategory,hotspotsIOTreeItemTimeEventCategories,hotspotsIOTreeItemTimeThread);
+		//hotspotsIOTreeItem.getChildren().addAll(hotspotsIOTreeItemActivityReport,hotspotsIOTreeItemFileTime,hotspotsIOTreeItemEventCategory,hotspotsIOTreeItemTimeEventCategories,hotspotsIOTreeItemTimeThread);
+		threadsafeAddTreeItem(hotspotsIOTreeItem,hotspotsIOTreeItemActivityReport);
+		threadsafeAddTreeItem(hotspotsIOTreeItem,hotspotsIOTreeItemFileTime);
+		threadsafeAddTreeItem(hotspotsIOTreeItem,hotspotsIOTreeItemEventCategory);
+		threadsafeAddTreeItem(hotspotsIOTreeItem,hotspotsIOTreeItemTimeEventCategories);
+		threadsafeAddTreeItem(hotspotsIOTreeItem,hotspotsIOTreeItemTimeThread);
 		
 		TreeItem<String> highCostSQLTreeItem = new TreeItem<String>("High Cost SQL Statements");
 		TreeItem<String> highCostSQLTreeItemStmtAnalysis = new TreeItem<String>("Analysis");
@@ -6447,9 +6617,15 @@ public class MySqlUI {
 		TreeItem<String> highCostSQLTreeItemSorting = new TreeItem<String>("With Sorting");
 		TreeItem<String> highCostSQLTreeItemTempTables = new TreeItem<String>("With Temp Tables");
 		
-		highCostSQLTreeItem.getChildren().addAll(highCostSQLTreeItemStmtAnalysis,highCostSQLTreeItemErrorsWarnings,highCostSQLTreeItemTableScans,highCostSQLTreeItem95thPercentile,highCostSQLTreeItemSorting
-				,highCostSQLTreeItemTempTables);
-
+		//highCostSQLTreeItem.getChildren().addAll(highCostSQLTreeItemStmtAnalysis,highCostSQLTreeItemErrorsWarnings,highCostSQLTreeItemTableScans,highCostSQLTreeItem95thPercentile,highCostSQLTreeItemSorting
+		//		,highCostSQLTreeItemTempTables);
+		threadsafeAddTreeItem(highCostSQLTreeItem,highCostSQLTreeItemStmtAnalysis);
+		threadsafeAddTreeItem(highCostSQLTreeItem,highCostSQLTreeItemErrorsWarnings);
+		threadsafeAddTreeItem(highCostSQLTreeItem,highCostSQLTreeItemTableScans);
+		threadsafeAddTreeItem(highCostSQLTreeItem,highCostSQLTreeItem95thPercentile);
+		threadsafeAddTreeItem(highCostSQLTreeItem,highCostSQLTreeItemSorting);
+		threadsafeAddTreeItem(highCostSQLTreeItem,highCostSQLTreeItemTempTables);
+		
 		TreeItem<String> schemaStatisticsTreeItem = new TreeItem<String>("Database Schema Statistics");
 		TreeItem<String> schemaStatisticsTreeItemAutoIncrement = new TreeItem<String>("Auto Increment Columns");
 		TreeItem<String> schemaStatisticsTreeItemFlattenedKeys = new TreeItem<String>("Flattened Keys");
@@ -6462,8 +6638,19 @@ public class MySqlUI {
 		TreeItem<String> schemaStatisticsTreeItemTableFullScans = new TreeItem<String>("Tables With Full Table Scans");
 		TreeItem<String> schemaStatisticsTreeItemUnusedIndexes = new TreeItem<String>("Unused Indexes");
 		
-		schemaStatisticsTreeItem.getChildren().addAll(schemaStatisticsTreeItemAutoIncrement,schemaStatisticsTreeItemFlattenedKeys,schemaStatisticsTreeItemIndex,schemaStatisticsTreeItemObject
-				,schemaStatisticsTreeItemRedundantIndexes,schemaStatisticsTreeItemTableLoackWaits,schemaStatisticsTreeItemTableSatictics,schemaStatisticsTreeItemTableStatwithBuffer,schemaStatisticsTreeItemTableFullScans,schemaStatisticsTreeItemUnusedIndexes);
+		//schemaStatisticsTreeItem.getChildren().addAll(schemaStatisticsTreeItemAutoIncrement,schemaStatisticsTreeItemFlattenedKeys,schemaStatisticsTreeItemIndex,schemaStatisticsTreeItemObject
+		//		,schemaStatisticsTreeItemRedundantIndexes,schemaStatisticsTreeItemTableLoackWaits,schemaStatisticsTreeItemTableSatictics,schemaStatisticsTreeItemTableStatwithBuffer,schemaStatisticsTreeItemTableFullScans,schemaStatisticsTreeItemUnusedIndexes);
+		threadsafeAddTreeItem(schemaStatisticsTreeItem,schemaStatisticsTreeItemAutoIncrement);
+		threadsafeAddTreeItem(schemaStatisticsTreeItem,schemaStatisticsTreeItemFlattenedKeys);
+		threadsafeAddTreeItem(schemaStatisticsTreeItem,schemaStatisticsTreeItemIndex);
+		threadsafeAddTreeItem(schemaStatisticsTreeItem,schemaStatisticsTreeItemObject);
+		threadsafeAddTreeItem(schemaStatisticsTreeItem,schemaStatisticsTreeItemRedundantIndexes);
+		threadsafeAddTreeItem(schemaStatisticsTreeItem,schemaStatisticsTreeItemTableLoackWaits);
+		threadsafeAddTreeItem(schemaStatisticsTreeItem,schemaStatisticsTreeItemTableSatictics);
+		threadsafeAddTreeItem(schemaStatisticsTreeItem,schemaStatisticsTreeItemTableStatwithBuffer);
+		threadsafeAddTreeItem(schemaStatisticsTreeItem,schemaStatisticsTreeItemTableFullScans);
+		threadsafeAddTreeItem(schemaStatisticsTreeItem,schemaStatisticsTreeItemUnusedIndexes);
+
 		
 		TreeItem<String> waitTimesTreeItem = new TreeItem<String>("Wait Times");
 		TreeItem<String> waitTimesTreeItemGlobalWait = new TreeItem<String>("Global Waits By Time ");
@@ -6472,15 +6659,23 @@ public class MySqlUI {
 		TreeItem<String> waitTimesTreeItemClassesTime = new TreeItem<String>("Wait Classes By Time");
 		TreeItem<String> waitTimesTreeItemClassesAvgTime = new TreeItem<String>("Wait Classes By Avg Time");
 		
-		waitTimesTreeItem.getChildren().addAll(waitTimesTreeItemGlobalWait,waitTimesTreeItemUserTime,waitTimesTreeItemHostTime,waitTimesTreeItemClassesTime,waitTimesTreeItemClassesAvgTime);
+		//waitTimesTreeItem.getChildren().addAll(waitTimesTreeItemGlobalWait,waitTimesTreeItemUserTime,waitTimesTreeItemHostTime,waitTimesTreeItemClassesTime,waitTimesTreeItemClassesAvgTime);
+		threadsafeAddTreeItem(waitTimesTreeItem,waitTimesTreeItemGlobalWait);
+		threadsafeAddTreeItem(waitTimesTreeItem,waitTimesTreeItemUserTime);
+		threadsafeAddTreeItem(waitTimesTreeItem,waitTimesTreeItemHostTime);
+		threadsafeAddTreeItem(waitTimesTreeItem,waitTimesTreeItemClassesTime);
+		threadsafeAddTreeItem(waitTimesTreeItem,waitTimesTreeItemClassesAvgTime);
 		
 		TreeItem<String> innoDBStatisticsTreeItem = new TreeItem<String>("InnoDB Statistics");
 		TreeItem<String> innoDBStatisticsTreeItemSchemaStats = new TreeItem<String>("Buffer Stats By Schema");
 		TreeItem<String> innoDBStatisticsTreeItemTableStats = new TreeItem<String>("Buffer Stats By Table");
 		TreeItem<String> innoDBStatisticsTreeItemLockWaits = new TreeItem<String>("Lock Waits");
 
-		innoDBStatisticsTreeItem.getChildren().addAll(innoDBStatisticsTreeItemSchemaStats,innoDBStatisticsTreeItemTableStats,innoDBStatisticsTreeItemLockWaits);
-
+		//innoDBStatisticsTreeItem.getChildren().addAll(innoDBStatisticsTreeItemSchemaStats,innoDBStatisticsTreeItemTableStats,innoDBStatisticsTreeItemLockWaits);
+		threadsafeAddTreeItem(innoDBStatisticsTreeItem,innoDBStatisticsTreeItemSchemaStats);
+		threadsafeAddTreeItem(innoDBStatisticsTreeItem,innoDBStatisticsTreeItemTableStats);
+		threadsafeAddTreeItem(innoDBStatisticsTreeItem,innoDBStatisticsTreeItemLockWaits);
+		
 		TreeItem<String> userUtilizationTreeItem = new TreeItem<String>("User Resource Utilization");
 		TreeItem<String> userUtilizationTreeItemSummary= new TreeItem<String>("User Summary");
 		TreeItem<String> userUtilizationTreeItemIOStats= new TreeItem<String>("User File I/O Summary");
@@ -6489,9 +6684,14 @@ public class MySqlUI {
 		TreeItem<String> userUtilizationTreeItemSummaryStmtTime= new TreeItem<String>("User Statement Time Summary");
 		TreeItem<String> userUtilizationTreeItemSummaryStmtType= new TreeItem<String>("User Statement Type Summary");
 		
-		userUtilizationTreeItem.getChildren().addAll(userUtilizationTreeItemSummary,userUtilizationTreeItemIOStats,userUtilizationTreeItemIOStats,userUtilizationTreeItemSummaryIOTypeStats,userUtilizationTreeItemSummaryStageStats
-				,userUtilizationTreeItemSummaryStmtTime,userUtilizationTreeItemSummaryStmtType);
-		
+		//userUtilizationTreeItem.getChildren().addAll(userUtilizationTreeItemSummary,userUtilizationTreeItemIOStats,userUtilizationTreeItemIOStats,userUtilizationTreeItemSummaryIOTypeStats,userUtilizationTreeItemSummaryStageStats
+		//		,userUtilizationTreeItemSummaryStmtTime,userUtilizationTreeItemSummaryStmtType);
+		threadsafeAddTreeItem(userUtilizationTreeItem,userUtilizationTreeItemSummary);
+		threadsafeAddTreeItem(userUtilizationTreeItem,userUtilizationTreeItemIOStats);
+		threadsafeAddTreeItem(userUtilizationTreeItem,userUtilizationTreeItemSummaryIOTypeStats);
+		threadsafeAddTreeItem(userUtilizationTreeItem,userUtilizationTreeItemSummaryStageStats);
+		threadsafeAddTreeItem(userUtilizationTreeItem,userUtilizationTreeItemSummaryStmtTime);
+		threadsafeAddTreeItem(userUtilizationTreeItem,userUtilizationTreeItemSummaryStmtType);
 
 		TreeItem<String> hostUtilizationTreeItem = new TreeItem<String>("Host Resource Utilization");
 		TreeItem<String> hostUtilizationTreeItemSummary= new TreeItem<String>("Host Summary");
@@ -6501,8 +6701,14 @@ public class MySqlUI {
 		TreeItem<String> hostUtilizationTreeItemSummaryStmtTime= new TreeItem<String>("Host Statement Time Summary");
 		TreeItem<String> hostUtilizationTreeItemSummaryStmtType= new TreeItem<String>("Host Statement Type Summary");
 		
-		hostUtilizationTreeItem.getChildren().addAll(hostUtilizationTreeItemSummary,hostUtilizationTreeItemSummaryIOStats,hostUtilizationTreeItemSummaryIOTypeStats,hostUtilizationTreeItemSummaryStagesStmt
-				,hostUtilizationTreeItemSummaryStmtTime,hostUtilizationTreeItemSummaryStmtType);
+		//hostUtilizationTreeItem.getChildren().addAll(hostUtilizationTreeItemSummary,hostUtilizationTreeItemSummaryIOStats,hostUtilizationTreeItemSummaryIOTypeStats,hostUtilizationTreeItemSummaryStagesStmt
+        //				,hostUtilizationTreeItemSummaryStmtTime,hostUtilizationTreeItemSummaryStmtType);
+		threadsafeAddTreeItem(hostUtilizationTreeItem,hostUtilizationTreeItemSummary);
+		threadsafeAddTreeItem(hostUtilizationTreeItem,hostUtilizationTreeItemSummaryIOStats);
+		threadsafeAddTreeItem(hostUtilizationTreeItem,hostUtilizationTreeItemSummaryIOTypeStats);
+		threadsafeAddTreeItem(hostUtilizationTreeItem,hostUtilizationTreeItemSummaryStagesStmt);
+		threadsafeAddTreeItem(hostUtilizationTreeItem,hostUtilizationTreeItemSummaryStmtTime);
+		threadsafeAddTreeItem(hostUtilizationTreeItem,hostUtilizationTreeItemSummaryStmtType);
 		
 		TreeItem<String> otherInformationTreeItem = new TreeItem<String>("Other Information");
 		TreeItem<String> versionTreeItem = new TreeItem<String>("Version");
@@ -6514,11 +6720,28 @@ public class MySqlUI {
 		TreeItem<String> processListTreeItem = new TreeItem<String>("Process List");
 		TreeItem<String> checkLostInstrumentationTreeItem = new TreeItem<String>("Check Lost Instrumentation"); 
 		
-		otherInformationTreeItem.getChildren().addAll(versionTreeItem,sessionTreeItem,latestFileioTreeItem,systemConfigTreeItem,sessionSSLStatusConfigTreeItem,metricsTreeItem
-				,processListTreeItem,checkLostInstrumentationTreeItem);
+		//otherInformationTreeItem.getChildren().addAll(versionTreeItem,sessionTreeItem,latestFileioTreeItem,systemConfigTreeItem,sessionSSLStatusConfigTreeItem,metricsTreeItem
+		//		,processListTreeItem,checkLostInstrumentationTreeItem);
+		threadsafeAddTreeItem(otherInformationTreeItem,versionTreeItem);
+		threadsafeAddTreeItem(otherInformationTreeItem,sessionTreeItem);
+		threadsafeAddTreeItem(otherInformationTreeItem,latestFileioTreeItem);
+		threadsafeAddTreeItem(otherInformationTreeItem,systemConfigTreeItem);
+		threadsafeAddTreeItem(otherInformationTreeItem,sessionSSLStatusConfigTreeItem);
+		threadsafeAddTreeItem(otherInformationTreeItem,metricsTreeItem);
+		threadsafeAddTreeItem(otherInformationTreeItem,processListTreeItem);
+		threadsafeAddTreeItem(otherInformationTreeItem,checkLostInstrumentationTreeItem);
 		
-		rootReportsTreeItem.getChildren().addAll(memoryUsageTreeItem,hotspotsIOTreeItem,highCostSQLTreeItem,schemaStatisticsTreeItem,waitTimesTreeItem,innoDBStatisticsTreeItem
-				,userUtilizationTreeItem,hostUtilizationTreeItem,otherInformationTreeItem);
+		//rootReportsTreeItem.getChildren().addAll(memoryUsageTreeItem,hotspotsIOTreeItem,highCostSQLTreeItem,schemaStatisticsTreeItem,waitTimesTreeItem,innoDBStatisticsTreeItem
+		//		,userUtilizationTreeItem,hostUtilizationTreeItem,otherInformationTreeItem);
+		threadsafeAddTreeItem(rootReportsTreeItem,memoryUsageTreeItem);
+		threadsafeAddTreeItem(rootReportsTreeItem,hotspotsIOTreeItem);
+		threadsafeAddTreeItem(rootReportsTreeItem,highCostSQLTreeItem);
+		threadsafeAddTreeItem(rootReportsTreeItem,schemaStatisticsTreeItem);
+		threadsafeAddTreeItem(rootReportsTreeItem,waitTimesTreeItem);
+		threadsafeAddTreeItem(rootReportsTreeItem,innoDBStatisticsTreeItem);
+		threadsafeAddTreeItem(rootReportsTreeItem,userUtilizationTreeItem);
+		threadsafeAddTreeItem(rootReportsTreeItem,hostUtilizationTreeItem);
+		threadsafeAddTreeItem(rootReportsTreeItem,otherInformationTreeItem);
 		
 		return performanceView;
 	}
@@ -6612,14 +6835,15 @@ public class MySqlUI {
 			  refreshTableButton = new Button(menu_Items_FX.resourceBundle.getString("Refresh"));
 			  refreshTableButton.setId("buttons");
 			  
-			  createTableButtons.setOnAction(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent event) {
-					
-					tableDetailsSplitPane.getItems().remove(tableButtonsHbox);
-					tableDetailsSplitPane.setDividerPositions(0.99);
-				}	
-			  });
+			  createTableButtons.setOnAction(new CreateNewTableHandler(this));
+//			  createTableButtons.setOnAction(new EventHandler<ActionEvent>() {
+//				@Override
+//				public void handle(ActionEvent event) {
+//					
+//					tableDetailsSplitPane.getItems().remove(tableButtonsHbox);
+//					tableDetailsSplitPane.setDividerPositions(0.99);
+//				}	
+//			  });
 			  
 			  tableButtonsHbox.getChildren().addAll(viewTableButton,createTableButtons,editTableButton,deleteTableButton);
 			  allButtonsHBox.getChildren().addAll(tableButtonsHbox,refreshTableButton);
@@ -6683,14 +6907,15 @@ public class MySqlUI {
 			  refreshViewButton = new Button(menu_Items_FX.resourceBundle.getString("Refresh"));
 			  refreshViewButton.setId("buttons");
 			  
-			  createViewButton.setOnAction(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent event) {
-					
-					viewDetailsSplitPane.getItems().remove(viewButtonsHbox);
-					viewDetailsSplitPane.setDividerPositions(0.99);
-				}	
-			  });
+			  createViewButton.setOnAction(new CreateNewViewHandler(this));
+//			  createViewButton.setOnAction(new EventHandler<ActionEvent>() {
+//				@Override
+//				public void handle(ActionEvent event) {
+//					
+//					viewDetailsSplitPane.getItems().remove(viewButtonsHbox);
+//					viewDetailsSplitPane.setDividerPositions(0.99);
+//				}	
+//			  });
 			  
 			  viewButtonsHbox.getChildren().addAll(viewViewButton,createViewButton,editViewButton,deleteViewButton);
 			  allButtonsHBox.getChildren().addAll(viewButtonsHbox,refreshViewButton);
@@ -6815,14 +7040,17 @@ public class MySqlUI {
 			  deleteProcedureButton.setId("buttons");
 			  refreshProcedureButton = new Button(menu_Items_FX.resourceBundle.getString("Refresh"));
 			  refreshProcedureButton.setId("buttons");
-			  createProcedureButton.setOnAction(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent event) {
-					
-					proceduresDetailsSplitPane.getItems().remove(proceduresButtonsHbox);
-					proceduresDetailsSplitPane.setDividerPositions(0.99);
-				}	
-			  });
+			  
+			  createProcedureButton.setOnAction(new CreateNewProcedureHandler(this));
+			  
+//			  createProcedureButton.setOnAction(new EventHandler<ActionEvent>() {
+//				@Override
+//				public void handle(ActionEvent event) {
+//					
+//					proceduresDetailsSplitPane.getItems().remove(proceduresButtonsHbox);
+//					proceduresDetailsSplitPane.setDividerPositions(0.99);
+//				}	
+//			  });
 			  
 			  proceduresButtonsHbox.getChildren().addAll(viewProcedureButton,createProcedureButton,editProcedureButton,deleteProcedureButton);
 			  allButtonsHBox.getChildren().addAll(proceduresButtonsHbox,refreshProcedureButton);
@@ -6881,14 +7109,15 @@ public class MySqlUI {
 			  deleteFunctionButton.setId("buttons");
 			  refreshProcedureButton = new Button(menu_Items_FX.resourceBundle.getString("Refresh"));
 			  refreshProcedureButton.setId("buttons");
-			  createFunctionButton.setOnAction(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent event) {
-					
-					functionsDetailsSplitPane.getItems().remove(functionsButtonsHbox);
-					functionsDetailsSplitPane.setDividerPositions(0.99);
-				}	
-			  });
+			  createFunctionButton.setOnAction(new CreateNewFunctionHandler(this));
+//			  createFunctionButton.setOnAction(new EventHandler<ActionEvent>() {
+//				@Override
+//				public void handle(ActionEvent event) {
+//					
+//					functionsDetailsSplitPane.getItems().remove(functionsButtonsHbox);
+//					functionsDetailsSplitPane.setDividerPositions(0.99);
+//				}	
+//			  });
 			  
 			  functionsButtonsHbox.getChildren().addAll(viewFunctionButton,createFunctionButton,editFunctionButton,deleteFunctionButton);
 			  allButtonsHBox.getChildren().addAll(functionsButtonsHbox,refreshProcedureButton);
@@ -7929,6 +8158,8 @@ private boolean createERModelComponentOnMouseRelease(Pane mainPane,ERModelApplic
 
 	private Integer currentHostIndex=0;
 	private ChoiceBox memoryDistributionHostByChoiceBox;
+						
+	
 	private VBox getTopMemoryUsageByHostsVBox(TreeItem<String> loadedDatabaseName,ArrayList<String> columnNamesForGraph) {
 		
 		if(currentLoggedInUser ==null || currentLoggedInHost == null) {
@@ -8848,14 +9079,15 @@ private boolean createERModelComponentOnMouseRelease(Pane mainPane,ERModelApplic
 			  deleteEventButton.setId("buttons");
 			  refreshEventsButton = new Button(menu_Items_FX.resourceBundle.getString("Refresh"));
 			  refreshEventsButton.setId("buttons");
-			  createEventButton.setOnAction(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent event) {
-					
-					eventsDetailsSplitPane.getItems().remove(eventsButtonsHbox);
-					eventsDetailsSplitPane.setDividerPositions(0.99);
-				}	
-			  });
+			  createEventButton.setOnAction(new CreateNewEventHandler(this));
+//			  createEventButton.setOnAction(new EventHandler<ActionEvent>() {
+//				@Override
+//				public void handle(ActionEvent event) {
+//					
+//					eventsDetailsSplitPane.getItems().remove(eventsButtonsHbox);
+//					eventsDetailsSplitPane.setDividerPositions(0.99);
+//				}	
+//			  });
 			  
 			  
 			  eventsButtonsHbox.getChildren().addAll(viewEventButton,createEventButton,editEventButton,deleteEventButton);
